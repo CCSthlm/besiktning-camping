@@ -267,6 +267,13 @@
         </select>
       </div>
     </div>
+    <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border);">
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+        <label style="font-size:11px;color:var(--text3);font-weight:500;white-space:nowrap;">GitHub Token (sparas lokalt)</label>
+        <input type="password" id="gh-token" placeholder="ghp_xxxxxxxxxxxx" style="flex:1;min-width:200px;font-size:12px;padding:6px 9px;border-radius:6px;border:1px solid var(--border2);background:var(--bg2);color:var(--text);" oninput="saveToken()">
+        <span id="gh-token-status" style="font-size:11px;color:var(--text3);"></span>
+      </div>
+    </div>
   </div>
 
   <div class="lock-notice" id="lock-notice">
@@ -314,6 +321,9 @@
     </button>
     <button class="btn btn-excel" onclick="exportXLS()">
       <i class="ti ti-table-export"></i> Exportera till Excel
+    </button>
+    <button class="btn btn-github" id="btn-github" onclick="saveToGitHub()" style="background:#24292e;color:#fff;border-color:#24292e;">
+      <i class="ti ti-brand-github"></i> Spara till GitHub
     </button>
     <button class="btn" onclick="resetAll()">
       <i class="ti ti-refresh"></i> Återställ
@@ -1473,10 +1483,143 @@ function mailCert() {
   lines.push('Genererat via Caravan Club of Swedens besiktningsprogram.');
   lines.push('Bifoga Excel-export eller PDF f\u00f6r fullst\u00e4ndig dokumentation.');
 
-  const subject = encodeURIComponent('Besiktningsintyg \u2013 ' + campingName + ' \u2013 ' + dateStr);
+  const subject = encodeURIComponent('Besiktningsintyg \u2013 ' + campingName + ' \u2013 ' + dateStr + ' \u2013 ' + statusText);
   const body = encodeURIComponent(lines.join('\n'));
-  window.location.href = 'mailto:?subject=' + subject + '&body=' + body;
+
+  // Pre-fill To/CC per camping
+  const CAMPING_EMAIL = {
+    'c1': { to: 'info.bjorko@cc-camping.se', cc: 'massimo.johansson@cc-camping.se' },
+  };
+  const emailCfg = CAMPING_EMAIL[campingVal] || { to: '', cc: '' };
+  const toStr = emailCfg.to ? emailCfg.to : '';
+  const ccStr = emailCfg.cc ? '&cc=' + encodeURIComponent(emailCfg.cc) : '';
+
+  window.location.href = 'mailto:' + toStr + '?subject=' + subject + ccStr + '&body=' + body;
 }
+
+// ---- GitHub integration ----
+(function loadToken() {
+  const t = localStorage.getItem('gh_token_besiktning');
+  if (t) {
+    const el = document.getElementById('gh-token');
+    if (el) { el.value = t; updateTokenStatus(t); }
+  }
+})();
+
+function saveToken() {
+  const t = document.getElementById('gh-token').value.trim();
+  if (t) {
+    localStorage.setItem('gh_token_besiktning', t);
+    updateTokenStatus(t);
+  } else {
+    localStorage.removeItem('gh_token_besiktning');
+    document.getElementById('gh-token-status').textContent = '';
+  }
+}
+
+function updateTokenStatus(t) {
+  const el = document.getElementById('gh-token-status');
+  if (el) el.textContent = t.startsWith('ghp_') || t.startsWith('github_pat_') ? '\u2705 Token sparad' : '\u26a0\ufe0f Kontrollera token';
+}
+
+async function saveToGitHub() {
+  const token = (document.getElementById('gh-token').value.trim()) || localStorage.getItem('gh_token_besiktning') || '';
+  if (!token) {
+    alert('Klistra in ditt GitHub Personal Access Token i f\u00e4ltet ovan f\u00f6rst.');
+    return;
+  }
+
+  const campingEl = document.getElementById('m-camping');
+  const campingVal = campingEl.value;
+  if (!campingVal) { alert('V\u00e4lj camping f\u00f6rst.'); return; }
+
+  const campingName = CAMPING_FULL_NAMES[campingVal] || campingEl.options[campingEl.selectedIndex]?.text || 'camping';
+  const date = document.getElementById('m-date').value || new Date().toISOString().slice(0,10);
+
+  // Generate xlsx blob
+  const wb = buildWorkbook();
+  const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+  const blob = new Blob([wbout], { type: 'application/octet-stream' });
+
+  // Convert to base64
+  const reader = new FileReader();
+  reader.onload = async function() {
+    const base64 = reader.result.split(',')[1];
+    const filename = 'besiktningar/' + date.slice(0,4) + '/' + campingName.replace(/[^a-zA-Z\u00e5\u00e4\u00f6\u00c5\u00c4\u00d60-9]/g, '_') + '_' + date + '.xlsx';
+    const repo = 'CCSthlm/besiktning-camping';
+    const apiUrl = 'https://api.github.com/repos/' + repo + '/contents/' + filename;
+    const btn = document.getElementById('btn-github');
+    btn.textContent = 'Sparar...';
+    btn.disabled = true;
+
+    try {
+      // Check if file exists (to get SHA for update)
+      let sha = null;
+      const checkRes = await fetch(apiUrl, { headers: { 'Authorization': 'token ' + token } });
+      if (checkRes.ok) { const existing = await checkRes.json(); sha = existing.sha; }
+
+      const payload = {
+        message: 'Besiktning: ' + campingName + ' ' + date,
+        content: base64,
+        branch: 'main'
+      };
+      if (sha) payload.sha = sha;
+
+      const res = await fetch(apiUrl, {
+        method: 'PUT',
+        headers: { 'Authorization': 'token ' + token, 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (res.ok) {
+        btn.innerHTML = '<i class="ti ti-check"></i> Sparat!';
+        btn.style.background = '#1D9E75';
+        setTimeout(() => {
+          btn.innerHTML = '<i class="ti ti-brand-github"></i> Spara till GitHub';
+          btn.style.background = '#24292e';
+          btn.disabled = false;
+        }, 3000);
+      } else {
+        const err = await res.json();
+        alert('Fel vid sparande: ' + (err.message || res.status));
+        btn.innerHTML = '<i class="ti ti-brand-github"></i> Spara till GitHub';
+        btn.disabled = false;
+      }
+    } catch(e) {
+      alert('N\u00e4tverksfel: ' + e.message);
+      btn.innerHTML = '<i class="ti ti-brand-github"></i> Spara till GitHub';
+      btn.disabled = false;
+    }
+  };
+  reader.readAsDataURL(blob);
+}
+
+function buildWorkbook() {
+  // Reuse exportXLS logic but return wb instead of saving
+  const campingEl = document.getElementById('m-camping');
+  const campingVal = campingEl.value;
+  const fullCampingNameXLS = CAMPING_FULL_NAMES[campingVal] || campingEl.options[campingEl.selectedIndex]?.text || '';
+  const date = document.getElementById('m-date').value || '';
+  const inspector = document.getElementById('m-name').value || '';
+  const inspType = document.getElementById('m-type').value || '';
+  const dateStr = date ? new Date(date + 'T12:00:00').toLocaleDateString('sv-SE') : '\u2013';
+  const srvVis = !document.getElementById('srv-section').classList.contains('srv-hidden');
+  let totalW = 0, scoreW = 0, rated = 0, reds = 0;
+  SECTIONS.forEach(sec => { sec.items.forEach((_, i) => { if (naScores[sec.id] && naScores[sec.id][i]) return; const vRaw = scores[sec.id] && scores[sec.id][i]; const v = vRaw !== undefined ? ynToNum(vRaw) : undefined; if (v !== undefined) { rated++; scoreW += v * sec.weight; totalW += 5 * sec.weight; if (vRaw === 'nej') reds++; } }); });
+  SC_SECTION.items.forEach((_, i) => { if (scNaScores[i]) return; const vRaw = scScores[i]; const v = vRaw !== undefined ? ynToNum(vRaw) : undefined; if (v !== undefined) { rated++; scoreW += v * SC_SECTION.weight; totalW += 5 * SC_SECTION.weight; if (vRaw === 'nej') reds++; } });
+  if (srvVis) { const total = srvItemTotal(); const w = 2.5; for (let i = 0; i < total; i++) { if (srvNaScores[i]) continue; const vRaw = srvScores[i]; const v = vRaw !== undefined ? ynToNum(vRaw) : undefined; if (v !== undefined) { rated++; scoreW += v * w; totalW += 5 * w; if (vRaw === 'nej') reds++; } } }
+  const pct = totalW ? Math.round(scoreW / totalW * 100) : 0;
+  const scFailed = SC_SECTION.items.some((_, i) => !scNaScores[i] && scScores[i] === 'nej');
+  const passed = rated > 0 && reds === 0 && !scFailed;
+  const status = !rated ? 'Ej ifyllt' : passed ? 'GODK\u00c4ND' : 'UNDERK\u00c4ND';
+  const wb = XLSX.utils.book_new();
+  const summaryData = [['BESIKTNINGSINTYG \u2013 Caravan Club of Sweden, Stockholmssektionen'],[],['Camping', fullCampingNameXLS],['Datum', dateStr],['Ansvarig f\u00f6r besiktningen', inspector],['Typ av besiktning', inspType],[],['RESULTAT', status],['Bed\u00f6mda punkter', rated],['Underk\u00e4nda punkter (Nej)', reds]];
+  const ws = XLSX.utils.aoa_to_sheet(summaryData);
+  ws['!cols'] = [{wch:32},{wch:44}];
+  XLSX.utils.book_append_sheet(wb, ws, 'Sammanfattning');
+  return wb;
+}
+
 </script>
 </body>
 </html>
