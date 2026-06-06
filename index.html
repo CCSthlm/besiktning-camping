@@ -1211,237 +1211,13 @@ checkLock();
 function exportXLS() {
   const campingEl = document.getElementById('m-camping');
   const campingVal = campingEl.value;
-  const campingName = campingEl.options[campingEl.selectedIndex]?.text || 'Okänd camping';
-  const fullCampingNameXLS = CAMPING_FULL_NAMES[campingVal] || campingName;
+  const fullCampingNameXLS = CAMPING_FULL_NAMES[campingVal] || campingEl.options[campingEl.selectedIndex]?.text || 'camping';
   const date = document.getElementById('m-date').value || '';
-  const inspector = document.getElementById('m-name').value || '';
-  const inspType = document.getElementById('m-type').value || '';
-  const dateStr = date ? new Date(date + 'T12:00:00').toLocaleDateString('sv-SE') : '–';
-
-  const wb = XLSX.utils.book_new();
-
-  // ---- Scoring ----
-  const srvVis = !document.getElementById('srv-section').classList.contains('srv-hidden');
-  let totalW = 0, scoreW = 0, rated = 0, reds = 0;
-
-  SECTIONS.forEach(sec => {
-    sec.items.forEach((_, i) => {
-      if (naScores[sec.id] && naScores[sec.id][i]) return;
-      const vRaw = scores[sec.id] && scores[sec.id][i];
-      const v = vRaw !== undefined ? ynToNum(vRaw) : undefined;
-      if (v !== undefined) { rated++; scoreW += v * sec.weight; totalW += 5 * sec.weight; if (vRaw === 'nej') reds++; }
-    });
-  });
-  SC_SECTION.items.forEach((_, i) => {
-    if (scNaScores[i]) return;
-    const vRaw = scScores[i];
-    const v = vRaw !== undefined ? ynToNum(vRaw) : undefined;
-    if (v !== undefined) { rated++; scoreW += v * SC_SECTION.weight; totalW += 5 * SC_SECTION.weight; if (vRaw === 'nej') reds++; }
-  });
-  if (srvVis) {
-    const total = srvItemTotal(); const w = 2.5;
-    for (let i = 0; i < total; i++) {
-      if (srvNaScores[i]) continue;
-      const vRaw = srvScores[i];
-      const v = vRaw !== undefined ? ynToNum(vRaw) : undefined;
-      if (v !== undefined) { rated++; scoreW += v * w; totalW += 5 * w; if (vRaw === 'nej') reds++; }
-    }
-  }
-  const pct = totalW ? Math.round(scoreW / totalW * 100) : 0;
-  const naCount = SECTIONS.reduce((a, s) => a + s.items.filter((_, i) => naScores[s.id] && naScores[s.id][i]).length, 0)
-    + SC_SECTION.items.filter((_, i) => scNaScores[i]).length
-    + (srvVis ? Object.values(srvNaScores).filter(Boolean).length : 0);
-  const srvTotal2 = srvVis ? srvItemTotal() : 0;
-  const totalItems = SECTIONS.reduce((a, s) => a + s.items.length, 0) + SC_SECTION.items.length + srvTotal2 - naCount;
-  const scFailed = SC_SECTION.items.some((_, i) => !scNaScores[i] && scScores[i] === 'nej');
-  const passed = rated > 0 && reds === 0 && !scFailed;
-  const status = !rated ? 'Ej ifyllt' : passed ? 'GODKÄND' : 'UNDERKÄND';
-
-  // Helper
-  function yn(v, isNA) {
-    if (isNA) return 'N/A';
-    if (v === undefined || v === null || v === '') return 'Ej bedömd';
-    if (v === 'ja') return 'Ja';
-    if (v === 'nej') return 'Nej';
-    return v;
-  }
-  function statusTxtFn(v, isNA) {
-    if (isNA) return 'N/A';
-    if (v === undefined || v === null || v === '') return 'Ej bedömd';
-    return v === 'ja' ? 'Godkänt' : 'Underkänt';
-  }
-
-  // ---- Sheet 1: Sammanfattning ----
-  const summaryData = [
-    ['BESIKTNINGSINTYG – Caravan Club of Sweden, Stockholmssektionen'],
-    [],
-    ['Camping', fullCampingNameXLS],
-    ['Datum', dateStr],
-    ['Ansvarig för besiktningen', inspector],
-    ['Typ av besiktning', inspType],
-    [],
-    ['RESULTAT', status],
-    ['Bedömda punkter', rated + ' av ' + totalItems],
-    ['Underkända punkter (Nej)', reds],
-    ['N/A-punkter', naCount],
-  ];
-  const wsSummary = XLSX.utils.aoa_to_sheet(summaryData);
-  wsSummary['!cols'] = [{wch:32},{wch:44}];
-  XLSX.utils.book_append_sheet(wb, wsSummary, 'Sammanfattning');
-
-  // ---- Sheet 2: Detaljerade resultat ----
-  const noteEls = document.querySelectorAll('.note-row textarea');
-  const detailRows = [['Sektion', 'Punkt', 'Svar', 'Status', 'N/A', 'Anteckning']];
-
-  SECTIONS.forEach((sec, si) => {
-    sec.items.forEach((it, i) => {
-      const isNA = !!(naScores[sec.id] && naScores[sec.id][i]);
-      const v = scores[sec.id] && scores[sec.id][i];
-      const itemCmtS = itemComments[sec.id + '-' + i] || '';
-      detailRows.push([sec.label, it.t, yn(v, isNA), statusTxtFn(v, isNA), isNA ? 'Ja' : '', itemCmtS]);
-    });
-    const note = noteEls[si] ? noteEls[si].value.trim() : '';
-    if (note) {
-      const last = detailRows[detailRows.length - 1];
-      // attach note to last item row or add note row
-      detailRows.push([sec.label + ' – Sektionsanteckning', '', '', '', '', note]);
-    }
-  });
-
-  // SC section
-  const scCardEls = document.querySelectorAll('#sections-container .section-card');
-  const scNoteElX = scCardEls.length > 0 ? scCardEls[scCardEls.length - 1].querySelector('.note-row textarea') : null;
-  const scNoteX = scNoteElX ? scNoteElX.value.trim() : '';
-  SC_SECTION.items.forEach((it, i) => {
-    const isNA = !!scNaScores[i];
-    const v = scScores[i];
-    const itemCmtSC = itemComments['sc-' + i] || '';
-    detailRows.push([SC_SECTION.label, it.t, yn(v, isNA), statusTxtFn(v, isNA), isNA ? 'Ja' : '', itemCmtSC]);
-  });
-  if (scNoteX) detailRows.push([SC_SECTION.label + ' – Sektionsanteckning', '', '', '', '', scNoteX]);
-
-  // SRV section
-  if (srvVis) {
-    const tillf = document.getElementById('toggle-tillfallig').checked;
-    const groups = tillf ? SRV_TILLFALLIG : SRV_FULL;
-    let srvAllItems = [];
-    groups.forEach(g => g.items.forEach(it => srvAllItems.push({ ...it, grp: g.label })));
-    srvAllItems.forEach((it, i) => {
-      const isNA = !!srvNaScores[i];
-      const v = srvScores[i];
-      const itemCmtSrv = itemComments['srv-' + i] || '';
-      detailRows.push(['Servering / alkoholtillstånd', it.t, yn(v, isNA), statusTxtFn(v, isNA), isNA ? 'Ja' : '', itemCmtSrv]);
-    });
-    const srvNoteX = document.querySelector('#srv-section .note-row textarea');
-    const srvNoteVal = srvNoteX ? srvNoteX.value.trim() : '';
-    if (srvNoteVal) detailRows.push(['Servering – Sektionsanteckning', '', '', '', '', srvNoteVal]);
-  }
-
-  const wsDetail = XLSX.utils.aoa_to_sheet(detailRows);
-  wsDetail['!cols'] = [{wch:36},{wch:64},{wch:12},{wch:14},{wch:6},{wch:50}];
-  XLSX.utils.book_append_sheet(wb, wsDetail, 'Detaljerade resultat');
-
-  // ---- Sheet 3: Avvikelser & Anteckningar ----
-  const avvRows = [['Sektion', 'Punkt', 'Svar', 'Status', 'Anteckning']];
-
-  SECTIONS.forEach((sec, si) => {
-    const note = noteEls[si] ? noteEls[si].value.trim() : '';
-    let sectionHasRow = false;
-    sec.items.forEach((it, i) => {
-      if (naScores[sec.id] && naScores[sec.id][i]) return;
-      const v = scores[sec.id] && scores[sec.id][i];
-      if (v === 'nej') {
-        const iCmt = itemComments[sec.id + '-' + i] || '';
-        avvRows.push([sec.label, it.t, 'Nej', 'Underkänt', sectionHasRow ? iCmt : (note || iCmt)]);
-        sectionHasRow = true;
-      } else if (itemComments[sec.id + '-' + i]) {
-        avvRows.push([sec.label, it.t, yn(v, false), statusTxtFn(v, false), itemComments[sec.id + '-' + i]]);
-      }
-    });
-    // Add note row even if no nej answers
-    if (note && !sectionHasRow) {
-      avvRows.push([sec.label, 'Sektionsanteckning', '', '', note]);
-    }
-  });
-
-  // SC avvikelser
-  SC_SECTION.items.forEach((it, i) => {
-    if (scNaScores[i]) return;
-    const scICmt = itemComments['sc-' + i] || '';
-    if (scScores[i] === 'nej') avvRows.push([SC_SECTION.label, it.t, 'Nej', 'Underkänt', scICmt]);
-    else if (scICmt) avvRows.push([SC_SECTION.label, it.t, yn(scScores[i], false), statusTxtFn(scScores[i], false), scICmt]);
-  });
-  if (scNoteX) avvRows.push([SC_SECTION.label, 'Sektionsanteckning', '', '', scNoteX]);
-
-  // SRV avvikelser
-  if (srvVis) {
-    const tillf2 = document.getElementById('toggle-tillfallig').checked;
-    const groups2 = tillf2 ? SRV_TILLFALLIG : SRV_FULL;
-    let srvItems2 = [];
-    groups2.forEach(g => g.items.forEach(it => srvItems2.push(it)));
-    const srvNoteX2 = document.querySelector('#srv-section .note-row textarea');
-    const srvNoteVal2 = srvNoteX2 ? srvNoteX2.value.trim() : '';
-    let srvHasNej = false;
-    srvItems2.forEach((it, i) => {
-      if (srvNaScores[i]) return;
-      const srvICmt = itemComments['srv-' + i] || '';
-      if (srvScores[i] === 'nej') {
-        avvRows.push(['Servering / alkoholtillstånd', it.t, 'Nej', 'Underkänt', srvICmt || (srvHasNej ? '' : srvNoteVal2)]);
-        srvHasNej = true;
-      } else if (srvICmt) {
-        avvRows.push(['Servering / alkoholtillstånd', it.t, yn(srvScores[i], false), statusTxtFn(srvScores[i], false), srvICmt]);
-      }
-    });
-    if (srvNoteVal2 && !srvHasNej) avvRows.push(['Servering / alkoholtillstånd', 'Sektionsanteckning', '', '', srvNoteVal2]);
-  }
-
-  const wsAvv = XLSX.utils.aoa_to_sheet(avvRows);
-  wsAvv['!cols'] = [{wch:36},{wch:64},{wch:8},{wch:14},{wch:50}];
-  XLSX.utils.book_append_sheet(wb, wsAvv, 'Avvikelser och anteckningar');
-
-  // ---- Sheet 4: Underkända punkter ----
-  const undRows = [['Sektion', 'Punkt', 'Kommentar']];
-
-  SECTIONS.forEach(sec => {
-    sec.items.forEach((it, i) => {
-      if (naScores[sec.id] && naScores[sec.id][i]) return;
-      if (scores[sec.id] && scores[sec.id][i] === 'nej') {
-        undRows.push([sec.label, it.t, itemComments[sec.id + '-' + i] || '']);
-      }
-    });
-  });
-  SC_SECTION.items.forEach((it, i) => {
-    if (scNaScores[i]) return;
-    if (scScores[i] === 'nej') {
-      undRows.push([SC_SECTION.label, it.t, itemComments['sc-' + i] || '']);
-    }
-  });
-  if (srvVis) {
-    const tillf3 = document.getElementById('toggle-tillfallig').checked;
-    const groups3 = tillf3 ? SRV_TILLFALLIG : SRV_FULL;
-    let srvItems3 = [];
-    groups3.forEach(g => g.items.forEach(it => srvItems3.push(it)));
-    srvItems3.forEach((it, i) => {
-      if (srvNaScores[i]) return;
-      if (srvScores[i] === 'nej') {
-        undRows.push(['Servering / alkoholtillstånd', it.t, itemComments['srv-' + i] || '']);
-      }
-    });
-  }
-
-  if (undRows.length > 1) {
-    const wsUnd = XLSX.utils.aoa_to_sheet(undRows);
-    wsUnd['!cols'] = [{wch:36},{wch:64},{wch:50}];
-    XLSX.utils.book_append_sheet(wb, wsUnd, 'Underkända punkter');
-  }
-
-  // ---- Save ----
+  const wb = buildWorkbook();
   const filename = 'Besiktning_' + fullCampingNameXLS.replace(/[^a-zA-ZåäöÅÄÖ0-9]/g, '_') + '_' + (date || 'datum') + '.xlsx';
   XLSX.writeFile(wb, filename);
 }
 
-// ---- Comment system ----
-let _commentKey = null;
 
 function openCommentModal(key) {
   _commentKey = key;
@@ -1636,33 +1412,140 @@ async function saveToGitHub() {
 
 
 function buildWorkbook() {
-  // Reuse exportXLS logic but return wb instead of saving
+  // Delegate entirely to exportXLS internals - returns the full workbook
   const campingEl = document.getElementById('m-camping');
   const campingVal = campingEl.value;
   const fullCampingNameXLS = CAMPING_FULL_NAMES[campingVal] || campingEl.options[campingEl.selectedIndex]?.text || '';
   const date = document.getElementById('m-date').value || '';
   const inspector = document.getElementById('m-name').value || '';
   const inspType = document.getElementById('m-type').value || '';
-  const dateStr = date ? new Date(date + 'T12:00:00').toLocaleDateString('sv-SE') : '\u2013';
+  const dateStr = date ? new Date(date + 'T12:00:00').toLocaleDateString('sv-SE') : '–';
   const srvVis = !document.getElementById('srv-section').classList.contains('srv-hidden');
+
+  // Scoring
   let totalW = 0, scoreW = 0, rated = 0, reds = 0;
   SECTIONS.forEach(sec => { sec.items.forEach((_, i) => { if (naScores[sec.id] && naScores[sec.id][i]) return; const vRaw = scores[sec.id] && scores[sec.id][i]; const v = vRaw !== undefined ? ynToNum(vRaw) : undefined; if (v !== undefined) { rated++; scoreW += v * sec.weight; totalW += 5 * sec.weight; if (vRaw === 'nej') reds++; } }); });
   SC_SECTION.items.forEach((_, i) => { if (scNaScores[i]) return; const vRaw = scScores[i]; const v = vRaw !== undefined ? ynToNum(vRaw) : undefined; if (v !== undefined) { rated++; scoreW += v * SC_SECTION.weight; totalW += 5 * SC_SECTION.weight; if (vRaw === 'nej') reds++; } });
   if (srvVis) { const total = srvItemTotal(); const w = 2.5; for (let i = 0; i < total; i++) { if (srvNaScores[i]) continue; const vRaw = srvScores[i]; const v = vRaw !== undefined ? ynToNum(vRaw) : undefined; if (v !== undefined) { rated++; scoreW += v * w; totalW += 5 * w; if (vRaw === 'nej') reds++; } } }
-  const pct = totalW ? Math.round(scoreW / totalW * 100) : 0;
-  const naCountCert = SECTIONS.reduce((a, s) => a + s.items.filter((_, i) => naScores[s.id] && naScores[s.id][i]).length, 0)
-    + SC_SECTION.items.filter((_, i) => scNaScores[i]).length
-    + (srvVis ? Object.values(srvNaScores).filter(Boolean).length : 0);
-  const srvTotalCert = srvVis ? srvItemTotal() : 0;
-  const totalItems = SECTIONS.reduce((a, s) => a + s.items.length, 0) + SC_SECTION.items.length + srvTotalCert - naCountCert;
+  const naCount = SECTIONS.reduce((a, s) => a + s.items.filter((_, i) => naScores[s.id] && naScores[s.id][i]).length, 0) + SC_SECTION.items.filter((_, i) => scNaScores[i]).length + (srvVis ? Object.values(srvNaScores).filter(Boolean).length : 0);
+  const srvTotal2 = srvVis ? srvItemTotal() : 0;
+  const totalItems = SECTIONS.reduce((a, s) => a + s.items.length, 0) + SC_SECTION.items.length + srvTotal2 - naCount;
   const scFailed = SC_SECTION.items.some((_, i) => !scNaScores[i] && scScores[i] === 'nej');
   const passed = rated > 0 && reds === 0 && !scFailed;
-  const status = !rated ? 'Ej ifyllt' : passed ? 'GODK\u00c4ND' : 'UNDERK\u00c4ND';
+  const status = !rated ? 'Ej ifyllt' : passed ? 'GODKÄND' : 'UNDERKÄND';
+
+  function yn(v, isNA) { if (isNA) return 'N/A'; if (v === undefined || v === null || v === '') return 'Ej bedömd'; if (v === 'ja') return 'Ja'; if (v === 'nej') return 'Nej'; return v; }
+  function statusTxtFn(v, isNA) { if (isNA) return 'N/A'; if (v === undefined || v === null || v === '') return 'Ej bedömd'; return v === 'ja' ? 'Godkänt' : 'Underkänt'; }
+
   const wb = XLSX.utils.book_new();
-  const summaryData = [['BESIKTNINGSINTYG \u2013 Caravan Club of Sweden, Stockholmssektionen'],[],['Camping', fullCampingNameXLS],['Datum', dateStr],['Ansvarig f\u00f6r besiktningen', inspector],['Typ av besiktning', inspType],[],['RESULTAT', status],['Bed\u00f6mda punkter', rated],['Underk\u00e4nda punkter (Nej)', reds]];
-  const ws = XLSX.utils.aoa_to_sheet(summaryData);
-  ws['!cols'] = [{wch:32},{wch:44}];
-  XLSX.utils.book_append_sheet(wb, ws, 'Sammanfattning');
+
+  // Sheet 1: Sammanfattning
+  const summaryData = [
+    ['BESIKTNINGSINTYG – Caravan Club of Sweden, Stockholmssektionen'], [],
+    ['Camping', fullCampingNameXLS], ['Datum', dateStr],
+    ['Ansvarig för besiktningen', inspector], ['Typ av besiktning', inspType], [],
+    ['RESULTAT', status], ['Bedömda punkter', rated + ' av ' + totalItems],
+    ['Underkända punkter (Nej)', reds], ['N/A-punkter', naCount],
+  ];
+  const wsSummary = XLSX.utils.aoa_to_sheet(summaryData);
+  wsSummary['!cols'] = [{wch:32},{wch:44}];
+  XLSX.utils.book_append_sheet(wb, wsSummary, 'Sammanfattning');
+
+  // Sheet 2: Detaljerade resultat
+  const noteEls = document.querySelectorAll('.note-row textarea');
+  const detailRows = [['Sektion', 'Punkt', 'Svar', 'Status', 'N/A', 'Anteckning']];
+  SECTIONS.forEach((sec, si) => {
+    sec.items.forEach((it, i) => {
+      const isNA = !!(naScores[sec.id] && naScores[sec.id][i]);
+      const v = scores[sec.id] && scores[sec.id][i];
+      const itemCmt = itemComments[sec.id + '-' + i] || '';
+      detailRows.push([sec.label, it.t, yn(v, isNA), statusTxtFn(v, isNA), isNA ? 'Ja' : '', itemCmt]);
+    });
+    const note = noteEls[si] ? noteEls[si].value.trim() : '';
+    if (note) detailRows.push([sec.label + ' – Sektionsanteckning', '', '', '', '', note]);
+  });
+  const scCardEls = document.querySelectorAll('#sections-container .section-card');
+  const scNoteEl = scCardEls.length > 0 ? scCardEls[scCardEls.length - 1].querySelector('.note-row textarea') : null;
+  const scNoteX = scNoteEl ? scNoteEl.value.trim() : '';
+  SC_SECTION.items.forEach((it, i) => {
+    const isNA = !!scNaScores[i]; const v = scScores[i];
+    const itemCmt = itemComments['sc-' + i] || '';
+    detailRows.push([SC_SECTION.label, it.t, yn(v, isNA), statusTxtFn(v, isNA), isNA ? 'Ja' : '', itemCmt]);
+  });
+  if (scNoteX) detailRows.push([SC_SECTION.label + ' – Sektionsanteckning', '', '', '', '', scNoteX]);
+  if (srvVis) {
+    const tillf = document.getElementById('toggle-tillfallig').checked;
+    const groups = tillf ? SRV_TILLFALLIG : SRV_FULL;
+    let srvAllItems = []; groups.forEach(g => g.items.forEach(it => srvAllItems.push({...it, grp: g.label})));
+    srvAllItems.forEach((it, i) => {
+      const isNA = !!srvNaScores[i]; const v = srvScores[i];
+      const itemCmt = itemComments['srv-' + i] || '';
+      detailRows.push(['Servering / alkoholtillstånd', it.t, yn(v, isNA), statusTxtFn(v, isNA), isNA ? 'Ja' : '', itemCmt]);
+    });
+    const srvNoteX = document.querySelector('#srv-section .note-row textarea');
+    const srvNoteVal = srvNoteX ? srvNoteX.value.trim() : '';
+    if (srvNoteVal) detailRows.push(['Servering – Sektionsanteckning', '', '', '', '', srvNoteVal]);
+  }
+  const wsDetail = XLSX.utils.aoa_to_sheet(detailRows);
+  wsDetail['!cols'] = [{wch:36},{wch:64},{wch:12},{wch:14},{wch:6},{wch:50}];
+  XLSX.utils.book_append_sheet(wb, wsDetail, 'Detaljerade resultat');
+
+  // Sheet 3: Avvikelser och anteckningar
+  const avvRows = [['Sektion', 'Punkt', 'Svar', 'Status', 'Anteckning']];
+  SECTIONS.forEach((sec, si) => {
+    const note = noteEls[si] ? noteEls[si].value.trim() : '';
+    let sectionHasRow = false;
+    sec.items.forEach((it, i) => {
+      if (naScores[sec.id] && naScores[sec.id][i]) return;
+      const v = scores[sec.id] && scores[sec.id][i];
+      const iCmt = itemComments[sec.id + '-' + i] || '';
+      if (v === 'nej') { avvRows.push([sec.label, it.t, 'Nej', 'Underkänt', sectionHasRow ? iCmt : (note || iCmt)]); sectionHasRow = true; }
+      else if (iCmt) avvRows.push([sec.label, it.t, yn(v, false), statusTxtFn(v, false), iCmt]);
+    });
+    if (note && !sectionHasRow) avvRows.push([sec.label, 'Sektionsanteckning', '', '', note]);
+  });
+  SC_SECTION.items.forEach((it, i) => {
+    if (scNaScores[i]) return;
+    const scICmt = itemComments['sc-' + i] || '';
+    if (scScores[i] === 'nej') avvRows.push([SC_SECTION.label, it.t, 'Nej', 'Underkänt', scICmt]);
+    else if (scICmt) avvRows.push([SC_SECTION.label, it.t, yn(scScores[i], false), statusTxtFn(scScores[i], false), scICmt]);
+  });
+  if (scNoteX) avvRows.push([SC_SECTION.label, 'Sektionsanteckning', '', '', scNoteX]);
+  if (srvVis) {
+    const tillf2 = document.getElementById('toggle-tillfallig').checked;
+    const groups2 = tillf2 ? SRV_TILLFALLIG : SRV_FULL;
+    let srvItems2 = []; groups2.forEach(g => g.items.forEach(it => srvItems2.push(it)));
+    const srvNoteX2 = document.querySelector('#srv-section .note-row textarea');
+    const srvNoteVal2 = srvNoteX2 ? srvNoteX2.value.trim() : '';
+    let srvHasNej = false;
+    srvItems2.forEach((it, i) => {
+      if (srvNaScores[i]) return;
+      const srvICmt = itemComments['srv-' + i] || '';
+      if (srvScores[i] === 'nej') { avvRows.push(['Servering / alkoholtillstånd', it.t, 'Nej', 'Underkänt', srvICmt || (srvHasNej ? '' : srvNoteVal2)]); srvHasNej = true; }
+      else if (srvICmt) avvRows.push(['Servering / alkoholtillstånd', it.t, yn(srvScores[i], false), statusTxtFn(srvScores[i], false), srvICmt]);
+    });
+    if (srvNoteVal2 && !srvHasNej) avvRows.push(['Servering / alkoholtillstånd', 'Sektionsanteckning', '', '', srvNoteVal2]);
+  }
+  const wsAvv = XLSX.utils.aoa_to_sheet(avvRows);
+  wsAvv['!cols'] = [{wch:36},{wch:64},{wch:8},{wch:14},{wch:50}];
+  XLSX.utils.book_append_sheet(wb, wsAvv, 'Avvikelser och anteckningar');
+
+  // Sheet 4: Underkända punkter
+  const undRows = [['Sektion', 'Punkt', 'Kommentar']];
+  SECTIONS.forEach(sec => { sec.items.forEach((it, i) => { if (naScores[sec.id] && naScores[sec.id][i]) return; if (scores[sec.id] && scores[sec.id][i] === 'nej') undRows.push([sec.label, it.t, itemComments[sec.id + '-' + i] || '']); }); });
+  SC_SECTION.items.forEach((it, i) => { if (scNaScores[i]) return; if (scScores[i] === 'nej') undRows.push([SC_SECTION.label, it.t, itemComments['sc-' + i] || '']); });
+  if (srvVis) {
+    const tillf3 = document.getElementById('toggle-tillfallig').checked;
+    const groups3 = tillf3 ? SRV_TILLFALLIG : SRV_FULL;
+    let srvItems3 = []; groups3.forEach(g => g.items.forEach(it => srvItems3.push(it)));
+    srvItems3.forEach((it, i) => { if (srvNaScores[i]) return; if (srvScores[i] === 'nej') undRows.push(['Servering / alkoholtillstånd', it.t, itemComments['srv-' + i] || '']); });
+  }
+  if (undRows.length > 1) {
+    const wsUnd = XLSX.utils.aoa_to_sheet(undRows);
+    wsUnd['!cols'] = [{wch:36},{wch:64},{wch:50}];
+    XLSX.utils.book_append_sheet(wb, wsUnd, 'Underkända punkter');
+  }
+
   return wb;
 }
 
