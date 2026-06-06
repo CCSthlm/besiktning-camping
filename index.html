@@ -2043,17 +2043,19 @@ function autoSetInspectionType(filterVal) {
   const latest = campingHistory[0];
   const nineMonthsAgo = new Date();
   nineMonthsAgo.setMonth(nineMonthsAgo.getMonth() - 9);
-
-  if (latest.result === 'UNDERKAND') {
-    // Latest is underkänd -> uppföljning
-    typeSel.value = 'Uppföljningsbesiktning';
-    showInspTypeHint('Senaste besiktning var underkänd (' + latest.date + ').');
-    return;
-  }
-
-  // Latest is godkänd - check if within 9 months
   const latestGodkand = campingHistory.find(d => d.result === 'GODKAND');
   const latestDate = latestGodkand ? new Date(latestGodkand.date) : null;
+
+  if (latest.result === 'UNDERKAND') {
+    typeSel.value = 'Uppföljningsbesiktning';
+    if (latestGodkand) {
+      showInspTypeHint('Senaste underkänd (' + latest.date + '). Förifylls med svar från ' + latestGodkand.date + '...');
+      prefillFromHistory(latestGodkand);
+    } else {
+      showInspTypeHint('Senaste besiktning var underkänd (' + latest.date + ').');
+    }
+    return;
+  }
 
   if (latestDate && latestDate >= nineMonthsAgo) {
     typeSel.value = 'Stickprovsbesiktning';
@@ -2066,6 +2068,7 @@ function autoSetInspectionType(filterVal) {
     showInspTypeHint(msg);
   }
 }
+
 
 function showInspTypeHint(msg) {
   let hint = document.getElementById('insp-type-hint');
@@ -2250,6 +2253,106 @@ function buildAnswersJSON() {
   noteEls.forEach((t, i) => { if (t.value.trim()) answers.notes[i] = t.value.trim(); });
 
   return answers;
+}
+
+
+async function prefillFromHistory(histEntry) {
+  const token = localStorage.getItem('gh_token') || '';
+  const headers = token ? { 'Authorization': 'token ' + token } : {};
+  const repo = 'CCSthlm/besiktning-camping';
+
+  try {
+    // Build JSON filename from the xlsx filename
+    const jsonName = histEntry.name.replace('.xlsx', '.json');
+    const year = histEntry.date.slice(0, 4);
+    const path = 'besiktningar/' + year + '/' + jsonName;
+    const apiUrl = 'https://api.github.com/repos/' + repo + '/contents/' + path;
+
+    const res = await fetch(apiUrl, { headers });
+    if (!res.ok) {
+      showInspTypeHint('Kunde inte hitta sparade svar för ' + histEntry.date + '.');
+      return;
+    }
+    const data = await res.json();
+    const jsonStr = decodeURIComponent(escape(atob(data.content.replace(/\n/g, ''))));
+    const answers = JSON.parse(jsonStr);
+
+    // Confirm before overwriting
+    if (!confirm('Vill du förifyla protokollet med Ja-svar från ' + histEntry.date + '? Nej-svar lämnas tomma.')) return;
+
+    // Apply answers - only prefill 'ja', leave 'nej' empty
+    if (answers.sections) {
+      Object.keys(answers.sections).forEach(sid => {
+        Object.keys(answers.sections[sid]).forEach(i => {
+          const v = answers.sections[sid][i];
+          if (v === 'ja') {
+            if (!scores[sid]) scores[sid] = {};
+            scores[sid][i] = 'ja';
+            const jaBtn = document.getElementById('ja-' + sid + '-' + i);
+            if (jaBtn) jaBtn.className = 'yn-btn yn-ja';
+            const nejBtn = document.getElementById('nej-' + sid + '-' + i);
+            if (nejBtn) nejBtn.className = 'yn-btn';
+          }
+        });
+        updateSectionRag(sid);
+      });
+    }
+
+    // SC section
+    if (answers.sc) {
+      Object.keys(answers.sc).forEach(i => {
+        if (answers.sc[i] === 'ja') {
+          scScores[i] = 'ja';
+          const ja = document.getElementById('scja-' + i);
+          if (ja) ja.className = 'yn-btn yn-ja';
+          const nej = document.getElementById('scnej-' + i);
+          if (nej) nej.className = 'yn-btn';
+        }
+      });
+      updateSCRag();
+    }
+
+    // SRV section
+    if (answers.srv) {
+      Object.keys(answers.srv).forEach(i => {
+        if (answers.srv[i] === 'ja') {
+          srvScores[i] = 'ja';
+          const ja = document.getElementById('srvja-' + i);
+          if (ja) ja.className = 'yn-btn yn-ja';
+          const nej = document.getElementById('srvnej-' + i);
+          if (nej) nej.className = 'yn-btn';
+        }
+      });
+      updateSrvRag();
+    }
+
+    // N/A scores
+    if (answers.naScores) {
+      Object.keys(answers.naScores).forEach(sid => {
+        Object.keys(answers.naScores[sid]).forEach(i => {
+          if (answers.naScores[sid][i]) {
+            if (!naScores[sid]) naScores[sid] = {};
+            naScores[sid][i] = true;
+            const nb = document.getElementById('na-' + sid + '-' + i);
+            if (nb) nb.classList.add('na-on');
+            // Clear ja/nej if set
+            if (scores[sid]) delete scores[sid][i];
+            const ja = document.getElementById('ja-' + sid + '-' + i);
+            const nej = document.getElementById('nej-' + sid + '-' + i);
+            if (ja) ja.className = 'yn-btn';
+            if (nej) nej.className = 'yn-btn';
+          }
+        });
+      });
+    }
+
+    updateSummary();
+    showInspTypeHint('Förifyllt med Ja-svar från ' + histEntry.date + '. Kontrollera och fyll i resterande.');
+
+  } catch(e) {
+    console.error('prefillFromHistory error:', e);
+    showInspTypeHint('Fel vid hämtning av svar: ' + e.message);
+  }
 }
 
 </script>
