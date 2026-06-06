@@ -1203,6 +1203,18 @@ function generateCert() {
   const certBox = document.getElementById('cert-box');
   certBox.className = 'cert-box show';
   certBox.scrollIntoView({behavior: 'smooth', block: 'nearest'});
+
+  // Auto-save to GitHub if token exists
+  const ghToken = localStorage.getItem('gh_token') || '';
+  if (ghToken) {
+    setTimeout(() => {
+      const btn = document.getElementById('btn-github');
+      if (btn && !btn.disabled) {
+        const origText = btn.innerHTML;
+        saveToGitHub().catch(() => {}).finally(() => {});
+      }
+    }, 800);
+  }
 }
 
 function warnCampingChange() {
