@@ -88,6 +88,22 @@
   .yn-btn { font-size: 12px; font-weight: 600; padding: 5px 12px; border-radius: var(--radius); border: 1px solid var(--border2); background: var(--bg2); color: var(--text3); cursor: pointer; font-family: inherit; transition: background .1s, color .1s, border-color .1s; }
   .yn-btn.yn-ja { background: var(--green-bg); color: var(--green-text); border-color: var(--green-border); }
   .yn-btn.yn-nej { background: var(--red-bg); color: var(--red-text); border-color: var(--red-border); }
+  .comment-btn { font-size: 11px; font-weight: 600; padding: 3px 7px; border-radius: var(--radius); border: 1px solid var(--border2); background: var(--bg2); color: var(--text3); cursor: pointer; line-height: 1.6; white-space: nowrap; font-family: inherit; margin-left: 2px; transition: background .1s, color .1s, border-color .1s; }
+  .comment-btn.has-comment { background: var(--green-bg); color: var(--green-text); border-color: var(--green-border); }
+
+  /* Comment modal */
+  .comment-modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 1000; align-items: center; justify-content: center; padding: 16px; }
+  .comment-modal-overlay.show { display: flex; }
+  .comment-modal { background: var(--bg); border-radius: var(--radius-lg); padding: 24px; max-width: 480px; width: 100%; box-shadow: 0 8px 32px rgba(0,0,0,0.18); }
+  .comment-modal-title { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+  .comment-modal-sub { font-size: 11px; color: var(--text3); margin-bottom: 12px; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+  .comment-modal textarea { width: 100%; font-size: 13px; border: 1px solid var(--border2); border-radius: var(--radius); padding: 8px 10px; resize: vertical; min-height: 80px; background: var(--bg2); color: var(--text); font-family: inherit; }
+  .comment-modal textarea:focus { outline: 2px solid var(--star-on); outline-offset: 1px; }
+  .comment-modal-btns { display: flex; gap: 8px; margin-top: 12px; justify-content: flex-end; }
+  .comment-modal-btns button { font-size: 13px; font-weight: 500; padding: 7px 16px; border-radius: var(--radius); border: 1px solid var(--border2); background: var(--bg); color: var(--text); cursor: pointer; font-family: inherit; }
+  .comment-modal-btns .save-btn { background: #1D9E75; color: white; border-color: #1D9E75; }
+  .comment-modal-btns .save-btn:hover { background: #0F6E56; }
+
   .na-btn { font-size: 11px; font-weight: 600; padding: 3px 7px; border-radius: var(--radius); border: 1px solid var(--border2); background: var(--bg2); color: var(--text3); cursor: pointer; line-height: 1.6; white-space: nowrap; font-family: inherit; margin-left: 4px; }
   .na-btn.na-on { background: var(--amber-bg); color: var(--amber-border); border-color: var(--amber-border); }
 
@@ -327,6 +343,19 @@
   </div>
 </div><!-- end .page -->
 
+<!-- Comment modal -->
+<div class="comment-modal-overlay" id="comment-modal-overlay" onclick="closeCommentModal(event)">
+  <div class="comment-modal">
+    <div class="comment-modal-title">Kommentar</div>
+    <div class="comment-modal-sub" id="comment-modal-question"></div>
+    <textarea id="comment-modal-textarea" placeholder="Skriv din kommentar här..."></textarea>
+    <div class="comment-modal-btns">
+      <button onclick="closeCommentModal()">Avbryt</button>
+      <button class="save-btn" onclick="saveComment()">Spara</button>
+    </div>
+  </div>
+</div>
+
 <script>
 const SECTIONS = [
   {id:"ankomst", icon:"ti-gate", label:"Ankomst & första intryck", weight:1.5, items:[
@@ -453,6 +482,8 @@ const SRV_TILLFALLIG = [
 ];
 
 const scores = {};
+const itemTexts = {};      // key -> question text for modal display
+const itemComments = {};   // key -> comment text per question
 const scScores = {};   // 'ja' | 'nej' | undefined
 const scNaScores = {};
 const CAMPING_FULL_NAMES = {
@@ -746,6 +777,7 @@ function buildSrvSection() {
       const i = idx++;
       const row = document.createElement('div');
       row.className = 'item-row';
+      itemTexts['srv-' + i] = it.t;
       row.innerHTML = '<div class="item-left">'
         + '<div class="item-text">' + it.t + '</div>'
         + (it.law ? '<div class="item-law"><i class="ti ti-scale" style="font-size:11px;vertical-align:-1px"></i> ' + it.law + '</div>' : '')
@@ -755,7 +787,8 @@ function buildSrvSection() {
         + '<div class="stars" style="gap:6px">'
         + '<button class="yn-btn" id="srvja-' + i + '" onclick="setSrvYN(' + i + ',&quot;ja&quot;)">Ja</button>'
         + '<button class="yn-btn" id="srvnej-' + i + '" onclick="setSrvYN(' + i + ',&quot;nej&quot;)">Nej</button>'
-        + '<button class="na-btn" id="srvna-' + i + '" onclick="setSrvNA(' + i + ')">N/A</button></div>';
+        + '<button class="na-btn" id="srvna-' + i + '" onclick="setSrvNA(' + i + ')">N/A</button>'
+        + '<button class="comment-btn" id="cbtn-srv--' + i + '" onclick="openCommentModal(&quot;srv-' + i + '&quot;)">💬</button></div>';
       c.appendChild(row);
     });
   });
@@ -912,11 +945,19 @@ function generateCert() {
       if (vRaw === 'nej') { redItems.push({ text: it.t, score: 'nej' }); redCount++; }
     });
     const secNote = noteValues[si] || '';
-    if (redItems.length || secNote) {
+    // Collect item-level comments for this section
+    const itemCommentRows = sec.items.map((it, i) => {
+      const key = sec.id + '-' + i;
+      return itemComments[key] ? { text: it.t, comment: itemComments[key] } : null;
+    }).filter(Boolean);
+    if (redItems.length || secNote || itemCommentRows.length) {
       failedHtml += '<div class="cert-failed-section">';
       failedHtml += '<div class="cert-failed-section-name"><i class="ti ti-alert-circle" style="font-size:13px"></i>' + sec.label + '</div>';
       redItems.forEach(fi => { failedHtml += makeItemRow('Nej', fi.text, 'red', 'Underkänt'); });
-      if (secNote) failedHtml += '<div class="cert-comment"><i class="ti ti-message" style="font-size:11px;vertical-align:-1px"></i> ' + secNote + '</div>';
+      itemCommentRows.forEach(r => {
+        failedHtml += '<div class="cert-comment" style="margin-top:4px"><i class="ti ti-message" style="font-size:11px;vertical-align:-1px"></i> <strong style="font-style:normal">' + r.text.substring(0, 80) + (r.text.length > 80 ? '…' : '') + ':</strong> ' + r.comment + '</div>';
+      });
+      if (secNote) failedHtml += '<div class="cert-comment"><i class="ti ti-message" style="font-size:11px;vertical-align:-1px"></i> <em>Sektionsanteckning:</em> ' + secNote + '</div>';
       failedHtml += '</div>';
     }
   });
@@ -931,13 +972,20 @@ function generateCert() {
     const v = scScores[i];
     if (v === 'nej') { scNejItems.push(it.t); redCount++; }
   });
-  if (scNejItems.length || scNote) {
+  const scItemCommentRows = SC_SECTION.items.map((it, i) => {
+    const key = 'sc-' + i;
+    return itemComments[key] ? { text: it.t, comment: itemComments[key] } : null;
+  }).filter(Boolean);
+  if (scNejItems.length || scNote || scItemCommentRows.length) {
     failedHtml += '<div class="cert-failed-section">';
     failedHtml += '<div class="cert-failed-section-name"><i class="ti ti-rosette" style="font-size:13px"></i>Svensk Camping – kvalitetskrav</div>';
     scNejItems.forEach(txt => {
       failedHtml += '<div class="cert-failed-item cert-item-red"><span class="score score-red">(Nej – Underkänt)</span>' + txt + '</div>';
     });
-    if (scNote) failedHtml += '<div class="cert-comment"><i class="ti ti-message" style="font-size:11px;vertical-align:-1px"></i> ' + scNote + '</div>';
+    scItemCommentRows.forEach(r => {
+      failedHtml += '<div class="cert-comment" style="margin-top:4px"><i class="ti ti-message" style="font-size:11px;vertical-align:-1px"></i> <strong style="font-style:normal">' + r.text.substring(0, 80) + (r.text.length > 80 ? '…' : '') + ':</strong> ' + r.comment + '</div>';
+    });
+    if (scNote) failedHtml += '<div class="cert-comment"><i class="ti ti-message" style="font-size:11px;vertical-align:-1px"></i> <em>Sektionsanteckning:</em> ' + scNote + '</div>';
     failedHtml += '</div>';
   }
 
@@ -1014,6 +1062,8 @@ function resetAll() {
   Object.keys(scNaScores).forEach(k => delete scNaScores[k]);
   document.querySelectorAll('.na-btn').forEach(b => b.classList.remove('na-on'));
   document.querySelectorAll('.yn-btn').forEach(b => b.className = 'yn-btn');
+  Object.keys(itemComments).forEach(k => delete itemComments[k]);
+  document.querySelectorAll('.comment-btn').forEach(b => b.className = 'comment-btn');
   updateSCRag();
   document.querySelectorAll('.star-btn').forEach(b => b.classList.remove('on'));
   document.querySelectorAll('textarea').forEach(t => t.value = '');
@@ -1033,6 +1083,9 @@ function buildSections() {
       + '<span class="sec-title">' + sec.label + '<span class="weight-badge">Vikt ' + sec.weight + 'x</span></span>'
       + '<span class="pill pill-gray" id="rag-' + sec.id + '">Ej bedömd</span></div>';
     sec.items.forEach((it, i) => {
+      const ckeyS = sec.id + '-' + i;
+      const cbtnIdS = 'cbtn-' + ckeyS.replace(/[^a-z0-9]/gi, '-');
+      itemTexts[ckeyS] = it.t;
       html += '<div class="item-row">'
         + '<div class="item-left"><div class="item-text">' + it.t + '</div>'
         + (it.n ? '<div class="item-note">' + it.n + '</div>' : '')
@@ -1041,6 +1094,7 @@ function buildSections() {
         + '<button class="yn-btn" id="ja-' + sec.id + '-' + i + '" onclick="setYN(\'' + sec.id + '\',' + i + ',&quot;ja&quot;)">Ja</button>'
         + '<button class="yn-btn" id="nej-' + sec.id + '-' + i + '" onclick="setYN(\'' + sec.id + '\',' + i + ',&quot;nej&quot;)">Nej</button>'
         + '<button class="na-btn" id="na-' + sec.id + '-' + i + '" onclick="setNA(\'' + sec.id + '\',' + i + ')">N/A</button>'
+        + '<button class="comment-btn" id="' + cbtnIdS + '" onclick="openCommentModal(\'' + ckeyS + '\')">💬</button>'
         + '</div></div>';
     });
     html += '<div class="note-row"><textarea placeholder="Anteckningar för ' + sec.label.toLowerCase() + '..."></textarea></div>';
@@ -1057,6 +1111,9 @@ function buildSCSection() {
     + '<span class="sec-title">' + SC_SECTION.label + '<span class="weight-badge">Vikt ' + SC_SECTION.weight + 'x</span></span>'
     + '<span class="pill pill-gray" id="rag-sc">Ej bedömd</span></div>';
   SC_SECTION.items.forEach(function(it, i) {
+    const ckeysc = 'sc-' + i;
+    const cbtnIdsc = 'cbtn-sc--' + i;
+    itemTexts[ckeysc] = it.t;
     h += '<div class="item-row">'
       + '<div class="item-left"><div class="item-text">' + it.t + '</div>'
       + (it.n ? '<div class="item-note">' + it.n + '</div>' : '')
@@ -1065,6 +1122,7 @@ function buildSCSection() {
       + '<button class="yn-btn" id="scja-' + i + '" onclick="setSC(' + i + ',&quot;ja&quot;)">Ja</button>'
       + '<button class="yn-btn" id="scnej-' + i + '" onclick="setSC(' + i + ',&quot;nej&quot;)">Nej</button>'
       + '<button class="na-btn" id="scna-' + i + '" onclick="setSCNA(' + i + ')">N/A</button>'
+      + '<button class="comment-btn" id="' + cbtnIdsc + '" onclick="openCommentModal(\'' + ckeysc + '\')">💬</button>'
       + '</div></div>';
   });
   h += '<div class="note-row"><textarea placeholder="Anteckningar för Svensk Camping..."></textarea></div>';
@@ -1167,7 +1225,8 @@ function exportXLS() {
     sec.items.forEach((it, i) => {
       const isNA = !!(naScores[sec.id] && naScores[sec.id][i]);
       const v = scores[sec.id] && scores[sec.id][i];
-      detailRows.push([sec.label, it.t, yn(v, isNA), statusTxtFn(v, isNA), isNA ? 'Ja' : '', '']);
+      const itemCmtS = itemComments[sec.id + '-' + i] || '';
+      detailRows.push([sec.label, it.t, yn(v, isNA), statusTxtFn(v, isNA), isNA ? 'Ja' : '', itemCmtS]);
     });
     const note = noteEls[si] ? noteEls[si].value.trim() : '';
     if (note) {
@@ -1184,7 +1243,8 @@ function exportXLS() {
   SC_SECTION.items.forEach((it, i) => {
     const isNA = !!scNaScores[i];
     const v = scScores[i];
-    detailRows.push([SC_SECTION.label, it.t, yn(v, isNA), statusTxtFn(v, isNA), isNA ? 'Ja' : '', '']);
+    const itemCmtSC = itemComments['sc-' + i] || '';
+    detailRows.push([SC_SECTION.label, it.t, yn(v, isNA), statusTxtFn(v, isNA), isNA ? 'Ja' : '', itemCmtSC]);
   });
   if (scNoteX) detailRows.push([SC_SECTION.label + ' – Anteckning', '', '', '', '', scNoteX]);
 
@@ -1197,7 +1257,8 @@ function exportXLS() {
     srvAllItems.forEach((it, i) => {
       const isNA = !!srvNaScores[i];
       const v = srvScores[i];
-      detailRows.push(['Servering / alkoholtillstånd', it.t, yn(v, isNA), statusTxtFn(v, isNA), isNA ? 'Ja' : '', '']);
+      const itemCmtSrv = itemComments['srv-' + i] || '';
+      detailRows.push(['Servering / alkoholtillstånd', it.t, yn(v, isNA), statusTxtFn(v, isNA), isNA ? 'Ja' : '', itemCmtSrv]);
     });
     const srvNoteX = document.querySelector('#srv-section .note-row textarea');
     const srvNoteVal = srvNoteX ? srvNoteX.value.trim() : '';
@@ -1218,8 +1279,11 @@ function exportXLS() {
       if (naScores[sec.id] && naScores[sec.id][i]) return;
       const v = scores[sec.id] && scores[sec.id][i];
       if (v === 'nej') {
-        avvRows.push([sec.label, it.t, 'Nej', 'Underkänt', sectionHasRow ? '' : note]);
+        const iCmt = itemComments[sec.id + '-' + i] || '';
+        avvRows.push([sec.label, it.t, 'Nej', 'Underkänt', sectionHasRow ? iCmt : (note || iCmt)]);
         sectionHasRow = true;
+      } else if (itemComments[sec.id + '-' + i]) {
+        avvRows.push([sec.label, it.t, yn(v, false), statusTxtFn(v, false), itemComments[sec.id + '-' + i]]);
       }
     });
     // Add note row even if no nej answers
@@ -1231,7 +1295,9 @@ function exportXLS() {
   // SC avvikelser
   SC_SECTION.items.forEach((it, i) => {
     if (scNaScores[i]) return;
-    if (scScores[i] === 'nej') avvRows.push([SC_SECTION.label, it.t, 'Nej', 'Underkänt', '']);
+    const scICmt = itemComments['sc-' + i] || '';
+    if (scScores[i] === 'nej') avvRows.push([SC_SECTION.label, it.t, 'Nej', 'Underkänt', scICmt]);
+    else if (scICmt) avvRows.push([SC_SECTION.label, it.t, yn(scScores[i], false), statusTxtFn(scScores[i], false), scICmt]);
   });
   if (scNoteX) avvRows.push([SC_SECTION.label, '– Anteckning –', '', '', scNoteX]);
 
@@ -1246,9 +1312,12 @@ function exportXLS() {
     let srvHasNej = false;
     srvItems2.forEach((it, i) => {
       if (srvNaScores[i]) return;
+      const srvICmt = itemComments['srv-' + i] || '';
       if (srvScores[i] === 'nej') {
-        avvRows.push(['Servering / alkoholtillstånd', it.t, 'Nej', 'Underkänt', srvHasNej ? '' : srvNoteVal2]);
+        avvRows.push(['Servering / alkoholtillstånd', it.t, 'Nej', 'Underkänt', srvICmt || (srvHasNej ? '' : srvNoteVal2)]);
         srvHasNej = true;
+      } else if (srvICmt) {
+        avvRows.push(['Servering / alkoholtillstånd', it.t, yn(srvScores[i], false), statusTxtFn(srvScores[i], false), srvICmt]);
       }
     });
     if (srvNoteVal2 && !srvHasNej) avvRows.push(['Servering / alkoholtillstånd', '– Anteckning –', '', '', srvNoteVal2]);
@@ -1262,6 +1331,45 @@ function exportXLS() {
   const filename = 'Besiktning_' + fullCampingNameXLS.replace(/[^a-zA-ZåäöÅÄÖ0-9]/g, '_') + '_' + (date || 'datum') + '.xlsx';
   XLSX.writeFile(wb, filename);
 }
+
+// ---- Comment system ----
+let _commentKey = null;
+
+function openCommentModal(key) {
+  _commentKey = key;
+  document.getElementById('comment-modal-question').textContent = itemTexts[key] || '';
+  document.getElementById('comment-modal-textarea').value = itemComments[key] || '';
+  document.getElementById('comment-modal-overlay').classList.add('show');
+  setTimeout(() => document.getElementById('comment-modal-textarea').focus(), 50);
+}
+
+function closeCommentModal(e) {
+  if (e && e.target !== document.getElementById('comment-modal-overlay')) return;
+  document.getElementById('comment-modal-overlay').classList.remove('show');
+  _commentKey = null;
+}
+
+function saveComment() {
+  const val = document.getElementById('comment-modal-textarea').value.trim();
+  if (_commentKey) {
+    if (val) {
+      itemComments[_commentKey] = val;
+    } else {
+      delete itemComments[_commentKey];
+    }
+    // Update button appearance
+    const btn = document.getElementById('cbtn-' + _commentKey.replace(/[^a-z0-9]/gi, '-'));
+    if (btn) btn.className = 'comment-btn' + (val ? ' has-comment' : '');
+  }
+  document.getElementById('comment-modal-overlay').classList.remove('show');
+  _commentKey = null;
+}
+
+// Close on Escape
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') document.getElementById('comment-modal-overlay').classList.remove('show');
+});
+
 </script>
 </body>
 </html>
