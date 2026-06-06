@@ -1066,19 +1066,6 @@ function exportXLS() {
   const wb = XLSX.utils.book_new();
 
   // ---- Sheet 1: Sammanfattning ----
-  // SC section (Svensk Camping) - Ja=5, Nej=1 equivalent for scoring
-  SC_SECTION.items.forEach((_, i) => {
-    if (scNaScores[i]) return;
-    const v = scScores[i];
-    if (v !== undefined) {
-      rated++;
-      const numV = v === 'ja' ? 5 : 1;
-      scoreW += numV * SC_SECTION.weight;
-      totalW += 5 * SC_SECTION.weight;
-      if (v === 'nej') reds++;
-    }
-  });
-
   const srvVis = !document.getElementById('srv-section').classList.contains('srv-hidden');
   let totalW = 0, scoreW = 0, rated = 0, reds = 0;
   SECTIONS.forEach(sec => {
@@ -1088,6 +1075,12 @@ function exportXLS() {
       const v = vRaw !== undefined ? ynToNum(vRaw) : undefined;
       if (v !== undefined) { rated++; scoreW += v * sec.weight; totalW += 5 * sec.weight; if (vRaw === 'nej') reds++; }
     });
+  });
+  SC_SECTION.items.forEach((_, i) => {
+    if (scNaScores[i]) return;
+    const vRaw = scScores[i];
+    const v = vRaw !== undefined ? ynToNum(vRaw) : undefined;
+    if (v !== undefined) { rated++; scoreW += v * SC_SECTION.weight; totalW += 5 * SC_SECTION.weight; if (vRaw === 'nej') reds++; }
   });
   if (srvVis) {
     const total = srvItemTotal(); const w = 2.5;
