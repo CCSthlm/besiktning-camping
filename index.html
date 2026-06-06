@@ -1232,7 +1232,7 @@ function exportXLS() {
     if (note) {
       const last = detailRows[detailRows.length - 1];
       // attach note to last item row or add note row
-      detailRows.push([sec.label + ' – Anteckning', '', '', '', '', note]);
+      detailRows.push([sec.label + ' – Sektionsanteckning', '', '', '', '', note]);
     }
   });
 
@@ -1246,7 +1246,7 @@ function exportXLS() {
     const itemCmtSC = itemComments['sc-' + i] || '';
     detailRows.push([SC_SECTION.label, it.t, yn(v, isNA), statusTxtFn(v, isNA), isNA ? 'Ja' : '', itemCmtSC]);
   });
-  if (scNoteX) detailRows.push([SC_SECTION.label + ' – Anteckning', '', '', '', '', scNoteX]);
+  if (scNoteX) detailRows.push([SC_SECTION.label + ' – Sektionsanteckning', '', '', '', '', scNoteX]);
 
   // SRV section
   if (srvVis) {
@@ -1262,7 +1262,7 @@ function exportXLS() {
     });
     const srvNoteX = document.querySelector('#srv-section .note-row textarea');
     const srvNoteVal = srvNoteX ? srvNoteX.value.trim() : '';
-    if (srvNoteVal) detailRows.push(['Servering – Anteckning', '', '', '', '', srvNoteVal]);
+    if (srvNoteVal) detailRows.push(['Servering – Sektionsanteckning', '', '', '', '', srvNoteVal]);
   }
 
   const wsDetail = XLSX.utils.aoa_to_sheet(detailRows);
@@ -1288,7 +1288,7 @@ function exportXLS() {
     });
     // Add note row even if no nej answers
     if (note && !sectionHasRow) {
-      avvRows.push([sec.label, '– Anteckning –', '', '', note]);
+      avvRows.push([sec.label, 'Sektionsanteckning', '', '', note]);
     }
   });
 
@@ -1299,7 +1299,7 @@ function exportXLS() {
     if (scScores[i] === 'nej') avvRows.push([SC_SECTION.label, it.t, 'Nej', 'Underkänt', scICmt]);
     else if (scICmt) avvRows.push([SC_SECTION.label, it.t, yn(scScores[i], false), statusTxtFn(scScores[i], false), scICmt]);
   });
-  if (scNoteX) avvRows.push([SC_SECTION.label, '– Anteckning –', '', '', scNoteX]);
+  if (scNoteX) avvRows.push([SC_SECTION.label, 'Sektionsanteckning', '', '', scNoteX]);
 
   // SRV avvikelser
   if (srvVis) {
@@ -1320,12 +1320,48 @@ function exportXLS() {
         avvRows.push(['Servering / alkoholtillstånd', it.t, yn(srvScores[i], false), statusTxtFn(srvScores[i], false), srvICmt]);
       }
     });
-    if (srvNoteVal2 && !srvHasNej) avvRows.push(['Servering / alkoholtillstånd', '– Anteckning –', '', '', srvNoteVal2]);
+    if (srvNoteVal2 && !srvHasNej) avvRows.push(['Servering / alkoholtillstånd', 'Sektionsanteckning', '', '', srvNoteVal2]);
   }
 
   const wsAvv = XLSX.utils.aoa_to_sheet(avvRows);
   wsAvv['!cols'] = [{wch:36},{wch:64},{wch:8},{wch:14},{wch:50}];
   XLSX.utils.book_append_sheet(wb, wsAvv, 'Avvikelser och anteckningar');
+
+  // ---- Sheet 4: Underkända punkter ----
+  const undRows = [['Sektion', 'Punkt', 'Kommentar']];
+
+  SECTIONS.forEach(sec => {
+    sec.items.forEach((it, i) => {
+      if (naScores[sec.id] && naScores[sec.id][i]) return;
+      if (scores[sec.id] && scores[sec.id][i] === 'nej') {
+        undRows.push([sec.label, it.t, itemComments[sec.id + '-' + i] || '']);
+      }
+    });
+  });
+  SC_SECTION.items.forEach((it, i) => {
+    if (scNaScores[i]) return;
+    if (scScores[i] === 'nej') {
+      undRows.push([SC_SECTION.label, it.t, itemComments['sc-' + i] || '']);
+    }
+  });
+  if (srvVis) {
+    const tillf3 = document.getElementById('toggle-tillfallig').checked;
+    const groups3 = tillf3 ? SRV_TILLFALLIG : SRV_FULL;
+    let srvItems3 = [];
+    groups3.forEach(g => g.items.forEach(it => srvItems3.push(it)));
+    srvItems3.forEach((it, i) => {
+      if (srvNaScores[i]) return;
+      if (srvScores[i] === 'nej') {
+        undRows.push(['Servering / alkoholtillstånd', it.t, itemComments['srv-' + i] || '']);
+      }
+    });
+  }
+
+  if (undRows.length > 1) {
+    const wsUnd = XLSX.utils.aoa_to_sheet(undRows);
+    wsUnd['!cols'] = [{wch:36},{wch:64},{wch:50}];
+    XLSX.utils.book_append_sheet(wb, wsUnd, 'Underkända punkter');
+  }
 
   // ---- Save ----
   const filename = 'Besiktning_' + fullCampingNameXLS.replace(/[^a-zA-ZåäöÅÄÖ0-9]/g, '_') + '_' + (date || 'datum') + '.xlsx';
