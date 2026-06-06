@@ -893,18 +893,19 @@ function generateCert() {
       const vRaw = scores[sec.id] && scores[sec.id][i];
       if (vRaw === 'nej') { redItems.push({ text: it.t, score: 'nej' }); redCount++; }
     });
-    if (redItems.length) {
+    const secNote = noteValues[si] || '';
+    if (redItems.length || secNote) {
       failedHtml += '<div class="cert-failed-section">';
       failedHtml += '<div class="cert-failed-section-name"><i class="ti ti-alert-circle" style="font-size:13px"></i>' + sec.label + '</div>';
       redItems.forEach(fi => { failedHtml += makeItemRow('Nej', fi.text, 'red', 'Underkänt'); });
-      const secNote = noteValues[si] || '';
       if (secNote) failedHtml += '<div class="cert-comment"><i class="ti ti-message" style="font-size:11px;vertical-align:-1px"></i> ' + secNote + '</div>';
       failedHtml += '</div>';
     }
   });
 
   // SC section (Svensk Camping)
-  const scNoteEl = document.querySelector('#sections-container .section-card:last-of-type .note-row textarea');
+  const scCardEls = document.querySelectorAll('#sections-container .section-card');
+  const scNoteEl = scCardEls.length > 0 ? scCardEls[scCardEls.length - 1].querySelector('.note-row textarea') : null;
   const scNote = scNoteEl ? scNoteEl.value.trim() : '';
   const scNejItems = [];
   SC_SECTION.items.forEach((it, i) => {
@@ -942,19 +943,27 @@ function generateCert() {
       srvRed.forEach(fi => { const txt = allItems[fi.idx] ? allItems[fi.idx].t : 'Okänd punkt'; failedHtml += makeItemRow(fi.score === 'nej' ? 'Nej' : fi.score, txt, 'red', 'Underkänt'); });
       srvAmber.forEach(fi => { const txt = allItems[fi.idx] ? allItems[fi.idx].t : 'Okänd punkt'; failedHtml += makeItemRow(fi.score === 'ja' ? 'Ja' : fi.score, txt, 'amber', 'Åtgärd krävs'); });
       const srvNote2 = document.querySelector('#srv-section .note-row textarea');
-      if (srvNote2 && srvNote2.value.trim()) failedHtml += '<div class="cert-comment"><i class="ti ti-message" style="font-size:11px;vertical-align:-1px"></i> ' + srvNote2.value.trim() + '</div>';
+      const srvNoteText = srvNote2 ? srvNote2.value.trim() : '';
+      if (srvNoteText) failedHtml += '<div class="cert-comment"><i class="ti ti-message" style="font-size:11px;vertical-align:-1px"></i> ' + srvNoteText + '</div>';
       failedHtml += '</div>';
+    } else {
+      const srvNote2 = document.querySelector('#srv-section .note-row textarea');
+      const srvNoteText = srvNote2 ? srvNote2.value.trim() : '';
+      if (srvNoteText) {
+        failedHtml += '<div class="cert-failed-section">';
+        failedHtml += '<div class="cert-failed-section-name"><i class="ti ti-license" style="font-size:13px"></i>Servering / alkoholtillstånd</div>';
+        failedHtml += '<div class="cert-comment"><i class="ti ti-message" style="font-size:11px;vertical-align:-1px"></i> ' + srvNoteText + '</div>';
+        failedHtml += '</div>';
+      }
     }
   }
 
-  const totalIssues = redCount + amberCount;
-  if (totalIssues > 0) {
-    let title = '';
-    if (redCount > 0 && amberCount > 0) title = 'Underkända punkter (' + redCount + ' st) &amp; punkter som kräver åtgärd (' + amberCount + ' st)';
-    else if (redCount > 0) title = 'Underkända punkter (' + redCount + ' st)';
-    else title = 'Punkter som kräver åtgärd (' + amberCount + ' st)';
+  const titleParts = [];
+  if (redCount > 0) titleParts.push('Underkända punkter (' + redCount + ' st)');
+  const certTitle = titleParts.length ? titleParts.join(' &amp; ') : (failedHtml ? 'Anteckningar' : '');
+  if (failedHtml) {
     failedEl.style.display = 'block';
-    failedEl.innerHTML = '<div class="cert-failed-title">' + title + '</div>' + failedHtml;
+    failedEl.innerHTML = (certTitle ? '<div class="cert-failed-title">' + certTitle + '</div>' : '') + failedHtml;
   } else {
     failedEl.style.display = 'none';
     failedEl.innerHTML = '';
