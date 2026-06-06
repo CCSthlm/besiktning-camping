@@ -344,8 +344,23 @@
     </div>
   </div>
 
-  <div style="text-align:center; font-size:11px; color:var(--text3); margin-top:32px; padding-top:12px; border-top:1px solid var(--border);">
-    © Massimo Johansson – Caravan Club of Sweden, Stockholmssektionen
+  <div style="margin-top:32px; padding-top:12px; border-top:1px solid var(--border);">
+    <details>
+      <summary style="font-size:11px; color:var(--text3); cursor:pointer; user-select:none; list-style:none; display:flex; align-items:center; gap:6px;">
+        <span>⚙️</span> <span>Inställningar (GitHub)</span>
+      </summary>
+      <div style="margin-top:10px; display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+        <label style="font-size:11px; color:var(--text3); font-weight:500; white-space:nowrap;">GitHub Token</label>
+        <input type="password" id="gh-token-input" placeholder="ghp_xxxxxxxxxxxx"
+          style="flex:1; min-width:220px; font-size:12px; padding:6px 9px; border-radius:6px; border:1px solid var(--border2); background:var(--bg2); color:var(--text);"
+          oninput="saveGHToken(this.value)">
+        <span id="gh-token-ok" style="font-size:11px; color:var(--green-text);"></span>
+      </div>
+      <p style="font-size:10px; color:var(--text3); margin-top:6px;">Token sparas lokalt i webbläsaren. Behövs för att spara till GitHub. Generera på github.com/settings/tokens (scope: public_repo).</p>
+    </details>
+    <div style="text-align:center; font-size:11px; color:var(--text3); margin-top:12px;">
+      © Massimo Johansson – Caravan Club of Sweden, Stockholmssektionen
+    </div>
   </div>
 </div><!-- end .page -->
 
@@ -1541,8 +1556,6 @@ function mailCert() {
 }
 
 // ---- GitHub integration ----
-// Ersätt GITHUB_TOKEN_HÄR med din token (ghp_...)
-const GITHUB_TOKEN = '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';
 
 
 
@@ -1653,6 +1666,25 @@ function buildWorkbook() {
   return wb;
 }
 
+
+function saveGHToken(val) {
+  val = val.trim();
+  if (val) {
+    localStorage.setItem('gh_token', val);
+    document.getElementById('gh-token-ok').textContent = '✅ Sparad';
+  } else {
+    localStorage.removeItem('gh_token');
+    document.getElementById('gh-token-ok').textContent = '';
+  }
+}
+
+(function loadGHToken() {
+  const t = localStorage.getItem('gh_token');
+  if (t) {
+    const el = document.getElementById('gh-token-input');
+    if (el) { el.value = t; document.getElementById('gh-token-ok').textContent = '✅ Sparad'; }
+  }
+})();
 </script>
 </body>
 </html>
