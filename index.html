@@ -752,14 +752,15 @@ function updateSectionRag(sid) {
   if (!ratedItems.length) { pill.className = 'pill pill-gray'; pill.textContent = 'Ej bedömd'; return; }
   const hasNej = sec.items.some((_, i) => !(naScores[sid] && naScores[sid][i]) && scores[sid] && scores[sid][i] === 'nej');
   const allDone = ratedItems.length === totalNonNA;
-  const wasGreen = pill.classList.contains('pill-green');
+  const wasComplete = pill.dataset.complete === 'true';
   pill.className = 'pill ' + (hasNej ? 'pill-red' : 'pill-green');
   pill.textContent = hasNej ? 'Underkänt' : 'Godkänt';
-  // Flash animation when section becomes fully complete
-  if (allDone && !hasNej && !wasGreen) {
-    pill.style.transform = 'scale(1.15)';
-    pill.style.transition = 'transform .2s';
-    setTimeout(() => { pill.style.transform = ''; }, 300);
+  pill.dataset.complete = allDone && !hasNej ? 'true' : 'false';
+  // Flash animation when section just became fully complete
+  if (allDone && !hasNej && !wasComplete) {
+    pill.style.transform = 'scale(1.2)';
+    pill.style.transition = 'transform .15s ease-out';
+    setTimeout(() => { pill.style.transform = 'scale(1)'; setTimeout(() => { pill.style.transform = ''; pill.style.transition = ''; }, 150); }, 150);
   }
 }
 
@@ -814,6 +815,17 @@ function updateSummary() {
   const srvTotal = !document.getElementById('srv-section').classList.contains('srv-hidden') ? srvItemTotal() : 0;
   const totalItems = SECTIONS.reduce((a, s) => a + s.items.length, 0) + SC_SECTION.items.length + srvTotal - naCount;
   document.getElementById('s-rated').textContent = rated + ' av ' + totalItems;
+
+  // Progress bar
+  const pctProgress = totalItems > 0 ? Math.round(rated / totalItems * 100) : 0;
+  const progressBar = document.getElementById('s-progress-bar');
+  const progressTxt = document.getElementById('s-progress-txt');
+  if (progressBar) {
+    progressBar.style.width = pctProgress + '%';
+    progressBar.style.background = reds > 0 ? 'var(--red-border)' : pctProgress === 100 ? 'var(--green-border)' : 'var(--blue-text)';
+  }
+  if (progressTxt) progressTxt.textContent = pctProgress + '%';
+  if (typeof autoSave === 'function') autoSave();
 }
 
 function checkLock() {
