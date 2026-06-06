@@ -1583,6 +1583,17 @@ function saveGHToken(val) {
     localStorage.removeItem('gh_token');
     document.getElementById('gh-token-ok').textContent = '';
   }
+  updateGHBtn();
+}
+
+function updateGHBtn() {
+  const token = localStorage.getItem('gh_token') || '';
+  const btn = document.getElementById('btn-github');
+  if (!btn) return;
+  btn.disabled = !token;
+  btn.style.opacity = token ? '' : '0.38';
+  btn.style.cursor = token ? '' : 'not-allowed';
+  btn.title = token ? '' : 'Ange GitHub token under ⚙️ Inställningar längst ner på sidan';
 }
 
 (function loadGHToken() {
@@ -1591,6 +1602,7 @@ function saveGHToken(val) {
     const el = document.getElementById('gh-token-input');
     if (el) { el.value = t; document.getElementById('gh-token-ok').textContent = '✅ Sparad'; }
   }
+  updateGHBtn();
 })();
 </script>
 </body>
