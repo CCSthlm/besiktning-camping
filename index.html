@@ -363,12 +363,12 @@
       <div style="display:flex;gap:8px;padding:12px 16px;border-bottom:1px solid var(--border2);flex-wrap:wrap;align-items:center;">
         <select id="hist-filter-camping" onchange="renderHistory()" style="font-size:12px;padding:5px 8px;border-radius:var(--radius);border:1px solid var(--border2);background:var(--bg2);color:var(--text);">
           <option value="">Alla campingar</option>
-          <option value="Bjorko_Orns">CC Björkö Örn</option>
-          <option value="Ostnora">CC Östnora</option>
+          <option value="Björkö_Örns">CC Björkö Örn</option>
+          <option value="Östnora">CC Östnora</option>
           <option value="Mista">CC Mista</option>
           <option value="Storsveds">CC Storsved</option>
-          <option value="Orstigs">CC Örstig</option>
-          <option value="Kapellskars">CC Kapellskär</option>
+          <option value="Örstigs">CC Örstig</option>
+          <option value="Kapellskärs">CC Kapellskär</option>
         </select>
         <select id="hist-filter-year" onchange="renderHistory()" style="font-size:12px;padding:5px 8px;border-radius:var(--radius);border:1px solid var(--border2);background:var(--bg2);color:var(--text);">
           <option value="">Alla år</option>
@@ -2000,12 +2000,12 @@ setTimeout(function() {
 
 
 const CAMPING_HIST_FILTER = {
-  'c1': 'Bjorko_Orns',
-  'c2': 'Ostnora',
-  'c3': 'Kapellskars',
+  'c1': 'Björkö_Örns',
+  'c2': 'Östnora',
+  'c3': 'Kapellskärs',
   'c4': 'Mista',
   'c5': 'Storsveds',
-  'c6': 'Orstigs',
+  'c6': 'Örstigs',
 };
 
 function autoFilterHistory() {
