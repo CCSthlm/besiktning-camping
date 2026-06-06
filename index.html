@@ -171,6 +171,15 @@
   /* Failed points in certificate */
   .cert-failed { margin: 16px auto; max-width: 580px; text-align: left; }
   .cert-failed-title { font-size: 12px; font-weight: 600; color: var(--text2); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.04em; }
+  .cert-section-summary { margin: 16px auto 20px; max-width: 580px; }
+  .cert-section-summary-title { font-size: 12px; font-weight: 600; color: var(--text2); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.04em; }
+  .cert-section-row { display: flex; justify-content: space-between; align-items: center; padding: 5px 10px; border-radius: var(--radius); margin-bottom: 4px; font-size: 12px; background: var(--bg2); }
+  .cert-section-row .sec-name { color: var(--text); font-weight: 500; }
+  .cert-section-status { font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 20px; }
+  .cert-sec-ok { background: var(--green-bg); color: var(--green-text); }
+  .cert-sec-amber { background: var(--amber-bg); color: var(--amber-border); }
+  .cert-sec-red { background: var(--red-bg); color: var(--red-text); }
+  .cert-sec-na { background: var(--bg3); color: var(--text3); }
   .cert-failed-section { margin-bottom: 10px; }
   .cert-failed-section-name { font-size: 12px; font-weight: 600; color: var(--red-border); margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
   .cert-failed-item { font-size: 12px; color: var(--text); padding: 4px 8px; border-radius: var(--radius); margin-bottom: 3px; line-height: 1.4; }
@@ -300,6 +309,7 @@
     <div class="cert-status-text" id="cert-status-text"></div>
     <div class="cert-scores" id="cert-scores"></div>
     <div class="cert-body-text" id="cert-body-text"></div>
+    <div class="cert-section-summary" id="cert-section-summary" style="display:none"></div>
     <div class="cert-failed" id="cert-failed" style="display:none"></div>
     <div class="cert-srv-note" id="cert-srv-note"></div>
     <hr class="cert-divider">
@@ -385,7 +395,7 @@ const SC_SECTION = {
 
 const SRV_FULL = [
   { label:"Tillstånd & ansvar", items:[
-    {t:"Var finns serveringstillståndet?", n:"Original eller bestyrkt kopia skall visas vid inspektion", law:"Krav: tillståndet måste finnas tillgängligt på plats", ctrl:"Plats:"},
+    {t:"Finns det serveringstillstånd? Om Ja, var finns det?", n:"Original eller bestyrkt kopia skall visas vid inspektion", law:"Krav: tillståndet måste finnas tillgängligt på plats", ctrl:"Plats:"},
     {t:"Vilka personer är uppsatta som serveringspersonal?", n:"Lista skall finnas tillgänglig och visas", ctrl:"Antal:"},
     {t:"Stämmer serveringstider och serveringsyta med vad tillståndet anger?", law:"Avvikelse kan leda till återkallelse av tillståndet"},
     {t:"Finns personalliggare och är den ifylld?", n:"Kontrollera att alla anställda är registrerade och att in-/utcheckning är dokumenterad", law:"Krav enligt skatteförfarandelagen – gäller serveringsställen med anställda"},
@@ -467,7 +477,6 @@ function ragLabel(avg) {
 function setScore(sid, idx, val) {
   if (!scores[sid]) scores[sid] = {};
   scores[sid][idx] = val;
-  // Clear N/A if star clicked
   if (naScores[sid] && naScores[sid][idx]) {
     naScores[sid][idx] = false;
     const naBtn = document.getElementById('na-' + sid + '-' + idx);
@@ -477,6 +486,22 @@ function setScore(sid, idx, val) {
     const el = document.getElementById('star-' + sid + '-' + idx + '-' + i);
     if (el) el.className = 'star-btn' + (i <= val ? ' on' : '');
   }
+  updateSectionRag(sid);
+  updateSummary();
+}
+
+function setYN(sid, idx, val) {
+  if (!scores[sid]) scores[sid] = {};
+  scores[sid][idx] = val;
+  if (naScores[sid] && naScores[sid][idx]) {
+    naScores[sid][idx] = false;
+    const nb = document.getElementById('na-' + sid + '-' + idx);
+    if (nb) nb.classList.remove('na-on');
+  }
+  const jaBtn = document.getElementById('ja-' + sid + '-' + idx);
+  const nejBtn = document.getElementById('nej-' + sid + '-' + idx);
+  if (jaBtn) jaBtn.className = 'yn-btn' + (val === 'ja' ? ' yn-ja' : '');
+  if (nejBtn) nejBtn.className = 'yn-btn' + (val === 'nej' ? ' yn-nej' : '');
   updateSectionRag(sid);
   updateSummary();
 }
@@ -568,9 +593,30 @@ function setSrvScore(idx, val) {
   updateSummary();
 }
 
+function setSrvYN(idx, val) {
+  srvScores[idx] = val;
+  if (srvNaScores[idx]) {
+    srvNaScores[idx] = false;
+    const nb = document.getElementById('srvna-' + idx);
+    if (nb) nb.classList.remove('na-on');
+  }
+  const jaBtn = document.getElementById('srvja-' + idx);
+  const nejBtn = document.getElementById('srvnej-' + idx);
+  if (jaBtn) jaBtn.className = 'yn-btn' + (val === 'ja' ? ' yn-ja' : '');
+  if (nejBtn) nejBtn.className = 'yn-btn' + (val === 'nej' ? ' yn-nej' : '');
+  updateSrvRag();
+  updateSummary();
+}
+
+function ynToNum(v) { return v === 'ja' ? 5 : v === 'nej' ? 1 : (typeof v === 'number' ? v : undefined); }
+
 function sectionAvg(sid) {
   const sec = SECTIONS.find(s => s.id === sid);
-  const vals = sec.items.map((_, i) => scores[sid] && scores[sid][i]).filter((v, i) => v !== undefined && !(naScores[sid] && naScores[sid][i]));
+  const vals = sec.items.map((_, i) => {
+    if (naScores[sid] && naScores[sid][i]) return undefined;
+    const v = scores[sid] && scores[sid][i];
+    return v !== undefined ? ynToNum(v) : undefined;
+  }).filter(v => v !== undefined);
   if (!vals.length) return null;
   return vals.reduce((a, b) => a + b, 0) / vals.length;
 }
@@ -582,21 +628,35 @@ function srvItemTotal() {
 
 function srvAvgCalc() {
   const total = srvItemTotal();
-  const vals = Array.from({length: total}, (_, i) => srvScores[i]).filter((v, i) => v !== undefined && !srvNaScores[i]);
+  const vals = Array.from({length: total}, (_, i) => {
+    if (srvNaScores[i]) return undefined;
+    const v = srvScores[i];
+    return v !== undefined ? ynToNum(v) : undefined;
+  }).filter(v => v !== undefined);
   if (!vals.length) return null;
   return vals.reduce((a, b) => a + b, 0) / vals.length;
 }
 
 function updateSectionRag(sid) {
-  const avg = sectionAvg(sid);
+  const sec = SECTIONS.find(s => s.id === sid);
   const pill = document.getElementById('rag-' + sid);
-  if (pill) { pill.className = 'pill ' + ragClass(avg); pill.textContent = ragLabel(avg); }
+  if (!pill) return;
+  const rated = sec.items.some((_, i) => !(naScores[sid] && naScores[sid][i]) && scores[sid] && scores[sid][i] !== undefined);
+  if (!rated) { pill.className = 'pill pill-gray'; pill.textContent = 'Ej bedömd'; return; }
+  const hasNej = sec.items.some((_, i) => !(naScores[sid] && naScores[sid][i]) && scores[sid] && scores[sid][i] === 'nej');
+  pill.className = 'pill ' + (hasNej ? 'pill-red' : 'pill-green');
+  pill.textContent = hasNej ? 'Underkänt' : 'Godkänt';
 }
 
 function updateSrvRag() {
-  const avg = srvAvgCalc();
   const pill = document.getElementById('rag-srv');
-  if (pill) { pill.className = 'pill ' + ragClass(avg); pill.textContent = ragLabel(avg); }
+  if (!pill) return;
+  const total = srvItemTotal();
+  const rated = Array.from({length: total}, (_, i) => !srvNaScores[i] && srvScores[i] !== undefined).some(Boolean);
+  if (!rated) { pill.className = 'pill pill-gray'; pill.textContent = 'Ej bedömd'; return; }
+  const hasNej = Array.from({length: total}, (_, i) => !srvNaScores[i] && srvScores[i] === 'nej').some(Boolean);
+  pill.className = 'pill ' + (hasNej ? 'pill-red' : 'pill-green');
+  pill.textContent = hasNej ? 'Underkänt' : 'Godkänt';
 }
 
 function updateSummary() {
@@ -604,8 +664,9 @@ function updateSummary() {
   SECTIONS.forEach(sec => {
     sec.items.forEach((_, i) => {
       if (naScores[sec.id] && naScores[sec.id][i]) return; // skip N/A
-      const v = scores[sec.id] && scores[sec.id][i];
-      if (v !== undefined) { rated++; scoreW += v * sec.weight; totalW += 5 * sec.weight; if (v <= 2) reds++; }
+      const vRaw = scores[sec.id] && scores[sec.id][i];
+      const v = vRaw !== undefined ? ynToNum(vRaw) : undefined;
+      if (v !== undefined) { rated++; scoreW += v * sec.weight; totalW += 5 * sec.weight; if (vRaw === 'nej') reds++; }
     });
   });
   // SC section (Svensk Camping) - Ja=5, Nej=1 equivalent for scoring
@@ -626,8 +687,9 @@ function updateSummary() {
     const total = srvItemTotal(); const w = 2.5;
     for (let i = 0; i < total; i++) {
       if (srvNaScores[i]) continue; // skip N/A
-      const v = srvScores[i];
-      if (v !== undefined) { rated++; scoreW += v * w; totalW += 5 * w; if (v <= 2) reds++; }
+      const vRaw = srvScores[i];
+      const v = vRaw !== undefined ? ynToNum(vRaw) : undefined;
+      if (v !== undefined) { rated++; scoreW += v * w; totalW += 5 * w; if (vRaw === 'nej') reds++; }
     }
   }
   document.getElementById('s-score').textContent = rated ? scoreW.toFixed(1) + 'p' : '–';
@@ -672,9 +734,10 @@ function buildSrvSection() {
         + (it.n ? '<div class="item-note">' + it.n + '</div>' : '')
         + (it.ctrl ? '<div class="item-ctrl"><span>' + it.ctrl + '</span><input type="text" placeholder="Anteckna här..."></div>' : '')
         + '</div>'
-        + '<div class="stars">' + [1,2,3,4,5].map(v =>
-          '<button class="star-btn" id="srvstar-' + i + '-' + v + '" title="' + v + '" onclick="setSrvScore(' + i + ',' + v + ')">★</button>'
-        ).join('') + '<button class="na-btn" id="srvna-' + i + '" onclick="setSrvNA(' + i + ')">N/A</button></div>';
+        + '<div class="stars" style="gap:6px">'
+        + '<button class="yn-btn" id="srvja-' + i + '" onclick="setSrvYN(' + i + ',&quot;ja&quot;)">Ja</button>'
+        + '<button class="yn-btn" id="srvnej-' + i + '" onclick="setSrvYN(' + i + ',&quot;nej&quot;)">Nej</button>'
+        + '<button class="na-btn" id="srvna-' + i + '" onclick="setSrvNA(' + i + ')">N/A</button></div>';
       c.appendChild(row);
     });
   });
@@ -697,8 +760,9 @@ function generateCert() {
   SECTIONS.forEach(sec => {
     sec.items.forEach((_, i) => {
       if (naScores[sec.id] && naScores[sec.id][i]) return; // skip N/A
-      const v = scores[sec.id] && scores[sec.id][i];
-      if (v !== undefined) { rated++; scoreW += v * sec.weight; totalW += 5 * sec.weight; if (v <= 2) reds++; }
+      const vRaw = scores[sec.id] && scores[sec.id][i];
+      const v = vRaw !== undefined ? ynToNum(vRaw) : undefined;
+      if (v !== undefined) { rated++; scoreW += v * sec.weight; totalW += 5 * sec.weight; if (vRaw === 'nej') reds++; }
     });
   });
   SC_SECTION.items.forEach((_, i) => {
@@ -715,8 +779,9 @@ function generateCert() {
   if (srvVis) {
     const total = srvItemTotal(); const w = 2.5;
     for (let i = 0; i < total; i++) {
-      const v = srvScores[i];
-      if (v !== undefined) { rated++; scoreW += v * w; totalW += 5 * w; if (v <= 2) { reds++; srvReds++; } }
+      const vRaw = srvScores[i];
+      const v = vRaw !== undefined ? ynToNum(vRaw) : undefined;
+      if (v !== undefined) { rated++; scoreW += v * w; totalW += 5 * w; if (vRaw === 'nej') { reds++; srvReds++; } }
     }
   }
 
@@ -756,6 +821,62 @@ function generateCert() {
   document.getElementById('cert-body-text').textContent = body;
 
   // Collect failed (<=2) and action-required (==3) points grouped by section
+  // Section summary
+  const secSummaryEl = document.getElementById('cert-section-summary');
+  let secSummaryHtml = '<div class="cert-section-summary-title">Resultat per sektion</div>';
+  let anySectionRated = false;
+
+  SECTIONS.forEach(sec => {
+    const vals = sec.items.map((_, i) => {
+      if (naScores[sec.id] && naScores[sec.id][i]) return null;
+      const vRaw = scores[sec.id] && scores[sec.id][i];
+      return vRaw !== undefined ? ynToNum(vRaw) : null;
+    }).filter(v => v !== null);
+    if (!vals.length) return;
+    anySectionRated = true;
+    const avg = vals.reduce((a, b) => a + b, 0) / vals.length;
+    const hasNej = sec.items.some((_, i) => !(naScores[sec.id] && naScores[sec.id][i]) && scores[sec.id] && scores[sec.id][i] === 'nej');
+    const cls = hasNej ? 'cert-sec-red' : 'cert-sec-ok';
+    const lbl = hasNej ? 'Underkänt' : 'Godkänt';
+    secSummaryHtml += '<div class="cert-section-row"><span class="sec-name">' + sec.label + '</span><span class="cert-section-status ' + cls + '">' + lbl + '</span></div>';
+  });
+
+  // SC section in summary
+  const scVals = SC_SECTION.items.map((_, i) => {
+    if (scNaScores[i]) return null;
+    return scScores[i] !== undefined ? ynToNum(scScores[i]) : null;
+  }).filter(v => v !== null);
+  if (scVals.length) {
+    anySectionRated = true;
+    const scHasNej = SC_SECTION.items.some((_, i) => !scNaScores[i] && scScores[i] === 'nej');
+    const scCls = scHasNej ? 'cert-sec-red' : 'cert-sec-ok';
+    const scLbl = scHasNej ? 'Underkänt' : 'Godkänt';
+    secSummaryHtml += '<div class="cert-section-row"><span class="sec-name">' + SC_SECTION.label + '</span><span class="cert-section-status ' + scCls + '">' + scLbl + '</span></div>';
+  }
+
+  // SRV section in summary
+  if (srvVis) {
+    const total = srvItemTotal();
+    const srvVals = Array.from({length: total}, (_, i) => {
+      if (srvNaScores[i]) return null;
+      return srvScores[i] !== undefined ? ynToNum(srvScores[i]) : null;
+    }).filter(v => v !== null);
+    if (srvVals.length) {
+      anySectionRated = true;
+      const srvHasNej = Array.from({length: total}, (_, i) => !srvNaScores[i] && srvScores[i] === 'nej').some(Boolean);
+      const srvCls = srvHasNej ? 'cert-sec-red' : 'cert-sec-ok';
+      const srvLbl = srvHasNej ? 'Underkänt' : 'Godkänt';
+      secSummaryHtml += '<div class="cert-section-row"><span class="sec-name">Servering / alkoholtillstånd</span><span class="cert-section-status ' + srvCls + '">' + srvLbl + '</span></div>';
+    }
+  }
+
+  if (anySectionRated) {
+    secSummaryEl.style.display = 'block';
+    secSummaryEl.innerHTML = secSummaryHtml;
+  } else {
+    secSummaryEl.style.display = 'none';
+  }
+
   const failedEl = document.getElementById('cert-failed');
   const noteValues = {};
   document.querySelectorAll('.note-row textarea').forEach((ta, i) => {
@@ -764,7 +885,7 @@ function generateCert() {
 
   let failedHtml = '';
   let redCount = 0;
-  let amberCount = 0;
+  const amberCount = 0;
 
   function makeItemRow(score, text, colorClass, scoreLabel) {
     return '<div class="cert-failed-item cert-item-' + colorClass + '"><span class="score score-' + colorClass + '">(' + score + '/5 – ' + scoreLabel + ')</span>' + text + '</div>';
@@ -773,17 +894,15 @@ function generateCert() {
   // Regular sections
   SECTIONS.forEach((sec, si) => {
     const redItems = [];
-    const amberItems = [];
     sec.items.forEach((it, i) => {
-      const v = scores[sec.id] && scores[sec.id][i];
-      if (v !== undefined && v <= 2) { redItems.push({ text: it.t, score: v }); redCount++; }
-      else if (v === 3) { amberItems.push({ text: it.t, score: v }); amberCount++; }
+      if (naScores[sec.id] && naScores[sec.id][i]) return;
+      const vRaw = scores[sec.id] && scores[sec.id][i];
+      if (vRaw === 'nej') { redItems.push({ text: it.t, score: 'nej' }); redCount++; }
     });
-    if (redItems.length || amberItems.length) {
+    if (redItems.length) {
       failedHtml += '<div class="cert-failed-section">';
       failedHtml += '<div class="cert-failed-section-name"><i class="ti ti-alert-circle" style="font-size:13px"></i>' + sec.label + '</div>';
-      redItems.forEach(fi => { failedHtml += makeItemRow(fi.score, fi.text, 'red', 'Underkänt'); });
-      amberItems.forEach(fi => { failedHtml += makeItemRow(fi.score, fi.text, 'amber', 'Åtgärd krävs'); });
+      redItems.forEach(fi => { failedHtml += makeItemRow('Nej', fi.text, 'red', 'Underkänt'); });
       const secNote = noteValues[si] || '';
       if (secNote) failedHtml += '<div class="cert-comment"><i class="ti ti-message" style="font-size:11px;vertical-align:-1px"></i> ' + secNote + '</div>';
       failedHtml += '</div>';
@@ -815,9 +934,9 @@ function generateCert() {
     const total = srvItemTotal();
     const srvRed = [], srvAmber = [];
     for (let i = 0; i < total; i++) {
-      const v = srvScores[i];
-      if (v !== undefined && v <= 2) { srvRed.push({ idx: i, score: v }); redCount++; }
-      else if (v === 3) { srvAmber.push({ idx: i, score: v }); amberCount++; }
+      if (srvNaScores[i]) continue;
+      const vRawS = srvScores[i];
+      if (vRawS === 'nej') { srvRed.push({ idx: i, score: 'nej' }); redCount++; }
     }
     if (srvRed.length || srvAmber.length) {
       const tillf = document.getElementById('toggle-tillfallig').checked;
@@ -826,8 +945,8 @@ function generateCert() {
       groups.forEach(g => g.items.forEach(it => allItems.push(it)));
       failedHtml += '<div class="cert-failed-section">';
       failedHtml += '<div class="cert-failed-section-name"><i class="ti ti-license" style="font-size:13px"></i>Servering / alkoholtillstånd</div>';
-      srvRed.forEach(fi => { const txt = allItems[fi.idx] ? allItems[fi.idx].t : 'Okänd punkt'; failedHtml += makeItemRow(fi.score, txt, 'red', 'Underkänt'); });
-      srvAmber.forEach(fi => { const txt = allItems[fi.idx] ? allItems[fi.idx].t : 'Okänd punkt'; failedHtml += makeItemRow(fi.score, txt, 'amber', 'Åtgärd krävs'); });
+      srvRed.forEach(fi => { const txt = allItems[fi.idx] ? allItems[fi.idx].t : 'Okänd punkt'; failedHtml += makeItemRow(fi.score === 'nej' ? 'Nej' : fi.score, txt, 'red', 'Underkänt'); });
+      srvAmber.forEach(fi => { const txt = allItems[fi.idx] ? allItems[fi.idx].t : 'Okänd punkt'; failedHtml += makeItemRow(fi.score === 'ja' ? 'Ja' : fi.score, txt, 'amber', 'Åtgärd krävs'); });
       const srvNote2 = document.querySelector('#srv-section .note-row textarea');
       if (srvNote2 && srvNote2.value.trim()) failedHtml += '<div class="cert-comment"><i class="ti ti-message" style="font-size:11px;vertical-align:-1px"></i> ' + srvNote2.value.trim() + '</div>';
       failedHtml += '</div>';
@@ -897,9 +1016,11 @@ function buildSections() {
         + '<div class="item-left"><div class="item-text">' + it.t + '</div>'
         + (it.n ? '<div class="item-note">' + it.n + '</div>' : '')
         + '</div>'
-        + '<div class="stars">' + [1,2,3,4,5].map(v =>
-          '<button class="star-btn" id="star-' + sec.id + '-' + i + '-' + v + '" title="' + v + '" onclick="setScore(\'' + sec.id + '\',' + i + ',' + v + ')">★</button>'
-        ).join('') + '<button class="na-btn" id="na-' + sec.id + '-' + i + '" onclick="setNA(\'' + sec.id + '\',' + i + ')">N/A</button></div></div>';
+        + '<div class="stars" style="gap:6px">'
+        + '<button class="yn-btn" id="ja-' + sec.id + '-' + i + '" onclick="setYN(\'' + sec.id + '\',' + i + ',&quot;ja&quot;)">Ja</button>'
+        + '<button class="yn-btn" id="nej-' + sec.id + '-' + i + '" onclick="setYN(\'' + sec.id + '\',' + i + ',&quot;nej&quot;)">Nej</button>'
+        + '<button class="na-btn" id="na-' + sec.id + '-' + i + '" onclick="setNA(\'' + sec.id + '\',' + i + ')">N/A</button>'
+        + '</div></div>';
     });
     html += '<div class="note-row"><textarea placeholder="Anteckningar för ' + sec.label.toLowerCase() + '..."></textarea></div>';
     div.innerHTML = html;
@@ -964,16 +1085,18 @@ function exportXLS() {
   SECTIONS.forEach(sec => {
     sec.items.forEach((_, i) => {
       if (naScores[sec.id] && naScores[sec.id][i]) return;
-      const v = scores[sec.id] && scores[sec.id][i];
-      if (v !== undefined) { rated++; scoreW += v * sec.weight; totalW += 5 * sec.weight; if (v <= 2) reds++; }
+      const vRaw = scores[sec.id] && scores[sec.id][i];
+      const v = vRaw !== undefined ? ynToNum(vRaw) : undefined;
+      if (v !== undefined) { rated++; scoreW += v * sec.weight; totalW += 5 * sec.weight; if (vRaw === 'nej') reds++; }
     });
   });
   if (srvVis) {
     const total = srvItemTotal(); const w = 2.5;
     for (let i = 0; i < total; i++) {
       if (srvNaScores[i]) continue;
-      const v = srvScores[i];
-      if (v !== undefined) { rated++; scoreW += v * w; totalW += 5 * w; if (v <= 2) reds++; }
+      const vRaw = srvScores[i];
+      const v = vRaw !== undefined ? ynToNum(vRaw) : undefined;
+      if (v !== undefined) { rated++; scoreW += v * w; totalW += 5 * w; if (vRaw === 'nej') reds++; }
     }
   }
   const pct = totalW ? Math.round(scoreW / totalW * 100) : 0;
@@ -1063,8 +1186,9 @@ function exportXLS() {
     sec.items.forEach((it, i) => {
       if (naScores[sec.id] && naScores[sec.id][i]) return;
       const v = scores[sec.id] && scores[sec.id][i];
-      if (v !== undefined && v <= 3) {
-        avvRows.push([sec.label, it.t, v, v <= 2 ? 'Underkänt' : 'Åtgärd krävs']);
+      const vNum = v !== undefined ? ynToNum(v) : undefined;
+      if (vNum !== undefined && vNum <= 2) {
+        avvRows.push([sec.label, it.t, v === 'nej' ? 'Nej' : v, 'Underkänt']);
       }
     });
   });
@@ -1080,9 +1204,10 @@ function exportXLS() {
     groups.forEach(g => g.items.forEach(it => allItems.push(it)));
     allItems.forEach((it, i) => {
       if (srvNaScores[i]) return;
-      const v = srvScores[i];
-      if (v !== undefined && v <= 3) {
-        avvRows.push(['Servering / alkoholtillstånd', it.t, v, v <= 2 ? 'Underkänt' : 'Åtgärd krävs']);
+      const vRawE = srvScores[i];
+      const vNumE = vRawE !== undefined ? ynToNum(vRawE) : undefined;
+      if (vNumE !== undefined && vNumE <= 2) {
+        avvRows.push(['Servering / alkoholtillstånd', it.t, vRawE === 'nej' ? 'Nej' : vRawE, 'Underkänt']);
       }
     });
   }
