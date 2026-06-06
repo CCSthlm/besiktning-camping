@@ -85,6 +85,9 @@
   .star-btn { width: 24px; height: 24px; background: none; border: none; cursor: pointer; font-size: 18px; color: var(--star-off); transition: color 0.1s, transform 0.1s; padding: 0; line-height: 1; display: flex; align-items: center; justify-content: center; }
   .star-btn:hover { transform: scale(1.2); }
   .star-btn.on { color: var(--star-on); }
+  .yn-btn { font-size: 12px; font-weight: 600; padding: 5px 12px; border-radius: var(--radius); border: 1px solid var(--border2); background: var(--bg2); color: var(--text3); cursor: pointer; font-family: inherit; transition: background .1s, color .1s, border-color .1s; }
+  .yn-btn.yn-ja { background: var(--green-bg); color: var(--green-text); border-color: var(--green-border); }
+  .yn-btn.yn-nej { background: var(--red-bg); color: var(--red-text); border-color: var(--red-border); }
   .na-btn { font-size: 11px; font-weight: 600; padding: 3px 7px; border-radius: var(--radius); border: 1px solid var(--border2); background: var(--bg2); color: var(--text3); cursor: pointer; line-height: 1.6; white-space: nowrap; font-family: inherit; margin-left: 4px; }
   .na-btn.na-on { background: var(--amber-bg); color: var(--amber-border); border-color: var(--amber-border); }
 
@@ -357,6 +360,29 @@ const SECTIONS = [
   ]},
 ];
 
+const SC_SECTION = {
+  id: 'sc',
+  icon: 'ti-rosette',
+  label: 'Svensk Camping – kvalitetskrav',
+  weight: 2,
+  items: [
+    { t: 'Campingen diskriminerar inte någon anställd, praktikant, arbetssökande, inhyrd eller inlånad medarbetare eller någon gäst/kund på grund av etnisk tillhörighet, religion eller annan trosuppfattning, kön, könsöverskridande identitet eller uttryck, sexuell läggning, ålder eller funktionsnedsättning.', yn: true },
+    { t: 'Erbjuder alla anställda och praktikanter en trygg och trivsam arbetsmiljö.', yn: true },
+    { t: 'Följer gällande bokförings- och redovisningsregler.', yn: true },
+    { t: 'Betalar korrekta skatter och avgifter i tid.', yn: true },
+    { t: 'Registrerar all försäljning mot kontant betalning eller mot betalning med kort i ett kassaregister samt tar fram och erbjuder kunden ett av kassaregistret framställt kvitto.', yn: true },
+    { t: 'Följer tillämpliga kollektivavtal.', yn: true },
+    { t: 'SCR:s medlemsföretag håller ingångna avtal och lever upp till SCR:s etiska regler även i förhållande till leverantörer och andra affärspartners.', yn: true },
+    { t: 'I förhållande till såväl anställda som kunder/gäster tar avstånd från allt användande av illegala droger samt från missbruk av alkohol.', yn: true },
+    { t: 'Inser vikten av och utifrån sina förutsättningar alltid tar ansvar för att verksamheten bedrivs på ett hållbart sätt ur socialt, miljömässigt och ekonomiskt perspektiv.', yn: true },
+    { t: 'Är uppmärksamma på och kontaktar Polismyndigheten vid tecken på förekomst av människohandel (trafficking) och prostitution/sexhandel.', yn: true },
+    { t: 'Vid köp av varor och tjänster anlitar leverantörer som arbetar i enlighet med gällande lagstiftning och god affärssed.', yn: true },
+    { t: 'Har som målsättning att även leverantörer och andra affärskontakter samt samarbetspartners så långt det är möjligt ska uppfylla de krav som följer av SCR:s etiska regler.', yn: true },
+    { t: 'Verkar för att de anställda i företagen har kännedom om och följer SCR:s etiska regler.', yn: true },
+    { t: 'SCR:s medlemsföretag har skyldighet att alltid ha det senast utfärdade medlemsmärket från SCR uppsatt på för kund/gäst väl synlig plats.', yn: true },
+  ]
+};
+
 const SRV_FULL = [
   { label:"Tillstånd & ansvar", items:[
     {t:"Var finns serveringstillståndet?", n:"Original eller bestyrkt kopia skall visas vid inspektion", law:"Krav: tillståndet måste finnas tillgängligt på plats", ctrl:"Plats:"},
@@ -411,6 +437,8 @@ const SRV_TILLFALLIG = [
 ];
 
 const scores = {};
+const scScores = {};   // 'ja' | 'nej' | undefined
+const scNaScores = {};
 const CAMPING_FULL_NAMES = {
   'c1': 'Caravan Club Björkö Örns Camping',
   'c2': 'Caravan Club Östnora Camping',
@@ -469,6 +497,44 @@ function setNA(sid, idx) {
   }
   updateSectionRag(sid);
   updateSummary();
+}
+
+function setSC(idx, val) {
+  scScores[idx] = val;
+  // Clear NA
+  if (scNaScores[idx]) { scNaScores[idx] = false; const nb = document.getElementById('scna-' + idx); if (nb) nb.classList.remove('na-on'); }
+  const ja = document.getElementById('scja-' + idx);
+  const nej = document.getElementById('scnej-' + idx);
+  if (ja) ja.className = 'yn-btn' + (val === 'ja' ? ' yn-ja' : '');
+  if (nej) nej.className = 'yn-btn' + (val === 'nej' ? ' yn-nej' : '');
+  updateSCRag();
+  updateSummary();
+}
+
+function setSCNA(idx) {
+  const isOn = scNaScores[idx];
+  scNaScores[idx] = !isOn;
+  const nb = document.getElementById('scna-' + idx);
+  if (nb) nb.classList.toggle('na-on', !isOn);
+  if (!isOn) {
+    delete scScores[idx];
+    const ja = document.getElementById('scja-' + idx);
+    const nej = document.getElementById('scnej-' + idx);
+    if (ja) ja.className = 'yn-btn';
+    if (nej) nej.className = 'yn-btn';
+  }
+  updateSCRag();
+  updateSummary();
+}
+
+function updateSCRag() {
+  const vals = SC_SECTION.items.map((_, i) => scNaScores[i] ? null : scScores[i]).filter(v => v !== null && v !== undefined);
+  const pill = document.getElementById('rag-sc');
+  if (!pill) return;
+  if (!vals.length) { pill.className = 'pill pill-gray'; pill.textContent = 'Ej bedömd'; return; }
+  const hasNej = vals.some(v => v === 'nej');
+  pill.className = 'pill ' + (hasNej ? 'pill-red' : 'pill-green');
+  pill.textContent = hasNej ? 'Underkänt' : 'Godkänt';
 }
 
 function setSrvNA(idx) {
@@ -542,6 +608,19 @@ function updateSummary() {
       if (v !== undefined) { rated++; scoreW += v * sec.weight; totalW += 5 * sec.weight; if (v <= 2) reds++; }
     });
   });
+  // SC section (Svensk Camping) - Ja=5, Nej=1 equivalent for scoring
+  SC_SECTION.items.forEach((_, i) => {
+    if (scNaScores[i]) return;
+    const v = scScores[i];
+    if (v !== undefined) {
+      rated++;
+      const numV = v === 'ja' ? 5 : 1;
+      scoreW += numV * SC_SECTION.weight;
+      totalW += 5 * SC_SECTION.weight;
+      if (v === 'nej') reds++;
+    }
+  });
+
   const srvVis = !document.getElementById('srv-section').classList.contains('srv-hidden');
   if (srvVis) {
     const total = srvItemTotal(); const w = 2.5;
@@ -555,9 +634,10 @@ function updateSummary() {
   document.getElementById('s-pct').textContent = rated ? Math.round(scoreW / totalW * 100) + '%' : '–';
   document.getElementById('s-red').textContent = reds;
   const naCount = SECTIONS.reduce((a, s) => a + s.items.filter((_, i) => naScores[s.id] && naScores[s.id][i]).length, 0)
+    + SC_SECTION.items.filter((_, i) => scNaScores[i]).length
     + (srvVis ? Object.values(srvNaScores).filter(Boolean).length : 0);
   const srvTotal = !document.getElementById('srv-section').classList.contains('srv-hidden') ? srvItemTotal() : 0;
-  const totalItems = SECTIONS.reduce((a, s) => a + s.items.length, 0) + srvTotal - naCount;
+  const totalItems = SECTIONS.reduce((a, s) => a + s.items.length, 0) + SC_SECTION.items.length + srvTotal - naCount;
   document.getElementById('s-rated').textContent = rated + ' av ' + totalItems;
 }
 
@@ -621,6 +701,17 @@ function generateCert() {
       if (v !== undefined) { rated++; scoreW += v * sec.weight; totalW += 5 * sec.weight; if (v <= 2) reds++; }
     });
   });
+  SC_SECTION.items.forEach((_, i) => {
+    if (scNaScores[i]) return;
+    const v = scScores[i];
+    if (v !== undefined) {
+      rated++;
+      const numV = v === 'ja' ? 5 : 1;
+      scoreW += numV * SC_SECTION.weight;
+      totalW += 5 * SC_SECTION.weight;
+      if (v === 'nej') reds++;
+    }
+  });
   if (srvVis) {
     const total = srvItemTotal(); const w = 2.5;
     for (let i = 0; i < total; i++) {
@@ -630,8 +721,9 @@ function generateCert() {
   }
 
   const pct = totalW ? Math.round(scoreW / totalW * 100) : 0;
-  const passed = rated > 0 && reds === 0 && pct >= 60;
-  const conditional = rated > 0 && reds <= 1 && pct >= 50;
+  const scFailed = SC_SECTION.items.some((_, i) => !scNaScores[i] && scScores[i] === 'nej');
+  const passed = rated > 0 && reds === 0 && pct >= 60 && !scFailed;
+  const conditional = rated > 0 && reds <= 1 && pct >= 50 && !scFailed;
 
   let status, body, stampClass, stampIcon, statusClass;
   if (!rated) {
@@ -698,6 +790,25 @@ function generateCert() {
     }
   });
 
+  // SC section (Svensk Camping)
+  const scNoteEl = document.querySelector('#sections-container .section-card:last-of-type .note-row textarea');
+  const scNote = scNoteEl ? scNoteEl.value.trim() : '';
+  const scNejItems = [];
+  SC_SECTION.items.forEach((it, i) => {
+    if (scNaScores[i]) return;
+    const v = scScores[i];
+    if (v === 'nej') { scNejItems.push(it.t); redCount++; }
+  });
+  if (scNejItems.length || scNote) {
+    failedHtml += '<div class="cert-failed-section">';
+    failedHtml += '<div class="cert-failed-section-name"><i class="ti ti-rosette" style="font-size:13px"></i>Svensk Camping – kvalitetskrav</div>';
+    scNejItems.forEach(txt => {
+      failedHtml += '<div class="cert-failed-item cert-item-red"><span class="score score-red">(Nej – Underkänt)</span>' + txt + '</div>';
+    });
+    if (scNote) failedHtml += '<div class="cert-comment"><i class="ti ti-message" style="font-size:11px;vertical-align:-1px"></i> ' + scNote + '</div>';
+    failedHtml += '</div>';
+  }
+
   // Servering section
   const srvVis2 = !document.getElementById('srv-section').classList.contains('srv-hidden');
   if (srvVis2) {
@@ -759,7 +870,11 @@ function resetAll() {
   Object.keys(srvNaScores).forEach(k => delete srvNaScores[k]);
   Object.keys(naScores).forEach(k => delete naScores[k]);
   Object.keys(srvNaScores).forEach(k => delete srvNaScores[k]);
+  Object.keys(scScores).forEach(k => delete scScores[k]);
+  Object.keys(scNaScores).forEach(k => delete scNaScores[k]);
   document.querySelectorAll('.na-btn').forEach(b => b.classList.remove('na-on'));
+  document.querySelectorAll('.yn-btn').forEach(b => b.className = 'yn-btn');
+  updateSCRag();
   document.querySelectorAll('.star-btn').forEach(b => b.classList.remove('on'));
   document.querySelectorAll('textarea').forEach(t => t.value = '');
   document.querySelectorAll('.item-ctrl input').forEach(i => i.value = '');
@@ -792,8 +907,32 @@ function buildSections() {
   });
 }
 
+function buildSCSection() {
+  const c = document.getElementById('sections-container');
+  const div = document.createElement('div');
+  div.className = 'section-card';
+  let h = '<div class="sec-head"><i class="ti ' + SC_SECTION.icon + ' sec-icon"></i>'
+    + '<span class="sec-title">' + SC_SECTION.label + '<span class="weight-badge">Vikt ' + SC_SECTION.weight + 'x</span></span>'
+    + '<span class="pill pill-gray" id="rag-sc">Ej bedömd</span></div>';
+  SC_SECTION.items.forEach(function(it, i) {
+    h += '<div class="item-row">'
+      + '<div class="item-left"><div class="item-text">' + it.t + '</div>'
+      + (it.n ? '<div class="item-note">' + it.n + '</div>' : '')
+      + '</div>'
+      + '<div class="stars" style="gap:6px">'
+      + '<button class="yn-btn" id="scja-' + i + '" onclick="setSC(' + i + ',&quot;ja&quot;)">Ja</button>'
+      + '<button class="yn-btn" id="scnej-' + i + '" onclick="setSC(' + i + ',&quot;nej&quot;)">Nej</button>'
+      + '<button class="na-btn" id="scna-' + i + '" onclick="setSCNA(' + i + ')">N/A</button>'
+      + '</div></div>';
+  });
+  h += '<div class="note-row"><textarea placeholder="Anteckningar för Svensk Camping..."></textarea></div>';
+  div.innerHTML = h;
+  c.appendChild(div);
+}
+
 document.getElementById('m-date').valueAsDate = new Date();
 buildSections();
+buildSCSection();
 buildSrvSection();
 
 function exportXLS() {
@@ -807,6 +946,19 @@ function exportXLS() {
   const wb = XLSX.utils.book_new();
 
   // ---- Sheet 1: Sammanfattning ----
+  // SC section (Svensk Camping) - Ja=5, Nej=1 equivalent for scoring
+  SC_SECTION.items.forEach((_, i) => {
+    if (scNaScores[i]) return;
+    const v = scScores[i];
+    if (v !== undefined) {
+      rated++;
+      const numV = v === 'ja' ? 5 : 1;
+      scoreW += numV * SC_SECTION.weight;
+      totalW += 5 * SC_SECTION.weight;
+      if (v === 'nej') reds++;
+    }
+  });
+
   const srvVis = !document.getElementById('srv-section').classList.contains('srv-hidden');
   let totalW = 0, scoreW = 0, rated = 0, reds = 0;
   SECTIONS.forEach(sec => {
@@ -826,12 +978,14 @@ function exportXLS() {
   }
   const pct = totalW ? Math.round(scoreW / totalW * 100) : 0;
   const naCount = SECTIONS.reduce((a, s) => a + s.items.filter((_, i) => naScores[s.id] && naScores[s.id][i]).length, 0)
+    + SC_SECTION.items.filter((_, i) => scNaScores[i]).length
     + (srvVis ? Object.values(srvNaScores).filter(Boolean).length : 0);
   const srvTotal2 = srvVis ? srvItemTotal() : 0;
   const totalItems = SECTIONS.reduce((a, s) => a + s.items.length, 0) + srvTotal2 - naCount;
 
-  const passed = rated > 0 && reds === 0 && pct >= 60;
-  const conditional = rated > 0 && reds <= 1 && pct >= 50;
+  const scFailed = SC_SECTION.items.some((_, i) => !scNaScores[i] && scScores[i] === 'nej');
+  const passed = rated > 0 && reds === 0 && pct >= 60 && !scFailed;
+  const conditional = rated > 0 && reds <= 1 && pct >= 50 && !scFailed;
   const status = !rated ? 'Ej ifyllt' : passed ? 'GODKÄND' : conditional ? 'VILLKORLIGT GODKÄND' : 'UNDERKÄND';
 
   const summaryData = [
@@ -875,6 +1029,14 @@ function exportXLS() {
     noteIdx++;
   });
 
+  // SC section
+  SC_SECTION.items.forEach((it, i) => {
+    const isNA = scNaScores[i];
+    const v = scScores[i];
+    const statusTxt = isNA ? 'N/A' : v === undefined ? 'Ej bedömd' : v === 'ja' ? 'Godkänt' : 'Underkänt';
+    detailRows.push(['Svensk Camping – kvalitetskrav', SC_SECTION.weight + 'x', it.t, isNA ? 'N/A' : (v || ''), statusTxt, isNA ? 'Ja' : '']);
+  });
+
   // SRV section
   if (srvVis) {
     const tillf = document.getElementById('toggle-tillfallig').checked;
@@ -906,6 +1068,11 @@ function exportXLS() {
       }
     });
   });
+  SC_SECTION.items.forEach((it, i) => {
+    if (scNaScores[i]) return;
+    if (scScores[i] === 'nej') avvRows.push(['Svensk Camping – kvalitetskrav', it.t, 'Nej', 'Underkänt']);
+  });
+
   if (srvVis) {
     const tillf = document.getElementById('toggle-tillfallig').checked;
     const groups = tillf ? SRV_TILLFALLIG : SRV_FULL;
