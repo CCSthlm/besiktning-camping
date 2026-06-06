@@ -1610,6 +1610,11 @@ async function saveToGitHub() {
     const htmlContent = buildHTMLReport();
     const htmlB64 = btoa(unescape(encodeURIComponent(htmlContent)));
     await githubPut(folder + safeName + '_' + date + '_' + timeStr + '_' + safeTypeGH + '_' + safeResult + '.html', htmlB64, msg + ' (Rapport)');
+
+    // Save answers JSON for prefill support
+    const answersJson = buildAnswersJSON();
+    const jsonB64 = btoa(unescape(encodeURIComponent(JSON.stringify(answersJson, null, 2))));
+    await githubPut(folder + safeName + '_' + date + '_' + timeStr + '_' + safeTypeGH + '_' + safeResult + '.json', jsonB64, msg + ' (Svar)');
     btn.innerHTML = '<i class="ti ti-check"></i> Excel + HTML sparat!';
     btn.style.background = '#1D9E75';
     setTimeout(() => { btn.innerHTML = '<i class="ti ti-brand-github"></i> Spara en kopia på servern'; btn.style.background = '#24292e'; btn.disabled = false; }, 4000);
@@ -2191,6 +2196,60 @@ function renderHistory() {
       + '<a href="' + d.xlsUrl + '" target="_blank" style="color:var(--text3);text-decoration:none;padding:4px;border-radius:4px;display:inline-flex;" title="Ladda ner Excel"><i class="ti ti-table-export" style="font-size:16px"></i></a>'
       + '</td></tr>';
   }).join('');
+}
+
+
+function buildAnswersJSON() {
+  const campingEl = document.getElementById('m-camping');
+  const campingVal = campingEl.value;
+  const answers = {
+    meta: {
+      camping: campingVal,
+      campingName: CAMPING_FULL_NAMES[campingVal] || campingEl.options[campingEl.selectedIndex]?.text || '',
+      date: document.getElementById('m-date').value || '',
+      inspector: document.getElementById('m-name').value || '',
+      type: document.getElementById('m-type').value || '',
+      savedAt: new Date().toISOString(),
+    },
+    sections: {},
+    sc: {},
+    srv: {},
+    naScores: {},
+    scNaScores: {},
+    srvNaScores: {},
+    itemComments: JSON.parse(JSON.stringify(itemComments)),
+    notes: {}
+  };
+
+  // Regular sections
+  SECTIONS.forEach(sec => {
+    answers.sections[sec.id] = {};
+    answers.naScores[sec.id] = {};
+    sec.items.forEach((it, i) => {
+      const v = scores[sec.id] && scores[sec.id][i];
+      if (v !== undefined) answers.sections[sec.id][i] = v;
+      if (naScores[sec.id] && naScores[sec.id][i]) answers.naScores[sec.id][i] = true;
+    });
+  });
+
+  // SC section
+  SC_SECTION.items.forEach((_, i) => {
+    if (scScores[i] !== undefined) answers.sc[i] = scScores[i];
+    if (scNaScores[i]) answers.scNaScores[i] = true;
+  });
+
+  // SRV section
+  const total = srvItemTotal();
+  for (let i = 0; i < total; i++) {
+    if (srvScores[i] !== undefined) answers.srv[i] = srvScores[i];
+    if (srvNaScores[i]) answers.srvNaScores[i] = true;
+  }
+
+  // Notes
+  const noteEls = document.querySelectorAll('.note-row textarea');
+  noteEls.forEach((t, i) => { if (t.value.trim()) answers.notes[i] = t.value.trim(); });
+
+  return answers;
 }
 
 </script>
