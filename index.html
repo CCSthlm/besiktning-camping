@@ -315,7 +315,7 @@
       <i class="ti ti-table-export"></i> Exportera till Excel
     </button>
     <button class="btn btn-github" id="btn-github" onclick="saveToGitHub()" style="background:#24292e;color:#fff;border-color:#24292e;">
-      <i class="ti ti-brand-github"></i> Spara till GitHub
+      <i class="ti ti-brand-github"></i> Spara en kopia på servern
     </button>
     <button class="btn" onclick="resetAll()">
       <i class="ti ti-refresh"></i> Återställ
@@ -474,7 +474,7 @@ const SRV_FULL = [
   { label:"Köket & serveringslokal", items:[
     {t:"Finns en fullständig förstahjälpenlåda i köket?", n:"Skall vara lättillgänglig och komplett"},
     {t:"Är köksytor, utrustning och serveringsutrymmen rena och i gott skick?"},
-    {t:"Finns schema för serveringspersonalen – är det tillgängligt och uppdaterat?", ctrl:"Senaste datum:"},
+    {t:"Finns schema för serveringspersonalen – är det tillgängligt och uppdaterat?"},
     {t:"Är kyla och förvaring av livsmedel korrekt (temperaturer, märkning)?", n:"Kontrollera kylskåp och frysar – logg skall föras"},
     {t:"Hanteras kassahantering och kvittosystem korrekt för alkoholförsäljning?"},
   ]},
@@ -486,6 +486,7 @@ const SRV_FULL = [
   { label:"Meny & livsmedelsinformation", items:[
     {t:"Finns det tydliga menyer tillgängliga för gästerna?", n:"Menyer skall vara läsliga och uppdaterade"},
     {t:"Framgår köttets ursprung i menyn, eller kan personalen uppge det på förfrågan?", n:"Gästerna skall kunna få information om ursprungsland"},
+    {t:"Stickprov: kan serveringspersonalen uppge ursprungsland på en kött- eller fågelrätt?", n:"Kontrollera att personalen har kännedom om ursprungsland"},
     {t:"Framgår allergener i menyn, eller kan personalen uppge dem på förfrågan?", n:"EU:s livsmedelsförordning kräver information om 14 allergener", law:"Krav enligt EU-förordning 1169/2011 om livsmedelsinformation"},
     {t:"Stickprov: kan serveringspersonalen uppge allergener för en utvald rätt?", n:"Be personalen redogöra för allergeninnehållet i en specifik maträtt"},
   ]},
@@ -1427,10 +1428,10 @@ async function saveToGitHub() {
     await githubPut(folder + safeName + '_' + date + '.html', htmlB64, msg + ' (Rapport)');
     btn.innerHTML = '<i class="ti ti-check"></i> Excel + HTML sparat!';
     btn.style.background = '#1D9E75';
-    setTimeout(() => { btn.innerHTML = '<i class="ti ti-brand-github"></i> Spara till GitHub'; btn.style.background = '#24292e'; btn.disabled = false; }, 4000);
+    setTimeout(() => { btn.innerHTML = '<i class="ti ti-brand-github"></i> Spara en kopia på servern'; btn.style.background = '#24292e'; btn.disabled = false; }, 4000);
   } catch(e) {
     alert('Fel vid sparande: ' + e.message);
-    btn.innerHTML = '<i class="ti ti-brand-github"></i> Spara till GitHub'; btn.style.background = '#24292e'; btn.disabled = false;
+    btn.innerHTML = '<i class="ti ti-brand-github"></i> Spara en kopia på servern'; btn.style.background = '#24292e'; btn.disabled = false;
   }
 }
 
