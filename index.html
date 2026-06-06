@@ -135,6 +135,7 @@
   .btn-primary { background: #1D9E75; color: white; border-color: #1D9E75; }
   .btn-primary:hover { background: #0F6E56; border-color: #0F6E56; }
   .btn-print { background: var(--blue-bg); color: var(--blue-text); border-color: var(--blue-text); }
+  .btn-mail { background: var(--green-bg); color: var(--green-text); border-color: var(--green-border); }
   .btn-excel { background: #E8F5E9; color: #1B5E20; border-color: #2E7D32; }
 
   /* Certificate */
@@ -307,6 +308,9 @@
     </button>
     <button class="btn btn-print" onclick="window.print()">
       <i class="ti ti-printer"></i> Skriv ut / spara som PDF
+    </button>
+    <button class="btn btn-mail" onclick="mailCert()">
+      <i class="ti ti-mail"></i> Maila certifikat
     </button>
     <button class="btn btn-excel" onclick="exportXLS()">
       <i class="ti ti-table-export"></i> Exportera till Excel
@@ -1406,6 +1410,73 @@ document.addEventListener('keydown', e => {
   if (e.key === 'Escape') document.getElementById('comment-modal-overlay').classList.remove('show');
 });
 
+
+function mailCert() {
+  const certBox = document.getElementById('cert-box');
+  if (!certBox.classList.contains('show')) {
+    alert('Generera certifieringsintyget f\u00f6rst innan du mailar.');
+    return;
+  }
+
+  const campingEl = document.getElementById('m-camping');
+  const campingVal = campingEl.value;
+  const campingName = CAMPING_FULL_NAMES[campingVal] || (campingEl.options[campingEl.selectedIndex]?.text || '');
+  const date = document.getElementById('m-date').value;
+  const inspector = document.getElementById('m-name').value || '\u2013';
+  const inspType = document.getElementById('m-type').value || '';
+  const dateStr = date ? new Date(date + 'T12:00:00').toLocaleDateString('sv-SE') : '\u2013';
+
+  const statusEl = document.getElementById('cert-status-text');
+  const statusText = statusEl ? statusEl.textContent : '';
+
+  let sectionLines = '';
+  const secRows = document.querySelectorAll('.cert-section-row');
+  secRows.forEach(row => {
+    const name = row.querySelector('.sec-name')?.textContent || '';
+    const status = row.querySelector('.cert-section-status')?.textContent || '';
+    sectionLines += '  ' + name + ': ' + status + '\n';
+  });
+
+  let issuesText = '';
+  const failedEl = document.getElementById('cert-failed');
+  if (failedEl && failedEl.style.display !== 'none') {
+    const sections = failedEl.querySelectorAll('.cert-failed-section');
+    sections.forEach(sec => {
+      const secName = sec.querySelector('.cert-failed-section-name');
+      if (secName) issuesText += '\n' + secName.textContent.trim().toUpperCase() + '\n';
+      sec.querySelectorAll('.cert-failed-item').forEach(item => {
+        issuesText += '  - ' + item.textContent.trim() + '\n';
+      });
+      sec.querySelectorAll('.cert-comment').forEach(c => {
+        issuesText += '  > ' + c.textContent.trim() + '\n';
+      });
+    });
+  }
+
+  const sep = '--------------------------------------';
+  const lines = [
+    'BESIKTNINGSINTYG',
+    'Caravan Club of Sweden \u2013 Stockholmssektionen',
+    sep,
+    '',
+    'Camping:                   ' + campingName,
+    'Datum:                     ' + dateStr,
+    'Ansvarig f\u00f6r besiktningen:  ' + inspector,
+    'Typ av besiktning:         ' + inspType,
+    '',
+    'RESULTAT: ' + statusText,
+    '',
+  ];
+  if (sectionLines) { lines.push('RESULTAT PER SEKTION'); lines.push(sectionLines); }
+  if (issuesText) { lines.push('AVVIKELSER OCH KOMMENTARER'); lines.push(issuesText); }
+  lines.push(sep);
+  lines.push('Genererat via Caravan Club of Swedens besiktningsprogram.');
+  lines.push('Bifoga Excel-export eller PDF f\u00f6r fullst\u00e4ndig dokumentation.');
+
+  const subject = encodeURIComponent('Besiktningsintyg \u2013 ' + campingName + ' \u2013 ' + dateStr);
+  const body = encodeURIComponent(lines.join('\n'));
+  window.location.href = 'mailto:?subject=' + subject + '&body=' + body;
+}
 </script>
 </body>
 </html>
