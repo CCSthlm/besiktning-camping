@@ -333,6 +333,80 @@
     <button class="btn" onclick="confirmReset()">
       <i class="ti ti-refresh"></i> Återställ
     </button>
+    <button class="btn btn-history" id="btn-history" onclick="toggleHistory()" style="background:var(--bg2);color:var(--text2);border-color:var(--border2);">
+      <i class="ti ti-history"></i> Historik
+    </button>
+  </div>
+
+  <!-- History panel -->
+  <div id="history-panel" class="no-print" style="display:none; margin-bottom:24px;">
+    <div style="background:var(--bg);border:1px solid var(--border2);border-radius:var(--radius-lg);overflow:hidden;">
+      <!-- Stats row -->
+      <div id="hist-stats" style="display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border-bottom:1px solid var(--border2);">
+        <div style="background:var(--bg2);padding:12px 16px;text-align:center;">
+          <div style="font-size:22px;font-weight:700;color:var(--text)" id="hist-total">–</div>
+          <div style="font-size:11px;color:var(--text3)">Totalt</div>
+        </div>
+        <div style="background:var(--bg2);padding:12px 16px;text-align:center;">
+          <div style="font-size:22px;font-weight:700;color:#27500A" id="hist-ok">–</div>
+          <div style="font-size:11px;color:var(--text3)">Godkända</div>
+        </div>
+        <div style="background:var(--bg2);padding:12px 16px;text-align:center;">
+          <div style="font-size:22px;font-weight:700;color:#501313" id="hist-ej">–</div>
+          <div style="font-size:11px;color:var(--text3)">Underkända</div>
+        </div>
+        <div style="background:var(--bg2);padding:12px 16px;text-align:center;">
+          <div style="font-size:16px;font-weight:700;color:var(--text)" id="hist-latest">–</div>
+          <div style="font-size:11px;color:var(--text3)" id="hist-latest-name">Senaste</div>
+        </div>
+      </div>
+      <!-- Filter row -->
+      <div style="display:flex;gap:8px;padding:12px 16px;border-bottom:1px solid var(--border2);flex-wrap:wrap;align-items:center;">
+        <select id="hist-filter-camping" onchange="renderHistory()" style="font-size:12px;padding:5px 8px;border-radius:var(--radius);border:1px solid var(--border2);background:var(--bg2);color:var(--text);">
+          <option value="">Alla campingar</option>
+          <option value="Bjorko">CC Björkö Örn</option>
+          <option value="Ostnora">CC Östnora</option>
+          <option value="Mista">CC Mista</option>
+          <option value="Storsved">CC Storsved</option>
+          <option value="Orstig">CC Örstig</option>
+          <option value="Kapellskar">CC Kapellskär</option>
+        </select>
+        <select id="hist-filter-year" onchange="renderHistory()" style="font-size:12px;padding:5px 8px;border-radius:var(--radius);border:1px solid var(--border2);background:var(--bg2);color:var(--text);">
+          <option value="">Alla år</option>
+        </select>
+        <select id="hist-filter-result" onchange="renderHistory()" style="font-size:12px;padding:5px 8px;border-radius:var(--radius);border:1px solid var(--border2);background:var(--bg2);color:var(--text);">
+          <option value="">Alla resultat</option>
+          <option value="GODKAND">Godkänd</option>
+          <option value="UNDERKAND">Underkänd</option>
+        </select>
+        <div style="flex:1"></div>
+        <button onclick="loadHistory()" style="font-size:12px;padding:5px 10px;display:flex;align-items:center;gap:5px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);color:var(--text);cursor:pointer;">
+          <i class="ti ti-refresh" style="font-size:13px"></i> Hämta från GitHub
+        </button>
+      </div>
+      <!-- Table -->
+      <div id="hist-table-wrap" style="overflow-x:auto;">
+        <table style="width:100%;font-size:13px;border-collapse:collapse;table-layout:fixed;">
+          <thead>
+            <tr style="background:var(--bg2);border-bottom:1px solid var(--border2);">
+              <th style="text-align:left;padding:9px 14px;font-weight:500;color:var(--text3);font-size:12px;width:27%">Camping</th>
+              <th style="text-align:left;padding:9px 10px;font-weight:500;color:var(--text3);font-size:12px;width:13%">Datum</th>
+              <th style="text-align:left;padding:9px 10px;font-weight:500;color:var(--text3);font-size:12px;width:9%">Tid</th>
+              <th style="text-align:left;padding:9px 10px;font-weight:500;color:var(--text3);font-size:12px;width:20%">Typ</th>
+              <th style="text-align:left;padding:9px 10px;font-weight:500;color:var(--text3);font-size:12px;width:14%">Resultat</th>
+              <th style="text-align:right;padding:9px 14px;font-weight:500;color:var(--text3);font-size:12px;width:17%">Öppna</th>
+            </tr>
+          </thead>
+          <tbody id="hist-tbody">
+            <tr><td colspan="6" style="padding:24px;text-align:center;color:var(--text3);font-size:13px;">Klicka "Hämta från GitHub" för att visa historik</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="display:flex;justify-content:space-between;padding:8px 16px;border-top:1px solid var(--border2);">
+        <span style="font-size:11px;color:var(--text3)" id="hist-count"></span>
+        <span style="font-size:11px;color:var(--text3)">besiktningar/ i GitHub</span>
+      </div>
+    </div>
   </div>
 
   <div class="cert-box" id="cert-box">
@@ -1497,6 +1571,13 @@ async function saveToGitHub() {
   const campingName = CAMPING_FULL_NAMES[campingVal] || campingEl.options[campingEl.selectedIndex]?.text || 'camping';
   const date = document.getElementById('m-date').value || new Date().toISOString().slice(0,10);
   const safeName = campingName.replace(/[^a-zA-Z\u00e5\u00e4\u00f6\u00c5\u00c4\u00d60-9]/g, '_');
+  const nowGH = new Date();
+  const timeStr = nowGH.getHours().toString().padStart(2,'0') + nowGH.getMinutes().toString().padStart(2,'0') + nowGH.getSeconds().toString().padStart(2,'0');
+  const inspTypeGH = document.getElementById('m-type').value || 'Besiktning';
+  const safeTypeGH = inspTypeGH.replace(/[^a-zA-Z0-9]/g, '_');
+  const scFailedGH = SC_SECTION.items.some((_, i) => !scNaScores[i] && scScores[i] === 'nej');
+  const redsGH = Object.keys(scores).reduce((a, sid) => a + Object.values(scores[sid]||{}).filter(v => v==='nej').length, 0) + Object.values(scScores).filter(v => v==='nej').length + Object.values(srvScores).filter(v => v==='nej').length;
+  const safeResult = (redsGH === 0 && !scFailedGH) ? 'GODKAND' : 'UNDERKAND';
   const repo = 'CCSthlm/besiktning-camping';
   const folder = 'besiktningar/' + date.slice(0,4) + '/';
   const btn = document.getElementById('btn-github');
@@ -1903,6 +1984,126 @@ function autoRestore() {
 }
 
 setTimeout(autoRestore, 600);
+
+
+// ---- History view ----
+let _histData = [];
+
+function toggleHistory() {
+  const panel = document.getElementById('history-panel');
+  const btn = document.getElementById('btn-history');
+  const visible = panel.style.display !== 'none';
+  panel.style.display = visible ? 'none' : 'block';
+  btn.innerHTML = visible
+    ? '<i class="ti ti-history"></i> Historik'
+    : '<i class="ti ti-history"></i> Stäng historik';
+  if (!visible && _histData.length === 0) loadHistory();
+}
+
+async function loadHistory() {
+  const token = localStorage.getItem('gh_token') || '';
+  const tbody = document.getElementById('hist-tbody');
+  tbody.innerHTML = '<tr><td colspan="6" style="padding:24px;text-align:center;color:var(--text3)">Hämtar...</td></tr>';
+
+  const repo = 'CCSthlm/besiktning-camping';
+  const headers = token ? { 'Authorization': 'token ' + token } : {};
+
+  try {
+    // Get all years under besiktningar/
+    const rootRes = await fetch('https://api.github.com/repos/' + repo + '/contents/besiktningar', { headers });
+    if (!rootRes.ok) throw new Error('Kunde inte hämta besiktningar/ (' + rootRes.status + ')');
+    const years = await rootRes.json();
+
+    const allFiles = [];
+    for (const year of years) {
+      if (year.type !== 'dir') continue;
+      const yearRes = await fetch(year.url, { headers });
+      if (!yearRes.ok) continue;
+      const files = await yearRes.json();
+      files.forEach(f => { if (f.name.endsWith('.xlsx')) allFiles.push({ name: f.name, htmlUrl: f.html_url, downloadUrl: f.download_url, path: f.path, year: year.name }); });
+    }
+
+    // Parse filenames
+    _histData = allFiles.map(f => {
+      const base = f.name.replace('.xlsx', '');
+      const parts = base.split('_');
+      // Find date (YYYY-MM-DD pattern)
+      const dateIdx = parts.findIndex(p => /^\d{4}-\d{2}-\d{2}$/.test(p));
+      const camping = dateIdx > 0 ? parts.slice(0, dateIdx).join(' ') : base;
+      const date = dateIdx >= 0 ? parts[dateIdx] : '';
+      const time = dateIdx >= 0 && parts[dateIdx+1] && /^\d{6}$/.test(parts[dateIdx+1])
+        ? parts[dateIdx+1].slice(0,2) + ':' + parts[dateIdx+1].slice(2,4)
+        : '';
+      const typeStart = dateIdx + (time ? 2 : 1);
+      const result = parts[parts.length-1];
+      const typeParts = parts.slice(typeStart, parts.length-1);
+      const type = typeParts.join(' ');
+      // Build HTML report URL
+      const htmlPath = f.path.replace('.xlsx', '.html');
+      const htmlReportUrl = 'https://ccsthlm.github.io/besiktning-camping/' + htmlPath;
+      return { camping, date, time, type, result, htmlUrl: htmlReportUrl, xlsUrl: f.downloadUrl, name: f.name };
+    }).sort((a, b) => (b.date + b.time).localeCompare(a.date + a.time));
+
+    // Populate year filter
+    const years2 = [...new Set(_histData.map(d => d.date.slice(0,4)).filter(Boolean))].sort().reverse();
+    const yearSel = document.getElementById('hist-filter-year');
+    yearSel.innerHTML = '<option value="">Alla år</option>';
+    years2.forEach(y => { const o = document.createElement('option'); o.value = y; o.textContent = y; yearSel.appendChild(o); });
+
+    renderHistory();
+  } catch(e) {
+    tbody.innerHTML = '<tr><td colspan="6" style="padding:24px;text-align:center;color:var(--text3)">' + e.message + '</td></tr>';
+  }
+}
+
+function renderHistory() {
+  const campingF = document.getElementById('hist-filter-camping').value;
+  const yearF = document.getElementById('hist-filter-year').value;
+  const resultF = document.getElementById('hist-filter-result').value;
+
+  let filtered = _histData.filter(d => {
+    if (campingF && !d.name.includes(campingF)) return false;
+    if (yearF && !d.date.startsWith(yearF)) return false;
+    if (resultF && d.result !== resultF) return false;
+    return true;
+  });
+
+  const tbody = document.getElementById('hist-tbody');
+  const total = _histData.length;
+  const ok = _histData.filter(d => d.result === 'GODKAND').length;
+  const ej = _histData.filter(d => d.result === 'UNDERKAND').length;
+  const latest = _histData[0];
+
+  document.getElementById('hist-total').textContent = total;
+  document.getElementById('hist-ok').textContent = ok;
+  document.getElementById('hist-ej').textContent = ej;
+  document.getElementById('hist-latest').textContent = latest ? latest.date : '–';
+  document.getElementById('hist-latest-name').textContent = latest ? latest.camping : 'Senaste';
+  document.getElementById('hist-count').textContent = filtered.length + ' av ' + total + ' visas';
+
+  if (!filtered.length) {
+    tbody.innerHTML = '<tr><td colspan="6" style="padding:24px;text-align:center;color:var(--text3)">Inga besiktningar matchar filtret</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = filtered.map(d => {
+    const isOk = d.result === 'GODKAND';
+    const badge = isOk
+      ? '<span style="background:#EAF3DE;color:#27500A;font-size:11px;font-weight:500;padding:2px 8px;border-radius:20px;">Godkänd</span>'
+      : '<span style="background:#FCEBEB;color:#501313;font-size:11px;font-weight:500;padding:2px 8px;border-radius:20px;">Underkänd</span>';
+    const typeBadge = d.type ? '<span style="background:var(--bg2);color:var(--text3);font-size:11px;padding:2px 8px;border-radius:20px;">' + d.type + '</span>' : '–';
+    return '<tr style="border-bottom:0.5px solid var(--border2);" onmouseenter="this.style.background=\'var(--bg2)\'" onmouseleave="this.style.background=\'\'">'
+      + '<td style="padding:10px 14px;font-weight:500;color:var(--text)">' + d.camping + '</td>'
+      + '<td style="padding:10px;color:var(--text3)">' + (d.date || '–') + '</td>'
+      + '<td style="padding:10px;color:var(--text3)">' + (d.time || '–') + '</td>'
+      + '<td style="padding:10px;">' + typeBadge + '</td>'
+      + '<td style="padding:10px;">' + badge + '</td>'
+      + '<td style="padding:10px 14px;text-align:right;white-space:nowrap;">'
+      + '<a href="' + d.htmlUrl + '" target="_blank" style="color:var(--text3);text-decoration:none;padding:4px;border-radius:4px;display:inline-flex;margin-right:2px;" title="Öppna rapport"><i class="ti ti-file-text" style="font-size:16px"></i></a>'
+      + '<a href="' + d.xlsUrl + '" target="_blank" style="color:var(--text3);text-decoration:none;padding:4px;border-radius:4px;display:inline-flex;" title="Ladda ner Excel"><i class="ti ti-table-export" style="font-size:16px"></i></a>'
+      + '</td></tr>';
+  }).join('');
+}
 
 </script>
 </body>
