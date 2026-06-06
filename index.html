@@ -235,7 +235,8 @@
     <div class="meta-grid">
       <div class="meta-field">
         <label>Camping</label>
-        <select id="m-camping" onchange="checkSrv(); checkLock();">
+        <select id="m-camping" onchange="warnCampingChange(); checkSrv(); checkLock();
+  setTimeout(autoRestore, 500);">
           <option value="">Välj camping...</option>
           <option value="c1" data-srv="true">CC Björkö Örn (serveringstillstånd)</option>
           <option value="c2" data-srv="true">CC Östnora (serveringstillstånd)</option>
@@ -300,6 +301,14 @@
   <div class="summary-bar">
     <div class="stat-card"><div class="n" id="s-red">0</div><div class="l">Underkända punkter</div></div>
     <div class="stat-card"><div class="n" id="s-rated">0</div><div class="l">Bedömda punkter</div></div>
+    <div class="stat-card" style="flex:2">
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+        <span class="l">Framsteg</span><span class="l" id="s-progress-txt">0%</span>
+      </div>
+      <div style="background:var(--border2);border-radius:4px;height:8px;overflow:hidden">
+        <div id="s-progress-bar" style="height:100%;width:0%;background:var(--green-border);border-radius:4px;transition:width .3s"></div>
+      </div>
+    </div>
   </div>
 
   <div class="btn-row no-print">
@@ -321,7 +330,7 @@
     <button class="btn btn-sharepoint" id="btn-sharepoint" onclick="saveToSharePoint()" style="background:#0078d4;color:#fff;border-color:#0078d4;">
       <i class="ti ti-brand-office"></i> Spara i OneDrive
     </button>
-    <button class="btn" onclick="resetAll()">
+    <button class="btn" onclick="confirmReset()">
       <i class="ti ti-refresh"></i> Återställ
     </button>
   </div>
@@ -738,11 +747,20 @@ function updateSectionRag(sid) {
   const sec = SECTIONS.find(s => s.id === sid);
   const pill = document.getElementById('rag-' + sid);
   if (!pill) return;
-  const rated = sec.items.some((_, i) => !(naScores[sid] && naScores[sid][i]) && scores[sid] && scores[sid][i] !== undefined);
-  if (!rated) { pill.className = 'pill pill-gray'; pill.textContent = 'Ej bedömd'; return; }
+  const ratedItems = sec.items.filter((_, i) => !(naScores[sid] && naScores[sid][i]) && scores[sid] && scores[sid][i] !== undefined);
+  const totalNonNA = sec.items.filter((_, i) => !(naScores[sid] && naScores[sid][i])).length;
+  if (!ratedItems.length) { pill.className = 'pill pill-gray'; pill.textContent = 'Ej bedömd'; return; }
   const hasNej = sec.items.some((_, i) => !(naScores[sid] && naScores[sid][i]) && scores[sid] && scores[sid][i] === 'nej');
+  const allDone = ratedItems.length === totalNonNA;
+  const wasGreen = pill.classList.contains('pill-green');
   pill.className = 'pill ' + (hasNej ? 'pill-red' : 'pill-green');
   pill.textContent = hasNej ? 'Underkänt' : 'Godkänt';
+  // Flash animation when section becomes fully complete
+  if (allDone && !hasNej && !wasGreen) {
+    pill.style.transform = 'scale(1.15)';
+    pill.style.transition = 'transform .2s';
+    setTimeout(() => { pill.style.transform = ''; }, 300);
+  }
 }
 
 function updateSrvRag() {
@@ -1152,6 +1170,27 @@ function generateCert() {
   certBox.scrollIntoView({behavior: 'smooth', block: 'nearest'});
 }
 
+
+function warnCampingChange() {
+  const hasData = Object.keys(scores).some(s => Object.keys(scores[s]||{}).length > 0)
+    || Object.keys(scScores).length > 0
+    || Object.keys(srvScores).length > 0;
+  if (hasData) {
+    if (!confirm('Du har redan fyllt i svar. Vill du byta camping och rensa all data?')) {
+      // Revert to previous value - handled by browser, just re-check
+      return;
+    }
+    resetAll();
+  }
+}
+function confirmReset() {
+  const hasData = Object.keys(scores).some(s => Object.keys(scores[s]||{}).length > 0)
+    || Object.keys(scScores).length > 0
+    || Object.keys(srvScores).length > 0;
+  if (hasData && !confirm('Är du säker? All ifylld data försvinner.')) return;
+  resetAll();
+}
+
 function resetAll() {
   if (!confirm('Återställ och rensa alla svar?')) return;
   Object.keys(scores).forEach(k => delete scores[k]);
@@ -1164,6 +1203,7 @@ function resetAll() {
   document.querySelectorAll('.na-btn').forEach(b => b.classList.remove('na-on'));
   document.querySelectorAll('.yn-btn').forEach(b => b.className = 'yn-btn');
   Object.keys(itemComments).forEach(k => delete itemComments[k]);
+  localStorage.removeItem('besiktning_autosave');
   document.querySelectorAll('.comment-btn').forEach(b => b.className = 'comment-btn');
   updateSCRag();
   document.querySelectorAll('.star-btn').forEach(b => b.classList.remove('on'));
@@ -1694,12 +1734,87 @@ async function saveToSharePoint() {
       btn.disabled = false;
     }, 4000);
   } catch(e) {
-    alert('Fel vid sparande till SharePoint: ' + e.message);
+    let msg = e.message || 'Okänt fel';
+    if (msg.includes('redirect') || msg.includes('AADSTS')) {
+      msg = 'Inloggningen misslyckades. Kontrollera att redirect URI är konfigurerad i Azure Portal: https://ccsthlm.github.io/besiktning-camping/';
+    } else if (msg.includes('popup') || msg.includes('blocked')) {
+      msg = 'Popup blockerades av webbläsaren. Tillåt popups för den här sidan och försök igen.';
+    }
+    alert('Fel vid sparande till OneDrive: ' + msg);
     btn.innerHTML = '<i class="ti ti-brand-office"></i> Spara i OneDrive';
     btn.style.background = '#0078d4';
     btn.disabled = false;
   }
 }
+
+
+// ---- Auto-save to localStorage ----
+function autoSave() {
+  try {
+    const noteEls = document.querySelectorAll('.note-row textarea');
+    const noteVals = Array.from(noteEls).map(t => t.value);
+    const state = {
+      camping: document.getElementById('m-camping').value,
+      name: document.getElementById('m-name').value,
+      type: document.getElementById('m-type').value,
+      date: document.getElementById('m-date').value,
+      scores: JSON.parse(JSON.stringify(scores)),
+      naScores: JSON.parse(JSON.stringify(naScores)),
+      scScores: JSON.parse(JSON.stringify(scScores)),
+      scNaScores: JSON.parse(JSON.stringify(scNaScores)),
+      srvScores: JSON.parse(JSON.stringify(srvScores)),
+      srvNaScores: JSON.parse(JSON.stringify(srvNaScores)),
+      itemComments: JSON.parse(JSON.stringify(itemComments)),
+      noteVals: noteVals,
+      ts: Date.now()
+    };
+    localStorage.setItem('besiktning_autosave', JSON.stringify(state));
+  } catch(e) {}
+}
+
+function autoRestore() {
+  try {
+    const raw = localStorage.getItem('besiktning_autosave');
+    if (!raw) return;
+    const state = JSON.parse(raw);
+    const age = (Date.now() - state.ts) / 60000;
+    if (age > 480) { localStorage.removeItem('besiktning_autosave'); return; }
+    if (!confirm('Det finns ett osparad protokoll från ' + Math.round(age) + ' minuter sedan. Vill du återställa det?')) {
+      localStorage.removeItem('besiktning_autosave'); return;
+    }
+    if (state.camping) document.getElementById('m-camping').value = state.camping;
+    if (state.name) document.getElementById('m-name').value = state.name;
+    if (state.type) document.getElementById('m-type').value = state.type;
+    if (state.date) document.getElementById('m-date').value = state.date;
+    checkSrv(); checkLock();
+    Object.assign(scores, state.scores || {});
+    Object.assign(naScores, state.naScores || {});
+    Object.assign(scScores, state.scScores || {});
+    Object.assign(scNaScores, state.scNaScores || {});
+    Object.assign(srvScores, state.srvScores || {});
+    Object.assign(srvNaScores, state.srvNaScores || {});
+    Object.assign(itemComments, state.itemComments || {});
+    // Rebuild UI
+    SECTIONS.forEach(sec => {
+      sec.items.forEach((_, i) => {
+        const v = scores[sec.id] && scores[sec.id][i];
+        if (v) { const ja = document.getElementById('ja-' + sec.id + '-' + i); const nej = document.getElementById('nej-' + sec.id + '-' + i); if (ja) ja.className = 'yn-btn' + (v==='ja' ? ' yn-ja' : ''); if (nej) nej.className = 'yn-btn' + (v==='nej' ? ' yn-nej' : ''); }
+        if (naScores[sec.id] && naScores[sec.id][i]) { const nb = document.getElementById('na-' + sec.id + '-' + i); if (nb) nb.classList.add('na-on'); }
+        const cmt = itemComments[sec.id + '-' + i]; if (cmt) { const cb = document.getElementById('cbtn-' + (sec.id + '-' + i).replace(/[^a-z0-9]/gi, '-')); if (cb) cb.className = 'comment-btn has-comment'; }
+      });
+      updateSectionRag(sec.id);
+    });
+    SC_SECTION.items.forEach((_, i) => {
+      const v = scScores[i]; if (v) { const ja = document.getElementById('scja-' + i); const nej = document.getElementById('scnej-' + i); if (ja) ja.className = 'yn-btn' + (v==='ja' ? ' yn-ja' : ''); if (nej) nej.className = 'yn-btn' + (v==='nej' ? ' yn-nej' : ''); }
+      if (scNaScores[i]) { const nb = document.getElementById('scna-' + i); if (nb) nb.classList.add('na-on'); }
+      const cmt = itemComments['sc-' + i]; if (cmt) { const cb = document.getElementById('cbtn-sc-' + i); if (cb) cb.className = 'comment-btn has-comment'; }
+    });
+    updateSCRag();
+    updateSummary();
+  } catch(e) { console.error('autoRestore error:', e); }
+}
+
+setTimeout(autoRestore, 600);
 
 </script>
 </body>
