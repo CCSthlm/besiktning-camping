@@ -1526,16 +1526,14 @@ function mailCert() {
 }
 
 // ---- GitHub integration ----
-
-
-
+// Ersätt GITHUB_TOKEN_HÄR med din token (ghp_...)
+const GITHUB_TOKEN = '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';
 
 
 
 async function saveToGitHub() {
-  localStorage.setItem('gh_token_besiktning', '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');
-  const token = localStorage.getItem('gh_token_besiktning') || '';
-  if (!token) { alert('Klistra in ditt GitHub Personal Access Token i f\u00e4ltet ovan f\u00f6rst.'); return; }
+  const token = GITHUB_TOKEN;
+  if (!token || token === 'GITHUB_TOKEN_HÄR') { alert('Lägg till din GitHub token i koden.'); return; }
   const campingEl = document.getElementById('m-camping');
   const campingVal = campingEl.value;
   if (!campingVal) { alert('V\u00e4lj camping f\u00f6rst.'); return; }
