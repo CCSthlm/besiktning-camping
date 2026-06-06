@@ -2023,6 +2023,9 @@ function autoFilterHistory() {
   if (_histData.length > 0) {
     renderHistory();
     autoSetInspectionType(filterVal);
+  } else if (localStorage.getItem('gh_token')) {
+    // Data not loaded yet - load it, renderHistory will call autoSetInspectionType
+    loadHistory();
   }
 }
 
@@ -2176,6 +2179,12 @@ function renderHistory() {
   document.getElementById('hist-latest').textContent = latest ? latest.date : '–';
   document.getElementById('hist-latest-name').textContent = latest ? latest.camping : 'Senaste';
   document.getElementById('hist-count').textContent = filtered.length + ' av ' + total + ' visas';
+
+  // After render, update inspection type if camping is already selected
+  const campingVal = document.getElementById('m-camping').value;
+  if (campingVal && CAMPING_HIST_FILTER[campingVal]) {
+    autoSetInspectionType(CAMPING_HIST_FILTER[campingVal]);
+  }
 
   if (!filtered.length) {
     tbody.innerHTML = '<tr><td colspan="6" style="padding:24px;text-align:center;color:var(--text3)">Inga besiktningar matchar filtret</td></tr>';
