@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="sv">
 <head>
@@ -85,6 +84,8 @@
   .star-btn { width: 24px; height: 24px; background: none; border: none; cursor: pointer; font-size: 18px; color: var(--star-off); transition: color 0.1s, transform 0.1s; padding: 0; line-height: 1; display: flex; align-items: center; justify-content: center; }
   .star-btn:hover { transform: scale(1.2); }
   .star-btn.on { color: var(--star-on); }
+  .na-btn { font-size: 11px; font-weight: 600; padding: 3px 7px; border-radius: var(--radius); border: 1px solid var(--border2); background: var(--bg2); color: var(--text3); cursor: pointer; line-height: 1.6; white-space: nowrap; font-family: inherit; margin-left: 4px; }
+  .na-btn.na-on { background: var(--amber-bg); color: var(--amber-border); border-color: var(--amber-border); }
 
   /* Notes */
   .note-row { padding: 6px 16px 12px; border-top: 1px solid var(--border); }
@@ -273,7 +274,7 @@
     <button class="btn btn-print" onclick="window.print()">
       <i class="ti ti-printer"></i> Skriv ut / spara som PDF
     </button>
-    <button class="btn" onclick="resetAll()">
+<button class="btn" onclick="resetAll()">
       <i class="ti ti-refresh"></i> Återställ
     </button>
   </div>
@@ -404,6 +405,8 @@ const SRV_TILLFALLIG = [
 
 const scores = {};
 const srvScores = {};
+const naScores = {};
+const srvNaScores = {};
 
 function ragClass(avg) {
   if (avg === null) return 'pill-gray';
@@ -421,6 +424,12 @@ function ragLabel(avg) {
 function setScore(sid, idx, val) {
   if (!scores[sid]) scores[sid] = {};
   scores[sid][idx] = val;
+  // Clear N/A if star clicked
+  if (naScores[sid] && naScores[sid][idx]) {
+    naScores[sid][idx] = false;
+    const naBtn = document.getElementById('na-' + sid + '-' + idx);
+    if (naBtn) naBtn.classList.remove('na-on');
+  }
   for (let i = 1; i <= 5; i++) {
     const el = document.getElementById('star-' + sid + '-' + idx + '-' + i);
     if (el) el.className = 'star-btn' + (i <= val ? ' on' : '');
@@ -429,8 +438,47 @@ function setScore(sid, idx, val) {
   updateSummary();
 }
 
+function setNA(sid, idx) {
+  if (!naScores[sid]) naScores[sid] = {};
+  const isOn = naScores[sid][idx];
+  naScores[sid][idx] = !isOn;
+  const naBtn = document.getElementById('na-' + sid + '-' + idx);
+  if (naBtn) naBtn.classList.toggle('na-on', !isOn);
+  // Clear star selection if N/A turned on
+  if (!isOn && scores[sid]) {
+    delete scores[sid][idx];
+    for (let v = 1; v <= 5; v++) {
+      const el = document.getElementById('star-' + sid + '-' + idx + '-' + v);
+      if (el) el.classList.remove('on');
+    }
+  }
+  updateSectionRag(sid);
+  updateSummary();
+}
+
+function setSrvNA(idx) {
+  const isOn = srvNaScores[idx];
+  srvNaScores[idx] = !isOn;
+  const naBtn = document.getElementById('srvna-' + idx);
+  if (naBtn) naBtn.classList.toggle('na-on', !isOn);
+  if (!isOn) {
+    delete srvScores[idx];
+    for (let v = 1; v <= 5; v++) {
+      const el = document.getElementById('srvstar-' + idx + '-' + v);
+      if (el) el.classList.remove('on');
+    }
+  }
+  updateSrvRag();
+  updateSummary();
+}
+
 function setSrvScore(idx, val) {
   srvScores[idx] = val;
+  if (srvNaScores[idx]) {
+    srvNaScores[idx] = false;
+    const naBtn = document.getElementById('srvna-' + idx);
+    if (naBtn) naBtn.classList.remove('na-on');
+  }
   for (let i = 1; i <= 5; i++) {
     const el = document.getElementById('srvstar-' + idx + '-' + i);
     if (el) el.className = 'star-btn' + (i <= val ? ' on' : '');
@@ -441,7 +489,7 @@ function setSrvScore(idx, val) {
 
 function sectionAvg(sid) {
   const sec = SECTIONS.find(s => s.id === sid);
-  const vals = sec.items.map((_, i) => scores[sid] && scores[sid][i]).filter(v => v !== undefined);
+  const vals = sec.items.map((_, i) => scores[sid] && scores[sid][i]).filter((v, i) => v !== undefined && !(naScores[sid] && naScores[sid][i]));
   if (!vals.length) return null;
   return vals.reduce((a, b) => a + b, 0) / vals.length;
 }
@@ -453,7 +501,7 @@ function srvItemTotal() {
 
 function srvAvgCalc() {
   const total = srvItemTotal();
-  const vals = Array.from({length: total}, (_, i) => srvScores[i]).filter(v => v !== undefined);
+  const vals = Array.from({length: total}, (_, i) => srvScores[i]).filter((v, i) => v !== undefined && !srvNaScores[i]);
   if (!vals.length) return null;
   return vals.reduce((a, b) => a + b, 0) / vals.length;
 }
@@ -474,6 +522,7 @@ function updateSummary() {
   let totalW = 0, scoreW = 0, reds = 0, rated = 0;
   SECTIONS.forEach(sec => {
     sec.items.forEach((_, i) => {
+      if (naScores[sec.id] && naScores[sec.id][i]) return; // skip N/A
       const v = scores[sec.id] && scores[sec.id][i];
       if (v !== undefined) { rated++; scoreW += v * sec.weight; totalW += 5 * sec.weight; if (v <= 2) reds++; }
     });
@@ -482,6 +531,7 @@ function updateSummary() {
   if (srvVis) {
     const total = srvItemTotal(); const w = 2.5;
     for (let i = 0; i < total; i++) {
+      if (srvNaScores[i]) continue; // skip N/A
       const v = srvScores[i];
       if (v !== undefined) { rated++; scoreW += v * w; totalW += 5 * w; if (v <= 2) reds++; }
     }
@@ -489,7 +539,11 @@ function updateSummary() {
   document.getElementById('s-score').textContent = rated ? scoreW.toFixed(1) + 'p' : '–';
   document.getElementById('s-pct').textContent = rated ? Math.round(scoreW / totalW * 100) + '%' : '–';
   document.getElementById('s-red').textContent = reds;
-  document.getElementById('s-rated').textContent = rated;
+  const naCount = SECTIONS.reduce((a, s) => a + s.items.filter((_, i) => naScores[s.id] && naScores[s.id][i]).length, 0)
+    + (srvVis ? Object.values(srvNaScores).filter(Boolean).length : 0);
+  const srvTotal = !document.getElementById('srv-section').classList.contains('srv-hidden') ? srvItemTotal() : 0;
+  const totalItems = SECTIONS.reduce((a, s) => a + s.items.length, 0) + srvTotal - naCount;
+  document.getElementById('s-rated').textContent = rated + ' av ' + totalItems;
 }
 
 function checkSrv() {
@@ -502,6 +556,7 @@ function checkSrv() {
 
 function buildSrvSection() {
   Object.keys(srvScores).forEach(k => delete srvScores[k]);
+  Object.keys(srvNaScores).forEach(k => delete srvNaScores[k]);
   const tillf = document.getElementById('toggle-tillfallig').checked;
   const groups = tillf ? SRV_TILLFALLIG : SRV_FULL;
   const c = document.getElementById('srv-items-container');
@@ -524,7 +579,7 @@ function buildSrvSection() {
         + '</div>'
         + '<div class="stars">' + [1,2,3,4,5].map(v =>
           '<button class="star-btn" id="srvstar-' + i + '-' + v + '" title="' + v + '" onclick="setSrvScore(' + i + ',' + v + ')">★</button>'
-        ).join('') + '</div>';
+        ).join('') + '<button class="na-btn" id="srvna-' + i + '" onclick="setSrvNA(' + i + ')">N/A</button></div>';
       c.appendChild(row);
     });
   });
@@ -542,6 +597,7 @@ function generateCert() {
   let totalW = 0, scoreW = 0, rated = 0, reds = 0, srvReds = 0;
   SECTIONS.forEach(sec => {
     sec.items.forEach((_, i) => {
+      if (naScores[sec.id] && naScores[sec.id][i]) return; // skip N/A
       const v = scores[sec.id] && scores[sec.id][i];
       if (v !== undefined) { rated++; scoreW += v * sec.weight; totalW += 5 * sec.weight; if (v <= 2) reds++; }
     });
@@ -681,6 +737,10 @@ function resetAll() {
   if (!confirm('Återställ och rensa alla svar?')) return;
   Object.keys(scores).forEach(k => delete scores[k]);
   Object.keys(srvScores).forEach(k => delete srvScores[k]);
+  Object.keys(srvNaScores).forEach(k => delete srvNaScores[k]);
+  Object.keys(naScores).forEach(k => delete naScores[k]);
+  Object.keys(srvNaScores).forEach(k => delete srvNaScores[k]);
+  document.querySelectorAll('.na-btn').forEach(b => b.classList.remove('na-on'));
   document.querySelectorAll('.star-btn').forEach(b => b.classList.remove('on'));
   document.querySelectorAll('textarea').forEach(t => t.value = '');
   document.querySelectorAll('.item-ctrl input').forEach(i => i.value = '');
@@ -705,7 +765,7 @@ function buildSections() {
         + '</div>'
         + '<div class="stars">' + [1,2,3,4,5].map(v =>
           '<button class="star-btn" id="star-' + sec.id + '-' + i + '-' + v + '" title="' + v + '" onclick="setScore(\'' + sec.id + '\',' + i + ',' + v + ')">★</button>'
-        ).join('') + '</div></div>';
+        ).join('') + '<button class="na-btn" id="na-' + sec.id + '-' + i + '" onclick="setNA(\'' + sec.id + '\',' + i + ')">N/A</button></div></div>';
     });
     html += '<div class="note-row"><textarea placeholder="Anteckningar för ' + sec.label.toLowerCase() + '..."></textarea></div>';
     div.innerHTML = html;
@@ -719,5 +779,3 @@ buildSrvSection();
 </script>
 </body>
 </html>
-
-
