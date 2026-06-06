@@ -297,9 +297,7 @@
   </div>
 
   <div class="summary-bar">
-    <div class="stat-card"><div class="n" id="s-score">–</div><div class="l">Totalpoäng</div></div>
-    <div class="stat-card"><div class="n" id="s-pct">–</div><div class="l">Av max möjligt</div></div>
-    <div class="stat-card"><div class="n" id="s-red">0</div><div class="l">Röda punkter</div></div>
+    <div class="stat-card"><div class="n" id="s-red">0</div><div class="l">Underkända punkter</div></div>
     <div class="stat-card"><div class="n" id="s-rated">0</div><div class="l">Bedömda punkter</div></div>
   </div>
 
@@ -771,8 +769,6 @@ function updateSummary() {
       if (v !== undefined) { rated++; scoreW += v * w; totalW += 5 * w; if (vRaw === 'nej') reds++; }
     }
   }
-  document.getElementById('s-score').textContent = rated ? scoreW.toFixed(1) + 'p' : '–';
-  document.getElementById('s-pct').textContent = rated ? Math.round(scoreW / totalW * 100) + '%' : '–';
   document.getElementById('s-red').textContent = reds;
   const naCount = SECTIONS.reduce((a, s) => a + s.items.filter((_, i) => naScores[s.id] && naScores[s.id][i]).length, 0)
     + SC_SECTION.items.filter((_, i) => scNaScores[i]).length
@@ -879,6 +875,11 @@ function generateCert() {
   }
 
   const pct = totalW ? Math.round(scoreW / totalW * 100) : 0;
+  const naCountCert = SECTIONS.reduce((a, s) => a + s.items.filter((_, i) => naScores[s.id] && naScores[s.id][i]).length, 0)
+    + SC_SECTION.items.filter((_, i) => scNaScores[i]).length
+    + (srvVis ? Object.values(srvNaScores).filter(Boolean).length : 0);
+  const srvTotalCert = srvVis ? srvItemTotal() : 0;
+  const totalItems = SECTIONS.reduce((a, s) => a + s.items.length, 0) + SC_SECTION.items.length + srvTotalCert - naCountCert;
   const scFailed = SC_SECTION.items.some((_, i) => !scNaScores[i] && scScores[i] === 'nej');
   const passed = rated > 0 && reds === 0 && !scFailed;
 
@@ -901,9 +902,8 @@ function generateCert() {
   document.getElementById('cert-status-text').textContent = status;
   document.getElementById('cert-status-text').className = 'cert-status-text ' + statusClass;
   document.getElementById('cert-scores').innerHTML = rated
-    ? '<div class="cert-score-item"><div class="val">' + scoreW.toFixed(1) + 'p</div><div class="lbl">Totalpoäng</div></div>'
-    + '<div class="cert-score-item"><div class="val">' + pct + '%</div><div class="lbl">Av max möjligt</div></div>'
-    + '<div class="cert-score-item"><div class="val">' + reds + '</div><div class="lbl">Röda punkter</div></div>'
+    ? '<div class="cert-score-item"><div class="val">' + reds + '</div><div class="lbl">Underkända punkter</div></div>'
+    + '<div class="cert-score-item"><div class="val">' + rated + ' av ' + totalItems + '</div><div class="lbl">Bedömda punkter</div></div>'
     : '';
   document.getElementById('cert-body-text').textContent = body;
 
@@ -975,7 +975,7 @@ function generateCert() {
   const amberCount = 0;
 
   function makeItemRow(score, text, colorClass, scoreLabel) {
-    return '<div class="cert-failed-item cert-item-' + colorClass + '"><span class="score score-' + colorClass + '">(' + score + '/5 – ' + scoreLabel + ')</span>' + text + '</div>';
+    return '<div class="cert-failed-item cert-item-' + colorClass + '"><span class="score score-' + colorClass + '">(' + scoreLabel + ')</span>' + text + '</div>';
   }
 
   // Regular sections
@@ -1066,12 +1066,27 @@ function generateCert() {
     }
   }
 
-  const titleParts = [];
-  if (redCount > 0) titleParts.push('Underkända punkter (' + redCount + ' st)');
-  const certTitle = titleParts.length ? titleParts.join(' &amp; ') : (failedHtml ? 'Anteckningar' : '');
-  if (failedHtml) {
+  // Split failedHtml into underkända (cert-item-red) and anmärkningar (comments only)
+  // We rebuild with two titled sections
+  const tempDiv = document.createElement('div');
+  tempDiv.innerHTML = failedHtml;
+  const allSections = tempDiv.querySelectorAll('.cert-failed-section');
+  let underkandaHtml = '';
+  let anmarkningHtml = '';
+  allSections.forEach(sec => {
+    const hasRed = sec.querySelector('.cert-item-red');
+    const secHtml = sec.outerHTML;
+    if (hasRed) underkandaHtml += secHtml;
+    else anmarkningHtml += secHtml;
+  });
+
+  let finalHtml = '';
+  if (underkandaHtml) finalHtml += '<div class="cert-failed-title">Underkända punkter (' + redCount + ' st)</div>' + underkandaHtml;
+  if (anmarkningHtml) finalHtml += '<div class="cert-failed-title" style="margin-top:' + (underkandaHtml ? '16px' : '0') + '">Anmärkning</div>' + anmarkningHtml;
+
+  if (finalHtml) {
     failedEl.style.display = 'block';
-    failedEl.innerHTML = (certTitle ? '<div class="cert-failed-title">' + certTitle + '</div>' : '') + failedHtml;
+    failedEl.innerHTML = finalHtml;
   } else {
     failedEl.style.display = 'none';
     failedEl.innerHTML = '';
@@ -1622,6 +1637,11 @@ function buildWorkbook() {
   SC_SECTION.items.forEach((_, i) => { if (scNaScores[i]) return; const vRaw = scScores[i]; const v = vRaw !== undefined ? ynToNum(vRaw) : undefined; if (v !== undefined) { rated++; scoreW += v * SC_SECTION.weight; totalW += 5 * SC_SECTION.weight; if (vRaw === 'nej') reds++; } });
   if (srvVis) { const total = srvItemTotal(); const w = 2.5; for (let i = 0; i < total; i++) { if (srvNaScores[i]) continue; const vRaw = srvScores[i]; const v = vRaw !== undefined ? ynToNum(vRaw) : undefined; if (v !== undefined) { rated++; scoreW += v * w; totalW += 5 * w; if (vRaw === 'nej') reds++; } } }
   const pct = totalW ? Math.round(scoreW / totalW * 100) : 0;
+  const naCountCert = SECTIONS.reduce((a, s) => a + s.items.filter((_, i) => naScores[s.id] && naScores[s.id][i]).length, 0)
+    + SC_SECTION.items.filter((_, i) => scNaScores[i]).length
+    + (srvVis ? Object.values(srvNaScores).filter(Boolean).length : 0);
+  const srvTotalCert = srvVis ? srvItemTotal() : 0;
+  const totalItems = SECTIONS.reduce((a, s) => a + s.items.length, 0) + SC_SECTION.items.length + srvTotalCert - naCountCert;
   const scFailed = SC_SECTION.items.some((_, i) => !scNaScores[i] && scScores[i] === 'nej');
   const passed = rated > 0 && reds === 0 && !scFailed;
   const status = !rated ? 'Ej ifyllt' : passed ? 'GODK\u00c4ND' : 'UNDERK\u00c4ND';
