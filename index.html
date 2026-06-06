@@ -364,12 +364,12 @@
       <div style="display:flex;gap:8px;padding:12px 16px;border-bottom:1px solid var(--border2);flex-wrap:wrap;align-items:center;">
         <select id="hist-filter-camping" onchange="renderHistory()" style="font-size:12px;padding:5px 8px;border-radius:var(--radius);border:1px solid var(--border2);background:var(--bg2);color:var(--text);">
           <option value="">Alla campingar</option>
-          <option value="Bjorko">CC Björkö Örn</option>
+          <option value="Bjorko_Orns">CC Björkö Örn</option>
           <option value="Ostnora">CC Östnora</option>
           <option value="Mista">CC Mista</option>
-          <option value="Storsved">CC Storsved</option>
-          <option value="Orstig">CC Örstig</option>
-          <option value="Kapellskar">CC Kapellskär</option>
+          <option value="Storsveds">CC Storsved</option>
+          <option value="Orstigs">CC Örstig</option>
+          <option value="Kapellskars">CC Kapellskär</option>
         </select>
         <select id="hist-filter-year" onchange="renderHistory()" style="font-size:12px;padding:5px 8px;border-radius:var(--radius);border:1px solid var(--border2);background:var(--bg2);color:var(--text);">
           <option value="">Alla år</option>
@@ -1985,7 +1985,38 @@ function autoRestore() {
 
 setTimeout(autoRestore, 600);
 
+// Auto-open history if GitHub token exists
+setTimeout(function() {
+  const token = localStorage.getItem('gh_token') || '';
+  if (token) {
+    const panel = document.getElementById('history-panel');
+    const btn = document.getElementById('btn-history');
+    if (panel && btn) {
+      panel.style.display = 'block';
+      btn.innerHTML = '<i class="ti ti-history"></i> Stäng historik';
+      loadHistory();
+    }
+  }
+}, 900);
 
+
+const CAMPING_HIST_FILTER = {
+  'c1': 'Bjorko_Orns',
+  'c2': 'Ostnora',
+  'c3': 'Kapellskars',
+  'c4': 'Mista',
+  'c5': 'Storsveds',
+  'c6': 'Orstigs',
+};
+
+function autoFilterHistory() {
+  const campingVal = document.getElementById('m-camping').value;
+  const filterSel = document.getElementById('hist-filter-camping');
+  if (!filterSel) return;
+  const filterVal = CAMPING_HIST_FILTER[campingVal] || '';
+  filterSel.value = filterVal;
+  if (_histData.length > 0) renderHistory();
+}
 // ---- History view ----
 let _histData = [];
 
