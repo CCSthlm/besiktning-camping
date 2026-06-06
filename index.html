@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Besiktningsprotokoll – Caravan Club Stockholm</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/tabler-icons.min.css">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #ffffff; --bg2: #f5f5f3; --bg3: #eeede8;
+    --text: #1a1a18; --text2: #5a5a57; --text3: #909088;
+    --border: rgba(0,0,0,0.12); --border2: rgba(0,0,0,0.22);
+    --green-bg: #EAF3DE; --green-text: #27500A; --green-border: #3B6D11;
+    --amber-bg: #FAEEDA; --amber-text: #412402; --amber-border: #854F0B;
+    --red-bg: #FCEBEB; --red-text: #501313; --red-border: #A32D2D;
+    --blue-bg: #E6F1FB; --blue-text: #042C53;
+    --star-on: #EF9F27; --star-off: #d0cfc8;
+    --radius: 8px; --radius-lg: 12px;
+    --srv-bg: #fff8f0; --srv-head: #FAEEDA; --srv-text: #412402;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1e1e1c; --bg2: #282825; --bg3: #323230;
+      --text: #e8e8e4; --text2: #a0a09a; --text3: #686864;
+      --border: rgba(255,255,255,0.1); --border2: rgba(255,255,255,0.2);
+      --green-bg: #173404; --green-text: #C0DD97;
+      --amber-bg: #412402; --amber-text: #FAC775;
+      --red-bg: #501313; --red-text: #F7C1C1;
+      --blue-bg: #042C53; --blue-text: #B5D4F4;
+      --srv-bg: #2a2118; --srv-head: #412402; --srv-text: #FAC775;
+    }
+  }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg3); color: var(--text); font-size: 15px; line-height: 1.5; min-height: 100vh; }
+  .page { max-width: 860px; margin: 0 auto; padding: 24px 16px 60px; }
+
+  /* Header */
+  .app-header { background: var(--bg); border-bottom: 1px solid var(--border); padding: 14px 24px; margin-bottom: 20px; border-radius: var(--radius-lg); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+  .app-header h1 { font-size: 17px; font-weight: 600; color: var(--text); }
+  .app-header .sub { font-size: 12px; color: var(--text3); margin-top: 2px; }
+  .legend { display: flex; gap: 6px; flex-wrap: wrap; }
+
+  /* Pill badges */
+  .pill { font-size: 11px; padding: 3px 10px; border-radius: 20px; font-weight: 500; display: inline-block; }
+  .pill-green { background: var(--green-bg); color: var(--green-text); }
+  .pill-amber { background: var(--amber-bg); color: var(--amber-text); }
+  .pill-red { background: var(--red-bg); color: var(--red-text); }
+  .pill-gray { background: var(--bg3); color: var(--text3); }
+  .pill-blue { background: var(--blue-bg); color: var(--blue-text); }
+
+  /* Meta form */
+  .meta-card { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; margin-bottom: 16px; }
+  .meta-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+  .meta-field label { display: block; font-size: 11px; color: var(--text3); margin-bottom: 4px; font-weight: 500; }
+  .meta-field input, .meta-field select { width: 100%; font-size: 13px; padding: 7px 9px; border-radius: var(--radius); border: 1px solid var(--border2); background: var(--bg2); color: var(--text); }
+  .meta-field input:focus, .meta-field select:focus { outline: 2px solid var(--star-on); outline-offset: 1px; }
+
+  /* Section cards */
+  .section-card { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-lg); margin-bottom: 12px; overflow: hidden; }
+  .sec-head { display: flex; align-items: center; gap: 10px; padding: 11px 16px; background: var(--bg2); border-bottom: 1px solid var(--border); }
+  .sec-head.srv-head-style { background: var(--srv-head); }
+  .sec-icon { font-size: 18px; color: var(--text3); }
+  .srv-head-style .sec-icon { color: var(--amber-border); }
+  .sec-title { font-size: 13px; font-weight: 600; color: var(--text); flex: 1; }
+  .srv-head-style .sec-title { color: var(--srv-text); }
+
+  /* Subsection labels */
+  .subsec-label { font-size: 11px; font-weight: 600; color: var(--amber-border); background: var(--srv-head); padding: 5px 16px; border-top: 1px solid var(--border); text-transform: uppercase; letter-spacing: 0.04em; }
+
+  /* Item rows */
+  .item-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding: 10px 16px; border-top: 1px solid var(--border); }
+  .item-left { flex: 1; min-width: 0; }
+  .item-text { font-size: 13px; color: var(--text); line-height: 1.45; }
+  .item-note { font-size: 11px; color: var(--text3); margin-top: 3px; }
+  .item-law { font-size: 11px; color: var(--amber-border); margin-top: 3px; font-weight: 500; }
+  .item-ctrl { display: flex; align-items: center; gap: 6px; margin-top: 6px; }
+  .item-ctrl span { font-size: 11px; color: var(--text3); white-space: nowrap; }
+  .item-ctrl input { font-size: 12px; border: 1px solid var(--border2); border-radius: var(--radius); padding: 4px 7px; background: var(--bg2); color: var(--text); width: 180px; }
+
+  /* Stars */
+  .stars { display: flex; gap: 3px; flex-shrink: 0; padding-top: 1px; }
+  .star-btn { width: 24px; height: 24px; background: none; border: none; cursor: pointer; font-size: 18px; color: var(--star-off); transition: color 0.1s, transform 0.1s; padding: 0; line-height: 1; display: flex; align-items: center; justify-content: center; }
+  .star-btn:hover { transform: scale(1.2); }
+  .star-btn.on { color: var(--star-on); }
+
+  /* Notes */
+  .note-row { padding: 6px 16px 12px; border-top: 1px solid var(--border); }
+  .note-row textarea { width: 100%; font-size: 12px; border: 1px solid var(--border); border-radius: var(--radius); padding: 6px 8px; resize: vertical; min-height: 44px; background: var(--bg2); color: var(--text); font-family: inherit; }
+  .note-row textarea:focus { outline: 2px solid var(--star-on); outline-offset: 1px; }
+
+  /* Toggle */
+  .toggle-row { display: flex; align-items: center; gap: 12px; padding: 10px 16px; background: var(--srv-bg); border-bottom: 1px solid var(--border); }
+  .toggle-row span { font-size: 12px; color: var(--text2); flex: 1; }
+  .toggle { position: relative; width: 38px; height: 22px; flex-shrink: 0; }
+  .toggle input { opacity: 0; width: 0; height: 0; }
+  .tslider { position: absolute; inset: 0; border-radius: 22px; background: var(--border2); cursor: pointer; transition: background .2s; }
+  .tslider::before { content: ""; position: absolute; width: 16px; height: 16px; left: 3px; top: 3px; border-radius: 50%; background: white; transition: transform .2s; }
+  .toggle input:checked + .tslider { background: var(--green-border); }
+  .toggle input:checked + .tslider::before { transform: translateX(16px); }
+
+  /* Summary bar */
+  .summary-bar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 20px 0 12px; }
+  .stat-card { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 12px; text-align: center; }
+  .stat-card .n { font-size: 22px; font-weight: 700; color: var(--text); }
+  .stat-card .l { font-size: 11px; color: var(--text3); margin-top: 2px; }
+
+  /* Buttons */
+  .btn-row { display: flex; gap: 10px; flex-wrap: wrap; }
+  .btn { flex: 1; min-width: 160px; font-size: 13px; font-weight: 500; padding: 10px 16px; border-radius: var(--radius); border: 1px solid var(--border2); background: var(--bg); color: var(--text); cursor: pointer; transition: background .15s; font-family: inherit; }
+  .btn:hover { background: var(--bg2); }
+  .btn-primary { background: #1D9E75; color: white; border-color: #1D9E75; }
+  .btn-primary:hover { background: #0F6E56; border-color: #0F6E56; }
+  .btn-print { background: var(--blue-bg); color: var(--blue-text); border-color: var(--blue-text); }
+
+  /* Certificate */
+  .cert-box { display: none; border: 2px solid var(--border2); border-radius: var(--radius-lg); padding: 28px 32px; margin-top: 20px; background: var(--bg); }
+  .cert-box.show { display: block; }
+  .cert-header { text-align: center; margin-bottom: 20px; }
+  .cert-header h2 { font-size: 20px; font-weight: 700; letter-spacing: 0.03em; color: var(--text); }
+  .cert-header .org { font-size: 13px; color: var(--text3); margin-top: 4px; }
+  .cert-divider { border: none; border-top: 2px solid var(--border2); margin: 16px 0; }
+  .cert-status-text { font-size: 22px; font-weight: 700; text-align: center; padding: 10px 0; }
+  .cert-status-green { color: var(--green-border); }
+  .cert-status-amber { color: var(--amber-border); }
+  .cert-status-red { color: var(--red-border); }
+  .cert-body-text { font-size: 13px; color: var(--text); line-height: 1.8; text-align: center; max-width: 560px; margin: 0 auto; }
+  .cert-scores { display: flex; justify-content: center; gap: 24px; margin: 16px 0; flex-wrap: wrap; }
+  .cert-score-item { text-align: center; }
+  .cert-score-item .val { font-size: 20px; font-weight: 700; color: var(--text); }
+  .cert-score-item .lbl { font-size: 11px; color: var(--text3); }
+  .cert-sigs { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-top: 28px; }
+  .cert-sig-line { border-top: 1px solid var(--border2); padding-top: 8px; font-size: 12px; color: var(--text3); text-align: center; }
+  .cert-sig-line strong { display: block; font-size: 14px; color: var(--text); font-weight: 600; margin-top: 2px; }
+  .cert-srv-note { font-size: 12px; color: var(--amber-border); text-align: center; margin-top: 12px; padding: 8px 12px; background: var(--amber-bg); border-radius: var(--radius); display: none; }
+  .cert-stamp { width: 80px; height: 80px; border: 3px solid var(--green-border); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 16px auto 0; }
+  .cert-stamp i { font-size: 36px; color: var(--green-border); }
+  .cert-stamp.red-stamp { border-color: var(--red-border); }
+  .cert-stamp.red-stamp i { color: var(--red-border); }
+  .cert-stamp.amber-stamp { border-color: var(--amber-border); }
+  .cert-stamp.amber-stamp i { color: var(--amber-border); }
+
+  /* Print */
+  @media print {
+    body { background: white; font-size: 12px; }
+    .page { max-width: none; padding: 0; }
+    .app-header { border-radius: 0; }
+    .no-print { display: none !important; }
+    .cert-box { border: 2px solid #333; }
+    .section-card { break-inside: avoid; }
+  }
+
+  /* Responsive */
+  @media (max-width: 560px) {
+    .summary-bar { grid-template-columns: 1fr 1fr; }
+    .cert-sigs { grid-template-columns: 1fr; }
+    .stars .star-btn { width: 20px; height: 20px; font-size: 15px; }
+  }
+
+  .srv-hidden { display: none; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="app-header">
+    <div>
+      <h1>Besiktningsprotokoll</h1>
+      <div class="sub">Caravan Club av Sverige – Stockholmssektionen · v1.2</div>
+    </div>
+    <div class="legend">
+      <span class="pill pill-green">4–5 Godkänt</span>
+      <span class="pill pill-amber">3 Åtgärd</span>
+      <span class="pill pill-red">1–2 Underkänt</span>
+    </div>
+  </div>
+
+  <div class="meta-card">
+    <div class="meta-grid">
+      <div class="meta-field">
+        <label>Camping</label>
+        <select id="m-camping" onchange="checkSrv()">
+          <option value="">Välj camping...</option>
+          <option value="c1" data-srv="true">Camping 1 (serveringstillstånd)</option>
+          <option value="c2" data-srv="true">Camping 2 (serveringstillstånd)</option>
+          <option value="c3">Camping 3</option>
+          <option value="c4">Camping 4</option>
+          <option value="c5">Camping 5</option>
+          <option value="c6">Camping 6</option>
+        </select>
+      </div>
+      <div class="meta-field">
+        <label>Datum</label>
+        <input type="date" id="m-date">
+      </div>
+      <div class="meta-field">
+        <label>Besiktningsman</label>
+        <input type="text" id="m-name" placeholder="För- och efternamn">
+      </div>
+      <div class="meta-field">
+        <label>Typ av besiktning</label>
+        <select id="m-type">
+          <option>Ordinarie besiktning</option>
+          <option>Uppföljning</option>
+          <option>Förbesiktning</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div id="sections-container"></div>
+
+  <!-- Servering / Alkoholtillstånd -->
+  <div class="section-card srv-hidden" id="srv-section">
+    <div class="toggle-row">
+      <span>Tillfälligt tillstånd för slutet sällskap (förenklade krav)</span>
+      <label class="toggle">
+        <input type="checkbox" id="toggle-tillfallig" onchange="buildSrvSection()">
+        <span class="tslider"></span>
+      </label>
+    </div>
+    <div class="sec-head srv-head-style">
+      <i class="ti ti-license sec-icon"></i>
+      <span class="sec-title">Servering / alkoholtillstånd</span>
+      <span class="pill pill-gray" id="rag-srv">Ej bedömd</span>
+    </div>
+    <div id="srv-items-container"></div>
+    <div class="note-row">
+      <textarea placeholder="Övriga anteckningar för servering / alkoholtillstånd..."></textarea>
+    </div>
+  </div>
+
+  <div class="summary-bar">
+    <div class="stat-card"><div class="n" id="s-score">–</div><div class="l">Totalpoäng</div></div>
+    <div class="stat-card"><div class="n" id="s-pct">–</div><div class="l">Av max möjligt</div></div>
+    <div class="stat-card"><div class="n" id="s-red">0</div><div class="l">Röda punkter</div></div>
+    <div class="stat-card"><div class="n" id="s-rated">0</div><div class="l">Bedömda punkter</div></div>
+  </div>
+
+  <div class="btn-row no-print">
+    <button class="btn btn-primary" onclick="generateCert()">
+      <i class="ti ti-certificate"></i> Generera certifieringsintyg
+    </button>
+    <button class="btn btn-print" onclick="window.print()">
+      <i class="ti ti-printer"></i> Skriv ut / spara som PDF
+    </button>
+    <button class="btn" onclick="resetAll()">
+      <i class="ti ti-refresh"></i> Återställ
+    </button>
+  </div>
+
+  <div class="cert-box" id="cert-box">
+    <div class="cert-header">
+      <h2>CERTIFIERINGSINTYG</h2>
+      <div class="org">Caravan Club av Sverige – Stockholmssektionen</div>
+    </div>
+    <hr class="cert-divider">
+    <div id="cert-stamp-wrap"></div>
+    <div class="cert-status-text" id="cert-status-text"></div>
+    <div class="cert-scores" id="cert-scores"></div>
+    <div class="cert-body-text" id="cert-body-text"></div>
+    <div class="cert-srv-note" id="cert-srv-note"></div>
+    <hr class="cert-divider">
+    <div class="cert-sigs">
+      <div class="cert-sig-line">Besiktningsman<strong id="cert-sig-name">–</strong></div>
+      <div class="cert-sig-line">Datum<strong id="cert-sig-date">–</strong></div>
+    </div>
+  </div>
+
+</div><!-- end .page -->
+
+<script>
+const SECTIONS = [
+  {id:"ankomst", icon:"ti-gate", label:"Ankomst & första intryck", weight:1.5, items:[
+    {t:"Skyltar och vägvisning är tydliga och i gott skick"},
+    {t:"Entré och reception är välkomnande, ren och presentabel", n:"Gräs, rabatter, uppfart, fasad"},
+    {t:"Parkeringsyta är ordnad och fri från skräp"},
+    {t:"Välkomstskylt med aktuell information finns synligt"},
+    {t:"Allmän känsla av ordning och välskötsel vid ankomst"},
+  ]},
+  {id:"sanitet", icon:"ti-droplet", label:"Sanitet & hygien", weight:2, items:[
+    {t:"Toaletter är rena, luktfria och välskötta"},
+    {t:"Duschutrymmen är rena och i gott skick"},
+    {t:"Tvål, toalettpapper och handdukar finns tillgängliga"},
+    {t:"Rengöringsschema är synligt, uppdaterat med datum och signatur"},
+    {t:"Avlopp och golvbrunnar är fria och fungerar"},
+    {t:"Belysning fungerar i alla sanitetsrum"},
+  ]},
+  {id:"gemensamma", icon:"ti-building-community", label:"Gemensamma ytor", weight:1, items:[
+    {t:"Gemensamma ytor är rena och fria från skräp"},
+    {t:"Utemöbler är hela, rena och i gott skick"},
+    {t:"Belysning fungerar på gångvägar och gemensamma ytor"},
+    {t:"Sopkärl är märkta, placerade korrekt och regelbundet tömda"},
+    {t:"Återvinningsstation finns och är tydligt märkt"},
+  ]},
+  {id:"vardskap", icon:"ti-user-check", label:"Campingvärdskap & dokumentation", weight:1.5, items:[
+    {t:"Aktuellt arbetsschema för campingvärden finns tillgängligt"},
+    {t:"Campingvärdens kontaktuppgifter är anslagna för gästerna"},
+    {t:"Campingvärden känner till nödrutiner och aktuella larmnummer"},
+    {t:"Gästinformation och välkomstfolder finns och är uppdaterad"},
+    {t:"Campingkarta, regler och öppettider är anslagna och aktuella"},
+    {t:"Campingråd och ordningsregler är anslagna på synlig plats"},
+    {t:"Campingvärden vet vem hen kontaktar vid problem (eskaleringsväg)"},
+  ]},
+  {id:"sakerhet", icon:"ti-shield-check", label:"Säkerhet & beredskap", weight:2, items:[
+    {t:"Brandsläckare finns, är kontrollerade och tydligt skyltade"},
+    {t:"Nödutgångar är fria, välskyltade och utan hinder"},
+    {t:"Förstahjälpenlåda finns, är komplett och tillgänglig"},
+    {t:"Evakueringsplan finns och är känd av campingvärden"},
+    {t:"Hjärtstartare finns och är registrerad (om tillämpligt)"},
+  ]},
+  {id:"teknisk", icon:"ti-tool", label:"Teknisk standard", weight:1, items:[
+    {t:"El-uttag för husvagnar/husbilar fungerar och är säkra"},
+    {t:"VA-anslutningar är i gott skick, inga synliga läckor"},
+    {t:"Servicehus är i gott tekniskt skick – inga synliga skador"},
+    {t:"Gångvägar är fria från halkrisker och i gott skick"},
+    {t:"Belysning utomhus fungerar och täcker campingområdet"},
+  ]},
+];
+
+const SRV_FULL = [
+  { label:"Tillstånd & ansvar", items:[
+    {t:"Var finns serveringstillståndet?", n:"Original eller bestyrkt kopia skall visas vid inspektion", law:"Krav: tillståndet måste finnas tillgängligt på plats", ctrl:"Plats:"},
+    {t:"Vem är utsedd som ansvarig föreståndare för serveringstillståndet?", law:"Krav: namngiven föreståndare skall finnas registrerad hos kommunen", ctrl:"Namn:"},
+    {t:"Vilka personer är uppsatta som serveringspersonal?", n:"Lista skall finnas tillgänglig och visas", ctrl:"Antal:"},
+    {t:"Stämmer serveringstider och serveringsyta med vad tillståndet anger?", law:"Avvikelse kan leda till återkallelse av tillståndet"},
+  ]},
+  { label:"Utbildning & kompetens", items:[
+    {t:"Har serveringspersonalen genomgått utbildning i ansvarsfull alkoholservering (RAS eller motsv.)?", n:"Dokumentation skall visas – intyg per person", law:"Starkt rekommenderat av Folkhälsomyndigheten"},
+    {t:"Finns dokumenterad hygienutbildning för serveringspersonalen?", n:"Livsmedelsverkets krav – intyg per person skall kunna uppvisas"},
+    {t:"Har personalen fått introduktion i campingens egna rutiner för servering och alkohol?", ctrl:"Datum:"},
+  ]},
+  { label:"Egenkontrollprogram", items:[
+    {t:"Var finns egenkontrollprogrammet?", n:"Skall vara lättillgängligt för personalen", law:"Krav enligt alkohollagen 8 kap. 8 §", ctrl:"Plats:"},
+    {t:"Är egenkontrollprogrammet ifyllt och uppdaterat?", n:"Kontrollera senaste datum och signatur"},
+    {t:"Innehåller programmet rutiner för ålderskontroll, nykterhetskontroll och avvisning?"},
+    {t:"Loggas avvikelser och incidenter i egenkontrollprogrammet?", n:"Stickprov – be att få se senaste månaden"},
+  ]},
+  { label:"Köket & serveringslokal", items:[
+    {t:"Finns en fullständig förstahjälpenlåda i köket?", n:"Skall vara lättillgänglig och komplett"},
+    {t:"Är köksytor, utrustning och serveringsutrymmen rena och i gott skick?"},
+    {t:"Finns schema för serveringspersonalen – är det tillgängligt och uppdaterat?", ctrl:"Senaste datum:"},
+    {t:"Är kyla och förvaring av livsmedel korrekt (temperaturer, märkning)?", n:"Kontrollera kylskåp och frysar – logg skall föras"},
+    {t:"Hanteras kassahantering och kvittosystem korrekt för alkoholförsäljning?"},
+  ]},
+  { label:"Ansvarsfull servering", items:[
+    {t:"Genomförs ålderskontroll konsekvent – finns rutin dokumenterad och känd av all personal?", law:"Krav: alkohol får ej serveras till personer under 18 år"},
+    {t:"Finns rutiner för att neka servering till synbart berusade gäster?", law:"Krav enligt alkohollagen 3 kap. 5 §"},
+    {t:"Erbjuds lättdrycker och alkoholfria alternativ vid sidan av alkohol?", n:"God sed enligt Folkhälsomyndigheten"},
+  ]},
+];
+
+const SRV_TILLFALLIG = [
+  { label:"Tillfälligt tillstånd – slutet sällskap", items:[
+    {t:"Var finns det tillfälliga tillståndet?", n:"Original skall finnas på plats under hela evenemanget", law:"Krav: tillståndet gäller specifikt tillfälle och sällskap", ctrl:"Plats:"},
+    {t:"Vem är ansvarig för evenemanget och känner till tillståndets villkor?", ctrl:"Namn:"},
+    {t:"Sker serveringen inom angiven tid och enbart till det slutna sällskapet?"},
+    {t:"Finns rutiner för att neka servering till berusade eller minderåriga?", law:"Gäller även vid tillfälliga tillstånd"},
+    {t:"Är serveringslokal/yta ren och i ordning?"},
+    {t:"Finns förstahjälpenlåda tillgänglig vid serveringsstället?"},
+  ]},
+];
+
+const scores = {};
+const srvScores = {};
+
+function ragClass(avg) {
+  if (avg === null) return 'pill-gray';
+  if (avg >= 4) return 'pill-green';
+  if (avg >= 3) return 'pill-amber';
+  return 'pill-red';
+}
+function ragLabel(avg) {
+  if (avg === null) return 'Ej bedömd';
+  if (avg >= 4) return 'Godkänt (' + avg.toFixed(1) + ')';
+  if (avg >= 3) return 'Åtgärd krävs (' + avg.toFixed(1) + ')';
+  return 'Underkänt (' + avg.toFixed(1) + ')';
+}
+
+function setScore(sid, idx, val) {
+  if (!scores[sid]) scores[sid] = {};
+  scores[sid][idx] = val;
+  for (let i = 1; i <= 5; i++) {
+    const el = document.getElementById('star-' + sid + '-' + idx + '-' + i);
+    if (el) el.className = 'star-btn' + (i <= val ? ' on' : '');
+  }
+  updateSectionRag(sid);
+  updateSummary();
+}
+
+function setSrvScore(idx, val) {
+  srvScores[idx] = val;
+  for (let i = 1; i <= 5; i++) {
+    const el = document.getElementById('srvstar-' + idx + '-' + i);
+    if (el) el.className = 'star-btn' + (i <= val ? ' on' : '');
+  }
+  updateSrvRag();
+  updateSummary();
+}
+
+function sectionAvg(sid) {
+  const sec = SECTIONS.find(s => s.id === sid);
+  const vals = sec.items.map((_, i) => scores[sid] && scores[sid][i]).filter(v => v !== undefined);
+  if (!vals.length) return null;
+  return vals.reduce((a, b) => a + b, 0) / vals.length;
+}
+
+function srvItemTotal() {
+  const tillf = document.getElementById('toggle-tillfallig').checked;
+  return (tillf ? SRV_TILLFALLIG : SRV_FULL).reduce((a, g) => a + g.items.length, 0);
+}
+
+function srvAvgCalc() {
+  const total = srvItemTotal();
+  const vals = Array.from({length: total}, (_, i) => srvScores[i]).filter(v => v !== undefined);
+  if (!vals.length) return null;
+  return vals.reduce((a, b) => a + b, 0) / vals.length;
+}
+
+function updateSectionRag(sid) {
+  const avg = sectionAvg(sid);
+  const pill = document.getElementById('rag-' + sid);
+  if (pill) { pill.className = 'pill ' + ragClass(avg); pill.textContent = ragLabel(avg); }
+}
+
+function updateSrvRag() {
+  const avg = srvAvgCalc();
+  const pill = document.getElementById('rag-srv');
+  if (pill) { pill.className = 'pill ' + ragClass(avg); pill.textContent = ragLabel(avg); }
+}
+
+function updateSummary() {
+  let totalW = 0, scoreW = 0, reds = 0, rated = 0;
+  SECTIONS.forEach(sec => {
+    sec.items.forEach((_, i) => {
+      const v = scores[sec.id] && scores[sec.id][i];
+      if (v !== undefined) { rated++; scoreW += v * sec.weight; totalW += 5 * sec.weight; if (v <= 2) reds++; }
+    });
+  });
+  const srvVis = !document.getElementById('srv-section').classList.contains('srv-hidden');
+  if (srvVis) {
+    const total = srvItemTotal(); const w = 2.5;
+    for (let i = 0; i < total; i++) {
+      const v = srvScores[i];
+      if (v !== undefined) { rated++; scoreW += v * w; totalW += 5 * w; if (v <= 2) reds++; }
+    }
+  }
+  document.getElementById('s-score').textContent = rated ? scoreW.toFixed(1) + 'p' : '–';
+  document.getElementById('s-pct').textContent = rated ? Math.round(scoreW / totalW * 100) + '%' : '–';
+  document.getElementById('s-red').textContent = reds;
+  document.getElementById('s-rated').textContent = rated;
+}
+
+function checkSrv() {
+  const sel = document.getElementById('m-camping');
+  const opt = sel.options[sel.selectedIndex];
+  const hasSrv = opt && opt.dataset.srv === 'true';
+  document.getElementById('srv-section').classList.toggle('srv-hidden', !hasSrv);
+  updateSummary();
+}
+
+function buildSrvSection() {
+  Object.keys(srvScores).forEach(k => delete srvScores[k]);
+  const tillf = document.getElementById('toggle-tillfallig').checked;
+  const groups = tillf ? SRV_TILLFALLIG : SRV_FULL;
+  const c = document.getElementById('srv-items-container');
+  c.innerHTML = '';
+  let idx = 0;
+  groups.forEach(grp => {
+    const lbl = document.createElement('div');
+    lbl.className = 'subsec-label';
+    lbl.textContent = grp.label;
+    c.appendChild(lbl);
+    grp.items.forEach(it => {
+      const i = idx++;
+      const row = document.createElement('div');
+      row.className = 'item-row';
+      row.innerHTML = '<div class="item-left">'
+        + '<div class="item-text">' + it.t + '</div>'
+        + (it.law ? '<div class="item-law"><i class="ti ti-scale" style="font-size:11px;vertical-align:-1px"></i> ' + it.law + '</div>' : '')
+        + (it.n ? '<div class="item-note">' + it.n + '</div>' : '')
+        + (it.ctrl ? '<div class="item-ctrl"><span>' + it.ctrl + '</span><input type="text" placeholder="Anteckna här..."></div>' : '')
+        + '</div>'
+        + '<div class="stars">' + [1,2,3,4,5].map(v =>
+          '<button class="star-btn" id="srvstar-' + i + '-' + v + '" title="' + v + '" onclick="setSrvScore(' + i + ',' + v + ')">★</button>'
+        ).join('') + '</div>';
+      c.appendChild(row);
+    });
+  });
+  updateSrvRag();
+  updateSummary();
+}
+
+function generateCert() {
+  const campingEl = document.getElementById('m-camping');
+  const campingName = campingEl.options[campingEl.selectedIndex]?.text || '[Camping ej vald]';
+  const date = document.getElementById('m-date').value;
+  const name = document.getElementById('m-name').value || '[Ej angiven]';
+  const srvVis = !document.getElementById('srv-section').classList.contains('srv-hidden');
+
+  let totalW = 0, scoreW = 0, rated = 0, reds = 0, srvReds = 0;
+  SECTIONS.forEach(sec => {
+    sec.items.forEach((_, i) => {
+      const v = scores[sec.id] && scores[sec.id][i];
+      if (v !== undefined) { rated++; scoreW += v * sec.weight; totalW += 5 * sec.weight; if (v <= 2) reds++; }
+    });
+  });
+  if (srvVis) {
+    const total = srvItemTotal(); const w = 2.5;
+    for (let i = 0; i < total; i++) {
+      const v = srvScores[i];
+      if (v !== undefined) { rated++; scoreW += v * w; totalW += 5 * w; if (v <= 2) { reds++; srvReds++; } }
+    }
+  }
+
+  const pct = totalW ? Math.round(scoreW / totalW * 100) : 0;
+  const passed = rated > 0 && reds === 0 && pct >= 60;
+  const conditional = rated > 0 && reds <= 1 && pct >= 50;
+
+  let status, body, stampClass, stampIcon, statusClass;
+  if (!rated) {
+    status = 'Protokollet är inte ifyllt';
+    body = 'Fyll i besiktningsprotokoll innan intyg genereras.';
+    stampIcon = 'ti-clock'; stampClass = ''; statusClass = '';
+  } else if (passed) {
+    status = 'GODKÄND';
+    body = campingName + ' har genomgått besiktning och uppfyller samtliga krav med ett resultat om ' + scoreW.toFixed(1) + ' poäng av maximalt ' + totalW.toFixed(1) + ' (' + pct + '%). Inga underkända punkter noterades. Certifikatet gäller till och med nästkommande ordinarie besiktningstillfälle.';
+    stampIcon = 'ti-check'; stampClass = 'cert-stamp'; statusClass = 'cert-status-green';
+  } else if (conditional) {
+    status = 'VILLKORLIGT GODKÄND';
+    body = campingName + ' godkänns villkorligt. Resultat: ' + scoreW.toFixed(1) + 'p av ' + totalW.toFixed(1) + ' (' + pct + '%). ' + reds + ' punkt(er) kräver åtgärd inom 30 dagar. Uppföljande kontroll skall genomföras.';
+    stampIcon = 'ti-alert-triangle'; stampClass = 'cert-stamp amber-stamp'; statusClass = 'cert-status-amber';
+  } else {
+    status = 'UNDERKÄND';
+    body = campingName + ' uppfyller inte ställda krav. Resultat: ' + scoreW.toFixed(1) + 'p av ' + totalW.toFixed(1) + ' (' + pct + '%). ' + reds + ' underkänd(a) punkt(er). Ny besiktning krävs efter genomförda åtgärder.';
+    stampIcon = 'ti-x'; stampClass = 'cert-stamp red-stamp'; statusClass = 'cert-status-red';
+  }
+
+  document.getElementById('cert-stamp-wrap').innerHTML = stampClass
+    ? '<div class="' + stampClass + '"><i class="ti ' + stampIcon + '"></i></div>' : '';
+  document.getElementById('cert-status-text').textContent = status;
+  document.getElementById('cert-status-text').className = 'cert-status-text ' + statusClass;
+  document.getElementById('cert-scores').innerHTML = rated
+    ? '<div class="cert-score-item"><div class="val">' + scoreW.toFixed(1) + 'p</div><div class="lbl">Totalpoäng</div></div>'
+    + '<div class="cert-score-item"><div class="val">' + pct + '%</div><div class="lbl">Av max möjligt</div></div>'
+    + '<div class="cert-score-item"><div class="val">' + reds + '</div><div class="lbl">Röda punkter</div></div>'
+    : '';
+  document.getElementById('cert-body-text').textContent = body;
+
+  const srvNoteEl = document.getElementById('cert-srv-note');
+  if (srvVis && srvReds > 0) {
+    srvNoteEl.style.display = 'block';
+    srvNoteEl.textContent = 'Notering: ' + srvReds + ' underkänd(a) punkt(er) avser servering/alkoholtillstånd. Åtgärder kan kräva kontakt med kommunens tillståndsenhet.';
+  } else {
+    srvNoteEl.style.display = 'none';
+  }
+
+  document.getElementById('cert-sig-name').textContent = name;
+  document.getElementById('cert-sig-date').textContent = date ? new Date(date + 'T12:00:00').toLocaleDateString('sv-SE') : '–';
+
+  const certBox = document.getElementById('cert-box');
+  certBox.className = 'cert-box show';
+  certBox.scrollIntoView({behavior: 'smooth', block: 'nearest'});
+}
+
+function resetAll() {
+  if (!confirm('Återställ och rensa alla svar?')) return;
+  Object.keys(scores).forEach(k => delete scores[k]);
+  Object.keys(srvScores).forEach(k => delete srvScores[k]);
+  document.querySelectorAll('.star-btn').forEach(b => b.classList.remove('on'));
+  document.querySelectorAll('textarea').forEach(t => t.value = '');
+  document.querySelectorAll('.item-ctrl input').forEach(i => i.value = '');
+  SECTIONS.forEach(sec => updateSectionRag(sec.id));
+  updateSrvRag();
+  updateSummary();
+  document.getElementById('cert-box').className = 'cert-box';
+}
+
+function buildSections() {
+  const c = document.getElementById('sections-container');
+  SECTIONS.forEach(sec => {
+    const div = document.createElement('div');
+    div.className = 'section-card';
+    let html = '<div class="sec-head"><i class="ti ' + sec.icon + ' sec-icon"></i>'
+      + '<span class="sec-title">' + sec.label + '</span>'
+      + '<span class="pill pill-gray" id="rag-' + sec.id + '">Ej bedömd</span></div>';
+    sec.items.forEach((it, i) => {
+      html += '<div class="item-row">'
+        + '<div class="item-left"><div class="item-text">' + it.t + '</div>'
+        + (it.n ? '<div class="item-note">' + it.n + '</div>' : '')
+        + '</div>'
+        + '<div class="stars">' + [1,2,3,4,5].map(v =>
+          '<button class="star-btn" id="star-' + sec.id + '-' + i + '-' + v + '" title="' + v + '" onclick="setScore(\'' + sec.id + '\',' + i + ',' + v + ')">★</button>'
+        ).join('') + '</div></div>';
+    });
+    html += '<div class="note-row"><textarea placeholder="Anteckningar för ' + sec.label.toLowerCase() + '..."></textarea></div>';
+    div.innerHTML = html;
+    c.appendChild(div);
+  });
+}
+
+document.getElementById('m-date').valueAsDate = new Date();
+buildSections();
+buildSrvSection();
+</script>
+</body>
+</html>
