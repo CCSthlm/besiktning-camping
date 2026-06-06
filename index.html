@@ -129,7 +129,7 @@
   .cert-header .org { font-size: 13px; color: var(--text3); margin-top: 4px; }
   .cert-camping { font-size: 17px; font-weight: 600; color: var(--text); margin-top: 6px; letter-spacing: 0.02em; }
   .cert-divider { border: none; border-top: 2px solid var(--border2); margin: 16px 0; }
-  .cert-status-text { font-size: 22px; font-weight: 700; text-align: center; padding: 10px 0; }
+  .cert-status-text { font-size: 32px; font-weight: 700; text-align: center; padding: 10px 0; letter-spacing: 0.05em; }
   .cert-status-green { color: var(--green-border); }
   .cert-status-amber { color: var(--amber-border); }
   .cert-status-red { color: var(--red-border); }
@@ -787,30 +787,24 @@ function generateCert() {
 
   const pct = totalW ? Math.round(scoreW / totalW * 100) : 0;
   const scFailed = SC_SECTION.items.some((_, i) => !scNaScores[i] && scScores[i] === 'nej');
-  const passed = rated > 0 && reds === 0 && pct >= 60 && !scFailed;
-  const conditional = rated > 0 && reds <= 1 && pct >= 50 && !scFailed;
+  const passed = rated > 0 && reds === 0 && !scFailed;
 
-  let status, body, stampClass, stampIcon, statusClass;
+  let status, body, statusClass;
   if (!rated) {
     status = 'Protokollet är inte ifyllt';
     body = 'Fyll i besiktningsprotokoll innan intyg genereras.';
-    stampIcon = 'ti-clock'; stampClass = ''; statusClass = '';
+    statusClass = '';
   } else if (passed) {
     status = 'GODKÄND';
-    body = fullCampingName + ' har genomgått ' + inspType.toLowerCase() + ' och uppfyller samtliga krav med ett resultat om ' + scoreW.toFixed(1) + ' poäng av maximalt ' + totalW.toFixed(1) + ' (' + pct + '%). Inga underkända punkter noterades. Certifikatet gäller till och med nästkommande ordinarie besiktningstillfälle.';
-    stampIcon = 'ti-check'; stampClass = 'cert-stamp'; statusClass = 'cert-status-green';
-  } else if (conditional) {
-    status = 'VILLKORLIGT GODKÄND';
-    body = fullCampingName + ' godkänns villkorligt i ' + inspType.toLowerCase() + '. Resultat: ' + scoreW.toFixed(1) + 'p av ' + totalW.toFixed(1) + ' (' + pct + '%). ' + reds + ' punkt(er) kräver åtgärd inom 30 dagar. Uppföljande kontroll skall genomföras.';
-    stampIcon = 'ti-alert-triangle'; stampClass = 'cert-stamp amber-stamp'; statusClass = 'cert-status-amber';
+    body = fullCampingName + ' har genomgått ' + inspType.toLowerCase() + ' och uppfyller samtliga krav. Inga underkända punkter noterades. Certifikatet gäller till och med nästkommande ordinarie besiktningstillfälle.';
+    statusClass = 'cert-status-green';
   } else {
     status = 'UNDERKÄND';
-    body = fullCampingName + ' uppfyller inte ställda krav i ' + inspType.toLowerCase() + '. Resultat: ' + scoreW.toFixed(1) + 'p av ' + totalW.toFixed(1) + ' (' + pct + '%). ' + reds + ' underkänd(a) punkt(er). Ny besiktning krävs efter genomförda åtgärder.';
-    stampIcon = 'ti-x'; stampClass = 'cert-stamp red-stamp'; statusClass = 'cert-status-red';
+    body = fullCampingName + ' uppfyller inte ställda krav i ' + inspType.toLowerCase() + '. ' + reds + ' underkänd(a) punkt(er). Ny besiktning krävs efter genomförda åtgärder.';
+    statusClass = 'cert-status-red';
   }
 
-  document.getElementById('cert-stamp-wrap').innerHTML = stampClass
-    ? '<div class="' + stampClass + '"><i class="ti ' + stampIcon + '"></i></div>' : '';
+  document.getElementById('cert-stamp-wrap').innerHTML = '';
   document.getElementById('cert-status-text').textContent = status;
   document.getElementById('cert-status-text').className = 'cert-status-text ' + statusClass;
   document.getElementById('cert-scores').innerHTML = rated
@@ -1107,8 +1101,7 @@ function exportXLS() {
   const totalItems = SECTIONS.reduce((a, s) => a + s.items.length, 0) + srvTotal2 - naCount;
 
   const scFailed = SC_SECTION.items.some((_, i) => !scNaScores[i] && scScores[i] === 'nej');
-  const passed = rated > 0 && reds === 0 && pct >= 60 && !scFailed;
-  const conditional = rated > 0 && reds <= 1 && pct >= 50 && !scFailed;
+  const passed = rated > 0 && reds === 0 && !scFailed;
   const status = !rated ? 'Ej ifyllt' : passed ? 'GODKÄND' : conditional ? 'VILLKORLIGT GODKÄND' : 'UNDERKÄND';
 
   const summaryData = [
