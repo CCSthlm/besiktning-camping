@@ -319,7 +319,7 @@
       <i class="ti ti-brand-github"></i> Spara en kopia på servern
     </button>
     <button class="btn btn-sharepoint" id="btn-sharepoint" onclick="saveToSharePoint()" style="background:#0078d4;color:#fff;border-color:#0078d4;">
-      <i class="ti ti-brand-office"></i> Spara till SharePoint
+      <i class="ti ti-brand-office"></i> Spara i OneDrive
     </button>
     <button class="btn" onclick="resetAll()">
       <i class="ti ti-refresh"></i> Återställ
@@ -1679,7 +1679,7 @@ async function saveToSharePoint() {
       btn.innerHTML = '<i class="ti ti-check"></i> Sparat till SharePoint!';
       btn.style.background = '#1D9E75';
       setTimeout(() => {
-        btn.innerHTML = '<i class="ti ti-brand-office"></i> Spara till SharePoint';
+        btn.innerHTML = '<i class="ti ti-brand-office"></i> Spara i OneDrive';
         btn.style.background = '#0078d4';
         btn.disabled = false;
       }, 4000);
@@ -1689,7 +1689,7 @@ async function saveToSharePoint() {
     }
   } catch(e) {
     alert('Fel vid sparande till SharePoint: ' + e.message);
-    btn.innerHTML = '<i class="ti ti-brand-office"></i> Spara till SharePoint';
+    btn.innerHTML = '<i class="ti ti-brand-office"></i> Spara i OneDrive';
     btn.style.background = '#0078d4';
     btn.disabled = false;
   }
