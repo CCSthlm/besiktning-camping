@@ -221,7 +221,7 @@
         <input type="date" id="m-date">
       </div>
       <div class="meta-field">
-        <label>Besiktningsman</label>
+        <label>Ansvarig för besiktningen</label>
         <select id="m-name">
           <option value="">Välj besiktningsman...</option>
           <option>Massimo Johansson</option>
@@ -234,7 +234,7 @@
         <label>Typ av besiktning</label>
         <select id="m-type">
           <option>Ordinarie besiktning</option>
-          <option>Uppföljning</option>
+          <option>Uppföljningsbesiktning</option>
           <option>Förbesiktning</option>
         </select>
       </div>
@@ -301,7 +301,7 @@
     <div class="cert-srv-note" id="cert-srv-note"></div>
     <hr class="cert-divider">
     <div class="cert-sigs">
-      <div class="cert-sig-line">Besiktningsman<strong id="cert-sig-name">–</strong></div>
+      <div class="cert-sig-line">Ansvarig för besiktningen<strong id="cert-sig-name">–</strong></div>
       <div class="cert-sig-line">Datum<strong id="cert-sig-date">–</strong></div>
     </div>
   </div>
@@ -411,6 +411,14 @@ const SRV_TILLFALLIG = [
 ];
 
 const scores = {};
+const CAMPING_FULL_NAMES = {
+  'c1': 'Caravan Club Björkö Örns Camping',
+  'c2': 'Caravan Club Östnora Camping',
+  'c3': 'Caravan Club Kapellskärs Camping',
+  'c4': 'Caravan Club Mista Camping',
+  'c5': 'Caravan Club Storsveds Camping',
+  'c6': 'Caravan Club Örstigs Camping',
+};
 const srvScores = {};
 const naScores = {};
 const srvNaScores = {};
@@ -597,7 +605,10 @@ function buildSrvSection() {
 function generateCert() {
   const campingEl = document.getElementById('m-camping');
   const campingName = campingEl.options[campingEl.selectedIndex]?.text || '[Camping ej vald]';
-  document.getElementById('cert-camping-name').textContent = campingName;
+  const campingVal = campingEl.value;
+  const fullCampingName = CAMPING_FULL_NAMES[campingVal] || campingName;
+  const inspType = document.getElementById('m-type').value || 'besiktning';
+  document.getElementById('cert-camping-name').textContent = fullCampingName;
   const date = document.getElementById('m-date').value;
   const name = document.getElementById('m-name').value || '[Ej angiven]';
   const srvVis = !document.getElementById('srv-section').classList.contains('srv-hidden');
@@ -629,15 +640,15 @@ function generateCert() {
     stampIcon = 'ti-clock'; stampClass = ''; statusClass = '';
   } else if (passed) {
     status = 'GODKÄND';
-    body = campingName + ' har genomgått besiktning och uppfyller samtliga krav med ett resultat om ' + scoreW.toFixed(1) + ' poäng av maximalt ' + totalW.toFixed(1) + ' (' + pct + '%). Inga underkända punkter noterades. Certifikatet gäller till och med nästkommande ordinarie besiktningstillfälle.';
+    body = fullCampingName + ' har genomgått ' + inspType.toLowerCase() + ' och uppfyller samtliga krav med ett resultat om ' + scoreW.toFixed(1) + ' poäng av maximalt ' + totalW.toFixed(1) + ' (' + pct + '%). Inga underkända punkter noterades. Certifikatet gäller till och med nästkommande ordinarie besiktningstillfälle.';
     stampIcon = 'ti-check'; stampClass = 'cert-stamp'; statusClass = 'cert-status-green';
   } else if (conditional) {
     status = 'VILLKORLIGT GODKÄND';
-    body = campingName + ' godkänns villkorligt. Resultat: ' + scoreW.toFixed(1) + 'p av ' + totalW.toFixed(1) + ' (' + pct + '%). ' + reds + ' punkt(er) kräver åtgärd inom 30 dagar. Uppföljande kontroll skall genomföras.';
+    body = fullCampingName + ' godkänns villkorligt i ' + inspType.toLowerCase() + '. Resultat: ' + scoreW.toFixed(1) + 'p av ' + totalW.toFixed(1) + ' (' + pct + '%). ' + reds + ' punkt(er) kräver åtgärd inom 30 dagar. Uppföljande kontroll skall genomföras.';
     stampIcon = 'ti-alert-triangle'; stampClass = 'cert-stamp amber-stamp'; statusClass = 'cert-status-amber';
   } else {
     status = 'UNDERKÄND';
-    body = campingName + ' uppfyller inte ställda krav. Resultat: ' + scoreW.toFixed(1) + 'p av ' + totalW.toFixed(1) + ' (' + pct + '%). ' + reds + ' underkänd(a) punkt(er). Ny besiktning krävs efter genomförda åtgärder.';
+    body = fullCampingName + ' uppfyller inte ställda krav i ' + inspType.toLowerCase() + '. Resultat: ' + scoreW.toFixed(1) + 'p av ' + totalW.toFixed(1) + ' (' + pct + '%). ' + reds + ' underkänd(a) punkt(er). Ny besiktning krävs efter genomförda åtgärder.';
     stampIcon = 'ti-x'; stampClass = 'cert-stamp red-stamp'; statusClass = 'cert-status-red';
   }
 
@@ -828,7 +839,7 @@ function exportXLS() {
     [],
     ['Camping', campingName],
     ['Datum', dateStr],
-    ['Besiktningsman', inspector],
+    ['Ansvarig för besiktningen', inspector],
     ['Typ av besiktning', inspType],
     [],
     ['RESULTAT', status],
