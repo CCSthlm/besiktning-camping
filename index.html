@@ -6,6 +6,7 @@
 <title>Besiktningsprotokoll – Caravan Club of Sweden - Stockholm</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/tabler-icons.min.css">
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://alcdn.msauth.net/browser/2.38.0/js/msal-browser.min.js"></script>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
@@ -316,6 +317,9 @@
     </button>
     <button class="btn btn-github" id="btn-github" onclick="saveToGitHub()" style="background:#24292e;color:#fff;border-color:#24292e;">
       <i class="ti ti-brand-github"></i> Spara en kopia på servern
+    </button>
+    <button class="btn btn-sharepoint" id="btn-sharepoint" onclick="saveToSharePoint()" style="background:#0078d4;color:#fff;border-color:#0078d4;">
+      <i class="ti ti-brand-office"></i> Spara till SharePoint
     </button>
     <button class="btn" onclick="resetAll()">
       <i class="ti ti-refresh"></i> Återställ
@@ -1605,6 +1609,92 @@ function updateGHBtn() {
   }
   updateGHBtn();
 })();
+
+// ---- SharePoint / OneDrive integration ----
+const MSAL_CONFIG = {
+  auth: {
+    clientId: '01d17a16-1a0f-4784-bcb2-90adb1a64ab0',
+    authority: 'https://login.microsoftonline.com/cc-camping.se',
+    redirectUri: window.location.href.split('?')[0],
+  },
+  cache: { cacheLocation: 'localStorage', storeAuthStateInCookie: true }
+};
+
+let _msalInstance = null;
+function getMSAL() {
+  if (!_msalInstance) _msalInstance = new msal.PublicClientApplication(MSAL_CONFIG);
+  return _msalInstance;
+}
+
+async function getGraphToken() {
+  const msalApp = getMSAL();
+  const scopes = ['Files.ReadWrite', 'User.Read'];
+  const accounts = msalApp.getAllAccounts();
+  try {
+    if (accounts.length > 0) {
+      const result = await msalApp.acquireTokenSilent({ scopes, account: accounts[0] });
+      return result.accessToken;
+    }
+  } catch(e) {}
+  const result = await msalApp.acquireTokenPopup({ scopes });
+  return result.accessToken;
+}
+
+async function saveToSharePoint() {
+  const btn = document.getElementById('btn-sharepoint');
+  const campingEl = document.getElementById('m-camping');
+  const campingVal = campingEl.value;
+  if (!campingVal) { alert('Välj camping först.'); return; }
+
+  const campingName = CAMPING_FULL_NAMES[campingVal] || campingEl.options[campingEl.selectedIndex]?.text || 'camping';
+  const date = document.getElementById('m-date').value || new Date().toISOString().slice(0,10);
+  const safeName = campingName.replace(/[^a-zA-Z\u00e5\u00e4\u00f6\u00c5\u00c4\u00d60-9]/g, '_');
+  const filename = safeName + '_' + date + '.xlsx';
+
+  btn.innerHTML = '<i class="ti ti-loader"></i> Loggar in...';
+  btn.disabled = true;
+
+  try {
+    const token = await getGraphToken();
+    btn.innerHTML = '<i class="ti ti-loader"></i> Sparar...';
+
+    // Build workbook
+    const wb = buildWorkbook();
+    const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+    const blob = new Blob([wbout], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+
+    // Upload to OneDrive: /me/drive/root:/Besiktningar_Campingar/{filename}:/content
+    const uploadUrl = 'https://graph.microsoft.com/v1.0/me/drive/root:/Besiktningar_Campingar/' + filename + ':/content';
+    const res = await fetch(uploadUrl, {
+      method: 'PUT',
+      headers: {
+        'Authorization': 'Bearer ' + token,
+        'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+      },
+      body: blob
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      btn.innerHTML = '<i class="ti ti-check"></i> Sparat till SharePoint!';
+      btn.style.background = '#1D9E75';
+      setTimeout(() => {
+        btn.innerHTML = '<i class="ti ti-brand-office"></i> Spara till SharePoint';
+        btn.style.background = '#0078d4';
+        btn.disabled = false;
+      }, 4000);
+    } else {
+      const err = await res.json();
+      throw new Error(err.error?.message || res.status);
+    }
+  } catch(e) {
+    alert('Fel vid sparande till SharePoint: ' + e.message);
+    btn.innerHTML = '<i class="ti ti-brand-office"></i> Spara till SharePoint';
+    btn.style.background = '#0078d4';
+    btn.disabled = false;
+  }
+}
+
 </script>
 </body>
 </html>
