@@ -1080,7 +1080,9 @@ checkLock();
 
 function exportXLS() {
   const campingEl = document.getElementById('m-camping');
+  const campingVal = campingEl.value;
   const campingName = campingEl.options[campingEl.selectedIndex]?.text || 'Okänd camping';
+  const fullCampingNameXLS = CAMPING_FULL_NAMES[campingVal] || campingName;
   const date = document.getElementById('m-date').value || '';
   const inspector = document.getElementById('m-name').value || '';
   const inspType = document.getElementById('m-type').value || '';
@@ -1088,9 +1090,10 @@ function exportXLS() {
 
   const wb = XLSX.utils.book_new();
 
-  // ---- Sheet 1: Sammanfattning ----
+  // ---- Scoring ----
   const srvVis = !document.getElementById('srv-section').classList.contains('srv-hidden');
   let totalW = 0, scoreW = 0, rated = 0, reds = 0;
+
   SECTIONS.forEach(sec => {
     sec.items.forEach((_, i) => {
       if (naScores[sec.id] && naScores[sec.id][i]) return;
@@ -1119,118 +1122,144 @@ function exportXLS() {
     + SC_SECTION.items.filter((_, i) => scNaScores[i]).length
     + (srvVis ? Object.values(srvNaScores).filter(Boolean).length : 0);
   const srvTotal2 = srvVis ? srvItemTotal() : 0;
-  const totalItems = SECTIONS.reduce((a, s) => a + s.items.length, 0) + srvTotal2 - naCount;
-
+  const totalItems = SECTIONS.reduce((a, s) => a + s.items.length, 0) + SC_SECTION.items.length + srvTotal2 - naCount;
   const scFailed = SC_SECTION.items.some((_, i) => !scNaScores[i] && scScores[i] === 'nej');
   const passed = rated > 0 && reds === 0 && !scFailed;
-  const status = !rated ? 'Ej ifyllt' : passed ? 'GODKÄND' : conditional ? 'VILLKORLIGT GODKÄND' : 'UNDERKÄND';
+  const status = !rated ? 'Ej ifyllt' : passed ? 'GODKÄND' : 'UNDERKÄND';
 
+  // Helper
+  function yn(v, isNA) {
+    if (isNA) return 'N/A';
+    if (v === undefined || v === null || v === '') return 'Ej bedömd';
+    if (v === 'ja') return 'Ja';
+    if (v === 'nej') return 'Nej';
+    return v;
+  }
+  function statusTxtFn(v, isNA) {
+    if (isNA) return 'N/A';
+    if (v === undefined || v === null || v === '') return 'Ej bedömd';
+    return v === 'ja' ? 'Godkänt' : 'Underkänt';
+  }
+
+  // ---- Sheet 1: Sammanfattning ----
   const summaryData = [
     ['BESIKTNINGSINTYG – Caravan Club of Sweden, Stockholmssektionen'],
     [],
-    ['Camping', campingName],
+    ['Camping', fullCampingNameXLS],
     ['Datum', dateStr],
     ['Ansvarig för besiktningen', inspector],
     ['Typ av besiktning', inspType],
     [],
     ['RESULTAT', status],
-    ['Totalpoäng', scoreW.toFixed(1) + ' p'],
-    ['Andel av max', pct + '%'],
     ['Bedömda punkter', rated + ' av ' + totalItems],
-    ['Röda punkter (underkänt)', reds],
+    ['Underkända punkter (Nej)', reds],
     ['N/A-punkter', naCount],
   ];
-
   const wsSummary = XLSX.utils.aoa_to_sheet(summaryData);
-  wsSummary['!cols'] = [{wch:28},{wch:40}];
+  wsSummary['!cols'] = [{wch:32},{wch:44}];
   XLSX.utils.book_append_sheet(wb, wsSummary, 'Sammanfattning');
 
   // ---- Sheet 2: Detaljerade resultat ----
-  const detailRows = [
-    ['Sektion', 'Vikt', 'Punkt', 'Betyg (1-5)', 'Status', 'N/A']
-  ];
-
-  // Get section notes
   const noteEls = document.querySelectorAll('.note-row textarea');
-  let noteIdx = 0;
+  const detailRows = [['Sektion', 'Punkt', 'Svar', 'Status', 'N/A', 'Anteckning']];
 
   SECTIONS.forEach((sec, si) => {
     sec.items.forEach((it, i) => {
-      const isNA = naScores[sec.id] && naScores[sec.id][i];
+      const isNA = !!(naScores[sec.id] && naScores[sec.id][i]);
       const v = scores[sec.id] && scores[sec.id][i];
-      let statusTxt = isNA ? 'N/A' : v === undefined ? 'Ej bedömd' : v >= 4 ? 'Godkänt' : v === 3 ? 'Åtgärd krävs' : 'Underkänt';
-      detailRows.push([sec.label, sec.weight + 'x', it.t, isNA ? 'N/A' : (v || ''), statusTxt, isNA ? 'Ja' : '']);
+      detailRows.push([sec.label, it.t, yn(v, isNA), statusTxtFn(v, isNA), isNA ? 'Ja' : '', '']);
     });
     const note = noteEls[si] ? noteEls[si].value.trim() : '';
-    if (note) detailRows.push(['', '', '→ Anteckning: ' + note, '', '', '']);
-    noteIdx++;
+    if (note) {
+      const last = detailRows[detailRows.length - 1];
+      // attach note to last item row or add note row
+      detailRows.push([sec.label + ' – Anteckning', '', '', '', '', note]);
+    }
   });
 
   // SC section
+  const scCardEls = document.querySelectorAll('#sections-container .section-card');
+  const scNoteElX = scCardEls.length > 0 ? scCardEls[scCardEls.length - 1].querySelector('.note-row textarea') : null;
+  const scNoteX = scNoteElX ? scNoteElX.value.trim() : '';
   SC_SECTION.items.forEach((it, i) => {
-    const isNA = scNaScores[i];
+    const isNA = !!scNaScores[i];
     const v = scScores[i];
-    const statusTxt = isNA ? 'N/A' : v === undefined ? 'Ej bedömd' : v === 'ja' ? 'Godkänt' : 'Underkänt';
-    detailRows.push(['Svensk Camping – kvalitetskrav', SC_SECTION.weight + 'x', it.t, isNA ? 'N/A' : (v || ''), statusTxt, isNA ? 'Ja' : '']);
+    detailRows.push([SC_SECTION.label, it.t, yn(v, isNA), statusTxtFn(v, isNA), isNA ? 'Ja' : '', '']);
   });
+  if (scNoteX) detailRows.push([SC_SECTION.label + ' – Anteckning', '', '', '', '', scNoteX]);
 
   // SRV section
   if (srvVis) {
     const tillf = document.getElementById('toggle-tillfallig').checked;
     const groups = tillf ? SRV_TILLFALLIG : SRV_FULL;
-    let allItems = [];
-    groups.forEach(g => g.items.forEach(it => allItems.push({...it, grp: g.label})));
-    allItems.forEach((it, i) => {
-      const isNA = srvNaScores[i];
+    let srvAllItems = [];
+    groups.forEach(g => g.items.forEach(it => srvAllItems.push({ ...it, grp: g.label })));
+    srvAllItems.forEach((it, i) => {
+      const isNA = !!srvNaScores[i];
       const v = srvScores[i];
-      let statusTxt = isNA ? 'N/A' : v === undefined ? 'Ej bedömd' : v >= 4 ? 'Godkänt' : v === 3 ? 'Åtgärd krävs' : 'Underkänt';
-      detailRows.push(['Servering / alkoholtillstånd (' + it.grp + ')', '2.5x', it.t, isNA ? 'N/A' : (v || ''), statusTxt, isNA ? 'Ja' : '']);
+      detailRows.push(['Servering / alkoholtillstånd', it.t, yn(v, isNA), statusTxtFn(v, isNA), isNA ? 'Ja' : '', '']);
     });
-    const srvNote = document.querySelector('#srv-section .note-row textarea');
-    if (srvNote && srvNote.value.trim()) detailRows.push(['', '', '→ Anteckning: ' + srvNote.value.trim(), '', '', '']);
+    const srvNoteX = document.querySelector('#srv-section .note-row textarea');
+    const srvNoteVal = srvNoteX ? srvNoteX.value.trim() : '';
+    if (srvNoteVal) detailRows.push(['Servering – Anteckning', '', '', '', '', srvNoteVal]);
   }
 
   const wsDetail = XLSX.utils.aoa_to_sheet(detailRows);
-  wsDetail['!cols'] = [{wch:36},{wch:8},{wch:60},{wch:12},{wch:18},{wch:6}];
+  wsDetail['!cols'] = [{wch:36},{wch:64},{wch:12},{wch:14},{wch:6},{wch:50}];
   XLSX.utils.book_append_sheet(wb, wsDetail, 'Detaljerade resultat');
 
-  // ---- Sheet 3: Avvikelser ----
-  const avvRows = [['Sektion', 'Punkt', 'Betyg', 'Status']];
-  SECTIONS.forEach(sec => {
+  // ---- Sheet 3: Avvikelser & Anteckningar ----
+  const avvRows = [['Sektion', 'Punkt', 'Svar', 'Status', 'Anteckning']];
+
+  SECTIONS.forEach((sec, si) => {
+    const note = noteEls[si] ? noteEls[si].value.trim() : '';
+    let sectionHasRow = false;
     sec.items.forEach((it, i) => {
       if (naScores[sec.id] && naScores[sec.id][i]) return;
       const v = scores[sec.id] && scores[sec.id][i];
-      const vNum = v !== undefined ? ynToNum(v) : undefined;
-      if (vNum !== undefined && vNum <= 2) {
-        avvRows.push([sec.label, it.t, v === 'nej' ? 'Nej' : v, 'Underkänt']);
+      if (v === 'nej') {
+        avvRows.push([sec.label, it.t, 'Nej', 'Underkänt', sectionHasRow ? '' : note]);
+        sectionHasRow = true;
       }
     });
+    // Add note row even if no nej answers
+    if (note && !sectionHasRow) {
+      avvRows.push([sec.label, '– Anteckning –', '', '', note]);
+    }
   });
+
+  // SC avvikelser
   SC_SECTION.items.forEach((it, i) => {
     if (scNaScores[i]) return;
-    if (scScores[i] === 'nej') avvRows.push(['Svensk Camping – kvalitetskrav', it.t, 'Nej', 'Underkänt']);
+    if (scScores[i] === 'nej') avvRows.push([SC_SECTION.label, it.t, 'Nej', 'Underkänt', '']);
   });
+  if (scNoteX) avvRows.push([SC_SECTION.label, '– Anteckning –', '', '', scNoteX]);
 
+  // SRV avvikelser
   if (srvVis) {
-    const tillf = document.getElementById('toggle-tillfallig').checked;
-    const groups = tillf ? SRV_TILLFALLIG : SRV_FULL;
-    let allItems = [];
-    groups.forEach(g => g.items.forEach(it => allItems.push(it)));
-    allItems.forEach((it, i) => {
+    const tillf2 = document.getElementById('toggle-tillfallig').checked;
+    const groups2 = tillf2 ? SRV_TILLFALLIG : SRV_FULL;
+    let srvItems2 = [];
+    groups2.forEach(g => g.items.forEach(it => srvItems2.push(it)));
+    const srvNoteX2 = document.querySelector('#srv-section .note-row textarea');
+    const srvNoteVal2 = srvNoteX2 ? srvNoteX2.value.trim() : '';
+    let srvHasNej = false;
+    srvItems2.forEach((it, i) => {
       if (srvNaScores[i]) return;
-      const vRawE = srvScores[i];
-      const vNumE = vRawE !== undefined ? ynToNum(vRawE) : undefined;
-      if (vNumE !== undefined && vNumE <= 2) {
-        avvRows.push(['Servering / alkoholtillstånd', it.t, vRawE === 'nej' ? 'Nej' : vRawE, 'Underkänt']);
+      if (srvScores[i] === 'nej') {
+        avvRows.push(['Servering / alkoholtillstånd', it.t, 'Nej', 'Underkänt', srvHasNej ? '' : srvNoteVal2]);
+        srvHasNej = true;
       }
     });
+    if (srvNoteVal2 && !srvHasNej) avvRows.push(['Servering / alkoholtillstånd', '– Anteckning –', '', '', srvNoteVal2]);
   }
-  const wsAvv = XLSX.utils.aoa_to_sheet(avvRows);
-  wsAvv['!cols'] = [{wch:36},{wch:60},{wch:8},{wch:18}];
-  XLSX.utils.book_append_sheet(wb, wsAvv, 'Avvikelser');
 
-  // Save
-  const filename = 'Besiktning_' + campingName.replace(/[^a-zA-ZåäöÅÄÖ0-9]/g, '_') + '_' + (date || 'datum') + '.xlsx';
+  const wsAvv = XLSX.utils.aoa_to_sheet(avvRows);
+  wsAvv['!cols'] = [{wch:36},{wch:64},{wch:8},{wch:14},{wch:50}];
+  XLSX.utils.book_append_sheet(wb, wsAvv, 'Avvikelser och anteckningar');
+
+  // ---- Save ----
+  const filename = 'Besiktning_' + fullCampingNameXLS.replace(/[^a-zA-ZåäöÅÄÖ0-9]/g, '_') + '_' + (date || 'datum') + '.xlsx';
   XLSX.writeFile(wb, filename);
 }
 </script>
