@@ -1560,8 +1560,8 @@ function mailCert() {
 
 
 async function saveToGitHub() {
-  const token = GITHUB_TOKEN;
-  if (!token || token === 'GITHUB_TOKEN_HÄR') { alert('Lägg till din GitHub token i koden.'); return; }
+  const token = localStorage.getItem('gh_token') || '';
+  if (!token) { alert('Ange din GitHub token under ⚙️ Inställningar längst ner på sidan.'); return; }
   const campingEl = document.getElementById('m-camping');
   const campingVal = campingEl.value;
   if (!campingVal) { alert('V\u00e4lj camping f\u00f6rst.'); return; }
