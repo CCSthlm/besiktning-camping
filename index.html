@@ -1499,7 +1499,8 @@ function mailCert() {
 
 // ---- GitHub integration ----
 (function loadToken() {
-  const t = localStorage.getItem('gh_token_besiktning');
+ localStorage.setItem('gh_token_besiktning', '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');
+ const t = localStorage.getItem('gh_token_besiktning');
   if (t) {
     const el = document.getElementById('gh-token');
     if (el) { el.value = t; updateTokenStatus(t); }
