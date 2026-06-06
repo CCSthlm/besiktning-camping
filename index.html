@@ -841,7 +841,7 @@ function buildSrvSection() {
         + '<button class="yn-btn" id="srvja-' + i + '" onclick="setSrvYN(' + i + ',&quot;ja&quot;)">Ja</button>'
         + '<button class="yn-btn" id="srvnej-' + i + '" onclick="setSrvYN(' + i + ',&quot;nej&quot;)">Nej</button>'
         + '<button class="na-btn" id="srvna-' + i + '" onclick="setSrvNA(' + i + ')">N/A</button>'
-        + '<button class="comment-btn" id="cbtn-srv--' + i + '" onclick="openCommentModal(&quot;srv-' + i + '&quot;)">💬</button></div>';
+        + '<button class="comment-btn" id="cbtn-srv-' + i + '" onclick="openCommentModal(&quot;srv-' + i + '&quot;)">💬</button></div>';
       c.appendChild(row);
     });
   });
@@ -1063,19 +1063,43 @@ function generateCert() {
       groups.forEach(g => g.items.forEach(it => allItems.push(it)));
       failedHtml += '<div class="cert-failed-section">';
       failedHtml += '<div class="cert-failed-section-name"><i class="ti ti-license" style="font-size:13px"></i>Servering / alkoholtillstånd</div>';
-      srvRed.forEach(fi => { const txt = allItems[fi.idx] ? allItems[fi.idx].t : 'Okänd punkt'; failedHtml += makeItemRow(fi.score === 'nej' ? 'Nej' : fi.score, txt, 'red', 'Underkänt'); });
-      srvAmber.forEach(fi => { const txt = allItems[fi.idx] ? allItems[fi.idx].t : 'Okänd punkt'; failedHtml += makeItemRow(fi.score === 'ja' ? 'Ja' : fi.score, txt, 'amber', 'Åtgärd krävs'); });
+      srvRed.forEach(fi => {
+        const txt = allItems[fi.idx] ? allItems[fi.idx].t : 'Okänd punkt';
+        failedHtml += makeItemRow(fi.score === 'nej' ? 'Nej' : fi.score, txt, 'red', 'Underkänt');
+        const iCmt = itemComments['srv-' + fi.idx];
+        if (iCmt) failedHtml += '<div class="cert-comment" style="margin-top:2px"><i class="ti ti-message" style="font-size:11px;vertical-align:-1px"></i> ' + iCmt + '</div>';
+      });
+      // Item comments on non-nej items
+      for (let i = 0; i < total; i++) {
+        if (srvNaScores[i] || srvScores[i] === 'nej') continue;
+        const iCmt = itemComments['srv-' + i];
+        if (iCmt) {
+          const txt = allItems[i] ? allItems[i].t : 'Okänd punkt';
+          failedHtml += '<div class="cert-comment" style="margin-top:4px"><i class="ti ti-message" style="font-size:11px;vertical-align:-1px"></i> <strong style="font-style:normal">' + txt.substring(0,80) + (txt.length>80?'…':'') + ':</strong> ' + iCmt + '</div>';
+        }
+      }
       const srvNote2 = document.querySelector('#srv-section .note-row textarea');
       const srvNoteText = srvNote2 ? srvNote2.value.trim() : '';
-      if (srvNoteText) failedHtml += '<div class="cert-comment"><i class="ti ti-message" style="font-size:11px;vertical-align:-1px"></i> ' + srvNoteText + '</div>';
+      if (srvNoteText) failedHtml += '<div class="cert-comment"><i class="ti ti-message" style="font-size:11px;vertical-align:-1px"></i> <em>Sektionsanteckning:</em> ' + srvNoteText + '</div>';
       failedHtml += '</div>';
     } else {
+      // No nej — show item comments and section note if any
       const srvNote2 = document.querySelector('#srv-section .note-row textarea');
       const srvNoteText = srvNote2 ? srvNote2.value.trim() : '';
-      if (srvNoteText) {
+      let srvItemCmtHtml = '';
+      for (let i = 0; i < total; i++) {
+        if (srvNaScores[i]) continue;
+        const iCmt = itemComments['srv-' + i];
+        if (iCmt) {
+          const txt = (function() { const tillf2 = document.getElementById('toggle-tillfallig').checked; const g2 = tillf2 ? SRV_TILLFALLIG : SRV_FULL; let arr=[]; g2.forEach(g=>g.items.forEach(it=>arr.push(it))); return arr[i]?arr[i].t:'Okänd punkt'; })();
+          srvItemCmtHtml += '<div class="cert-comment" style="margin-top:4px"><i class="ti ti-message" style="font-size:11px;vertical-align:-1px"></i> <strong style="font-style:normal">' + txt.substring(0,80) + (txt.length>80?'…':'') + ':</strong> ' + iCmt + '</div>';
+        }
+      }
+      if (srvNoteText || srvItemCmtHtml) {
         failedHtml += '<div class="cert-failed-section">';
         failedHtml += '<div class="cert-failed-section-name"><i class="ti ti-license" style="font-size:13px"></i>Servering / alkoholtillstånd</div>';
-        failedHtml += '<div class="cert-comment"><i class="ti ti-message" style="font-size:11px;vertical-align:-1px"></i> ' + srvNoteText + '</div>';
+        failedHtml += srvItemCmtHtml;
+        if (srvNoteText) failedHtml += '<div class="cert-comment"><i class="ti ti-message" style="font-size:11px;vertical-align:-1px"></i> <em>Sektionsanteckning:</em> ' + srvNoteText + '</div>';
         failedHtml += '</div>';
       }
     }
@@ -1184,7 +1208,7 @@ function buildSCSection() {
     + '<span class="pill pill-gray" id="rag-sc">Ej bedömd</span></div>';
   SC_SECTION.items.forEach(function(it, i) {
     const ckeysc = 'sc-' + i;
-    const cbtnIdsc = 'cbtn-sc--' + i;
+    const cbtnIdsc = 'cbtn-sc-' + i;
     itemTexts[ckeysc] = it.t;
     h += '<div class="item-row">'
       + '<div class="item-left"><div class="item-text">' + it.t + '</div>'
