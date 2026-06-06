@@ -1204,7 +1204,6 @@ function generateCert() {
   certBox.scrollIntoView({behavior: 'smooth', block: 'nearest'});
 }
 
-
 function warnCampingChange() {
   const hasData = Object.keys(scores).some(s => Object.keys(scores[s]||{}).length > 0)
     || Object.keys(scScores).length > 0
@@ -1243,7 +1242,22 @@ function resetAll() {
   document.querySelectorAll('.star-btn').forEach(b => b.classList.remove('on'));
   document.querySelectorAll('textarea').forEach(t => t.value = '');
   document.querySelectorAll('.item-ctrl input').forEach(i => i.value = '');
-  SECTIONS.forEach(sec => updateSectionRag(sec.id));
+  SECTIONS.forEach(sec => {
+    updateSectionRag(sec.id);
+    const pill = document.getElementById('rag-' + sec.id);
+    if (pill) pill.dataset.complete = 'false';
+    const doneIcon = document.getElementById('done-' + sec.id);
+    const secIcon = document.getElementById('icon-' + sec.id);
+    if (doneIcon) doneIcon.style.display = 'none';
+    if (secIcon) secIcon.style.display = 'inline-block';
+  });
+  // Reset SC checkmark
+  const scPill = document.getElementById('rag-sc');
+  if (scPill) scPill.dataset.complete = 'false';
+  const scDone = document.getElementById('done-sc');
+  const scIcon = document.getElementById('icon-sc');
+  if (scDone) scDone.style.display = 'none';
+  if (scIcon) scIcon.style.display = 'inline-block';
   updateSrvRag();
   updateSummary();
   document.getElementById('cert-box').className = 'cert-box';
@@ -1321,7 +1335,6 @@ function exportXLS() {
   XLSX.writeFile(wb, filename);
 }
 
-
 function openCommentModal(key) {
   _commentKey = key;
   document.getElementById('comment-modal-question').textContent = itemTexts[key] || '';
@@ -1356,7 +1369,6 @@ function saveComment() {
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') document.getElementById('comment-modal-overlay').classList.remove('show');
 });
-
 
 function mailCert() {
   const certBox = document.getElementById('cert-box');
@@ -1437,7 +1449,6 @@ function mailCert() {
 // ---- GitHub integration ----
 
 
-
 function buildHTMLReport() {
     generateCert();
     const campingName2 = document.getElementById('cert-camping-name')?.textContent || campingName;
@@ -1497,7 +1508,6 @@ async function saveToGitHub() {
   }
 
 
-
   try {
     const msg = 'Besiktning: ' + campingName + ' ' + date;
     const wb = buildWorkbook();
@@ -1514,7 +1524,6 @@ async function saveToGitHub() {
     btn.innerHTML = '<i class="ti ti-brand-github"></i> Spara en kopia på servern'; btn.style.background = '#24292e'; btn.disabled = false;
   }
 }
-
 
 function buildWorkbook() {
   // Delegate entirely to exportXLS internals - returns the full workbook
@@ -1654,7 +1663,6 @@ function buildWorkbook() {
   return wb;
 }
 
-
 function saveGHToken(val) {
   val = val.trim();
   if (val) {
@@ -1781,7 +1789,6 @@ async function saveToSharePoint() {
   }
 }
 
-
 // ---- Auto-save to localStorage ----
 function autoSave() {
   try {
@@ -1811,7 +1818,6 @@ function autoSave() {
     localStorage.setItem('besiktning_autosave', JSON.stringify(state));
   } catch(e) {}
 }
-
 
 function autoRestore() {
   try {
@@ -1876,7 +1882,6 @@ function autoRestore() {
   } catch(e) { console.error('autoRestore error:', e); }
 }
 
-setTimeout(autoRestore, 600);
 setTimeout(autoRestore, 600);
 
 </script>
