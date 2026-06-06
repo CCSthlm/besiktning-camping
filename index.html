@@ -912,8 +912,9 @@ function generateCert() {
   const campingVal = campingEl.value;
   const fullCampingName = CAMPING_FULL_NAMES[campingVal] || campingName;
   const inspType = document.getElementById('m-type').value || 'besiktning';
+  const date = document.getElementById('m-date').value || '';
+  const dateStr = date ? new Date(date + 'T12:00:00').toLocaleDateString('sv-SE') : '–';
   document.getElementById('cert-camping-name').textContent = fullCampingName;
-  const date = document.getElementById('m-date').value;
   const name = document.getElementById('m-name').value || '[Ej angiven]';
   const srvVis = !document.getElementById('srv-section').classList.contains('srv-hidden');
 
@@ -962,11 +963,11 @@ function generateCert() {
     statusClass = '';
   } else if (passed) {
     status = 'GODKÄND';
-    body = fullCampingName + ' har genomgått ' + inspType.toLowerCase() + ' och uppfyller samtliga krav. Inga underkända punkter noterades. Besiktningsintyget gäller till och med nästkommande ordinarie besiktningstillfälle.';
+    body = fullCampingName + ' har genomgått ' + inspType.toLowerCase() + ' den ' + dateStr + ' och uppfyller samtliga krav. Inga underkända punkter noterades. Besiktningsintyget gäller till och med nästkommande ordinarie besiktningstillfälle.';
     statusClass = 'cert-status-green';
   } else {
     status = 'UNDERKÄND';
-    body = fullCampingName + ' uppfyller inte ställda krav i ' + inspType.toLowerCase() + '. ' + reds + ' underkänd(a) punkt(er). Ny besiktning krävs efter genomförda åtgärder.';
+    body = fullCampingName + ' uppfyller inte ställda krav i ' + inspType.toLowerCase() + ' den ' + dateStr + '. ' + reds + ' underkänd(a) punkt(er). Ny besiktning krävs efter genomförda åtgärder.';
     statusClass = 'cert-status-red';
   }
 
@@ -1197,7 +1198,7 @@ function generateCert() {
   }
 
   document.getElementById('cert-sig-name').textContent = name;
-  document.getElementById('cert-sig-date').textContent = date ? new Date(date + 'T12:00:00').toLocaleDateString('sv-SE') : '–';
+  document.getElementById('cert-sig-date').textContent = new Date().toLocaleDateString('sv-SE');
 
   const certBox = document.getElementById('cert-box');
   certBox.className = 'cert-box show';
