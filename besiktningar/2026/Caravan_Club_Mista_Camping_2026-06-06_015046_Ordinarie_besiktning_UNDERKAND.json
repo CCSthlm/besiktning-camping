@@ -1,0 +1,45 @@
+{
+  "meta": {
+    "camping": "c4",
+    "campingName": "Caravan Club Mista Camping",
+    "date": "2026-06-06",
+    "inspector": "Massimo Johansson",
+    "type": "Ordinarie besiktning",
+    "savedAt": "2026-06-06T23:50:49.329Z"
+  },
+  "sections": {
+    "ankomst": {
+      "0": "ja",
+      "1": "ja",
+      "2": "ja",
+      "3": "ja",
+      "4": "ja"
+    },
+    "sanitet": {
+      "0": "ja",
+      "1": "nej",
+      "2": "ja",
+      "3": "nej",
+      "4": "ja",
+      "5": "nej"
+    },
+    "gemensamma": {},
+    "vardskap": {},
+    "sakerhet": {},
+    "teknisk": {}
+  },
+  "sc": {},
+  "srv": {},
+  "naScores": {
+    "ankomst": {},
+    "sanitet": {},
+    "gemensamma": {},
+    "vardskap": {},
+    "sakerhet": {},
+    "teknisk": {}
+  },
+  "scNaScores": {},
+  "srvNaScores": {},
+  "itemComments": {},
+  "notes": {}
+}
