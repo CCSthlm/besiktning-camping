@@ -537,6 +537,18 @@ function setScore(sid, idx, val) {
 
 function setYN(sid, idx, val) {
   if (!scores[sid]) scores[sid] = {};
+  const current = scores[sid][idx];
+  // Clicking active button deselects it
+  if (current === val) {
+    delete scores[sid][idx];
+    const jaBtn = document.getElementById('ja-' + sid + '-' + idx);
+    const nejBtn = document.getElementById('nej-' + sid + '-' + idx);
+    if (jaBtn) jaBtn.className = 'yn-btn';
+    if (nejBtn) nejBtn.className = 'yn-btn';
+    updateSectionRag(sid);
+    updateSummary();
+    return;
+  }
   scores[sid][idx] = val;
   if (naScores[sid] && naScores[sid][idx]) {
     naScores[sid][idx] = false;
@@ -557,19 +569,30 @@ function setNA(sid, idx) {
   naScores[sid][idx] = !isOn;
   const naBtn = document.getElementById('na-' + sid + '-' + idx);
   if (naBtn) naBtn.classList.toggle('na-on', !isOn);
-  // Clear star selection if N/A turned on
-  if (!isOn && scores[sid]) {
-    delete scores[sid][idx];
-    for (let v = 1; v <= 5; v++) {
-      const el = document.getElementById('star-' + sid + '-' + idx + '-' + v);
-      if (el) el.classList.remove('on');
-    }
+  // When turning NA on: clear Ja/Nej
+  if (!isOn) {
+    if (scores[sid]) delete scores[sid][idx];
+    const jaBtn = document.getElementById('ja-' + sid + '-' + idx);
+    const nejBtn = document.getElementById('nej-' + sid + '-' + idx);
+    if (jaBtn) jaBtn.className = 'yn-btn';
+    if (nejBtn) nejBtn.className = 'yn-btn';
   }
   updateSectionRag(sid);
   updateSummary();
 }
 
 function setSC(idx, val) {
+  const current = scScores[idx];
+  if (current === val) {
+    delete scScores[idx];
+    const ja = document.getElementById('scja-' + idx);
+    const nej = document.getElementById('scnej-' + idx);
+    if (ja) ja.className = 'yn-btn';
+    if (nej) nej.className = 'yn-btn';
+    updateSCRag();
+    updateSummary();
+    return;
+  }
   scScores[idx] = val;
   // Clear NA
   if (scNaScores[idx]) { scNaScores[idx] = false; const nb = document.getElementById('scna-' + idx); if (nb) nb.classList.remove('na-on'); }
@@ -614,10 +637,10 @@ function setSrvNA(idx) {
   if (naBtn) naBtn.classList.toggle('na-on', !isOn);
   if (!isOn) {
     delete srvScores[idx];
-    for (let v = 1; v <= 5; v++) {
-      const el = document.getElementById('srvstar-' + idx + '-' + v);
-      if (el) el.classList.remove('on');
-    }
+    const jaBtn = document.getElementById('srvja-' + idx);
+    const nejBtn = document.getElementById('srvnej-' + idx);
+    if (jaBtn) jaBtn.className = 'yn-btn';
+    if (nejBtn) nejBtn.className = 'yn-btn';
   }
   updateSrvRag();
   updateSummary();
@@ -639,6 +662,17 @@ function setSrvScore(idx, val) {
 }
 
 function setSrvYN(idx, val) {
+  const current = srvScores[idx];
+  if (current === val) {
+    delete srvScores[idx];
+    const jaBtn = document.getElementById('srvja-' + idx);
+    const nejBtn = document.getElementById('srvnej-' + idx);
+    if (jaBtn) jaBtn.className = 'yn-btn';
+    if (nejBtn) nejBtn.className = 'yn-btn';
+    updateSrvRag();
+    updateSummary();
+    return;
+  }
   srvScores[idx] = val;
   if (srvNaScores[idx]) {
     srvNaScores[idx] = false;
@@ -1499,7 +1533,6 @@ function mailCert() {
 
 
 async function saveToGitHub() {
-  localStorage.setItem('gh_token_besiktning', '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');
   const token = localStorage.getItem('gh_token_besiktning') || '';
   if (!token) { alert('Klistra in ditt GitHub Personal Access Token i f\u00e4ltet ovan f\u00f6rst.'); return; }
   const campingEl = document.getElementById('m-camping');
