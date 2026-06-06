@@ -235,8 +235,7 @@
     <div class="meta-grid">
       <div class="meta-field">
         <label>Camping</label>
-        <select id="m-camping" onchange="warnCampingChange(); checkSrv(); checkLock();
-  setTimeout(autoRestore, 500);">
+        <select id="m-camping" onchange="warnCampingChange(); checkSrv(); checkLock(); autoFilterHistory();">
           <option value="">Välj camping...</option>
           <option value="c1" data-srv="true">CC Björkö Örn (serveringstillstånd)</option>
           <option value="c2" data-srv="true">CC Östnora (serveringstillstånd)</option>
