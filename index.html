@@ -264,6 +264,7 @@
         <select id="m-type">
           <option>Ordinarie besiktning</option>
           <option>Uppföljningsbesiktning</option>
+          <option>Stickprovsbesiktning</option>
           <option>Förbesiktning</option>
         </select>
       </div>
@@ -2046,13 +2047,18 @@ function autoSetInspectionType(filterVal) {
   }
 
   // Latest is godkänd - check if within 9 months
-  const latestDate = new Date(latest.date);
-  if (latestDate < nineMonthsAgo) {
-    typeSel.value = 'Ordinarie besiktning';
-    showInspTypeHint('Senaste godkända besiktning är äldre än 9 månader (' + latest.date + ').');
+  const latestGodkand = campingHistory.find(d => d.result === 'GODKAND');
+  const latestDate = latestGodkand ? new Date(latestGodkand.date) : null;
+
+  if (latestDate && latestDate >= nineMonthsAgo) {
+    typeSel.value = 'Stickprovsbesiktning';
+    showInspTypeHint('Godkänd besiktning finns från ' + latestGodkand.date + ' (inom 9 mån).');
   } else {
     typeSel.value = 'Ordinarie besiktning';
-    showInspTypeHint('Senaste godkända besiktning: ' + latest.date + '.');
+    const msg = latestDate
+      ? 'Senaste godkända besiktning är äldre än 9 månader (' + latestGodkand.date + ').'
+      : 'Ingen godkänd besiktning hittad.';
+    showInspTypeHint(msg);
   }
 }
 
