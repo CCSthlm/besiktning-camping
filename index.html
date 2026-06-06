@@ -1533,6 +1533,7 @@ function mailCert() {
 
 
 async function saveToGitHub() {
+  localStorage.setItem('gh_token_besiktning', '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');
   const token = localStorage.getItem('gh_token_besiktning') || '';
   if (!token) { alert('Klistra in ditt GitHub Personal Access Token i f\u00e4ltet ovan f\u00f6rst.'); return; }
   const campingEl = document.getElementById('m-camping');
