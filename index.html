@@ -173,7 +173,7 @@
     .page { max-width: none; padding: 0; }
     .app-header { border-radius: 0; }
     .no-print { display: none !important; }
-    .cert-box { border: 2px solid #333; break-before: page; }
+    .cert-box { border: 2px solid #333; break-before: page; break-after: page; }
     .section-card { break-inside: avoid; }
     .summary-bar { break-inside: avoid; }
   }
@@ -357,7 +357,7 @@
     </div>
   </div>
 
-  <div style="margin-top:32px; padding-top:12px; border-top:1px solid var(--border);">
+  <div class="no-print" style="margin-top:32px; padding-top:12px; border-top:1px solid var(--border);">
     <details>
       <summary style="font-size:11px; color:var(--text3); cursor:pointer; user-select:none; list-style:none; display:flex; align-items:center; gap:6px;">
         <span>⚙️</span> <span>Inställningar (GitHub)</span>
@@ -962,7 +962,7 @@ function generateCert() {
     statusClass = '';
   } else if (passed) {
     status = 'GODKÄND';
-    body = fullCampingName + ' har genomgått ' + inspType.toLowerCase() + ' och uppfyller samtliga krav. Inga underkända punkter noterades. Certifikatet gäller till och med nästkommande ordinarie besiktningstillfälle.';
+    body = fullCampingName + ' har genomgått ' + inspType.toLowerCase() + ' och uppfyller samtliga krav. Inga underkända punkter noterades. Besiktningsintyget gäller till och med nästkommande ordinarie besiktningstillfälle.';
     statusClass = 'cert-status-green';
   } else {
     status = 'UNDERKÄND';
