@@ -168,6 +168,9 @@
   }
 
   .srv-hidden { display: none; }
+  .sections-locked { pointer-events: none; opacity: 0.38; user-select: none; }
+  .lock-notice { background: var(--amber-bg); color: var(--amber-border); border: 1px solid var(--amber-border); border-radius: var(--radius-lg); padding: 12px 16px; font-size: 13px; font-weight: 500; margin-bottom: 12px; display: none; align-items: center; gap: 8px; }
+  .lock-notice.show { display: flex; }
   /* Failed points in certificate */
   .cert-failed { margin: 16px auto; max-width: 580px; text-align: left; }
   .cert-failed-title { font-size: 12px; font-weight: 600; color: var(--text2); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.04em; }
@@ -214,7 +217,7 @@
     <div class="meta-grid">
       <div class="meta-field">
         <label>Camping</label>
-        <select id="m-camping" onchange="checkSrv()">
+        <select id="m-camping" onchange="checkSrv(); checkLock();">
           <option value="">Välj camping...</option>
           <option value="c1" data-srv="true">CC Björkö Örn (serveringstillstånd)</option>
           <option value="c2" data-srv="true">CC Östnora (serveringstillstånd)</option>
@@ -230,7 +233,7 @@
       </div>
       <div class="meta-field">
         <label>Ansvarig för besiktningen</label>
-        <select id="m-name">
+        <select id="m-name" onchange="checkLock();">
           <option value="">Välj besiktningsman...</option>
           <option>Massimo Johansson</option>
           <option>Stefan Leijon</option>
@@ -249,6 +252,10 @@
     </div>
   </div>
 
+  <div class="lock-notice" id="lock-notice">
+    <i class="ti ti-lock" style="font-size:16px;flex-shrink:0"></i>
+    Välj camping och ansvarig för besiktningen i formuläret ovan för att börja fylla i protokollet.
+  </div>
   <div id="sections-container"></div>
 
   <!-- Servering / Alkoholtillstånd -->
@@ -702,6 +709,18 @@ function updateSummary() {
   document.getElementById('s-rated').textContent = rated + ' av ' + totalItems;
 }
 
+function checkLock() {
+  const camping = document.getElementById('m-camping').value;
+  const name = document.getElementById('m-name').value;
+  const locked = !camping || !name;
+  document.getElementById('sections-container').classList.toggle('sections-locked', locked);
+  document.getElementById('srv-section').classList.toggle('sections-locked', locked);
+  document.getElementById('lock-notice').classList.toggle('show', locked);
+  // Also lock/unlock buttons
+  const btns = document.querySelectorAll('.btn-primary, .btn-excel');
+  btns.forEach(b => { b.disabled = locked; b.style.opacity = locked ? '0.38' : ''; b.style.cursor = locked ? 'not-allowed' : ''; });
+}
+
 function checkSrv() {
   const sel = document.getElementById('m-camping');
   const opt = sel.options[sel.selectedIndex];
@@ -1057,6 +1076,7 @@ document.getElementById('m-date').valueAsDate = new Date();
 buildSections();
 buildSCSection();
 buildSrvSection();
+checkLock();
 
 function exportXLS() {
   const campingEl = document.getElementById('m-camping');
