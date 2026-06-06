@@ -267,13 +267,7 @@
         </select>
       </div>
     </div>
-    <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border);">
-      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-        <label style="font-size:11px;color:var(--text3);font-weight:500;white-space:nowrap;">GitHub Token (sparas lokalt)</label>
-        <input type="password" id="gh-token" placeholder="ghp_xxxxxxxxxxxx" style="flex:1;min-width:200px;font-size:12px;padding:6px 9px;border-radius:6px;border:1px solid var(--border2);background:var(--bg2);color:var(--text);" oninput="saveToken()">
-        <span id="gh-token-status" style="font-size:11px;color:var(--text3);"></span>
-      </div>
-    </div>
+
   </div>
 
   <div class="lock-notice" id="lock-notice">
@@ -1498,33 +1492,14 @@ function mailCert() {
 }
 
 // ---- GitHub integration ----
-(function loadToken() {
- localStorage.setItem('gh_token_besiktning', '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');
- const t = localStorage.getItem('gh_token_besiktning');
-  if (t) {
-    const el = document.getElementById('gh-token');
-    if (el) { el.value = t; updateTokenStatus(t); }
-  }
-})();
 
-function saveToken() {
-  const t = document.getElementById('gh-token').value.trim();
-  if (t) {
-    localStorage.setItem('gh_token_besiktning', t);
-    updateTokenStatus(t);
-  } else {
-    localStorage.removeItem('gh_token_besiktning');
-    document.getElementById('gh-token-status').textContent = '';
-  }
-}
 
-function updateTokenStatus(t) {
-  const el = document.getElementById('gh-token-status');
-  if (el) el.textContent = t.startsWith('ghp_') || t.startsWith('github_pat_') ? '\u2705 Token sparad' : '\u26a0\ufe0f Kontrollera token';
-}
+
+
+
 
 async function saveToGitHub() {
-  const token = (document.getElementById('gh-token').value.trim()) || localStorage.getItem('gh_token_besiktning') || '';
+  const token = localStorage.getItem('gh_token_besiktning') || '';
   if (!token) { alert('Klistra in ditt GitHub Personal Access Token i f\u00e4ltet ovan f\u00f6rst.'); return; }
   const campingEl = document.getElementById('m-camping');
   const campingVal = campingEl.value;
