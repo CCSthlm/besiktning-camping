@@ -1651,7 +1651,8 @@ async function saveToSharePoint() {
   const campingName = CAMPING_FULL_NAMES[campingVal] || campingEl.options[campingEl.selectedIndex]?.text || 'camping';
   const date = document.getElementById('m-date').value || new Date().toISOString().slice(0,10);
   const safeName = campingName.replace(/[^a-zA-Z\u00e5\u00e4\u00f6\u00c5\u00c4\u00d60-9]/g, '_');
-  const filename = safeName + '_' + date + '.xlsx';
+  const now = new Date(); const timeStr = now.getHours().toString().padStart(2,'0') + now.getMinutes().toString().padStart(2,'0') + now.getSeconds().toString().padStart(2,'0');
+  const filename = safeName + '_' + date + '_' + timeStr + '.xlsx';
 
   btn.innerHTML = '<i class="ti ti-loader"></i> Loggar in...';
   btn.disabled = true;
