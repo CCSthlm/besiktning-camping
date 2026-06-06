@@ -660,7 +660,8 @@ function updateSCRag() {
   const wasComplete = pill.dataset.complete === 'true';
   pill.className = 'pill ' + (hasNej ? 'pill-red' : 'pill-green');
   pill.textContent = hasNej ? 'Underkänt' : 'Godkänt';
-  const nowComplete = allDone && !hasNej;
+    const answeredAllSC = SC_SECTION.items.every((_, i) => scNaScores[i] || scScores[i] !== undefined);
+  const nowComplete = answeredAllSC;
   pill.dataset.complete = nowComplete ? 'true' : 'false';
   const doneIcon = document.getElementById('done-sc');
   const secIcon = document.getElementById('icon-sc');
@@ -766,11 +767,11 @@ function updateSectionRag(sid) {
   const totalNonNA = sec.items.filter((_, i) => !(naScores[sid] && naScores[sid][i])).length;
   if (!ratedItems.length) { pill.className = 'pill pill-gray'; pill.textContent = 'Ej bedömd'; return; }
   const hasNej = sec.items.some((_, i) => !(naScores[sid] && naScores[sid][i]) && scores[sid] && scores[sid][i] === 'nej');
-  const allDone = ratedItems.length === totalNonNA;
   const wasComplete = pill.dataset.complete === 'true';
   pill.className = 'pill ' + (hasNej ? 'pill-red' : 'pill-green');
   pill.textContent = hasNej ? 'Underkänt' : 'Godkänt';
-  const nowComplete = allDone && !hasNej;
+  // Complete = all items have any answer (ja, nej, or N/A)
+  const nowComplete = sec.items.every((_, i) => (naScores[sid] && naScores[sid][i]) || (scores[sid] && scores[sid][i] !== undefined));
   pill.dataset.complete = nowComplete ? 'true' : 'false';
   // Show/hide green checkmark
   const doneIcon = document.getElementById('done-' + sid);
@@ -1784,6 +1785,12 @@ async function saveToSharePoint() {
 // ---- Auto-save to localStorage ----
 function autoSave() {
   try {
+    // Only save if there's actual data
+    const hasData = Object.keys(scores).some(s => Object.keys(scores[s]||{}).length > 0)
+      || Object.keys(scScores).length > 0
+      || Object.keys(srvScores).length > 0
+      || Object.keys(itemComments).length > 0;
+    if (!hasData) return;
     const noteEls = document.querySelectorAll('.note-row textarea');
     const noteVals = Array.from(noteEls).map(t => t.value);
     const state = {
@@ -1805,29 +1812,38 @@ function autoSave() {
   } catch(e) {}
 }
 
+
 function autoRestore() {
   try {
     const raw = localStorage.getItem('besiktning_autosave');
     if (!raw) return;
     const state = JSON.parse(raw);
+    // Only restore if there's real data
+    const hasData = Object.keys(state.scores||{}).some(s => Object.keys(state.scores[s]||{}).length > 0)
+      || Object.keys(state.scScores||{}).length > 0
+      || Object.keys(state.srvScores||{}).length > 0;
+    if (!hasData) { localStorage.removeItem('besiktning_autosave'); return; }
     const age = (Date.now() - state.ts) / 60000;
     if (age > 480) { localStorage.removeItem('besiktning_autosave'); return; }
-    if (!confirm('Det finns ett osparad protokoll från ' + Math.round(age) + ' minuter sedan. Vill du återställa det?')) {
+    const ageText = age < 1 ? 'nyss' : Math.round(age) + ' minuter sedan';
+    if (!confirm('Det finns ett osparad protokoll från ' + ageText + ' (' + (state.camping ? 'Camping: ' + state.camping : 'okänd camping') + '). Vill du återställa det?')) {
       localStorage.removeItem('besiktning_autosave'); return;
     }
-    if (state.camping) document.getElementById('m-camping').value = state.camping;
+    // Restore metadata
+    if (state.camping) { document.getElementById('m-camping').value = state.camping; checkSrv(); }
     if (state.name) document.getElementById('m-name').value = state.name;
     if (state.type) document.getElementById('m-type').value = state.type;
     if (state.date) document.getElementById('m-date').value = state.date;
-    checkSrv(); checkLock();
-    Object.assign(scores, state.scores || {});
-    Object.assign(naScores, state.naScores || {});
-    Object.assign(scScores, state.scScores || {});
-    Object.assign(scNaScores, state.scNaScores || {});
-    Object.assign(srvScores, state.srvScores || {});
-    Object.assign(srvNaScores, state.srvNaScores || {});
-    Object.assign(itemComments, state.itemComments || {});
-    // Rebuild UI
+    checkLock();
+    // Restore data
+    Object.keys(state.scores||{}).forEach(k => { scores[k] = state.scores[k]; });
+    Object.keys(state.naScores||{}).forEach(k => { naScores[k] = state.naScores[k]; });
+    Object.keys(state.scScores||{}).forEach(k => { scScores[k] = state.scScores[k]; });
+    Object.keys(state.scNaScores||{}).forEach(k => { scNaScores[k] = state.scNaScores[k]; });
+    Object.keys(state.srvScores||{}).forEach(k => { srvScores[k] = state.srvScores[k]; });
+    Object.keys(state.srvNaScores||{}).forEach(k => { srvNaScores[k] = state.srvNaScores[k]; });
+    Object.keys(state.itemComments||{}).forEach(k => { itemComments[k] = state.itemComments[k]; });
+    // Rebuild UI buttons
     SECTIONS.forEach(sec => {
       sec.items.forEach((_, i) => {
         const v = scores[sec.id] && scores[sec.id][i];
@@ -1843,10 +1859,24 @@ function autoRestore() {
       const cmt = itemComments['sc-' + i]; if (cmt) { const cb = document.getElementById('cbtn-sc-' + i); if (cb) cb.className = 'comment-btn has-comment'; }
     });
     updateSCRag();
+    // Restore SRV scores UI
+    const total = srvItemTotal();
+    for (let i = 0; i < total; i++) {
+      const v = srvScores[i]; if (v) { const ja = document.getElementById('srvja-' + i); const nej = document.getElementById('srvnej-' + i); if (ja) ja.className = 'yn-btn' + (v==='ja' ? ' yn-ja' : ''); if (nej) nej.className = 'yn-btn' + (v==='nej' ? ' yn-nej' : ''); }
+      if (srvNaScores[i]) { const nb = document.getElementById('srvna-' + i); if (nb) nb.classList.add('na-on'); }
+      const cmt = itemComments['srv-' + i]; if (cmt) { const cb = document.getElementById('cbtn-srv-' + i); if (cb) cb.className = 'comment-btn has-comment'; }
+    }
+    updateSrvRag();
+    // Restore notes
+    if (state.noteVals) {
+      const noteEls = document.querySelectorAll('.note-row textarea');
+      state.noteVals.forEach((v, i) => { if (noteEls[i]) noteEls[i].value = v; });
+    }
     updateSummary();
   } catch(e) { console.error('autoRestore error:', e); }
 }
 
+setTimeout(autoRestore, 600);
 setTimeout(autoRestore, 600);
 
 </script>
