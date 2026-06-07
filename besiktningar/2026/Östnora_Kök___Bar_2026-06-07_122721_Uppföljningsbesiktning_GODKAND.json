@@ -1,0 +1,66 @@
+{
+  "meta": {
+    "camping": "c8",
+    "campingName": "Östnora Kök & Bar",
+    "date": "2026-06-07",
+    "inspector": "Massimo Johansson",
+    "type": "Uppföljningsbesiktning",
+    "savedAt": "2026-06-07T10:27:23.978Z"
+  },
+  "sections": {
+    "ankomst": {},
+    "sanitet": {},
+    "gemensamma": {},
+    "vardskap": {},
+    "sakerhet": {},
+    "teknisk": {}
+  },
+  "sc": {},
+  "srv": {
+    "0": "ja",
+    "1": "ja",
+    "2": "ja",
+    "3": "ja",
+    "4": "ja",
+    "5": "ja",
+    "6": "ja",
+    "7": "ja",
+    "8": "ja",
+    "9": "ja",
+    "10": "ja",
+    "11": "ja",
+    "12": "ja",
+    "13": "ja",
+    "14": "ja",
+    "15": "ja",
+    "16": "ja",
+    "17": "ja",
+    "18": "ja",
+    "19": "ja",
+    "20": "ja",
+    "21": "ja",
+    "22": "ja",
+    "23": "ja",
+    "24": "ja",
+    "25": "ja",
+    "26": "ja",
+    "27": "ja"
+  },
+  "naScores": {
+    "ankomst": {},
+    "sanitet": {},
+    "gemensamma": {},
+    "vardskap": {},
+    "sakerhet": {},
+    "teknisk": {}
+  },
+  "scNaScores": {},
+  "srvNaScores": {},
+  "itemComments": {},
+  "notes": {},
+  "srvCtrl": {
+    "0": "Pärmen i grönsaksrummet",
+    "1": "2",
+    "7": "Online - Esmiley"
+  }
+}
