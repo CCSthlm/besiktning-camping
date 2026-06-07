@@ -1286,23 +1286,16 @@ function generateCert() {
   if (anmarkningHtml) finalHtml += '<div class="cert-failed-title" style="margin-top:' + (underkandaHtml ? '16px' : '0') + '">Anmärkning</div>' + anmarkningHtml;
 
   const annexEl = document.getElementById('cert-annex');
-  if (finalHtml) {
-    // Underkänd: underkända punkter stay on cert, anmärkningar too
-    // Godkänd: move anmärkningar to annex (separate print page)
-    if (passed && underkandaHtml === '') {
-      // All content is anmärkningar only - move to annex
-      failedEl.style.display = 'none';
-      failedEl.innerHTML = '';
-      if (annexEl) {
-        annexEl.style.display = 'block';
-        annexEl.innerHTML = '<div class="cert-annex-title">Anmärkningar</div>' + finalHtml;
-      }
-    } else {
-      // Has underkända - keep on cert, move any pure anmärkning sections to annex
-      failedEl.style.display = 'block';
-      failedEl.innerHTML = finalHtml;
-      if (annexEl) { annexEl.style.display = 'none'; annexEl.innerHTML = ''; }
-    }
+  if (passed) {
+    // GODKÄND: hide all anmärkningar from cert completely
+    failedEl.style.display = 'none';
+    failedEl.innerHTML = '';
+    if (annexEl) { annexEl.style.display = 'none'; annexEl.innerHTML = ''; }
+  } else if (finalHtml) {
+    // UNDERKÄND: show everything on cert as before
+    failedEl.style.display = 'block';
+    failedEl.innerHTML = finalHtml;
+    if (annexEl) { annexEl.style.display = 'none'; annexEl.innerHTML = ''; }
   } else {
     failedEl.style.display = 'none';
     failedEl.innerHTML = '';
