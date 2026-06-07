@@ -2054,12 +2054,9 @@ function autoSetInspectionType(filterVal) {
 
   if (latest.result === 'UNDERKAND') {
     typeSel.value = 'Uppföljningsbesiktning';
-    if (latestGodkand) {
-      showInspTypeHint('Senaste underkänd (' + latest.date + '). Förifylls med svar från ' + latestGodkand.date + '...');
-      prefillFromHistory(latestGodkand);
-    } else {
-      showInspTypeHint('Senaste besiktning var underkänd (' + latest.date + ').');
-    }
+    // Prefill from the latest UNDERKAND so user sees all previous answers
+    showInspTypeHint('Senaste besiktning underkänd (' + latest.date + '). Förifylls med alla svar...');
+    prefillFromHistory(latest);
     return;
   }
 
@@ -2291,20 +2288,20 @@ async function prefillFromHistory(histEntry) {
     const answers = JSON.parse(jsonStr);
 
     // Confirm before overwriting
-    if (!confirm('Vill du förifyla protokollet med Ja-svar från ' + histEntry.date + '? Nej-svar lämnas tomma.')) return;
+    if (!confirm('Vill du förifyla protokollet med alla svar från ' + histEntry.date + '? Du kan sedan ändra Nej till Ja för åtgärdade punkter.')) return;
 
-    // Apply answers - only prefill 'ja', leave 'nej' empty
+    // Apply ALL answers (ja and nej) so user sees full previous state
     if (answers.sections) {
       Object.keys(answers.sections).forEach(sid => {
         Object.keys(answers.sections[sid]).forEach(i => {
           const v = answers.sections[sid][i];
-          if (v === 'ja') {
+          if (v === 'ja' || v === 'nej') {
             if (!scores[sid]) scores[sid] = {};
-            scores[sid][i] = 'ja';
+            scores[sid][i] = v;
             const jaBtn = document.getElementById('ja-' + sid + '-' + i);
-            if (jaBtn) jaBtn.className = 'yn-btn yn-ja';
             const nejBtn = document.getElementById('nej-' + sid + '-' + i);
-            if (nejBtn) nejBtn.className = 'yn-btn';
+            if (jaBtn) jaBtn.className = 'yn-btn' + (v === 'ja' ? ' yn-ja' : '');
+            if (nejBtn) nejBtn.className = 'yn-btn' + (v === 'nej' ? ' yn-nej' : '');
           }
         });
         updateSectionRag(sid);
@@ -2314,12 +2311,13 @@ async function prefillFromHistory(histEntry) {
     // SC section
     if (answers.sc) {
       Object.keys(answers.sc).forEach(i => {
-        if (answers.sc[i] === 'ja') {
-          scScores[i] = 'ja';
+        const v = answers.sc[i];
+        if (v === 'ja' || v === 'nej') {
+          scScores[i] = v;
           const ja = document.getElementById('scja-' + i);
-          if (ja) ja.className = 'yn-btn yn-ja';
           const nej = document.getElementById('scnej-' + i);
-          if (nej) nej.className = 'yn-btn';
+          if (ja) ja.className = 'yn-btn' + (v === 'ja' ? ' yn-ja' : '');
+          if (nej) nej.className = 'yn-btn' + (v === 'nej' ? ' yn-nej' : '');
         }
       });
       updateSCRag();
@@ -2328,12 +2326,13 @@ async function prefillFromHistory(histEntry) {
     // SRV section
     if (answers.srv) {
       Object.keys(answers.srv).forEach(i => {
-        if (answers.srv[i] === 'ja') {
-          srvScores[i] = 'ja';
+        const v = answers.srv[i];
+        if (v === 'ja' || v === 'nej') {
+          srvScores[i] = v;
           const ja = document.getElementById('srvja-' + i);
-          if (ja) ja.className = 'yn-btn yn-ja';
           const nej = document.getElementById('srvnej-' + i);
-          if (nej) nej.className = 'yn-btn';
+          if (ja) ja.className = 'yn-btn' + (v === 'ja' ? ' yn-ja' : '');
+          if (nej) nej.className = 'yn-btn' + (v === 'nej' ? ' yn-nej' : '');
         }
       });
       updateSrvRag();
@@ -2360,7 +2359,7 @@ async function prefillFromHistory(histEntry) {
     }
 
     updateSummary();
-    showInspTypeHint('Förifyllt med Ja-svar från ' + histEntry.date + '. Kontrollera och fyll i resterande.');
+    showInspTypeHint('Förifyllt med alla svar från ' + histEntry.date + '. Ändra Nej till Ja för åtgärdade punkter.');
 
   } catch(e) {
     console.error('prefillFromHistory error:', e);
