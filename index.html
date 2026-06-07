@@ -174,6 +174,8 @@
     .app-header { border-radius: 0; }
     .no-print { display: none !important; }
     .cert-box { border: 2px solid #333; break-before: page; break-after: page; }
+    .cert-annex { display: block !important; break-before: page; padding: 20px 0; }
+    .cert-annex-title { font-size: 13px; font-weight: 600; color: #5a5a57; text-transform: uppercase; letter-spacing: .04em; margin-bottom: 12px; }
     .section-card { break-inside: avoid; }
     .summary-bar { break-inside: avoid; }
   }
@@ -427,6 +429,7 @@
     <div class="cert-body-text" id="cert-body-text"></div>
     <div class="cert-section-summary" id="cert-section-summary" style="display:none"></div>
     <div class="cert-failed" id="cert-failed" style="display:none"></div>
+    <div class="cert-annex no-screen" id="cert-annex" style="display:none"></div>
     <div class="cert-srv-note" id="cert-srv-note"></div>
     <hr class="cert-divider">
     <div class="cert-sigs">
@@ -1282,12 +1285,28 @@ function generateCert() {
   if (underkandaHtml) finalHtml += '<div class="cert-failed-title">Underkända punkter (' + redCount + ' st)</div>' + underkandaHtml;
   if (anmarkningHtml) finalHtml += '<div class="cert-failed-title" style="margin-top:' + (underkandaHtml ? '16px' : '0') + '">Anmärkning</div>' + anmarkningHtml;
 
+  const annexEl = document.getElementById('cert-annex');
   if (finalHtml) {
-    failedEl.style.display = 'block';
-    failedEl.innerHTML = finalHtml;
+    // Underkänd: underkända punkter stay on cert, anmärkningar too
+    // Godkänd: move anmärkningar to annex (separate print page)
+    if (passed && underkandaHtml === '') {
+      // All content is anmärkningar only - move to annex
+      failedEl.style.display = 'none';
+      failedEl.innerHTML = '';
+      if (annexEl) {
+        annexEl.style.display = 'block';
+        annexEl.innerHTML = '<div class="cert-annex-title">Anmärkningar</div>' + finalHtml;
+      }
+    } else {
+      // Has underkända - keep on cert, move any pure anmärkning sections to annex
+      failedEl.style.display = 'block';
+      failedEl.innerHTML = finalHtml;
+      if (annexEl) { annexEl.style.display = 'none'; annexEl.innerHTML = ''; }
+    }
   } else {
     failedEl.style.display = 'none';
     failedEl.innerHTML = '';
+    if (annexEl) { annexEl.style.display = 'none'; annexEl.innerHTML = ''; }
   }
 
   const srvNoteEl = document.getElementById('cert-srv-note');
