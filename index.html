@@ -1671,7 +1671,11 @@ function buildWorkbook() {
   if (srvVis) { const total = srvItemTotal(); const w = 2.5; for (let i = 0; i < total; i++) { if (srvNaScores[i]) continue; const vRaw = srvScores[i]; const v = vRaw !== undefined ? ynToNum(vRaw) : undefined; if (v !== undefined) { rated++; scoreW += v * w; totalW += 5 * w; if (vRaw === 'nej') reds++; } } }
   const naCount = SECTIONS.reduce((a, s) => a + s.items.filter((_, i) => naScores[s.id] && naScores[s.id][i]).length, 0) + SC_SECTION.items.filter((_, i) => scNaScores[i]).length + (srvVis ? Object.values(srvNaScores).filter(Boolean).length : 0);
   const srvTotal2 = srvVis ? srvItemTotal() : 0;
-  const totalItems = SECTIONS.reduce((a, s) => a + s.items.length, 0) + SC_SECTION.items.length + srvTotal2 - naCount;
+  const campingOptBW = document.getElementById('m-camping');
+  const srvOnlyBW = campingOptBW && campingOptBW.options[campingOptBW.selectedIndex]?.dataset.srvOnly === 'true';
+  const totalItems = srvOnlyBW
+    ? srvTotal2
+    : SECTIONS.reduce((a, s) => a + s.items.length, 0) + SC_SECTION.items.length + srvTotal2 - naCount;
   const scFailed = SC_SECTION.items.some((_, i) => !scNaScores[i] && scScores[i] === 'nej');
   const passed = rated > 0 && reds === 0 && !scFailed;
   const status = !rated ? 'Ej ifyllt' : passed ? 'GODKÄND' : 'UNDERKÄND';
@@ -1696,7 +1700,7 @@ function buildWorkbook() {
   // Sheet 2: Detaljerade resultat
   const noteEls = document.querySelectorAll('.note-row textarea');
   const detailRows = [['Sektion', 'Punkt', 'Svar', 'Status', 'N/A', 'Anteckning']];
-  SECTIONS.forEach((sec, si) => {
+  if (!srvOnlyBW) SECTIONS.forEach((sec, si) => {
     sec.items.forEach((it, i) => {
       const isNA = !!(naScores[sec.id] && naScores[sec.id][i]);
       const v = scores[sec.id] && scores[sec.id][i];
@@ -1709,7 +1713,7 @@ function buildWorkbook() {
   const scCardEls = document.querySelectorAll('#sections-container .section-card');
   const scNoteEl = scCardEls.length > 0 ? scCardEls[scCardEls.length - 1].querySelector('.note-row textarea') : null;
   const scNoteX = scNoteEl ? scNoteEl.value.trim() : '';
-  SC_SECTION.items.forEach((it, i) => {
+  if (!srvOnlyBW) SC_SECTION.items.forEach((it, i) => {
     const isNA = !!scNaScores[i]; const v = scScores[i];
     const itemCmt = itemComments['sc-' + i] || '';
     detailRows.push([SC_SECTION.label, it.t, yn(v, isNA), statusTxtFn(v, isNA), isNA ? 'Ja' : '', itemCmt]);
@@ -1770,7 +1774,7 @@ function buildWorkbook() {
       const srvICmt = itemComments['srv-' + i] || '';
       const srvCombined = [srvCtrlValA, srvICmt].filter(Boolean).join(' | ');
       if (srvScores[i] === 'nej') { avvRows.push(['Servering / alkoholtillstånd', it.t, 'Nej', 'Underkänt', srvCombined || (srvHasNej ? '' : srvNoteVal2)]); srvHasNej = true; }
-      else if (srvCombined) avvRows.push(['Servering / alkoholtillstånd', it.t, yn(srvScores[i], false), statusTxtFn(srvScores[i], false), srvICmt]);
+      else if (srvCombined) avvRows.push(['Servering / alkoholtillstånd', it.t, yn(srvScores[i], false), statusTxtFn(srvScores[i], false), srvCombined]);
     });
     if (srvNoteVal2 && !srvHasNej) avvRows.push(['Servering / alkoholtillstånd', 'Sektionsanteckning', '', '', srvNoteVal2]);
   }
