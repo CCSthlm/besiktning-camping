@@ -591,6 +591,7 @@ const SRV_TILLFALLIG = [
 ];
 
 const scores = {};
+let _prevUnderkandDate = ''; // Set when prefilling from underkänd
 const itemTexts = {};      // key -> question text for modal display
 const itemComments = {};   // key -> comment text per question
 const scScores = {};   // 'ja' | 'nej' | undefined
@@ -1037,7 +1038,13 @@ function generateCert() {
     statusClass = '';
   } else if (passed) {
     status = 'GODKÄND';
+    const isUppfoljning = inspType.toLowerCase().includes('uppf');
+  const prevUndStr = _prevUnderkandDate ? new Date(_prevUnderkandDate + 'T12:00:00').toLocaleDateString('sv-SE') : '';
+  if (isUppfoljning && prevUndStr) {
+    body = fullCampingName + ' har genomgått uppföljningsbesiktning den ' + dateStr + ' efter en tidigare underkänd besiktning den ' + prevUndStr + '. Campingen uppfyller nu samtliga krav. Besiktningsintyget gäller till och med nästkommande ordinarie besiktningstillfälle.';
+  } else {
     body = fullCampingName + ' har genomgått ' + inspType.toLowerCase() + ' den ' + dateStr + ' och uppfyller samtliga krav. Inga underkända punkter noterades. Besiktningsintyget gäller till och med nästkommande ordinarie besiktningstillfälle.';
+  }
     statusClass = 'cert-status-green';
   } else {
     status = 'UNDERKÄND';
@@ -1324,6 +1331,7 @@ function resetAll() {
   document.querySelectorAll('.yn-btn').forEach(b => b.className = 'yn-btn');
   Object.keys(itemComments).forEach(k => delete itemComments[k]);
   localStorage.removeItem('besiktning_autosave');
+  _prevUnderkandDate = '';
   document.querySelectorAll('.comment-btn').forEach(b => b.className = 'comment-btn');
   updateSCRag();
   document.querySelectorAll('.star-btn').forEach(b => b.classList.remove('on'));
@@ -2267,6 +2275,7 @@ function buildAnswersJSON() {
 
 async function prefillFromHistory(histEntry) {
   console.log('prefillFromHistory called for:', histEntry.date, histEntry.name);
+  if (histEntry.result === 'UNDERKAND') _prevUnderkandDate = histEntry.date;
   const token = localStorage.getItem('gh_token') || '';
   const headers = token ? { 'Authorization': 'token ' + token } : {};
   const repo = 'CCSthlm/besiktning-camping';
