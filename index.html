@@ -171,13 +171,18 @@
   @media print {
     body { background: white; font-size: 12px; }
     .page { max-width: none; padding: 0; }
-    .app-header { border-radius: 0; }
+    .app-header { display: none !important; }
     .no-print { display: none !important; }
-    .cert-box { border: 2px solid #333; break-before: page; padding: 16px 24px; }
+    .meta-card { display: none !important; }
+    .summary-bar { display: none !important; }
+    #sections-container { display: none !important; }
+    #srv-section { display: none !important; }
+    #lock-notice { display: none !important; }
+    #history-panel { display: none !important; }
+    .cert-box { border: 2px solid #333; break-before: auto; padding: 16px 24px; }
     .cert-annex { display: block !important; break-before: page; padding: 20px 0; }
     .cert-annex-title { font-size: 13px; font-weight: 600; color: #5a5a57; text-transform: uppercase; letter-spacing: .04em; margin-bottom: 12px; }
     .section-card { break-inside: avoid; }
-    .summary-bar { break-inside: avoid; }
   }
 
   /* Responsive */
