@@ -140,14 +140,14 @@
   .btn-excel { background: #E8F5E9; color: #1B5E20; border-color: #2E7D32; }
 
   /* Certificate */
-  .cert-box { display: none; border: 2px solid var(--border2); border-radius: var(--radius-lg); padding: 28px 32px; margin-top: 20px; background: var(--bg); }
+  .cert-box { display: none; border: 2px solid var(--border2); border-radius: var(--radius-lg); padding: 20px 28px; margin-top: 20px; background: var(--bg); }
   .cert-box.show { display: block; }
-  .cert-header { text-align: center; margin-bottom: 20px; }
+  .cert-header { text-align: center; margin-bottom: 12px; }
   .cert-header h2 { font-size: 28px; font-weight: 700; letter-spacing: 0.03em; color: var(--text); }
   .cert-header .org { font-size: 13px; color: var(--text3); margin-top: 4px; }
   .cert-camping { font-size: 17px; font-weight: 600; color: var(--text); margin-top: 6px; letter-spacing: 0.02em; }
-  .cert-divider { border: none; border-top: 2px solid var(--border2); margin: 16px 0; }
-  .cert-status-text { font-size: 32px; font-weight: 700; text-align: center; padding: 10px 0; letter-spacing: 0.05em; }
+  .cert-divider { border: none; border-top: 2px solid var(--border2); margin: 10px 0; }
+  .cert-status-text { font-size: 32px; font-weight: 700; text-align: center; padding: 6px 0; letter-spacing: 0.05em; }
   .cert-status-green { color: var(--green-border); }
   .cert-status-amber { color: var(--amber-border); }
   .cert-status-red { color: var(--red-border); }
@@ -173,7 +173,7 @@
     .page { max-width: none; padding: 0; }
     .app-header { border-radius: 0; }
     .no-print { display: none !important; }
-    .cert-box { border: 2px solid #333; break-before: page; break-after: page; }
+    .cert-box { border: 2px solid #333; break-before: page; break-after: page; padding: 16px 24px; }
     .cert-annex { display: block !important; break-before: page; padding: 20px 0; }
     .cert-annex-title { font-size: 13px; font-weight: 600; color: #5a5a57; text-transform: uppercase; letter-spacing: .04em; margin-bottom: 12px; }
     .section-card { break-inside: avoid; }
@@ -194,7 +194,7 @@
   /* Failed points in certificate */
   .cert-failed { margin: 16px auto; max-width: 580px; text-align: left; }
   .cert-failed-title { font-size: 12px; font-weight: 600; color: var(--text2); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.04em; }
-  .cert-section-summary { margin: 16px auto 20px; max-width: 580px; }
+  .cert-section-summary { margin: 10px auto 12px; max-width: 580px; }
   .cert-section-summary-title { font-size: 12px; font-weight: 600; color: var(--text2); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.04em; }
   .cert-section-row { display: flex; justify-content: space-between; align-items: center; padding: 5px 10px; border-radius: var(--radius); margin-bottom: 4px; font-size: 12px; background: var(--bg2); }
   .cert-section-row .sec-name { color: var(--text); font-weight: 500; }
@@ -214,8 +214,8 @@
   .cert-comment { font-size: 11px; color: var(--text2); margin-top: 4px; margin-bottom: 4px; font-style: italic; display: flex; align-items: flex-start; gap: 4px; }
 
   /* Logo in certificate */
-  .cert-logo { display: block; width: 180px; height: auto; margin: 0 auto 12px; }
-  @media print { .cert-logo { width: 160px; } }
+  .cert-logo { display: block; width: 180px; height: auto; margin: 0 auto 8px; }
+  @media print { .cert-logo { width: 120px; } }
 
 </style>
 </head>
