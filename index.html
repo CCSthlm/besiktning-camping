@@ -1078,7 +1078,7 @@ function generateCert() {
   document.getElementById('cert-stamp-wrap').innerHTML = '';
   document.getElementById('cert-status-text').textContent = status;
   document.getElementById('cert-status-text').className = 'cert-status-text ' + statusClass;
-  document.getElementById('cert-scores').innerHTML = rated
+  document.getElementById('cert-scores').innerHTML = (rated && !passed)
     ? '<div class="cert-score-item"><div class="val">' + reds + '</div><div class="lbl">Underkända punkter</div></div>'
     + '<div class="cert-score-item"><div class="val">' + rated + ' av ' + totalItems + '</div><div class="lbl">Bedömda punkter</div></div>'
     : '';
@@ -1134,11 +1134,12 @@ function generateCert() {
     }
   }
 
-  if (anySectionRated) {
+  if (anySectionRated && !passed) {
     secSummaryEl.style.display = 'block';
     secSummaryEl.innerHTML = secSummaryHtml;
   } else {
     secSummaryEl.style.display = 'none';
+    secSummaryEl.innerHTML = '';
   }
 
   const failedEl = document.getElementById('cert-failed');
