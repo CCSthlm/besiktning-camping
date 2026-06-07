@@ -289,7 +289,7 @@
     </div>
     <div class="sec-head srv-head-style">
       <i class="ti ti-license sec-icon"></i>
-      <span class="sec-title">Servering / alkoholtillstånd<span class="weight-badge">Vikt 2,5x</span></span>
+      <span class="sec-title">Servering / alkoholtillstånd</span>
       <span class="pill pill-gray" id="rag-srv">Ej bedömd</span>
     </div>
     <div id="srv-items-container"></div>
@@ -967,7 +967,7 @@ function buildSrvSection() {
         + '<div class="item-text">' + it.t + '</div>'
         + (it.law ? '<div class="item-law"><i class="ti ti-scale" style="font-size:11px;vertical-align:-1px"></i> ' + it.law + '</div>' : '')
         + (it.n ? '<div class="item-note">' + it.n + '</div>' : '')
-        + (it.ctrl ? '<div class="item-ctrl"><span>' + it.ctrl + '</span><input type="text" placeholder="Anteckna här..."></div>' : '')
+        + (it.ctrl ? '<div class="item-ctrl"><span>' + it.ctrl + '</span><input type="text" id="ctrl-srv-' + i + '" placeholder="Anteckna här..."></div>' : '')
         + '</div>'
         + '<div class="stars" style="gap:6px">'
         + '<button class="yn-btn" id="srvja-' + i + '" onclick="setSrvYN(' + i + ',&quot;ja&quot;)">Ja</button>'
@@ -1364,7 +1364,7 @@ function buildSections() {
     const div = document.createElement('div');
     div.className = 'section-card';
     let html = '<div class="sec-head"><span class="sec-done-check" id="done-' + sec.id + '" style="display:none;color:#27ae60;font-size:20px;font-weight:700;line-height:1;margin-right:-4px">✓</span><i class="ti ' + sec.icon + ' sec-icon" id="icon-' + sec.id + '"></i>'
-      + '<span class="sec-title">' + sec.label + '<span class="weight-badge">Vikt ' + sec.weight + 'x</span></span>'
+      + '<span class="sec-title">' + sec.label + '</span>'
       + '<span class="pill pill-gray" id="rag-' + sec.id + '">Ej bedömd</span></div>';
     sec.items.forEach((it, i) => {
       const ckeyS = sec.id + '-' + i;
@@ -1392,7 +1392,7 @@ function buildSCSection() {
   const div = document.createElement('div');
   div.className = 'section-card';
   let h = '<div class="sec-head"><span class="sec-done-check" id="done-sc" style="display:none;color:#27ae60;font-size:20px;font-weight:700;line-height:1;margin-right:-4px">✓</span><i class="ti ' + SC_SECTION.icon + ' sec-icon" id="icon-sc"></i>'
-    + '<span class="sec-title">' + SC_SECTION.label + '<span class="weight-badge">Vikt ' + SC_SECTION.weight + 'x</span></span>'
+    + '<span class="sec-title">' + SC_SECTION.label + '</span>'
     + '<span class="pill pill-gray" id="rag-sc">Ej bedömd</span></div>';
   SC_SECTION.items.forEach(function(it, i) {
     const ckeysc = 'sc-' + i;
@@ -2264,10 +2264,13 @@ function buildAnswersJSON() {
   });
 
   // SRV section
+  answers.srvCtrl = {};
   const total = srvItemTotal();
   for (let i = 0; i < total; i++) {
     if (srvScores[i] !== undefined) answers.srv[i] = srvScores[i];
     if (srvNaScores[i]) answers.srvNaScores[i] = true;
+    const ctrlEl = document.getElementById('ctrl-srv-' + i);
+    if (ctrlEl && ctrlEl.value.trim()) answers.srvCtrl[i] = ctrlEl.value.trim();
   }
 
   // Notes
@@ -2385,6 +2388,14 @@ async function prefillFromHistory(histEntry) {
           if (ja) ja.className = 'yn-btn';
           if (nej) nej.className = 'yn-btn';
         }
+      });
+    }
+
+    // SRV ctrl fields
+    if (answers.srvCtrl) {
+      Object.keys(answers.srvCtrl).forEach(i => {
+        const el = document.getElementById('ctrl-srv-' + i);
+        if (el) el.value = answers.srvCtrl[i];
       });
     }
 
