@@ -2367,6 +2367,59 @@ async function prefillFromHistory(histEntry) {
       });
     }
 
+    // SC N/A
+    if (answers.scNaScores) {
+      Object.keys(answers.scNaScores).forEach(i => {
+        if (answers.scNaScores[i]) {
+          scNaScores[i] = true;
+          const nb = document.getElementById('scna-' + i);
+          if (nb) nb.classList.add('na-on');
+          delete scScores[i];
+          const ja = document.getElementById('scja-' + i);
+          const nej = document.getElementById('scnej-' + i);
+          if (ja) ja.className = 'yn-btn';
+          if (nej) nej.className = 'yn-btn';
+        }
+      });
+    }
+
+    // SRV N/A
+    if (answers.srvNaScores) {
+      Object.keys(answers.srvNaScores).forEach(i => {
+        if (answers.srvNaScores[i]) {
+          srvNaScores[i] = true;
+          const nb = document.getElementById('srvna-' + i);
+          if (nb) nb.classList.add('na-on');
+          delete srvScores[i];
+          const ja = document.getElementById('srvja-' + i);
+          const nej = document.getElementById('srvnej-' + i);
+          if (ja) ja.className = 'yn-btn';
+          if (nej) nej.className = 'yn-btn';
+        }
+      });
+    }
+
+    // Item comments
+    if (answers.itemComments) {
+      Object.keys(answers.itemComments).forEach(k => {
+        itemComments[k] = answers.itemComments[k];
+        const btnId = 'cbtn-' + k.replace(/[^a-z0-9]/gi, '-');
+        const cb = document.getElementById(btnId);
+        if (cb) cb.className = 'comment-btn has-comment';
+      });
+    }
+
+    // Section notes
+    if (answers.notes) {
+      const noteEls = document.querySelectorAll('.note-row textarea');
+      Object.keys(answers.notes).forEach(i => {
+        if (noteEls[i]) noteEls[i].value = answers.notes[i];
+      });
+    }
+
+    SECTIONS.forEach(sec => updateSectionRag(sec.id));
+    updateSCRag();
+    updateSrvRag();
     updateSummary();
     showInspTypeHint('Förifyllt med alla svar från ' + histEntry.date + '. Ändra Nej till Ja för åtgärdade punkter.');
 
