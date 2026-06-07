@@ -169,20 +169,15 @@
 
   /* Print */
   @media print {
-    body { background: white; font-size: 12px; }
-    .page { max-width: none; padding: 0; }
-    .app-header { display: none !important; }
-    .no-print { display: none !important; }
-    .meta-card { display: none !important; }
-    .summary-bar { display: none !important; }
-    #sections-container { display: none !important; }
-    #srv-section { display: none !important; }
-    #lock-notice { display: none !important; }
-    #history-panel { display: none !important; }
-    .cert-box { border: 2px solid #333; break-before: auto; padding: 16px 24px; }
-    .cert-annex { display: block !important; break-before: page; padding: 20px 0; }
-    .cert-annex-title { font-size: 13px; font-weight: 600; color: #5a5a57; text-transform: uppercase; letter-spacing: .04em; margin-bottom: 12px; }
-    .section-card { break-inside: avoid; }
+    body { background: white; font-size: 12px; margin: 0; padding: 0; min-height: 0 !important; }
+    .page { max-width: none; padding: 0; margin: 0; min-height: 0 !important; }
+    /* Hide everything by default */
+    .app-header, .meta-card, .summary-bar, #sections-container,
+    #srv-section, #lock-notice, #history-panel, .no-print,
+    .btn-row, footer, .cert-annex { display: none !important; }
+    /* Show only cert-box */
+    .cert-box { display: block !important; border: 2px solid #333; padding: 16px 24px; margin: 0; break-before: auto; break-inside: avoid; }
+    .cert-box.show { display: block !important; }
   }
 
   /* Responsive */
