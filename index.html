@@ -237,8 +237,10 @@
         <label>Camping</label>
         <select id="m-camping" onchange="warnCampingChange(); checkSrv(); checkLock(); autoFilterHistory();">
           <option value="">Välj camping...</option>
-          <option value="c1" data-srv="true">CC Björkö Örn (serveringstillstånd)</option>
-          <option value="c2" data-srv="true">CC Östnora (serveringstillstånd)</option>
+          <option value="c1">CC Björkö Örn</option>
+          <option value="c7" data-srv="true" data-srv-only="true">Gräddös Pärla Kök & Bar</option>
+          <option value="c2">CC Östnora</option>
+          <option value="c8" data-srv="true" data-srv-only="true">Östnora Kök & Bar</option>
           <option value="c3">CC Kapellskär</option>
           <option value="c4">CC Mista</option>
           <option value="c5">CC Storsved</option>
@@ -365,7 +367,9 @@
         <select id="hist-filter-camping" onchange="renderHistory()" style="font-size:12px;padding:5px 8px;border-radius:var(--radius);border:1px solid var(--border2);background:var(--bg2);color:var(--text);">
           <option value="">Alla campingar</option>
           <option value="Björkö_Örns">CC Björkö Örn</option>
-          <option value="Östnora">CC Östnora</option>
+          <option value="Gräddös_Pärla">Gräddös Pärla</option>
+          <option value="Östnora_Camping">CC Östnora</option>
+          <option value="Östnora_Kök">Östnora Kök & Bar</option>
           <option value="Mista">CC Mista</option>
           <option value="Storsveds">CC Storsved</option>
           <option value="Örstigs">CC Örstig</option>
@@ -603,6 +607,8 @@ const CAMPING_FULL_NAMES = {
   'c4': 'Caravan Club Mista Camping',
   'c5': 'Caravan Club Storsveds Camping',
   'c6': 'Caravan Club Örstigs Camping',
+  'c7': 'Gräddös Pärla Kök & Bar',
+  'c8': 'Östnora Kök & Bar',
 };
 const srvScores = {};
 const naScores = {};
@@ -941,7 +947,12 @@ function checkSrv() {
   const sel = document.getElementById('m-camping');
   const opt = sel.options[sel.selectedIndex];
   const hasSrv = opt && opt.dataset.srv === 'true';
+  const srvOnly = opt && opt.dataset.srvOnly === 'true';
   document.getElementById('srv-section').classList.toggle('srv-hidden', !hasSrv);
+  // For srv-only campings, hide regular sections and SC section
+  const sectionsContainer = document.getElementById('sections-container');
+  if (sectionsContainer) sectionsContainer.style.display = srvOnly ? 'none' : '';
+  // Hide lock notice for srv-only too if needed
   updateSummary();
 }
 
@@ -1533,6 +1544,7 @@ function mailCert() {
   // Pre-fill To/CC per camping
   const CAMPING_EMAIL = {
     'c1': { to: 'info.bjorko@cc-camping.se', cc: 'massimo.johansson@cc-camping.se' },
+    'c7': { to: 'info.bjorko@cc-camping.se', cc: 'massimo.johansson@cc-camping.se' },
   };
   const emailCfg = CAMPING_EMAIL[campingVal] || { to: '', cc: '' };
   const toStr = emailCfg.to ? emailCfg.to : '';
@@ -2015,11 +2027,13 @@ setTimeout(function() {
 
 const CAMPING_HIST_FILTER = {
   'c1': 'Björkö_Örns',
-  'c2': 'Östnora',
+  'c2': 'Östnora_Camping',
   'c3': 'Kapellskärs',
   'c4': 'Mista',
   'c5': 'Storsveds',
   'c6': 'Örstigs',
+  'c7': 'Gräddös_Pärla',
+  'c8': 'Östnora_Kök',
 };
 
 function autoFilterHistory() {
