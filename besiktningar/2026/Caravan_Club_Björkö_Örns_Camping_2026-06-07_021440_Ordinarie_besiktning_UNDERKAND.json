@@ -1,0 +1,124 @@
+{
+  "meta": {
+    "camping": "c1",
+    "campingName": "Caravan Club Björkö Örns Camping",
+    "date": "2026-06-07",
+    "inspector": "Massimo Johansson",
+    "type": "Ordinarie besiktning",
+    "savedAt": "2026-06-07T00:14:42.590Z"
+  },
+  "sections": {
+    "ankomst": {
+      "0": "ja",
+      "1": "ja",
+      "2": "ja",
+      "3": "ja",
+      "4": "ja"
+    },
+    "sanitet": {
+      "0": "ja",
+      "1": "ja",
+      "2": "ja",
+      "3": "ja",
+      "4": "ja",
+      "5": "ja"
+    },
+    "gemensamma": {
+      "0": "ja",
+      "1": "ja",
+      "2": "ja",
+      "3": "ja",
+      "4": "ja"
+    },
+    "vardskap": {
+      "0": "ja",
+      "1": "ja",
+      "2": "ja",
+      "3": "ja",
+      "4": "ja",
+      "5": "ja",
+      "6": "ja"
+    },
+    "sakerhet": {
+      "0": "ja",
+      "1": "ja",
+      "2": "ja",
+      "3": "nej",
+      "4": "ja"
+    },
+    "teknisk": {
+      "0": "ja",
+      "1": "ja",
+      "2": "ja",
+      "3": "ja",
+      "4": "ja"
+    }
+  },
+  "sc": {
+    "0": "ja",
+    "1": "ja",
+    "2": "ja",
+    "3": "ja",
+    "4": "ja",
+    "5": "ja",
+    "6": "ja",
+    "7": "ja",
+    "8": "ja",
+    "9": "ja",
+    "10": "ja",
+    "11": "ja",
+    "12": "ja",
+    "13": "ja"
+  },
+  "srv": {
+    "0": "nej",
+    "1": "ja",
+    "2": "ja",
+    "3": "ja",
+    "4": "ja",
+    "5": "ja",
+    "6": "ja",
+    "7": "ja",
+    "8": "ja",
+    "9": "ja",
+    "10": "ja",
+    "11": "ja",
+    "12": "ja",
+    "13": "ja",
+    "14": "ja",
+    "15": "ja",
+    "16": "ja",
+    "17": "ja",
+    "18": "ja",
+    "19": "ja",
+    "20": "ja",
+    "21": "ja",
+    "22": "ja",
+    "23": "ja",
+    "24": "ja",
+    "25": "ja"
+  },
+  "naScores": {
+    "ankomst": {},
+    "sanitet": {},
+    "gemensamma": {},
+    "vardskap": {},
+    "sakerhet": {},
+    "teknisk": {}
+  },
+  "scNaScores": {},
+  "srvNaScores": {
+    "26": true,
+    "27": true
+  },
+  "itemComments": {
+    "ankomst-0": "Tvättas",
+    "sanitet-4": "Spruket galler på herrarnas i duschen,",
+    "gemensamma-4": "Fixa till grinden",
+    "srv-26": "Fanns ingen personal på plats",
+    "srv-27": "Fanns ingen personal"
+  },
+  "notes": {
+    "3": "Behov av bättre utbildning"
+  }
+}
