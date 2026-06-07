@@ -1721,8 +1721,11 @@ function buildWorkbook() {
     let srvAllItems = []; groups.forEach(g => g.items.forEach(it => srvAllItems.push({...it, grp: g.label})));
     srvAllItems.forEach((it, i) => {
       const isNA = !!srvNaScores[i]; const v = srvScores[i];
+      const ctrlEl = document.getElementById('ctrl-srv-' + i);
+      const ctrlVal = ctrlEl ? ctrlEl.value.trim() : '';
       const itemCmt = itemComments['srv-' + i] || '';
-      detailRows.push(['Servering / alkoholtillstånd', it.t, yn(v, isNA), statusTxtFn(v, isNA), isNA ? 'Ja' : '', itemCmt]);
+      const combinedCmt = [ctrlVal, itemCmt].filter(Boolean).join(' | ');
+      detailRows.push(['Servering / alkoholtillstånd', it.t, yn(v, isNA), statusTxtFn(v, isNA), isNA ? 'Ja' : '', combinedCmt]);
     });
     const srvNoteX = document.querySelector('#srv-section .note-row textarea');
     const srvNoteVal = srvNoteX ? srvNoteX.value.trim() : '';
@@ -1762,9 +1765,12 @@ function buildWorkbook() {
     let srvHasNej = false;
     srvItems2.forEach((it, i) => {
       if (srvNaScores[i]) return;
+      const srvCtrlElA = document.getElementById('ctrl-srv-' + i);
+      const srvCtrlValA = srvCtrlElA ? srvCtrlElA.value.trim() : '';
       const srvICmt = itemComments['srv-' + i] || '';
-      if (srvScores[i] === 'nej') { avvRows.push(['Servering / alkoholtillstånd', it.t, 'Nej', 'Underkänt', srvICmt || (srvHasNej ? '' : srvNoteVal2)]); srvHasNej = true; }
-      else if (srvICmt) avvRows.push(['Servering / alkoholtillstånd', it.t, yn(srvScores[i], false), statusTxtFn(srvScores[i], false), srvICmt]);
+      const srvCombined = [srvCtrlValA, srvICmt].filter(Boolean).join(' | ');
+      if (srvScores[i] === 'nej') { avvRows.push(['Servering / alkoholtillstånd', it.t, 'Nej', 'Underkänt', srvCombined || (srvHasNej ? '' : srvNoteVal2)]); srvHasNej = true; }
+      else if (srvCombined) avvRows.push(['Servering / alkoholtillstånd', it.t, yn(srvScores[i], false), statusTxtFn(srvScores[i], false), srvICmt]);
     });
     if (srvNoteVal2 && !srvHasNej) avvRows.push(['Servering / alkoholtillstånd', 'Sektionsanteckning', '', '', srvNoteVal2]);
   }
