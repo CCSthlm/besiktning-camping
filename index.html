@@ -1419,51 +1419,47 @@ function apToast(msg, isError) {
 }
 
 // ---- Hook in i inloggningssystemet ----
-// Patchar loLoginSuccess och loLogout via window.load så
-// att funktionerna är definierade av login-overlay-v2 först.
+// Patchar loLoginSuccess och loLogout med setTimeout(0) så
+// att login-overlay-v2 hinner definiera funktionerna först,
+// men patchen sitter på plats innan sidan är "load"-klar.
 
-window.addEventListener('load', function() {
+function apShowAdminBtn(show) {
+  const btn = document.getElementById('admin-panel-toggle');
+  if (btn) btn.style.display = show ? 'inline-flex' : 'none';
+}
+
+setTimeout(function() {
+  // Patcha loLoginSuccess
   if (typeof loLoginSuccess === 'function') {
     const _orig = loLoginSuccess;
     window.loLoginSuccess = function(name, role, method) {
       _orig(name, role, method);
-      const btn = document.getElementById('admin-panel-toggle');
-      if (btn) btn.style.display = (role === 'admin') ? 'inline-flex' : 'none';
+      apShowAdminBtn(role === 'admin');
       window._loSession = { name, role };
     };
   }
+  // Patcha loLogout
   if (typeof loLogout === 'function') {
     const _origOut = loLogout;
     window.loLogout = function() {
       _origOut();
-      const btn = document.getElementById('admin-panel-toggle');
-      if (btn) btn.style.display = 'none';
+      apShowAdminBtn(false);
       window._loSession = null;
       apClose();
     };
   }
-});
-
-// Om redan inloggad (session restore) – visa knappen om admin
-(function apCheckExistingSession() {
+  // Session restore: om redan inloggad som admin – visa knappen direkt
   try {
     const raw = localStorage.getItem('besiktning_session_v2');
-    if (!raw) return;
-    const s = JSON.parse(raw);
-    if (s && s.role === 'admin' && Date.now() < s.expires) {
-      window._loSession = { name: s.name, role: s.role };
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', function() {
-          const btn = document.getElementById('admin-panel-toggle');
-          if (btn) btn.style.display = 'inline-flex';
-        });
-      } else {
-        const btn = document.getElementById('admin-panel-toggle');
-        if (btn) btn.style.display = 'inline-flex';
+    if (raw) {
+      const s = JSON.parse(raw);
+      if (s && s.role === 'admin' && Date.now() < s.expires) {
+        window._loSession = { name: s.name, role: s.role };
+        apShowAdminBtn(true);
       }
     }
   } catch(e) {}
-})();
+}, 0);
 </script>
 
 
