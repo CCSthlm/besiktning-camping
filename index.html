@@ -741,7 +741,7 @@ document.addEventListener('keydown', function(e) {
 })();
 </script>
 
- <!-- ============================================================
+<!-- ============================================================
      ADMINPANEL – Användarhantering
      Klistra in direkt EFTER login-overlay-v2.html blocket
      (efter det avslutande </script>-taggen för inloggningen,
@@ -990,7 +990,10 @@ document.addEventListener('keydown', function(e) {
     <div class="ap-body">
 
       <!-- Användarlista -->
-      <div class="ap-section-title">Befintliga användare</div>
+      <div class="ap-section-title" style="display:flex;justify-content:space-between;align-items:center;">
+        <span>Befintliga användare</span>
+        <button class="ap-btn-sm" onclick="apFixEncoding()" title="Skriv om filen med korrekt teckenkodning" style="font-size:10px;padding:2px 8px;">🔧 Fixa kodning</button>
+      </div>
       <div class="ap-user-list" id="ap-user-list">
         <div style="font-size:12px;color:var(--text3)">Laddar...</div>
       </div>
@@ -1129,9 +1132,8 @@ async function apLoadUsers() {
     _apFileSha = meta.sha;
     // Korrekt UTF-8-dekodning av base64 från GitHub API
     const b64 = meta.content.replace(/\n/g, '');
-    const jsonStr = decodeURIComponent(
-      atob(b64).split('').map(c => '%' + c.charCodeAt(0).toString(16).padStart(2,'0')).join('')
-    );
+    const bytes = Uint8Array.from(atob(b64), c => c.charCodeAt(0));
+    const jsonStr = new TextDecoder('utf-8').decode(bytes);
     const json = JSON.parse(jsonStr);
     _apUsers = json.users || [];
     apRenderList();
@@ -1300,7 +1302,9 @@ async function apSaveToGitHub(users) {
     _note: 'Lägg denna fil i samma mapp som index.html',
     users
   };
-  const content = btoa(unescape(encodeURIComponent(JSON.stringify(payload, null, 2))));
+  // Korrekt UTF-8-kodning till base64
+  const jsonBytes = new TextEncoder().encode(JSON.stringify(payload, null, 2));
+  const content = btoa(String.fromCharCode(...jsonBytes));
 
   const body = {
     message: 'Adminpanel: uppdatera användare',
@@ -1335,6 +1339,39 @@ async function apSaveToGitHub(users) {
       { headers: { 'Authorization': 'token ' + localStorage.getItem('gh_token') } }
     );
     if (check.ok) _apFileSha = (await check.json()).sha;
+  }
+}
+
+// ---- Fixa teckenkodningsfel i befintlig fil ----
+
+async function apFixEncoding() {
+  if (!confirm('Detta skriver om pin-config.json på GitHub med korrekt teckenkodning (fixar å/ä/ö). Fortsätt?')) return;
+  try {
+    // Hämta rådata via download_url för att undvika base64-problemet
+    const token = localStorage.getItem('gh_token') || '';
+    const headers = token ? { 'Authorization': 'token ' + token } : {};
+    const res = await fetch(
+      'https://api.github.com/repos/' + AP_REPO + '/contents/' + AP_FILE_PATH,
+      { headers }
+    );
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const meta = await res.json();
+    _apFileSha = meta.sha;
+
+    // Läs med TextDecoder för att få rätt UTF-8
+    const b64 = meta.content.replace(/
+/g, '');
+    const bytes = Uint8Array.from(atob(b64), c => c.charCodeAt(0));
+    const jsonStr = new TextDecoder('utf-8').decode(bytes);
+    const json = JSON.parse(jsonStr);
+    _apUsers = json.users || [];
+
+    // Spara tillbaka med korrekt kodning
+    await apSaveToGitHub(_apUsers);
+    apRenderList();
+    apToast('Teckenkodning fixad och sparad ✓');
+  } catch(e) {
+    apToast('Fel: ' + e.message, true);
   }
 }
 
