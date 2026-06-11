@@ -25,6 +25,11 @@
       "name": "MÃÂ¥rten",
       "role": "inspector",
       "_pin_hint": "PIN ÃÂ¤r 3456"
+    },
+    {
+      "hash": "c1f330d0aff31c1c87403f1e4347bcc21aff7c179908723535f2b31723702525",
+      "name": "Testar Testsson",
+      "role": "admin"
     }
   ]
 }
