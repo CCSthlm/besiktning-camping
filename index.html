@@ -220,6 +220,472 @@
 </style>
 </head>
 <body>
+ <!-- ============================================================
+     INLOGGNING: PIN-kod + Microsoft 365
+     Klistra in direkt efter <body>-taggen i besiktningsprotokollet
+     
+     PIN-koder (hårdkodade):
+       1234  →  Massimo Johansson  (admin)
+       5678  →  Stefan Leijon      (besiktningsman)
+       9012  →  Hans Östman        (besiktningsman)
+       3456  →  Mårten             (besiktningsman)
+
+     För att byta PIN: sök efter PIN_USERS nedan och ändra
+     ============================================================ -->
+
+<style id="login-styles">
+#login-overlay {
+  position: fixed; inset: 0; z-index: 9999;
+  background: #f5f5f3;
+  display: flex; align-items: center; justify-content: center;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  padding: 16px;
+}
+@media (prefers-color-scheme: dark) {
+  #login-overlay { background: #1e1e1c; }
+}
+#login-overlay.hidden { display: none; }
+
+.lo-card {
+  background: #fff;
+  border: 1px solid rgba(0,0,0,.1);
+  border-radius: 16px;
+  padding: 32px 28px 28px;
+  width: 100%; max-width: 360px;
+  text-align: center;
+}
+@media (prefers-color-scheme: dark) {
+  .lo-card { background: #282825; border-color: rgba(255,255,255,.1); }
+}
+
+.lo-logo {
+  width: 60px; height: 60px; border-radius: 50%;
+  background: #EAF3DE; margin: 0 auto 16px;
+  display: flex; align-items: center; justify-content: center;
+}
+.lo-logo i { font-size: 28px; color: #27500A; }
+
+.lo-title {
+  font-size: 17px; font-weight: 600; color: #1a1a18;
+  margin-bottom: 4px;
+}
+@media (prefers-color-scheme: dark) { .lo-title { color: #e8e8e4; } }
+
+.lo-sub {
+  font-size: 12px; color: #909088; margin-bottom: 24px;
+}
+
+/* --- PIN-sektion --- */
+.lo-section-label {
+  font-size: 11px; font-weight: 600; color: #909088;
+  text-transform: uppercase; letter-spacing: .05em;
+  margin-bottom: 10px;
+}
+
+.lo-pin-display {
+  display: flex; justify-content: center; gap: 10px; margin-bottom: 12px;
+}
+.lo-dot {
+  width: 14px; height: 14px; border-radius: 50%;
+  border: 2px solid #d0cfc8;
+  transition: background .15s, border-color .15s;
+}
+.lo-dot.filled { background: #1D9E75; border-color: #1D9E75; }
+.lo-dot.error  { background: #A32D2D; border-color: #A32D2D; }
+
+.lo-numpad {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 8px; margin-bottom: 8px;
+}
+.lo-key {
+  padding: 13px 0; border-radius: 10px;
+  border: 1px solid rgba(0,0,0,.1);
+  background: #f5f5f3;
+  font-size: 18px; font-weight: 500; color: #1a1a18;
+  cursor: pointer; user-select: none;
+  transition: background .1s, transform .08s;
+  line-height: 1;
+}
+.lo-key:active { transform: scale(.93); background: #e8e8e4; }
+.lo-key.del { font-size: 15px; color: #5a5a57; }
+.lo-key.del i { font-size: 18px; }
+@media (prefers-color-scheme: dark) {
+  .lo-key { background: #323230; border-color: rgba(255,255,255,.1); color: #e8e8e4; }
+  .lo-key:active { background: #3a3a38; }
+}
+
+.lo-error-msg {
+  font-size: 12px; color: #A32D2D; min-height: 18px; margin-bottom: 6px;
+}
+@media (prefers-color-scheme: dark) { .lo-error-msg { color: #F7C1C1; } }
+
+/* --- Divider --- */
+.lo-divider {
+  display: flex; align-items: center; gap: 8px;
+  margin: 18px 0;
+}
+.lo-divider-line { flex: 1; height: 1px; background: rgba(0,0,0,.1); }
+@media (prefers-color-scheme: dark) { .lo-divider-line { background: rgba(255,255,255,.1); } }
+.lo-divider-text { font-size: 11px; color: #909088; }
+
+/* --- MS-knapp --- */
+.lo-ms-btn {
+  width: 100%; padding: 11px 16px;
+  border-radius: 10px; border: 1px solid rgba(0,0,0,.12);
+  background: #fff;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  font-size: 14px; font-weight: 500; color: #1a1a18;
+  cursor: pointer; transition: background .15s;
+}
+.lo-ms-btn:hover { background: #f5f5f3; }
+.lo-ms-btn:active { background: #eeede8; }
+.lo-ms-btn svg { width: 18px; height: 18px; flex-shrink: 0; }
+@media (prefers-color-scheme: dark) {
+  .lo-ms-btn { background: #323230; border-color: rgba(255,255,255,.1); color: #e8e8e4; }
+  .lo-ms-btn:hover { background: #3a3a38; }
+}
+.lo-ms-spinner { display: none; width: 16px; height: 16px; border: 2px solid #d0cfc8; border-top-color: #0078d4; border-radius: 50%; animation: lospin .7s linear infinite; }
+@keyframes lospin { to { transform: rotate(360deg); } }
+
+/* --- Inloggad banner --- */
+#login-user-bar {
+  display: none;
+  position: fixed; top: 0; left: 0; right: 0; z-index: 8000;
+  background: #1D9E75; color: #fff;
+  padding: 8px 16px;
+  font-size: 13px; font-weight: 500;
+  align-items: center; gap: 8px;
+  flex-wrap: wrap;
+}
+#login-user-bar.show { display: flex; }
+#login-user-bar .lo-name { flex: 1; }
+#login-user-bar .lo-logout {
+  background: rgba(255,255,255,.2); border: none; color: #fff;
+  padding: 4px 12px; border-radius: 20px; font-size: 12px;
+  cursor: pointer; font-family: inherit;
+}
+#login-user-bar .lo-logout:hover { background: rgba(255,255,255,.3); }
+</style>
+
+<!-- Inloggningsskärm -->
+<div id="login-overlay">
+  <div class="lo-card">
+    <div class="lo-logo">
+      <i class="ti ti-tent"></i>
+    </div>
+    <div class="lo-title">Besiktningsprotokoll</div>
+    <div class="lo-sub">Caravan Club of Sweden – Stockholmssektionen</div>
+
+    <div class="lo-section-label">PIN-kod</div>
+
+    <div class="lo-pin-display">
+      <div class="lo-dot" id="lod0"></div>
+      <div class="lo-dot" id="lod1"></div>
+      <div class="lo-dot" id="lod2"></div>
+      <div class="lo-dot" id="lod3"></div>
+    </div>
+
+    <div class="lo-error-msg" id="lo-error"></div>
+
+    <div class="lo-numpad">
+      <button class="lo-key" onclick="loKey('1')">1</button>
+      <button class="lo-key" onclick="loKey('2')">2</button>
+      <button class="lo-key" onclick="loKey('3')">3</button>
+      <button class="lo-key" onclick="loKey('4')">4</button>
+      <button class="lo-key" onclick="loKey('5')">5</button>
+      <button class="lo-key" onclick="loKey('6')">6</button>
+      <button class="lo-key" onclick="loKey('7')">7</button>
+      <button class="lo-key" onclick="loKey('8')">8</button>
+      <button class="lo-key" onclick="loKey('9')">9</button>
+      <button class="lo-key" style="visibility:hidden"></button>
+      <button class="lo-key" onclick="loKey('0')">0</button>
+      <button class="lo-key del" onclick="loDel()"><i class="ti ti-backspace"></i></button>
+    </div>
+
+    <div class="lo-divider">
+      <div class="lo-divider-line"></div>
+      <div class="lo-divider-text">eller</div>
+      <div class="lo-divider-line"></div>
+    </div>
+
+    <button class="lo-ms-btn" id="lo-ms-btn" onclick="loMicrosoftLogin()">
+      <!-- Microsoft logotyp SVG -->
+      <svg viewBox="0 0 21 21" xmlns="http://www.w3.org/2000/svg">
+        <rect x="1"  y="1"  width="9" height="9" fill="#f25022"/>
+        <rect x="11" y="1"  width="9" height="9" fill="#7fba00"/>
+        <rect x="1"  y="11" width="9" height="9" fill="#00a4ef"/>
+        <rect x="11" y="11" width="9" height="9" fill="#ffb900"/>
+      </svg>
+      <span id="lo-ms-label">Logga in med Microsoft 365</span>
+      <div class="lo-ms-spinner" id="lo-ms-spinner"></div>
+    </button>
+  </div>
+</div>
+
+<!-- Inloggad-banner (visas efter lyckad inloggning) -->
+<div id="login-user-bar">
+  <i class="ti ti-user-check" style="font-size:15px"></i>
+  <span class="lo-name" id="lo-user-name">–</span>
+  <button class="lo-logout" onclick="loLogout()">Logga ut</button>
+</div>
+
+<script>
+// ============================================================
+//  PIN_USERS — ändra PIN-koder och namn här
+//  Format: 'PIN': { name: 'Namn', role: 'admin'|'inspector' }
+// ============================================================
+const PIN_USERS = {
+  '2204': { name: 'Massimo Johansson', role: 'admin' },
+  '5678': { name: 'Stefan Leijon',     role: 'inspector' },
+  '9012': { name: 'Hans Östman',       role: 'inspector' },
+  '3456': { name: 'Mårten',            role: 'inspector' },
+};
+
+// Session varar 8 timmar
+const SESSION_HOURS = 8;
+const SESSION_KEY   = 'besiktning_session_v1';
+
+// MSAL-konfiguration (återanvänds från befintlig kod)
+const LO_MSAL_CONFIG = {
+  auth: {
+    clientId: '01d17a16-1a0f-4784-bcb2-90adb1a64ab0',
+    authority: 'https://login.microsoftonline.com/cc-camping.se',
+    redirectUri: window.location.href.split('?')[0],
+  },
+  cache: { cacheLocation: 'localStorage', storeAuthStateInCookie: true }
+};
+
+// ---- Intern state ----
+let _loPin = '';
+let _loMsalInst = null;
+
+function loGetMsal() {
+  if (!_loMsalInst && typeof msal !== 'undefined') {
+    _loMsalInst = new msal.PublicClientApplication(LO_MSAL_CONFIG);
+  }
+  return _loMsalInst;
+}
+
+// ---- PIN-knapphantering ----
+function loKey(digit) {
+  if (_loPin.length >= 4) return;
+  _loPin += digit;
+  loUpdateDots();
+  if (_loPin.length === 4) {
+    setTimeout(loCheckPin, 120); // kort fördröjning för visuell feedback
+  }
+}
+
+function loDel() {
+  if (_loPin.length === 0) return;
+  _loPin = _loPin.slice(0, -1);
+  loUpdateDots();
+  loSetError('');
+}
+
+function loUpdateDots() {
+  for (let i = 0; i < 4; i++) {
+    const d = document.getElementById('lod' + i);
+    d.classList.toggle('filled', i < _loPin.length);
+    d.classList.remove('error');
+  }
+}
+
+function loCheckPin() {
+  const user = PIN_USERS[_loPin];
+  if (user) {
+    loLoginSuccess(user.name, user.role, 'pin');
+  } else {
+    // Felaktig PIN — rista och rensa
+    for (let i = 0; i < 4; i++) {
+      const d = document.getElementById('lod' + i);
+      d.classList.add('error');
+      d.classList.remove('filled');
+    }
+    loSetError('Fel PIN-kod. Försök igen.');
+    setTimeout(() => {
+      _loPin = '';
+      loUpdateDots();
+    }, 900);
+  }
+}
+
+function loSetError(msg) {
+  document.getElementById('lo-error').textContent = msg;
+}
+
+// Tangentbordsnavigation
+document.addEventListener('keydown', function(e) {
+  if (!document.getElementById('login-overlay') ||
+      document.getElementById('login-overlay').classList.contains('hidden')) return;
+  if (e.key >= '0' && e.key <= '9') loKey(e.key);
+  if (e.key === 'Backspace') loDel();
+  if (e.key === 'Escape') { _loPin = ''; loUpdateDots(); loSetError(''); }
+});
+
+// ---- Microsoft 365-inloggning ----
+async function loMicrosoftLogin() {
+  const btn   = document.getElementById('lo-ms-btn');
+  const label = document.getElementById('lo-ms-label');
+  const spin  = document.getElementById('lo-ms-spinner');
+
+  label.textContent = 'Loggar in...';
+  spin.style.display = 'block';
+  btn.disabled = true;
+
+  try {
+    const msalApp = loGetMsal();
+    if (!msalApp) throw new Error('MSAL ej laddad – försök igen om ett ögonblick.');
+
+    const scopes   = ['User.Read'];
+    const accounts = msalApp.getAllAccounts();
+    let result;
+
+    if (accounts.length > 0) {
+      try {
+        result = await msalApp.acquireTokenSilent({ scopes, account: accounts[0] });
+      } catch(e) {
+        result = await msalApp.acquireTokenPopup({ scopes });
+      }
+    } else {
+      result = await msalApp.acquireTokenPopup({ scopes });
+    }
+
+    // Hämta användarinfo från Graph
+    const me = await fetch('https://graph.microsoft.com/v1.0/me', {
+      headers: { 'Authorization': 'Bearer ' + result.accessToken }
+    }).then(r => r.json());
+
+    const name  = me.displayName || me.userPrincipalName || 'Microsoft-användare';
+    const email = (me.userPrincipalName || '').toLowerCase();
+
+    // Valfritt: kontrollera att domänen är cc-camping.se
+    // Ta bort de tre raderna nedan om ni vill tillåta alla MS-konton
+    if (!email.includes('@') || (!email.endsWith('@cc-camping.se') && !email.endsWith('@ccsthlm.se'))) {
+      throw new Error('Kontot tillhör inte cc-camping.se. Kontakta administratören.');
+    }
+
+    const role = email.includes('massimo') ? 'admin' : 'inspector';
+    loLoginSuccess(name, role, 'microsoft');
+
+  } catch(err) {
+    let msg = err.message || 'Inloggningen misslyckades.';
+    if (msg.includes('popup') || msg.includes('blocked')) {
+      msg = 'Popup blockerades – tillåt popups för den här sidan.';
+    } else if (msg.includes('AADSTS')) {
+      msg = 'Inloggningsfel. Kontrollera att kontot är registrerat.';
+    }
+    loSetError(msg);
+  } finally {
+    label.textContent = 'Logga in med Microsoft 365';
+    spin.style.display = 'none';
+    btn.disabled = false;
+  }
+}
+
+// ---- Gemensam lyckad inloggning ----
+function loLoginSuccess(name, role, method) {
+  // Spara session
+  const session = {
+    name,
+    role,
+    method,
+    expires: Date.now() + SESSION_HOURS * 3600 * 1000
+  };
+  try { localStorage.setItem(SESSION_KEY, JSON.stringify(session)); } catch(e) {}
+
+  // Dölj overlay, visa banner
+  document.getElementById('login-overlay').classList.add('hidden');
+  document.getElementById('login-user-bar').classList.add('show');
+  document.getElementById('lo-user-name').textContent =
+    name + (role === 'admin' ? ' · Admin' : '');
+
+  // Ge appen body lite padding-top så bannern inte täcker innehåll
+  document.body.style.paddingTop = '40px';
+
+  // Spara nuvarande användare globalt (befintlig kod använder m-name)
+  try {
+    const nameSelect = document.getElementById('m-name');
+    if (nameSelect) {
+      // Försök matcha mot befintliga alternativ
+      for (let i = 0; i < nameSelect.options.length; i++) {
+        if (nameSelect.options[i].text.toLowerCase().includes(name.split(' ')[0].toLowerCase())) {
+          nameSelect.selectedIndex = i;
+          // Trigga checkLock om den funktionen finns
+          if (typeof checkLock === 'function') checkLock();
+          break;
+        }
+      }
+    }
+  } catch(e) {}
+
+  // Admin-specifika åtgärder
+  if (role === 'admin') {
+    loApplyAdminUI();
+  }
+
+  // Återställ PIN-state
+  _loPin = '';
+  loUpdateDots();
+  loSetError('');
+}
+
+// ---- Utloggning ----
+function loLogout() {
+  try { localStorage.removeItem(SESSION_KEY); } catch(e) {}
+  document.getElementById('login-overlay').classList.remove('hidden');
+  document.getElementById('login-user-bar').classList.remove('show');
+  document.body.style.paddingTop = '';
+  _loPin = '';
+  loUpdateDots();
+  loSetError('');
+
+  // Rensa vald besiktningsman
+  try {
+    const sel = document.getElementById('m-name');
+    if (sel) sel.selectedIndex = 0;
+    if (typeof checkLock === 'function') checkLock();
+  } catch(e) {}
+
+  // Microsoft: rensa MSAL-konton
+  try {
+    const msalApp = loGetMsal();
+    if (msalApp) {
+      msalApp.getAllAccounts().forEach(acc => {
+        msalApp.logoutRedirect({ account: acc, onRedirectNavigate: () => false }).catch(() => {});
+      });
+    }
+  } catch(e) {}
+}
+
+// ---- Admin-specifik UI ----
+function loApplyAdminUI() {
+  // Exempelvis: visa en extra admin-knapp i headern
+  const header = document.querySelector('.app-header');
+  if (header && !document.getElementById('lo-admin-badge')) {
+    const badge = document.createElement('span');
+    badge.id = 'lo-admin-badge';
+    badge.style.cssText = 'font-size:11px;background:#FAEEDA;color:#633806;padding:3px 9px;border-radius:20px;font-weight:500;';
+    badge.textContent = 'Admin';
+    header.appendChild(badge);
+  }
+}
+
+// ---- Kontrollera befintlig session vid sidladdning ----
+(function loCheckSession() {
+  try {
+    const raw = localStorage.getItem(SESSION_KEY);
+    if (!raw) return;
+    const session = JSON.parse(raw);
+    if (!session || Date.now() > session.expires) {
+      localStorage.removeItem(SESSION_KEY);
+      return;
+    }
+    // Giltig session – logga in direkt utan att visa skärmen
+    loLoginSuccess(session.name, session.role, session.method);
+  } catch(e) {}
+})();
+</script>
 <div class="page">
 
   <div class="app-header">
