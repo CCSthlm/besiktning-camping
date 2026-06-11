@@ -435,6 +435,9 @@ body.lo-logged-in .app-header { margin-top: 0; }
 <div id="login-user-bar">
   <i class="ti ti-user-check" style="font-size:15px" aria-hidden="true"></i>
   <span class="lo-name" id="lo-user-name">–</span>
+  <button id="admin-panel-toggle" onclick="apOpen()" title="Administrera användare" style="display:none;align-items:center;gap:5px;font-size:12px;font-weight:600;padding:4px 11px;border-radius:20px;border:none;background:rgba(255,255,255,.2);color:#fff;cursor:pointer;font-family:inherit;">
+    <i class="ti ti-settings" style="font-size:13px"></i> Administrera
+  </button>
   <button class="lo-logout" onclick="loLogout()">Logga ut</button>
 </div>
 
@@ -1104,24 +1107,7 @@ document.addEventListener('keydown', function(e) {
      ============================================================ -->
 
 <style id="admin-styles">
-/* ---- Adminknapp i header ---- */
-#admin-panel-toggle {
-  display: none;
-  align-items: center;
-  gap: 6px;
-  font-size: 12px;
-  font-weight: 600;
-  padding: 5px 12px;
-  border-radius: 20px;
-  border: none;
-  background: #FAEEDA;
-  color: #633806;
-  cursor: pointer;
-  font-family: inherit;
-  transition: background .15s;
-}
-#admin-panel-toggle:hover { background: #f5dfc0; }
-#admin-panel-toggle.visible { display: flex; }
+/* Adminknapp – nu inbäddad i login-bannern (inline style) */
 
 /* ---- Adminpanel overlay ---- */
 #admin-panel {
@@ -1346,11 +1332,6 @@ document.addEventListener('keydown', function(e) {
   .ap-btn-sm { background: #282825; color: #e8e8e4; }
 }
 </style>
-
-<!-- Adminknapp — visas i headern när admin är inloggad -->
-<button id="admin-panel-toggle" onclick="apOpen()" title="Administrera användare">
-  <i class="ti ti-settings"></i> Administrera
-</button>
 
 <!-- Adminpanel -->
 <div id="admin-panel">
@@ -1749,7 +1730,7 @@ window.addEventListener('load', function() {
     window.loLoginSuccess = function(name, role, method) {
       _orig(name, role, method);
       const btn = document.getElementById('admin-panel-toggle');
-      if (btn) btn.classList.toggle('visible', role === 'admin');
+      if (btn) btn.style.display = (role === 'admin') ? 'inline-flex' : 'none';
       window._loSession = { name, role };
     };
   }
@@ -1758,7 +1739,7 @@ window.addEventListener('load', function() {
     window.loLogout = function() {
       _origOut();
       const btn = document.getElementById('admin-panel-toggle');
-      if (btn) btn.classList.remove('visible');
+      if (btn) btn.style.display = 'none';
       window._loSession = null;
       apClose();
     };
@@ -1776,16 +1757,20 @@ window.addEventListener('load', function() {
       if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', function() {
           const btn = document.getElementById('admin-panel-toggle');
-          if (btn) btn.classList.add('visible');
+          if (btn) btn.style.display = 'inline-flex';
         });
       } else {
         const btn = document.getElementById('admin-panel-toggle');
-        if (btn) btn.classList.add('visible');
+        if (btn) btn.style.display = 'inline-flex';
       }
     }
   } catch(e) {}
 })();
-</script> 
+</script>
+
+
+
+ 
 <div class="page">
 
   <div class="app-header">
