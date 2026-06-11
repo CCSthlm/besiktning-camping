@@ -6,25 +6,25 @@
       "hash": "03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4",
       "name": "Massimo Johansson",
       "role": "admin",
-      "_pin_hint": "PIN Ã¤r 1234 â byt hash nÃ¤r du byter PIN"
+      "_pin_hint": "PIN ÃÂ¤r 1234 Ã¢ÂÂ byt hash nÃÂ¤r du byter PIN"
     },
     {
       "hash": "0ffe1abd1a08215353c233d6e009613e95eec4253832a761af28ff37ac5a150c",
       "name": "Stefan Leijon",
       "role": "inspector",
-      "_pin_hint": "PIN Ã¤r 5678"
+      "_pin_hint": "PIN ÃÂ¤r 5678"
     },
     {
-      "hash": "9af15b336e6a9619928537df30b2e6a2376569fcf9d7e773eccede65606529a0",
-      "name": "Hans Ãstman",
+      "hash": "888df25ae35772424a560c7152a1de794440e0ea5cfee62828333a456a506e05",
+      "name": "Hans ÃÂstman",
       "role": "inspector",
-      "_pin_hint": "PIN Ã¤r 9012"
+      "_pin_hint": "PIN ÃÂ¤r 9012"
     },
     {
       "hash": "1c81a08e2eda3a33d9f6d547e8b44edc95dc7e23cfcaa8e1c30ab3b49b41bb0c",
-      "name": "MÃ¥rten",
+      "name": "MÃÂ¥rten",
       "role": "inspector",
-      "_pin_hint": "PIN Ã¤r 3456"
+      "_pin_hint": "PIN ÃÂ¤r 3456"
     }
   ]
 }
