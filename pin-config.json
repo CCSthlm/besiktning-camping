@@ -1,30 +1,30 @@
 {
   "_comment": "SHA-256-hashar av PIN-koder. Generera ny hash på: https://emn178.github.io/online-tools/sha256.html",
-  "_note": "Lägg denna fil i samma mapp som index.html och döp den till pin-config.json",
+  "_note": "Lägg denna fil i samma mapp som index.html",
   "users": [
     {
       "hash": "03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4",
       "name": "Massimo Johansson",
       "role": "admin",
-      "_pin_hint": "PIN är 1234 – byt hash när du byter PIN"
+      "_pin_hint": "PIN Ã¤r 1234 â byt hash nÃ¤r du byter PIN"
     },
     {
-      "hash": "ef797c8118f02dfb649607dd5d3f8c7623048c9c063d532cc95c5ed7a898a64f",
+      "hash": "0ffe1abd1a08215353c233d6e009613e95eec4253832a761af28ff37ac5a150c",
       "name": "Stefan Leijon",
       "role": "inspector",
-      "_pin_hint": "PIN är 5678"
+      "_pin_hint": "PIN Ã¤r 5678"
     },
     {
       "hash": "1b4f0e9851971998e732078544c96b36c3d01cedf7caa332359d6f1d83567014",
-      "name": "Hans Östman",
+      "name": "Hans Ãstman",
       "role": "inspector",
-      "_pin_hint": "PIN är 9012"
+      "_pin_hint": "PIN Ã¤r 9012"
     },
     {
       "hash": "1c81a08e2eda3a33d9f6d547e8b44edc95dc7e23cfcaa8e1c30ab3b49b41bb0c",
-      "name": "Mårten",
+      "name": "MÃ¥rten",
       "role": "inspector",
-      "_pin_hint": "PIN är 3456"
+      "_pin_hint": "PIN Ã¤r 3456"
     }
   ]
 }
