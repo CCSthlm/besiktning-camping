@@ -230,33 +230,51 @@ async function init() {
       return;
     } catch(e) { sessionStorage.removeItem('ccs_session'); }
   }
+  // Load users first — always populate select regardless of outcome
   await loadUsers();
   populateUserSelect();
-  // MSAL redirect callback
+  // MSAL redirect callback — run after users are loaded, don't let it block
   try {
-    _msalApp = new msal.PublicClientApplication(MSAL_CFG);
-    await _msalApp.handleRedirectPromise();
-    const accounts = _msalApp.getAllAccounts();
-    if (accounts.length > 0) await loginMS_continue(accounts[0]);
-  } catch(e) {}
+    if (typeof msal !== 'undefined') {
+      _msalApp = new msal.PublicClientApplication(MSAL_CFG);
+      const result = await _msalApp.handleRedirectPromise().catch(()=>null);
+      const accounts = _msalApp.getAllAccounts();
+      if (accounts.length > 0) await loginMS_continue(accounts[0]);
+    }
+  } catch(e) { console.warn('MSAL init:', e.message); }
 }
 
 // ─── USERS FROM GITHUB ────────────────────────────────────────────────────
 async function loadUsers() {
   const token = localStorage.getItem('gh_token') || '';
-  const headers = token ? {'Authorization':'token '+token} : {};
+  // No token = no fetch, go straight to fallback
+  if (!token) { loadDefaultUsers(); return; }
   try {
-    const res = await fetch('https://api.github.com/repos/'+GH_REPO+'/contents/'+USERS_PATH, {headers});
+    const res = await fetch(
+      'https://api.github.com/repos/'+GH_REPO+'/contents/'+USERS_PATH,
+      { headers: {'Authorization':'token '+token} }
+    );
     if (!res.ok) { loadDefaultUsers(); return; }
-    const data = await res.json();
-    _users = JSON.parse(atob(data.content.replace(/\n/g,'')));
-  } catch(e) { loadDefaultUsers(); }
+    const ghFile = await res.json();
+    const parsed = JSON.parse(atob(ghFile.content.replace(/\n/g,'')));
+    if (Array.isArray(parsed)) {
+      _users = parsed;
+    } else if (parsed && Array.isArray(parsed.users)) {
+      _users = parsed.users;
+    } else {
+      loadDefaultUsers();
+    }
+  } catch(e) {
+    loadDefaultUsers();
+  }
 }
 
 function loadDefaultUsers() {
-  // Default admin user for first-time setup
+  // Fallback users for first-time setup or when GitHub is unreachable
   _users = [
     {id:'admin1', name:'Massimo Johansson', email:'massimo@cc-camping.se', role:'Admin', pin:'1234', apps:['besiktning','admin'], active:true, created:'2025-01-01'},
+    {id:'u_stefan', name:'Stefan Leijon', email:'', role:'Besiktningsman', pin:'2345', apps:['besiktning'], active:true, created:'2025-01-01'},
+    {id:'u_hans', name:'Hans Östman', email:'', role:'Besiktningsman', pin:'3456', apps:['besiktning'], active:true, created:'2025-01-01'},
   ];
 }
 
