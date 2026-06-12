@@ -12,6 +12,18 @@
       ],
       "active": true,
       "created": "2025-01-01"
+    },
+    {
+      "id": "umqbd61uqljhs",
+      "name": "Joachim Säfqvist",
+      "email": "joachim.safqvist@cc-camping.se",
+      "pin": "1111",
+      "role": "Besiktningsman",
+      "active": true,
+      "apps": [
+        "besiktning"
+      ],
+      "created": "2026-06-12"
     }
   ],
   "campings": [
