@@ -1,0 +1,48 @@
+{
+  "meta": {
+    "camping": "c1",
+    "campingName": "Caravan Club Björkö Örns Camping",
+    "date": "2026-06-12",
+    "inspector": "Massimo Johansson",
+    "type": "Ordinarie besiktning",
+    "savedAt": "2026-06-12T19:20:14.378Z"
+  },
+  "sections": {
+    "ankomst": {
+      "0": "ja",
+      "1": "ja",
+      "2": "ja",
+      "3": "ja",
+      "4": "ja"
+    },
+    "sanitet": {
+      "0": "nej",
+      "1": "ja",
+      "2": "ja",
+      "3": "ja",
+      "4": "ja",
+      "5": "ja"
+    },
+    "gemensamma": {},
+    "vardskap": {},
+    "sakerhet": {},
+    "teknisk": {}
+  },
+  "sc": {},
+  "srv": {},
+  "naScores": {
+    "ankomst": {},
+    "sanitet": {},
+    "gemensamma": {},
+    "vardskap": {},
+    "sakerhet": {},
+    "teknisk": {}
+  },
+  "scNaScores": {},
+  "srvNaScores": {},
+  "itemComments": {
+    "sanitet-0": "SMutsiga"
+  },
+  "notes": {},
+  "srvCtrl": {}
+}
