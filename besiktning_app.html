@@ -305,6 +305,7 @@
 })();
 
 function portalLogout() {
+  sessionStorage.setItem('ccs_logged_out', '1');
   sessionStorage.removeItem('ccs_session');
   sessionStorage.removeItem('ccs_portal_user');
   sessionStorage.removeItem('besiktning_role');
