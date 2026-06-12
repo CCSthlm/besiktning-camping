@@ -220,6 +220,99 @@
 </style>
 </head>
 <body>
+ <!-- ═══════════════════════════════════════════════════════════════
+     PORTAL HEADER — klistra in detta direkt efter <body>-taggen
+     i besiktning_app.html (din nuvarande besiktnings-index.html)
+     ═══════════════════════════════════════════════════════════════ -->
+<style>
+#portal-bar{
+  position:sticky;top:0;z-index:9999;
+  background:#161b27;border-bottom:1px solid rgba(255,255,255,.1);
+  display:flex;align-items:center;gap:0;
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;
+  font-size:13px;color:#9ba3b8;
+  padding:0 16px;height:44px;
+}
+#portal-bar .pb-avatar{
+  width:28px;height:28px;border-radius:50%;
+  background:#4f8ef7;color:#fff;
+  font-size:11px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;margin-right:10px;
+}
+#portal-bar .pb-info{flex:1;display:flex;align-items:center;gap:10px;min-width:0;overflow:hidden;}
+#portal-bar .pb-name{font-weight:600;color:#e8eaf0;white-space:nowrap;}
+#portal-bar .pb-role{
+  font-size:11px;font-weight:500;padding:2px 8px;border-radius:20px;white-space:nowrap;
+}
+.pb-role-admin{background:rgba(251,191,36,.15);color:#fbbf24;}
+.pb-role-besiktning{background:rgba(79,142,247,.15);color:#4f8ef7;}
+.pb-role-granskare{background:rgba(52,211,153,.12);color:#34d399;}
+#portal-bar .pb-email{color:#5c6480;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:200px;}
+#portal-bar .pb-sep{width:1px;height:22px;background:rgba(255,255,255,.08);margin:0 12px;flex-shrink:0;}
+#portal-bar .pb-btn{
+  display:flex;align-items:center;gap:5px;
+  padding:6px 12px;border-radius:7px;border:1px solid rgba(255,255,255,.1);
+  background:none;color:#9ba3b8;font-size:12px;font-weight:500;
+  cursor:pointer;font-family:inherit;white-space:nowrap;
+  transition:background .15s,color .15s,border-color .15s;
+  text-decoration:none;flex-shrink:0;margin-left:6px;
+}
+#portal-bar .pb-btn:hover{background:rgba(255,255,255,.06);color:#e8eaf0;border-color:rgba(255,255,255,.2);}
+#portal-bar .pb-btn-logout{
+  background:rgba(248,113,113,.12);color:#f87171;
+  border-color:rgba(248,113,113,.25);
+}
+#portal-bar .pb-btn-logout:hover{background:#f87171;color:#fff;border-color:#f87171;}
+@media(max-width:560px){
+  #portal-bar .pb-email{display:none;}
+  #portal-bar .pb-sep{display:none;}
+}
+</style>
+
+<div id="portal-bar">
+  <div class="pb-avatar" id="pb-avatar">?</div>
+  <div class="pb-info">
+    <span class="pb-name" id="pb-name">–</span>
+    <span class="pb-role" id="pb-role">–</span>
+    <span class="pb-email" id="pb-email"></span>
+  </div>
+  <div class="pb-sep"></div>
+  <a href="index.html" class="pb-btn" id="pb-portal-btn">
+    ← Portal
+  </a>
+  <button class="pb-btn pb-btn-logout" onclick="portalLogout()">
+    Logga ut
+  </button>
+</div>
+
+<script>
+(function() {
+  const sess = sessionStorage.getItem('ccs_session') || sessionStorage.getItem('ccs_portal_user');
+  if (!sess) { window.location.replace('index.html'); return; }
+  try {
+    const u = JSON.parse(sess);
+    const initials = u.name.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase();
+    document.getElementById('pb-avatar').textContent = initials;
+    document.getElementById('pb-name').textContent = u.name;
+    document.getElementById('pb-email').textContent = u.email || '';
+    const roleEl = document.getElementById('pb-role');
+    roleEl.textContent = u.role;
+    if (u.role === 'Admin') roleEl.className = 'pb-role pb-role-admin';
+    else if (u.role === 'Besiktningsman') roleEl.className = 'pb-role pb-role-besiktning';
+    else roleEl.className = 'pb-role pb-role-granskare';
+  } catch(e) {}
+})();
+
+function portalLogout() {
+  sessionStorage.removeItem('ccs_session');
+  sessionStorage.removeItem('ccs_portal_user');
+  sessionStorage.removeItem('besiktning_role');
+  sessionStorage.removeItem('besiktning_user');
+  window.location.replace('index.html');
+}
+</script>
+<!-- ═══════════════════════════════════════════════════════════ END PORTAL HEADER -->
 <div class="page">
 
   <div class="app-header">
