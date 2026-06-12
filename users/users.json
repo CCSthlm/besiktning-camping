@@ -8,6 +8,7 @@
       "pin": "1234",
       "apps": [
         "besiktning",
+        "it-support",
         "admin"
       ],
       "active": true,
