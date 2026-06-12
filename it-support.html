@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IT-felanmälan – CCSthlm</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/tabler-icons.min.css">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #f5f5f3; --bg2: #ffffff; --bg3: #eeede8; --bg4: #e5e4de;
+  --text: #1a1a18; --text2: #5a5a57; --text3: #909088;
+  --accent: #3B6D11; --accent2: #27500A; --accent-glow: rgba(59,109,17,.1);
+  --red: #A32D2D; --red-bg: #FCEBEB; --red-text: #501313;
+  --amber: #854F0B; --amber-bg: #FAEEDA; --amber-text: #412402;
+  --green-bg: #EAF3DE; --green-text: #27500A;
+  --border: rgba(0,0,0,.10); --border2: rgba(0,0,0,.18);
+  --radius: 8px; --radius-lg: 14px;
+  --shadow: 0 2px 16px rgba(0,0,0,.09);
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  background: var(--bg3);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+/* ── PORTAL BAR ── */
+#portal-bar {
+  position: sticky; top: 0; z-index: 999;
+  background: var(--bg2); border-bottom: 1px solid var(--border2);
+  display: flex; align-items: center; gap: 0;
+  font-size: 13px; color: var(--text2);
+  padding: 0 20px; height: 46px;
+}
+.pb-avatar {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: var(--accent); color: #fff;
+  font-size: 11px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; margin-right: 10px;
+}
+.pb-info { flex: 1; display: flex; align-items: center; gap: 10px; min-width: 0; }
+.pb-name { font-weight: 600; color: var(--text); white-space: nowrap; }
+.pb-role {
+  font-size: 11px; font-weight: 500; padding: 2px 8px;
+  border-radius: 20px; white-space: nowrap;
+  background: var(--green-bg); color: var(--green-text);
+}
+.pb-email { color: var(--text3); font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px; }
+.pb-sep { width: 1px; height: 22px; background: var(--border2); margin: 0 12px; flex-shrink: 0; }
+.pb-btn {
+  display: flex; align-items: center; gap: 5px;
+  padding: 6px 12px; border-radius: 7px; border: 1px solid var(--border2);
+  background: none; color: var(--text2); font-size: 12px; font-weight: 500;
+  cursor: pointer; font-family: inherit; white-space: nowrap;
+  transition: background .15s, color .15s; text-decoration: none; flex-shrink: 0; margin-left: 6px;
+}
+.pb-btn:hover { background: var(--bg3); color: var(--text); }
+.pb-btn-logout { background: var(--red-bg); color: var(--red); border-color: rgba(163,45,45,.25); }
+.pb-btn-logout:hover { background: var(--red); color: #fff; border-color: var(--red); }
+@media(max-width:560px){ .pb-email,.pb-sep { display:none; } }
+
+/* ── LAYOUT ── */
+.page-wrap {
+  max-width: 680px;
+  margin: 32px auto;
+  padding: 0 16px 60px;
+}
+
+.page-header {
+  display: flex; align-items: center; gap: 14px;
+  margin-bottom: 28px;
+}
+.page-header-icon {
+  width: 48px; height: 48px; border-radius: 12px;
+  background: var(--amber-bg); color: var(--amber);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; flex-shrink: 0;
+}
+.page-header h1 { font-size: 20px; font-weight: 700; }
+.page-header p { font-size: 13px; color: var(--text2); margin-top: 2px; }
+
+/* ── STEP INDICATOR ── */
+.steps {
+  display: flex; align-items: center; gap: 0;
+  margin-bottom: 24px; background: var(--bg2);
+  border: 1px solid var(--border); border-radius: var(--radius-lg);
+  padding: 14px 20px; overflow: hidden;
+}
+.step {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 13px; color: var(--text3); flex: 1;
+}
+.step-num {
+  width: 24px; height: 24px; border-radius: 50%;
+  background: var(--bg3); color: var(--text3);
+  font-size: 11px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; transition: all .2s;
+}
+.step.active .step-num { background: var(--accent); color: #fff; }
+.step.active { color: var(--text); font-weight: 600; }
+.step.done .step-num { background: var(--green-bg); color: var(--accent); }
+.step.done { color: var(--text2); }
+.step-line { flex: 1; height: 1px; background: var(--border2); margin: 0 8px; min-width: 12px; }
+.step-label { white-space: nowrap; }
+@media(max-width:480px){ .step-label { display: none; } }
+
+/* ── CARDS ── */
+.card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); overflow: hidden;
+  box-shadow: var(--shadow); margin-bottom: 16px;
+}
+.card-header {
+  padding: 16px 20px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 10px;
+}
+.card-header-icon { font-size: 18px; color: var(--text3); }
+.card-header-title { font-size: 14px; font-weight: 600; }
+.card-body { padding: 20px; }
+
+/* ── CATEGORY BUTTONS ── */
+.cat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; }
+.cat-btn {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 8px; padding: 18px 12px;
+  background: var(--bg3); border: 2px solid var(--border);
+  border-radius: var(--radius-lg); cursor: pointer;
+  font-family: inherit; font-size: 13px; font-weight: 500; color: var(--text2);
+  transition: all .15s; text-align: center;
+}
+.cat-btn i { font-size: 24px; color: var(--text3); transition: color .15s; }
+.cat-btn:hover { border-color: var(--accent); background: var(--green-bg); color: var(--accent2); }
+.cat-btn:hover i { color: var(--accent); }
+.cat-btn.selected { border-color: var(--accent); background: var(--green-bg); color: var(--accent2); font-weight: 600; }
+.cat-btn.selected i { color: var(--accent); }
+
+.sub-grid { display: flex; flex-direction: column; gap: 8px; }
+.sub-btn {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 16px; background: var(--bg3);
+  border: 2px solid var(--border); border-radius: var(--radius);
+  cursor: pointer; font-family: inherit; font-size: 13px;
+  font-weight: 500; color: var(--text2); transition: all .15s;
+  text-align: left;
+}
+.sub-btn i { font-size: 16px; color: var(--text3); flex-shrink: 0; }
+.sub-btn:hover { border-color: var(--accent); background: var(--green-bg); color: var(--accent2); }
+.sub-btn:hover i { color: var(--accent); }
+.sub-btn.selected { border-color: var(--accent); background: var(--green-bg); color: var(--accent2); font-weight: 600; }
+.sub-btn.selected i { color: var(--accent); }
+
+/* ── FORM FIELDS ── */
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+.form-row.full { grid-template-columns: 1fr; }
+.form-row.trio { grid-template-columns: 1fr 1fr 1fr; }
+.form-field { display: flex; flex-direction: column; gap: 5px; }
+.form-field label {
+  font-size: 11px; font-weight: 600; color: var(--text2);
+  text-transform: uppercase; letter-spacing: .04em;
+}
+.form-field input, .form-field select, .form-field textarea {
+  padding: 10px 12px; background: var(--bg3);
+  border: 1px solid var(--border2); border-radius: var(--radius);
+  font-size: 13px; color: var(--text); font-family: inherit;
+  transition: border-color .2s, box-shadow .2s;
+}
+.form-field input:focus, .form-field select:focus, .form-field textarea:focus {
+  outline: none; border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+.form-field textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
+.form-field input::placeholder, .form-field textarea::placeholder { color: var(--text3); }
+.required-star { color: var(--red); margin-left: 2px; }
+
+/* ── SEVERITY ── */
+.severity-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.sev-btn {
+  padding: 7px 14px; border-radius: 20px;
+  border: 1px solid var(--border2); background: var(--bg3);
+  font-size: 12px; font-weight: 500; cursor: pointer;
+  font-family: inherit; color: var(--text2); transition: all .15s;
+  display: flex; align-items: center; gap: 5px;
+}
+.sev-btn.sev-low.selected { background: var(--green-bg); color: var(--green-text); border-color: var(--accent); }
+.sev-btn.sev-mid.selected { background: var(--amber-bg); color: var(--amber-text); border-color: var(--amber); }
+.sev-btn.sev-high.selected { background: var(--red-bg); color: var(--red-text); border-color: var(--red); }
+.sev-btn:hover { border-color: var(--text3); }
+
+/* ── BUTTONS ── */
+.btn-row { display: flex; gap: 10px; justify-content: space-between; align-items: center; margin-top: 20px; flex-wrap: wrap; }
+.btn-primary {
+  padding: 11px 28px; background: var(--accent); color: #fff;
+  border: none; border-radius: var(--radius); font-size: 14px;
+  font-weight: 600; cursor: pointer; font-family: inherit;
+  display: flex; align-items: center; gap: 7px; transition: background .15s;
+}
+.btn-primary:hover { background: var(--accent2); }
+.btn-primary:disabled { opacity: .45; cursor: not-allowed; }
+.btn-secondary {
+  padding: 11px 20px; background: var(--bg3); color: var(--text2);
+  border: 1px solid var(--border2); border-radius: var(--radius);
+  font-size: 13px; font-weight: 500; cursor: pointer; font-family: inherit;
+  display: flex; align-items: center; gap: 6px; transition: background .15s;
+}
+.btn-secondary:hover { background: var(--bg4); }
+
+/* ── SUMMARY BOX ── */
+.summary-box {
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 14px 16px; margin-bottom: 14px;
+  font-size: 12px; line-height: 1.8;
+}
+.summary-box strong { color: var(--text); display: inline-block; min-width: 140px; }
+
+/* ── SUCCESS ── */
+.success-screen {
+  text-align: center; padding: 48px 24px;
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); box-shadow: var(--shadow);
+}
+.success-icon {
+  width: 64px; height: 64px; border-radius: 50%;
+  background: var(--green-bg); color: var(--accent);
+  font-size: 30px; display: flex; align-items: center;
+  justify-content: center; margin: 0 auto 16px;
+}
+.success-screen h2 { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+.success-screen p { font-size: 13px; color: var(--text2); line-height: 1.7; max-width: 400px; margin: 0 auto 24px; }
+
+/* ── ERROR BANNER ── */
+.error-banner {
+  background: var(--red-bg); border: 1px solid rgba(163,45,45,.25);
+  border-radius: var(--radius); padding: 12px 16px;
+  font-size: 13px; color: var(--red-text);
+  display: none; align-items: center; gap: 8px; margin-bottom: 14px;
+}
+.error-banner.show { display: flex; }
+
+/* ── SENDING OVERLAY ── */
+.sending-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(245,245,243,.75); z-index: 999;
+  align-items: center; justify-content: center; flex-direction: column; gap: 14px;
+}
+.sending-overlay.show { display: flex; }
+.spinner {
+  width: 36px; height: 36px; border: 3px solid rgba(59,109,17,.2);
+  border-top-color: var(--accent); border-radius: 50%;
+  animation: spin .7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── ANIMATIONS ── */
+.fade-in { animation: fadeIn .25s ease both; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+@media(max-width:500px) {
+  .form-row { grid-template-columns: 1fr; }
+  .form-row.trio { grid-template-columns: 1fr 1fr; }
+  .cat-grid { grid-template-columns: 1fr 1fr; }
+  .page-wrap { margin: 16px auto; }
+}
+</style>
+</head>
+<body>
+
+<!-- PORTAL BAR -->
+<div id="portal-bar">
+  <div class="pb-avatar" id="pb-avatar">?</div>
+  <div class="pb-info">
+    <span class="pb-name" id="pb-name">–</span>
+    <span class="pb-role" id="pb-role">–</span>
+    <span class="pb-email" id="pb-email"></span>
+  </div>
+  <div class="pb-sep"></div>
+  <a href="index.html" class="pb-btn"><i class="ti ti-arrow-left"></i> Portal</a>
+  <button class="pb-btn pb-btn-logout" onclick="portalLogout()"><i class="ti ti-logout"></i> Logga ut</button>
+</div>
+
+<!-- SENDING OVERLAY -->
+<div class="sending-overlay" id="sending-overlay">
+  <div class="spinner"></div>
+  <div style="font-size:14px;font-weight:500;color:var(--text2)">Skickar felanmälan…</div>
+</div>
+
+<div class="page-wrap">
+
+  <div class="page-header">
+    <div class="page-header-icon"><i class="ti ti-tool"></i></div>
+    <div>
+      <h1>IT-felanmälan</h1>
+      <p>Rapportera ett IT-problem eller ställ en fråga till IT-support</p>
+    </div>
+  </div>
+
+  <!-- STEP INDICATOR -->
+  <div class="steps" id="step-indicator">
+    <div class="step active" id="step1-ind">
+      <div class="step-num">1</div>
+      <span class="step-label">Kategori</span>
+    </div>
+    <div class="step-line"></div>
+    <div class="step" id="step2-ind">
+      <div class="step-num">2</div>
+      <span class="step-label">Detaljer</span>
+    </div>
+    <div class="step-line"></div>
+    <div class="step" id="step3-ind">
+      <div class="step-num">3</div>
+      <span class="step-label">Granska & skicka</span>
+    </div>
+  </div>
+
+  <!-- ── STEP 1: KATEGORI ── -->
+  <div id="view-step1">
+
+    <div class="card fade-in">
+      <div class="card-header">
+        <i class="ti ti-category card-header-icon"></i>
+        <span class="card-header-title">Välj typ av ärende</span>
+      </div>
+      <div class="card-body">
+        <div class="cat-grid">
+          <button class="cat-btn" onclick="selectCategory('compusuit')" id="cat-compusuit">
+            <i class="ti ti-device-desktop"></i>
+            CompuSuit
+          </button>
+          <button class="cat-btn" onclick="selectCategory('hardware')" id="cat-hardware">
+            <i class="ti ti-cpu"></i>
+            Hårdvara
+          </button>
+          <button class="cat-btn" onclick="selectCategory('general')" id="cat-general">
+            <i class="ti ti-help-circle"></i>
+            Allmän fråga
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CompuSuit sub-categories -->
+    <div class="card fade-in" id="sub-card" style="display:none">
+      <div class="card-header">
+        <i class="ti ti-list card-header-icon"></i>
+        <span class="card-header-title">Välj CompuSuit-modul</span>
+      </div>
+      <div class="card-body">
+        <div class="sub-grid">
+          <button class="sub-btn" onclick="selectSub('bokning')" id="sub-bokning">
+            <i class="ti ti-calendar"></i> Bokning
+          </button>
+          <button class="sub-btn" onclick="selectSub('kassa')" id="sub-kassa">
+            <i class="ti ti-receipt"></i> Kassa
+          </button>
+          <button class="sub-btn" onclick="selectSub('compumat')" id="sub-compumat">
+            <i class="ti ti-barrier-block"></i> CompuMat
+          </button>
+          <button class="sub-btn" onclick="selectSub('aterbetalning')" id="sub-aterbetalning">
+            <i class="ti ti-refresh"></i> Återbetalning
+          </button>
+          <button class="sub-btn" onclick="selectSub('ovrigt_cs')" id="sub-ovrigt_cs">
+            <i class="ti ti-dots-circle-horizontal"></i> Övrigt
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="btn-row" style="justify-content:flex-end">
+      <button class="btn-primary" id="btn-to-step2" onclick="goToStep2()" disabled>
+        Nästa <i class="ti ti-arrow-right"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- ── STEP 2: DETALJER ── -->
+  <div id="view-step2" style="display:none">
+
+    <!-- Camping selector (always shown) -->
+    <div class="card fade-in">
+      <div class="card-header">
+        <i class="ti ti-tent card-header-icon"></i>
+        <span class="card-header-title">Camping</span>
+      </div>
+      <div class="card-body">
+        <div class="form-row full">
+          <div class="form-field">
+            <label>Välj camping <span class="required-star">*</span></label>
+            <select id="f-camping">
+              <option value="">– Välj camping –</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row full">
+          <div class="form-field">
+            <label>Allvarlighetsgrad <span class="required-star">*</span></label>
+            <div class="severity-row">
+              <button type="button" class="sev-btn sev-low" onclick="selectSeverity('low',this)">
+                <i class="ti ti-circle-check" style="font-size:13px"></i> Låg – kan vänta
+              </button>
+              <button type="button" class="sev-btn sev-mid" onclick="selectSeverity('mid',this)">
+                <i class="ti ti-alert-triangle" style="font-size:13px"></i> Medel – påverkar arbetet
+              </button>
+              <button type="button" class="sev-btn sev-high" onclick="selectSeverity('high',this)">
+                <i class="ti ti-flame" style="font-size:13px"></i> Hög – stopp i verksamheten
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dynamic form area -->
+    <div class="card fade-in" id="dynamic-form-card">
+      <div class="card-header">
+        <i class="ti ti-forms card-header-icon" id="dynamic-form-icon"></i>
+        <span class="card-header-title" id="dynamic-form-title">Information</span>
+      </div>
+      <div class="card-body" id="dynamic-form-body">
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-secondary" onclick="goToStep1()">
+        <i class="ti ti-arrow-left"></i> Tillbaka
+      </button>
+      <button class="btn-primary" id="btn-to-step3" onclick="goToStep3()">
+        Granska <i class="ti ti-arrow-right"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- ── STEP 3: GRANSKA & SKICKA ── -->
+  <div id="view-step3" style="display:none">
+    <div class="card fade-in">
+      <div class="card-header">
+        <i class="ti ti-eye card-header-icon"></i>
+        <span class="card-header-title">Granska din anmälan</span>
+      </div>
+      <div class="card-body">
+        <div class="error-banner" id="send-error">
+          <i class="ti ti-alert-circle"></i>
+          <span id="send-error-text">Något gick fel. Försök igen.</span>
+        </div>
+        <div class="summary-box" id="summary-content"></div>
+        <div style="font-size:12px;color:var(--text3);margin-top:10px;display:flex;align-items:center;gap:5px;">
+          <i class="ti ti-mail" style="font-size:13px"></i>
+          Skickas till: <strong style="color:var(--text2)">support.compusoft@cc-camping.se</strong>
+        </div>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-secondary" onclick="goToStep2()">
+        <i class="ti ti-arrow-left"></i> Ändra
+      </button>
+      <button class="btn-primary" onclick="submitForm()">
+        <i class="ti ti-send"></i> Skicka felanmälan
+      </button>
+    </div>
+  </div>
+
+  <!-- ── SUCCESS ── -->
+  <div id="view-success" style="display:none">
+    <div class="success-screen fade-in">
+      <div class="success-icon"><i class="ti ti-check"></i></div>
+      <h2>Felanmälan skickad!</h2>
+      <p id="success-text">Din anmälan har skickats till IT-support. Du får en bekräftelse på din e-postadress.</p>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+        <button class="btn-primary" onclick="resetForm()">
+          <i class="ti ti-plus"></i> Ny anmälan
+        </button>
+        <a href="index.html" class="btn-secondary">
+          <i class="ti ti-arrow-left"></i> Tillbaka till portalen
+        </a>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end page-wrap -->
+
+<script>
+// ── CONFIG ────────────────────────────────────────────────────────────────
+// Klistra in din Power Automate HTTP-trigger URL här:
+const POWER_AUTOMATE_URL = 'DIN_POWER_AUTOMATE_URL_HÄR';
+const SUPPORT_EMAIL = 'support.compusoft@cc-camping.se';
+
+// ── STATE ─────────────────────────────────────────────────────────────────
+let _user = null;
+let _category = '';   // 'compusuit' | 'hardware' | 'general'
+let _sub = '';        // 'bokning' | 'kassa' | 'compumat' | 'aterbetalning' | 'ovrigt_cs'
+let _severity = '';
+let _campings = [];
+
+// ── INIT ──────────────────────────────────────────────────────────────────
+(function init() {
+  const sess = sessionStorage.getItem('ccs_session') || sessionStorage.getItem('ccs_portal_user');
+  if (!sess) { window.location.replace('index.html'); return; }
+  try {
+    _user = JSON.parse(sess);
+    const initials = _user.name.split(' ').map(n => n[0]).join('').slice(0,2).toUpperCase();
+    document.getElementById('pb-avatar').textContent = initials;
+    document.getElementById('pb-name').textContent = _user.name;
+    document.getElementById('pb-email').textContent = _user.email || '';
+    const roleEl = document.getElementById('pb-role');
+    roleEl.textContent = _user.role;
+    if (_user.role === 'Admin') roleEl.style.cssText = 'background:#FAEEDA;color:#412402;font-size:11px;font-weight:500;padding:2px 8px;border-radius:20px;';
+  } catch(e) { window.location.replace('index.html'); }
+  loadCampings();
+})();
+
+async function loadCampings() {
+  const token = localStorage.getItem('gh_token') || '';
+  const sel = document.getElementById('f-camping');
+  try {
+    if (token) {
+      const res = await fetch('https://api.github.com/repos/CCSthlm/besiktning-camping/contents/users/users.json',
+        { headers: { 'Authorization': 'token ' + token } });
+      if (res.ok) {
+        const ghFile = await res.json();
+        const bytes = Uint8Array.from(atob(ghFile.content.replace(/\n/g,'')), c => c.charCodeAt(0));
+        const data = JSON.parse(new TextDecoder('utf-8').decode(bytes));
+        _campings = (data.campings || []).filter(c => c.active !== false);
+      }
+    }
+  } catch(e) {}
+  if (!_campings.length) {
+    _campings = [
+      {id:'c1',name:'CC Björkö Örns Camping'},{id:'c2',name:'CC Östnora Camping'},
+      {id:'c3',name:'CC Kapellskärs Camping'},{id:'c4',name:'CC Mista Camping'},
+      {id:'c5',name:'CC Storsveds Camping'},{id:'c6',name:'CC Örstigs Camping'},
+      {id:'c7',name:'Gräddös Pärla Kök & Bar'},{id:'c8',name:'Östnora Kök & Bar'},
+    ];
+  }
+  sel.innerHTML = '<option value="">– Välj camping –</option>' +
+    _campings.map(c => `<option value="${c.name}">${c.name}</option>`).join('');
+}
+
+// ── STEP 1: KATEGORI ──────────────────────────────────────────────────────
+function selectCategory(cat) {
+  _category = cat;
+  _sub = '';
+  ['compusuit','hardware','general'].forEach(c => {
+    document.getElementById('cat-' + c).classList.toggle('selected', c === cat);
+  });
+  const subCard = document.getElementById('sub-card');
+  if (cat === 'compusuit') {
+    subCard.style.display = '';
+    document.getElementById('btn-to-step2').disabled = true;
+    ['bokning','kassa','compumat','aterbetalning','ovrigt_cs'].forEach(s =>
+      document.getElementById('sub-' + s).classList.remove('selected'));
+  } else {
+    subCard.style.display = 'none';
+    document.getElementById('btn-to-step2').disabled = false;
+  }
+}
+
+function selectSub(sub) {
+  _sub = sub;
+  ['bokning','kassa','compumat','aterbetalning','ovrigt_cs'].forEach(s =>
+    document.getElementById('sub-' + s).classList.toggle('selected', s === sub));
+  document.getElementById('btn-to-step2').disabled = false;
+}
+
+function goToStep2() {
+  if (!_category) return;
+  setStep(2);
+  buildDynamicForm();
+  show('view-step2');
+  hide('view-step1');
+}
+
+// ── STEP 2: DYNAMIC FORM ──────────────────────────────────────────────────
+const FORM_CONFIGS = {
+  bokning: {
+    icon: 'ti-calendar', title: 'Bokningsproblem',
+    fields: [
+      { id: 'kundnamn', label: 'Kundens namn', type: 'text', placeholder: 'Anna Andersson', required: true, col: 'half' },
+      { id: 'kundnr', label: 'Kundnummer', type: 'text', placeholder: '12345', required: true, col: 'half' },
+      { id: 'datum_fran', label: 'Datum från', type: 'date', required: true, col: 'half' },
+      { id: 'datum_till', label: 'Datum till', type: 'date', required: true, col: 'half' },
+      { id: 'fragestellning', label: 'Frågeställning', type: 'textarea', placeholder: 'Beskriv problemet…', required: true, col: 'full' },
+    ]
+  },
+  kassa: {
+    icon: 'ti-receipt', title: 'Kassaproblem',
+    fields: [
+      { id: 'kassa_id', label: 'Kassa-ID', type: 'text', placeholder: 'KASSA-01', required: true, col: 'half' },
+      { id: 'fragestellning', label: 'Frågeställning', type: 'textarea', placeholder: 'Beskriv problemet…', required: true, col: 'full' },
+    ]
+  },
+  compumat: {
+    icon: 'ti-barrier-block', title: 'CompuMat',
+    fields: [
+      { id: 'bom', label: 'Bom', type: 'text', placeholder: 'BOM-01', required: false, col: 'half' },
+      { id: 'dorrar', label: 'Dörrar', type: 'text', placeholder: 'DORR-01', required: false, col: 'half' },
+      { id: 'elstolpar', label: 'Elstolpar', type: 'text', placeholder: 'EL-01', required: false, col: 'half' },
+      { id: 'fragestellning', label: 'Frågeställning', type: 'textarea', placeholder: 'Beskriv problemet…', required: true, col: 'full' },
+    ]
+  },
+  aterbetalning: {
+    icon: 'ti-refresh', title: 'Återbetalning',
+    fields: [
+      { id: 'kundnamn', label: 'Kundens namn', type: 'text', placeholder: 'Anna Andersson', required: true, col: 'half' },
+      { id: 'kundnr', label: 'Kundnummer', type: 'text', placeholder: '12345', required: true, col: 'half' },
+      { id: 'datum_fran', label: 'Datum från', type: 'date', required: true, col: 'half' },
+      { id: 'datum_till', label: 'Datum till', type: 'date', required: true, col: 'half' },
+      { id: 'order_id', label: 'Order-ID', type: 'text', placeholder: 'ORD-12345', required: true, col: 'half' },
+      { id: 'belopp', label: 'Belopp (kr)', type: 'text', placeholder: '1 500', required: true, col: 'half' },
+      { id: 'anledning', label: 'Anledning', type: 'text', placeholder: 'Avbokning, dubbeldebitering…', required: true, col: 'full' },
+      { id: 'ovrigt', label: 'Övrigt', type: 'textarea', placeholder: 'Ytterligare information…', required: false, col: 'full' },
+    ]
+  },
+  ovrigt_cs: {
+    icon: 'ti-dots-circle-horizontal', title: 'CompuSuit – Övrigt',
+    fields: [
+      { id: 'fragestellning', label: 'Beskriv ditt ärende', type: 'textarea', placeholder: 'Beskriv problemet eller frågan…', required: true, col: 'full' },
+    ]
+  },
+  hardware: {
+    icon: 'ti-cpu', title: 'Hårdvara',
+    fields: [
+      { id: 'enhet', label: 'Enhet / utrustning', type: 'text', placeholder: 'Dator, skrivare, skärm…', required: true, col: 'full' },
+      { id: 'fragestellning', label: 'Beskriv problemet', type: 'textarea', placeholder: 'Vad händer? Felmeddelande?', required: true, col: 'full' },
+    ]
+  },
+  general: {
+    icon: 'ti-help-circle', title: 'Allmän fråga',
+    fields: [
+      { id: 'fragestellning', label: 'Din fråga', type: 'textarea', placeholder: 'Ställ din fråga här…', required: true, col: 'full' },
+    ]
+  },
+};
+
+function buildDynamicForm() {
+  const key = _category === 'compusuit' ? _sub : _category;
+  const cfg = FORM_CONFIGS[key];
+  if (!cfg) return;
+  document.getElementById('dynamic-form-icon').className = 'ti ' + cfg.icon + ' card-header-icon';
+  document.getElementById('dynamic-form-title').textContent = cfg.title;
+  const body = document.getElementById('dynamic-form-body');
+  let html = '';
+  let rowOpen = false;
+  cfg.fields.forEach((f, idx) => {
+    if (f.col === 'full') {
+      if (rowOpen) { html += '</div>'; rowOpen = false; }
+      html += '<div class="form-row full">' + fieldHTML(f) + '</div>';
+    } else {
+      const next = cfg.fields[idx + 1];
+      if (!rowOpen) { html += '<div class="form-row">'; rowOpen = true; }
+      html += fieldHTML(f);
+      if (!next || next.col === 'full') { html += '</div>'; rowOpen = false; }
+    }
+  });
+  if (rowOpen) html += '</div>';
+  body.innerHTML = html;
+}
+
+function fieldHTML(f) {
+  const req = f.required ? '<span class="required-star">*</span>' : '';
+  let input = '';
+  if (f.type === 'textarea') {
+    input = `<textarea id="f-${f.id}" placeholder="${f.placeholder||''}" ${f.required?'required':''}></textarea>`;
+  } else if (f.type === 'date') {
+    input = `<input type="date" id="f-${f.id}" ${f.required?'required':''}>`;
+  } else {
+    input = `<input type="${f.type}" id="f-${f.id}" placeholder="${f.placeholder||''}" ${f.required?'required':''}>`;
+  }
+  return `<div class="form-field"><label>${f.label}${req}</label>${input}</div>`;
+}
+
+function selectSeverity(level, btn) {
+  _severity = level;
+  document.querySelectorAll('.sev-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+}
+
+// ── STEP 3: GRANSKA ───────────────────────────────────────────────────────
+function goToStep3() {
+  // Validate required fields
+  const camping = document.getElementById('f-camping').value;
+  if (!camping) { alert('Välj en camping.'); return; }
+  if (!_severity) { alert('Välj allvarlighetsgrad.'); return; }
+  const requiredInputs = document.querySelectorAll('#dynamic-form-body [required]');
+  for (const inp of requiredInputs) {
+    if (!inp.value.trim()) {
+      inp.focus();
+      inp.style.borderColor = 'var(--red)';
+      setTimeout(() => inp.style.borderColor = '', 2000);
+      alert('Fyll i alla obligatoriska fält (markerade med *).');
+      return;
+    }
+  }
+  buildSummary();
+  setStep(3);
+  show('view-step3');
+  hide('view-step2');
+}
+
+function buildSummary() {
+  const key = _category === 'compusuit' ? _sub : _category;
+  const cfg = FORM_CONFIGS[key];
+  const sevLabels = { low: '🟢 Låg', mid: '🟡 Medel', high: '🔴 Hög' };
+  const catLabels = { compusuit: 'CompuSuit', hardware: 'Hårdvara', general: 'Allmän fråga' };
+  const subLabels = { bokning:'Bokning', kassa:'Kassa', compumat:'CompuMat', aterbetalning:'Återbetalning', ovrigt_cs:'Övrigt' };
+
+  let rows = [
+    ['Kategori', catLabels[_category] + (_sub ? ' – ' + subLabels[_sub] : '')],
+    ['Camping', document.getElementById('f-camping').value],
+    ['Allvarlighetsgrad', sevLabels[_severity]],
+    ['Anmälare', _user.name + ' (' + (_user.email||'ingen e-post') + ')'],
+  ];
+
+  if (cfg) {
+    cfg.fields.forEach(f => {
+      const el = document.getElementById('f-' + f.id);
+      if (el && el.value.trim()) rows.push([f.label, el.value.trim()]);
+    });
+  }
+
+  document.getElementById('summary-content').innerHTML =
+    rows.map(([k,v]) => `<div><strong>${k}:</strong> ${v}</div>`).join('');
+}
+
+// ── SUBMIT ────────────────────────────────────────────────────────────────
+async function submitForm() {
+  const key = _category === 'compusuit' ? _sub : _category;
+  const cfg = FORM_CONFIGS[key];
+  const camping = document.getElementById('f-camping').value;
+  const catLabels = { compusuit:'CompuSuit', hardware:'Hårdvara', general:'Allmän fråga' };
+  const subLabels = { bokning:'Bokning', kassa:'Kassa', compumat:'CompuMat', aterbetalning:'Återbetalning', ovrigt_cs:'Övrigt' };
+  const sevLabels = { low:'Låg', mid:'Medel', high:'Hög – STOPP' };
+
+  const typeLabel = _category === 'compusuit'
+    ? 'CompuSuit – ' + (subLabels[_sub] || _sub)
+    : catLabels[_category];
+
+  // Build email subject: [Typ] – Camping
+  const subject = '[' + typeLabel + '] – ' + camping;
+
+  // Build form data object
+  const formData = { subject, typeLabel, camping, severity: sevLabels[_severity] };
+  if (cfg) {
+    cfg.fields.forEach(f => {
+      const el = document.getElementById('f-' + f.id);
+      if (el) formData[f.id] = el.value.trim();
+    });
+  }
+
+  // Build HTML email body
+  const rows = Object.entries(formData)
+    .filter(([k]) => !['subject'].includes(k))
+    .map(([k, v]) => `<tr><td style="padding:6px 12px;font-weight:600;color:#5a5a57;white-space:nowrap;border-bottom:1px solid #eee">${k}</td><td style="padding:6px 12px;border-bottom:1px solid #eee">${v||'–'}</td></tr>`)
+    .join('');
+
+  const htmlBody = `
+    <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto">
+      <div style="background:#3B6D11;color:#fff;padding:16px 20px;border-radius:8px 8px 0 0">
+        <h2 style="margin:0;font-size:18px">IT-felanmälan: ${typeLabel}</h2>
+        <p style="margin:4px 0 0;font-size:13px;opacity:.85">${camping}</p>
+      </div>
+      <table style="width:100%;border-collapse:collapse;background:#fff;border:1px solid #eee;border-top:none;border-radius:0 0 8px 8px">
+        <tr><td style="padding:6px 12px;font-weight:600;color:#5a5a57;border-bottom:1px solid #eee">Anmälare</td>
+            <td style="padding:6px 12px;border-bottom:1px solid #eee">${_user.name} (${_user.email||'–'})</td></tr>
+        <tr><td style="padding:6px 12px;font-weight:600;color:#5a5a57;border-bottom:1px solid #eee">Allvarlighetsgrad</td>
+            <td style="padding:6px 12px;border-bottom:1px solid #eee">${sevLabels[_severity]}</td></tr>
+        ${rows}
+      </table>
+      <p style="font-size:11px;color:#909088;margin-top:12px">Skickat via CCSthlm IT-felanmälan · ${new Date().toLocaleString('sv-SE')}</p>
+    </div>`;
+
+  const payload = {
+    to: SUPPORT_EMAIL,
+    from: _user.email || 'noreply@cc-camping.se',
+    fromName: _user.name,
+    subject,
+    htmlBody,
+    formData,
+  };
+
+  // Show sending overlay
+  document.getElementById('sending-overlay').classList.add('show');
+  document.getElementById('send-error').classList.remove('show');
+
+  try {
+    if (!POWER_AUTOMATE_URL || POWER_AUTOMATE_URL === 'DIN_POWER_AUTOMATE_URL_HÄR') {
+      // Demo mode — simulate send
+      await new Promise(r => setTimeout(r, 1200));
+      showSuccess(typeLabel, camping);
+      return;
+    }
+    const res = await fetch(POWER_AUTOMATE_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    showSuccess(typeLabel, camping);
+  } catch(e) {
+    document.getElementById('sending-overlay').classList.remove('show');
+    document.getElementById('send-error-text').textContent = 'Kunde inte skicka anmälan: ' + e.message + '. Kontrollera Power Automate-URL.';
+    document.getElementById('send-error').classList.add('show');
+  }
+}
+
+function showSuccess(type, camping) {
+  document.getElementById('sending-overlay').classList.remove('show');
+  document.getElementById('success-text').textContent =
+    'Din anmälan "' + type + ' – ' + camping + '" har skickats till IT-support på ' + SUPPORT_EMAIL + '.';
+  setStep(3, true);
+  hide('view-step3');
+  show('view-success');
+}
+
+function resetForm() {
+  _category = ''; _sub = ''; _severity = '';
+  ['compusuit','hardware','general'].forEach(c =>
+    document.getElementById('cat-' + c).classList.remove('selected'));
+  document.getElementById('sub-card').style.display = 'none';
+  document.getElementById('btn-to-step2').disabled = true;
+  document.querySelectorAll('.sev-btn').forEach(b => b.classList.remove('selected'));
+  setStep(1);
+  hide('view-success'); show('view-step1');
+}
+
+// ── NAV HELPERS ───────────────────────────────────────────────────────────
+function goToStep1() { setStep(1); hide('view-step2'); show('view-step1'); }
+function show(id) { document.getElementById(id).style.display = ''; document.getElementById(id).classList.add('fade-in'); }
+function hide(id) { document.getElementById(id).style.display = 'none'; }
+
+function setStep(n, done) {
+  [1,2,3].forEach(i => {
+    const el = document.getElementById('step'+i+'-ind');
+    el.classList.remove('active','done');
+    if (i < n || (done && i <= n)) el.classList.add('done');
+    else if (i === n) el.classList.add('active');
+  });
+}
+
+// ── LOGOUT ────────────────────────────────────────────────────────────────
+function portalLogout() {
+  sessionStorage.setItem('ccs_logged_out', '1');
+  sessionStorage.removeItem('ccs_session');
+  sessionStorage.removeItem('ccs_portal_user');
+  window.location.replace('index.html');
+}
+</script>
+</body>
+</html>
