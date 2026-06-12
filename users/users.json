@@ -3,29 +3,135 @@
     {
       "id": "admin1",
       "name": "Massimo Johansson",
-      "email": "massimo@cc-camping.se",
+      "email": "massimo.johansson@cc-camping.se",
       "role": "Admin",
       "pin": "1234",
-      "apps": ["besiktning", "admin"],
+      "apps": [
+        "besiktning",
+        "admin"
+      ],
       "active": true,
       "created": "2025-01-01"
     }
   ],
   "campings": [
-    {"id":"c1","name":"Caravan Club Björkö Örns Camping","shortname":"Björkö Örn","type":"camping","srv":false,"srvOnly":false,"email":"","active":true},
-    {"id":"c2","name":"Caravan Club Östnora Camping","shortname":"Östnora","type":"camping","srv":false,"srvOnly":false,"email":"","active":true},
-    {"id":"c3","name":"Caravan Club Kapellskärs Camping","shortname":"Kapellskär","type":"camping","srv":false,"srvOnly":false,"email":"","active":true},
-    {"id":"c4","name":"Caravan Club Mista Camping","shortname":"Mista","type":"camping","srv":false,"srvOnly":false,"email":"","active":true},
-    {"id":"c5","name":"Caravan Club Storsveds Camping","shortname":"Storsved","type":"camping","srv":false,"srvOnly":false,"email":"","active":true},
-    {"id":"c6","name":"Caravan Club Örstigs Camping","shortname":"Örstig","type":"camping","srv":false,"srvOnly":false,"email":"","active":true},
-    {"id":"c7","name":"Gräddös Pärla Kök & Bar","shortname":"Gräddös Pärla","type":"restaurant","srv":true,"srvOnly":true,"email":"","active":true},
-    {"id":"c8","name":"Östnora Kök & Bar","shortname":"Östnora Kök","type":"restaurant","srv":true,"srvOnly":true,"email":"","active":true}
+    {
+      "id": "c1",
+      "name": "Caravan Club Björkö Örns Camping",
+      "shortname": "Björkö Örn",
+      "type": "camping",
+      "srv": false,
+      "srvOnly": false,
+      "email": "",
+      "active": true
+    },
+    {
+      "id": "c2",
+      "name": "Caravan Club Östnora Camping",
+      "shortname": "Östnora",
+      "type": "camping",
+      "srv": false,
+      "srvOnly": false,
+      "email": "",
+      "active": true
+    },
+    {
+      "id": "c3",
+      "name": "Caravan Club Kapellskärs Camping",
+      "shortname": "Kapellskär",
+      "type": "camping",
+      "srv": false,
+      "srvOnly": false,
+      "email": "",
+      "active": true
+    },
+    {
+      "id": "c4",
+      "name": "Caravan Club Mista Camping",
+      "shortname": "Mista",
+      "type": "camping",
+      "srv": false,
+      "srvOnly": false,
+      "email": "",
+      "active": true
+    },
+    {
+      "id": "c5",
+      "name": "Caravan Club Storsveds Camping",
+      "shortname": "Storsved",
+      "type": "camping",
+      "srv": false,
+      "srvOnly": false,
+      "email": "",
+      "active": true
+    },
+    {
+      "id": "c6",
+      "name": "Caravan Club Örstigs Camping",
+      "shortname": "Örstig",
+      "type": "camping",
+      "srv": false,
+      "srvOnly": false,
+      "email": "",
+      "active": true
+    },
+    {
+      "id": "c7",
+      "name": "Gräddös Pärla Kök & Bar",
+      "shortname": "Gräddös Pärla",
+      "type": "restaurant",
+      "srv": true,
+      "srvOnly": true,
+      "email": "",
+      "active": true
+    },
+    {
+      "id": "c8",
+      "name": "Östnora Kök & Bar",
+      "shortname": "Östnora Kök",
+      "type": "restaurant",
+      "srv": true,
+      "srvOnly": true,
+      "email": "",
+      "active": true
+    }
   ],
   "inspectors": [
-    {"id":"i1","name":"Massimo Johansson","email":"massimo@cc-camping.se","phone":"","cert":true,"note":"","active":true},
-    {"id":"i2","name":"Stefan Leijon","email":"","phone":"","cert":true,"note":"","active":true},
-    {"id":"i3","name":"Hans Östman","email":"","phone":"","cert":false,"note":"","active":true},
-    {"id":"i4","name":"Mårten","email":"","phone":"","cert":false,"note":"","active":true}
+    {
+      "id": "i1",
+      "name": "Massimo Johansson",
+      "email": "massimo@cc-camping.se",
+      "phone": "",
+      "cert": true,
+      "note": "",
+      "active": true
+    },
+    {
+      "id": "i2",
+      "name": "Stefan Leijon",
+      "email": "",
+      "phone": "",
+      "cert": true,
+      "note": "",
+      "active": true
+    },
+    {
+      "id": "i3",
+      "name": "Hans Östman",
+      "email": "",
+      "phone": "",
+      "cert": false,
+      "note": "",
+      "active": true
+    },
+    {
+      "id": "i4",
+      "name": "Mårten",
+      "email": "",
+      "phone": "",
+      "cert": false,
+      "note": "",
+      "active": true
+    }
   ]
 }
-
