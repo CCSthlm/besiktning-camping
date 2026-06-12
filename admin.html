@@ -550,7 +550,8 @@ async function loadData() {
     const res = await fetch('https://api.github.com/repos/'+GH_REPO+'/contents/'+USERS_PATH, {headers});
     if (res.ok) {
       const raw = await res.json();
-      _data = JSON.parse(atob(raw.content.replace(/\n/g,'')));
+      const bytes = Uint8Array.from(atob(raw.content.replace(/\n/g,'')), c => c.charCodeAt(0));
+      _data = JSON.parse(new TextDecoder('utf-8').decode(bytes));
     } else { loadDefaultData(); }
   } catch(e) { loadDefaultData(); }
 }
