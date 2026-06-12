@@ -965,9 +965,10 @@ function showPage(id) {
 function goPortal() { window.location.href = 'index.html'; }
 
 function logout() {
+  sessionStorage.setItem('ccs_logged_out', '1');
   sessionStorage.removeItem('ccs_session');
   sessionStorage.removeItem('ccs_portal_user');
-  goPortal();
+  window.location.replace('index.html');
 }
 
 // ─── MODAL HELPERS ────────────────────────────────────────────────────────
