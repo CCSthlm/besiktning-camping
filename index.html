@@ -270,6 +270,15 @@ function checkTokenBanner() {
 }
 
 async function init() {
+  // If user explicitly logged out, never auto-login — stay on login screen
+  if (sessionStorage.getItem('ccs_logged_out') === '1') {
+    sessionStorage.removeItem('ccs_session');
+    sessionStorage.removeItem('ccs_portal_user');
+    await loadUsers();
+    populateUserSelect();
+    checkTokenBanner();
+    return;
+  }
   // Check existing session
   const stored = sessionStorage.getItem('ccs_session');
   if (stored) {
@@ -382,7 +391,7 @@ async function attemptPinLogin() {
     return;
   }
   _currentUser = {...user, authMethod:'pin'};
-  sessionStorage.setItem('ccs_session', JSON.stringify(_currentUser));
+  startSession(_currentUser);
   await showPortal();
 }
 
@@ -406,7 +415,7 @@ async function loginMS_continue(account) {
   }
   if (user.active === false) { showError('Kontot är inaktiverat.'); return; }
   _currentUser = {...user, authMethod:'microsoft', msEmail: email};
-  sessionStorage.setItem('ccs_session', JSON.stringify(_currentUser));
+  startSession(_currentUser);
   await showPortal();
 }
 
@@ -469,14 +478,28 @@ function setAppSession(e, appId) {
 }
 
 function logout() {
+  // Set flag so page reload stays on login screen
+  sessionStorage.setItem('ccs_logged_out', '1');
   sessionStorage.removeItem('ccs_session');
   sessionStorage.removeItem('ccs_portal_user');
+  // Sign out of MSAL too if active
+  try {
+    if (_msalApp) {
+      _msalApp.getAllAccounts().forEach(a => _msalApp.clearCache());
+    }
+  } catch(e) {}
   _currentUser = null;
   _pinBuffer = '';
   updatePinDots();
   document.getElementById('screen-portal').classList.remove('active');
   document.getElementById('screen-login').classList.add('active');
   populateUserSelect();
+}
+
+function startSession(user) {
+  // Called on successful login — clear the logged_out flag
+  sessionStorage.removeItem('ccs_logged_out');
+  sessionStorage.setItem('ccs_session', JSON.stringify(user));
 }
 
 function showError(msg) {
