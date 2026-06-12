@@ -302,7 +302,8 @@ async function loadUsers() {
     );
     if (!res.ok) { loadDefaultUsers(); return; }
     const ghFile = await res.json();
-    const parsed = JSON.parse(atob(ghFile.content.replace(/\n/g,'')));
+    const bytes = Uint8Array.from(atob(ghFile.content.replace(/\n/g,'')), c => c.charCodeAt(0));
+    const parsed = JSON.parse(new TextDecoder('utf-8').decode(bytes));
     if (Array.isArray(parsed)) {
       _users = parsed;
     } else if (parsed && Array.isArray(parsed.users)) {
