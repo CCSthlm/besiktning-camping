@@ -105,6 +105,15 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
 .screen.active{display:block;}
 
 @media(max-width:500px){.login-card{padding:24px 18px;}.app-grid{grid-template-columns:1fr;}}
+.token-banner{background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.25);border-radius:var(--radius);padding:12px 14px;margin-bottom:18px;display:none;}
+.token-banner.show{display:block;}
+.token-banner-title{font-size:12px;font-weight:600;color:var(--amber);margin-bottom:6px;display:flex;align-items:center;gap:5px;}
+.token-row{display:flex;gap:8px;}
+.token-row input{flex:1;padding:8px 11px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius);font-size:12px;color:var(--text);font-family:inherit;}
+.token-row input:focus{outline:2px solid var(--accent);outline-offset:1px;}
+.token-row button{padding:8px 13px;background:var(--amber);color:#000;border:none;border-radius:var(--radius);font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;font-family:inherit;}
+.token-row button:hover{opacity:.88;}
+.token-ok{font-size:11px;color:var(--green);margin-top:5px;display:none;}
 </style>
 </head>
 <body>
@@ -118,6 +127,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
       <p>Caravan Club of Sweden – Stockholmssektionen</p>
     </div>
     <div class="login-card">
+      <!-- GITHUB TOKEN BANNER (shown when token missing) -->
+      <div class="token-banner" id="token-banner">
+        <div class="token-banner-title"><i class="ti ti-key" style="font-size:13px"></i> GitHub-token krävs för att hämta användare</div>
+        <div style="font-size:11px;color:var(--text2);margin-bottom:8px;">Klistra in din GitHub-token (ghp_…) en gång – sparas lokalt i webbläsaren.</div>
+        <div class="token-row">
+          <input type="password" id="token-input" placeholder="ghp_xxxxxxxxxxxx" oninput="tokenInputChange(this.value)">
+          <button onclick="saveTokenAndReload()">Spara</button>
+        </div>
+        <div class="token-ok" id="token-ok"><i class="ti ti-check"></i> Token sparad – laddar användare…</div>
+      </div>
       <div class="login-tabs">
         <div class="login-tab active" id="tab-pin" onclick="switchTab('pin')"><i class="ti ti-keypad" style="font-size:14px;margin-right:5px"></i>PIN-kod</div>
         <div class="login-tab" id="tab-ms" onclick="switchTab('ms')"><i class="ti ti-brand-windows" style="font-size:14px;margin-right:5px"></i>Microsoft 365</div>
@@ -220,6 +239,32 @@ let _pinBuffer = '';
 let _msalApp = null;
 
 // ─── INIT ─────────────────────────────────────────────────────────────────
+// ─── TOKEN HANDLING ──────────────────────────────────────────────────────
+function tokenInputChange(val) {
+  // live-show token-ok when value looks like a token
+  document.getElementById('token-ok').style.display = '';
+}
+
+function saveTokenAndReload() {
+  const val = document.getElementById('token-input').value.trim();
+  if (!val) return;
+  localStorage.setItem('gh_token', val);
+  document.getElementById('token-ok').style.display = 'block';
+  document.getElementById('token-ok').textContent = '✓ Token sparad – laddar användare…';
+  setTimeout(async () => {
+    await loadUsers();
+    populateUserSelect();
+    document.getElementById('token-banner').classList.remove('show');
+  }, 600);
+}
+
+function checkTokenBanner() {
+  const token = localStorage.getItem('gh_token') || '';
+  if (!token) {
+    document.getElementById('token-banner').classList.add('show');
+  }
+}
+
 async function init() {
   // Check existing session
   const stored = sessionStorage.getItem('ccs_session');
@@ -233,6 +278,7 @@ async function init() {
   // Load users first — always populate select regardless of outcome
   await loadUsers();
   populateUserSelect();
+  checkTokenBanner();
   // MSAL redirect callback — run after users are loaded, don't let it block
   try {
     if (typeof msal !== 'undefined') {
