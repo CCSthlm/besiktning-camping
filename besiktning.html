@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<title>Laddar Besiktningsprotokoll…</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#0f1117;color:#e8eaf0;display:flex;align-items:center;justify-content:center;min-height:100vh;}
+.wrap{text-align:center;padding:40px;}
+.spinner{width:40px;height:40px;border:3px solid rgba(79,142,247,.2);border-top-color:#4f8ef7;border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 20px;}
+@keyframes spin{to{transform:rotate(360deg)}}
+h2{font-size:18px;font-weight:600;margin-bottom:8px;}
+p{font-size:13px;color:#9ba3b8;}
+.btn{margin-top:20px;padding:10px 22px;background:#4f8ef7;color:#fff;border:none;border-radius:10px;font-size:14px;cursor:pointer;font-family:inherit;}
+</style>
+</head>
+<body>
+<div class="wrap" id="wrap">
+  <div class="spinner"></div>
+  <h2>Verifierar behörighet…</h2>
+  <p>Ett ögonblick</p>
+</div>
+
+<script>
+// Auth check — redirect to portal if not logged in or lacking access
+const sess = sessionStorage.getItem('ccs_session') || sessionStorage.getItem('ccs_portal_user');
+if (!sess) {
+  window.location.replace('index.html');
+} else {
+  try {
+    const user = JSON.parse(sess);
+    const allowed = ['Admin','Besiktningsman','Granskare'];
+    if (!allowed.includes(user.role)) {
+      document.getElementById('wrap').innerHTML = '<h2 style="color:#f87171">Åtkomst nekad</h2><p>Du har inte behörighet till Besiktningsprotokoll.</p><button class="btn" onclick="window.location.replace(\'index.html\')">Tillbaka till portalen</button>';
+    } else {
+      // Read-only mode for Granskare
+      sessionStorage.setItem('besiktning_role', user.role);
+      sessionStorage.setItem('besiktning_user', user.name);
+      // Redirect to the actual besiktning app
+      window.location.replace('besiktning_app.html');
+    }
+  } catch(e) {
+    window.location.replace('index.html');
+  }
+}
+</script>
+</body>
+</html>

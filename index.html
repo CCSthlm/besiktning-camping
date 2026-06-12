@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CCSthlm – Portal</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/tabler-icons.min.css">
+<script src="https://alcdn.msauth.net/browser/2.38.0/js/msal-browser.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0f1117;--bg2:#161b27;--bg3:#1c2237;--bg4:#222840;
+  --text:#e8eaf0;--text2:#9ba3b8;--text3:#5c6480;
+  --accent:#4f8ef7;--accent2:#3a7be0;--accent-glow:rgba(79,142,247,0.18);
+  --green:#34d399;--red:#f87171;--amber:#fbbf24;
+  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);
+  --radius:10px;--radius-lg:16px;--radius-xl:24px;
+  --shadow:0 8px 32px rgba(0,0,0,0.45);
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;}
+
+/* ─── LOGIN SCREEN ─── */
+.login-wrap{width:100%;max-width:420px;animation:fadeUp .45s ease both;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+.logo-area{text-align:center;margin-bottom:32px;}
+.logo-area img{width:140px;height:auto;filter:brightness(1.1);}
+.logo-area h1{font-size:20px;font-weight:700;margin-top:12px;letter-spacing:.02em;}
+.logo-area p{font-size:13px;color:var(--text2);margin-top:4px;}
+
+.login-card{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius-xl);padding:32px 28px;box-shadow:var(--shadow);}
+
+.login-tabs{display:flex;gap:0;background:var(--bg3);border-radius:var(--radius);padding:4px;margin-bottom:28px;}
+.login-tab{flex:1;text-align:center;padding:8px 0;font-size:13px;font-weight:500;cursor:pointer;border-radius:7px;color:var(--text2);transition:all .2s;}
+.login-tab.active{background:var(--accent);color:#fff;box-shadow:0 2px 8px var(--accent-glow);}
+
+.form-field{margin-bottom:16px;}
+.form-field label{display:block;font-size:12px;font-weight:500;color:var(--text2);margin-bottom:6px;letter-spacing:.03em;text-transform:uppercase;}
+.form-field input,.form-field select{width:100%;padding:11px 14px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius);font-size:14px;color:var(--text);font-family:inherit;transition:border-color .2s,box-shadow .2s;}
+.form-field input:focus,.form-field select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow);}
+.form-field input::placeholder{color:var(--text3);}
+
+.pin-dots{display:flex;justify-content:center;gap:12px;margin:20px 0 8px;}
+.pin-dot{width:14px;height:14px;border-radius:50%;background:var(--border2);transition:background .15s;}
+.pin-dot.filled{background:var(--accent);}
+
+.pin-pad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:16px 0;}
+.pin-key{aspect-ratio:1;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);font-size:20px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text);transition:background .1s,transform .1s;user-select:none;}
+.pin-key:hover{background:var(--bg4);}
+.pin-key:active{transform:scale(.93);}
+.pin-key.del{font-size:16px;color:var(--text2);}
+.pin-key.empty{visibility:hidden;}
+
+.btn-primary{width:100%;padding:13px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius);font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;transition:background .15s,transform .1s;letter-spacing:.02em;}
+.btn-primary:hover{background:var(--accent2);}
+.btn-primary:active{transform:scale(.98);}
+.btn-primary:disabled{opacity:.45;cursor:not-allowed;}
+
+.btn-ms{width:100%;padding:12px;background:var(--bg3);color:var(--text);border:1px solid var(--border2);border-radius:var(--radius);font-size:14px;font-weight:500;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:10px;transition:background .15s;}
+.btn-ms:hover{background:var(--bg4);}
+.ms-logo{width:18px;height:18px;flex-shrink:0;}
+
+.login-error{background:rgba(248,113,113,.12);border:1px solid rgba(248,113,113,.3);color:var(--red);border-radius:var(--radius);padding:10px 14px;font-size:13px;margin-top:16px;display:none;}
+.login-error.show{display:block;}
+
+.login-footer{text-align:center;margin-top:20px;font-size:11px;color:var(--text3);}
+
+/* ─── APP LAUNCHER ─── */
+.portal-wrap{width:100%;max-width:860px;animation:fadeUp .45s ease both;}
+.portal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:32px;flex-wrap:wrap;gap:12px;}
+.portal-header-left{display:flex;align-items:center;gap:14px;}
+.portal-header-left img{width:52px;height:auto;}
+.portal-header-left h1{font-size:22px;font-weight:700;}
+.portal-header-left p{font-size:13px;color:var(--text2);margin-top:2px;}
+.user-chip{display:flex;align-items:center;gap:8px;background:var(--bg2);border:1px solid var(--border2);border-radius:40px;padding:7px 14px 7px 10px;}
+.user-avatar{width:30px;height:30px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0;}
+.user-chip-info{font-size:13px;}
+.user-chip-name{font-weight:600;}
+.user-chip-role{font-size:11px;color:var(--text2);}
+.btn-logout{background:none;border:none;cursor:pointer;color:var(--text3);font-size:20px;margin-left:4px;transition:color .15s;}
+.btn-logout:hover{color:var(--red);}
+
+.app-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px;}
+.app-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px;cursor:pointer;transition:border-color .2s,transform .15s,box-shadow .2s;position:relative;overflow:hidden;text-decoration:none;display:flex;flex-direction:column;}
+.app-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,var(--accent-glow),transparent 60%);opacity:0;transition:opacity .2s;}
+.app-card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.35);}
+.app-card:hover::before{opacity:1;}
+.app-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:16px;flex-shrink:0;}
+.app-icon-blue{background:rgba(79,142,247,.18);color:var(--accent);}
+.app-icon-green{background:rgba(52,211,153,.15);color:var(--green);}
+.app-icon-amber{background:rgba(251,191,36,.13);color:var(--amber);}
+.app-icon-purple{background:rgba(167,139,250,.15);color:#a78bfa;}
+.app-name{font-size:16px;font-weight:600;margin-bottom:4px;}
+.app-desc{font-size:12px;color:var(--text2);line-height:1.6;flex:1;}
+.app-badge{position:absolute;top:14px;right:14px;background:var(--accent);color:#fff;font-size:10px;font-weight:600;padding:2px 7px;border-radius:20px;letter-spacing:.04em;}
+.app-badge-new{background:var(--green);}
+
+.section-label{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);margin-bottom:12px;margin-top:28px;}
+
+.no-access{text-align:center;padding:60px 24px;color:var(--text2);}
+.no-access i{font-size:40px;color:var(--text3);margin-bottom:12px;display:block;}
+
+/* ─── HIDDEN STATES ─── */
+.screen{display:none;}
+.screen.active{display:block;}
+
+@media(max-width:500px){.login-card{padding:24px 18px;}.app-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div id="screen-login" class="screen active">
+  <div class="login-wrap">
+    <div class="logo-area">
+      <div style="width:80px;height:80px;border-radius:20px;background:var(--bg2);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:32px;">🏕️</div>
+      <h1>CCSthlm Portal</h1>
+      <p>Caravan Club of Sweden – Stockholmssektionen</p>
+    </div>
+    <div class="login-card">
+      <div class="login-tabs">
+        <div class="login-tab active" id="tab-pin" onclick="switchTab('pin')"><i class="ti ti-keypad" style="font-size:14px;margin-right:5px"></i>PIN-kod</div>
+        <div class="login-tab" id="tab-ms" onclick="switchTab('ms')"><i class="ti ti-brand-windows" style="font-size:14px;margin-right:5px"></i>Microsoft 365</div>
+      </div>
+
+      <!-- PIN LOGIN -->
+      <div id="pane-pin">
+        <div class="form-field">
+          <label>Välj användare</label>
+          <select id="user-select" onchange="onUserSelect()">
+            <option value="">Laddar användare…</option>
+          </select>
+        </div>
+        <div class="pin-dots">
+          <div class="pin-dot" id="pd0"></div>
+          <div class="pin-dot" id="pd1"></div>
+          <div class="pin-dot" id="pd2"></div>
+          <div class="pin-dot" id="pd3"></div>
+        </div>
+        <div class="pin-pad" id="pin-pad">
+          <div class="pin-key" onclick="pinKey('1')">1</div>
+          <div class="pin-key" onclick="pinKey('2')">2</div>
+          <div class="pin-key" onclick="pinKey('3')">3</div>
+          <div class="pin-key" onclick="pinKey('4')">4</div>
+          <div class="pin-key" onclick="pinKey('5')">5</div>
+          <div class="pin-key" onclick="pinKey('6')">6</div>
+          <div class="pin-key" onclick="pinKey('7')">7</div>
+          <div class="pin-key" onclick="pinKey('8')">8</div>
+          <div class="pin-key" onclick="pinKey('9')">9</div>
+          <div class="pin-key empty"></div>
+          <div class="pin-key" onclick="pinKey('0')">0</div>
+          <div class="pin-key del" onclick="pinDel()"><i class="ti ti-backspace"></i></div>
+        </div>
+      </div>
+
+      <!-- MS LOGIN -->
+      <div id="pane-ms" style="display:none;padding:8px 0;">
+        <p style="font-size:13px;color:var(--text2);margin-bottom:20px;text-align:center;line-height:1.6;">Logga in med ditt cc-camping.se Microsoft-konto för att komma åt portalen.</p>
+        <button class="btn-ms" onclick="loginWithMS()">
+          <svg class="ms-logo" viewBox="0 0 23 23" xmlns="http://www.w3.org/2000/svg"><path fill="#f25022" d="M0 0h11v11H0z"/><path fill="#00a4ef" d="M12 0h11v11H12z"/><path fill="#7fba00" d="M0 12h11v11H0z"/><path fill="#ffb900" d="M12 12h11v11H12z"/></svg>
+          Logga in med Microsoft
+        </button>
+        <p style="font-size:11px;color:var(--text3);text-align:center;margin-top:16px;">Kräver ett cc-camping.se konto</p>
+      </div>
+
+      <div class="login-error" id="login-error"></div>
+    </div>
+    <div class="login-footer">v2.0 · CCSthlm Besiktningsportal</div>
+  </div>
+</div>
+
+<!-- APP LAUNCHER SCREEN -->
+<div id="screen-portal" class="screen">
+  <div class="portal-wrap">
+    <div class="portal-header">
+      <div class="portal-header-left">
+        <div style="font-size:32px">🏕️</div>
+        <div>
+          <h1>CCSthlm Portal</h1>
+          <p>Välkommen tillbaka</p>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div class="user-chip">
+          <div class="user-avatar" id="portal-avatar">?</div>
+          <div class="user-chip-info">
+            <div class="user-chip-name" id="portal-username">–</div>
+            <div class="user-chip-role" id="portal-role">–</div>
+          </div>
+          <button class="btn-logout" title="Logga ut" onclick="logout()"><i class="ti ti-logout"></i></button>
+        </div>
+      </div>
+    </div>
+
+    <div id="app-launcher-content">
+      <!-- Populated by JS -->
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── CONFIG ───────────────────────────────────────────────────────────────
+const GH_REPO = 'CCSthlm/besiktning-camping';
+const USERS_PATH = 'users/users.json';
+const MSAL_CFG = {
+  auth:{clientId:'01d17a16-1a0f-4784-bcb2-90adb1a64ab0',authority:'https://login.microsoftonline.com/cc-camping.se',redirectUri:window.location.href.split('?')[0]},
+  cache:{cacheLocation:'localStorage',storeAuthStateInCookie:true}
+};
+
+// ─── APP DEFINITIONS ──────────────────────────────────────────────────────
+const ALL_APPS = [
+  {id:'besiktning', name:'Besiktningsprotokoll', desc:'Genomför och dokumentera campingbesiktningar. Generera intyg och spara historik.', icon:'ti-certificate', color:'app-icon-blue', url:'besiktning.html', roles:['Admin','Besiktningsman','Granskare'], badge:'', newTab:false},
+  {id:'admin', name:'Administration', desc:'Hantera användare, campingar och besiktningsmän. Systemkonfiguration.', icon:'ti-settings-2', color:'app-icon-amber', url:'admin.html', roles:['Admin'], badge:'ADMIN', newTab:false},
+];
+
+// ─── STATE ────────────────────────────────────────────────────────────────
+let _users = [];
+let _currentUser = null;
+let _pinBuffer = '';
+let _msalApp = null;
+
+// ─── INIT ─────────────────────────────────────────────────────────────────
+async function init() {
+  // Check existing session
+  const stored = sessionStorage.getItem('ccs_session');
+  if (stored) {
+    try {
+      _currentUser = JSON.parse(stored);
+      await showPortal();
+      return;
+    } catch(e) { sessionStorage.removeItem('ccs_session'); }
+  }
+  await loadUsers();
+  populateUserSelect();
+  // MSAL redirect callback
+  try {
+    _msalApp = new msal.PublicClientApplication(MSAL_CFG);
+    await _msalApp.handleRedirectPromise();
+    const accounts = _msalApp.getAllAccounts();
+    if (accounts.length > 0) await loginMS_continue(accounts[0]);
+  } catch(e) {}
+}
+
+// ─── USERS FROM GITHUB ────────────────────────────────────────────────────
+async function loadUsers() {
+  const token = localStorage.getItem('gh_token') || '';
+  const headers = token ? {'Authorization':'token '+token} : {};
+  try {
+    const res = await fetch('https://api.github.com/repos/'+GH_REPO+'/contents/'+USERS_PATH, {headers});
+    if (!res.ok) { loadDefaultUsers(); return; }
+    const data = await res.json();
+    _users = JSON.parse(atob(data.content.replace(/\n/g,'')));
+  } catch(e) { loadDefaultUsers(); }
+}
+
+function loadDefaultUsers() {
+  // Default admin user for first-time setup
+  _users = [
+    {id:'admin1', name:'Massimo Johansson', email:'massimo@cc-camping.se', role:'Admin', pin:'1234', apps:['besiktning','admin'], active:true, created:'2025-01-01'},
+  ];
+}
+
+function populateUserSelect() {
+  const sel = document.getElementById('user-select');
+  const active = _users.filter(u => u.active !== false);
+  if (!active.length) { sel.innerHTML = '<option value="">Inga användare konfigurerade</option>'; return; }
+  sel.innerHTML = '<option value="">– Välj dig –</option>' + active.map(u => `<option value="${u.id}">${u.name}</option>`).join('');
+}
+
+// ─── TAB SWITCH ──────────────────────────────────────────────────────────
+function switchTab(tab) {
+  document.getElementById('tab-pin').className = 'login-tab' + (tab==='pin'?' active':'');
+  document.getElementById('tab-ms').className = 'login-tab' + (tab==='ms'?' active':'');
+  document.getElementById('pane-pin').style.display = tab==='pin'?'':'none';
+  document.getElementById('pane-ms').style.display = tab==='ms'?'':'none';
+}
+
+// ─── PIN LOGIN ────────────────────────────────────────────────────────────
+function onUserSelect() { _pinBuffer = ''; updatePinDots(); hideError(); }
+
+function pinKey(k) {
+  if (_pinBuffer.length >= 4) return;
+  _pinBuffer += k;
+  updatePinDots();
+  if (_pinBuffer.length === 4) setTimeout(attemptPinLogin, 80);
+}
+
+function pinDel() {
+  _pinBuffer = _pinBuffer.slice(0,-1);
+  updatePinDots();
+  hideError();
+}
+
+function updatePinDots() {
+  for (let i=0;i<4;i++) {
+    document.getElementById('pd'+i).classList.toggle('filled', i < _pinBuffer.length);
+  }
+}
+
+async function attemptPinLogin() {
+  const uid = document.getElementById('user-select').value;
+  if (!uid) { showError('Välj en användare först.'); _pinBuffer=''; updatePinDots(); return; }
+  const user = _users.find(u => u.id === uid);
+  if (!user) { showError('Användaren hittades inte.'); _pinBuffer=''; updatePinDots(); return; }
+  if (user.pin !== _pinBuffer) {
+    showError('Fel PIN-kod. Försök igen.');
+    _pinBuffer = '';
+    updatePinDots();
+    // Shake animation
+    const card = document.querySelector('.login-card');
+    card.style.animation = 'none';
+    setTimeout(() => { card.style.animation = 'shake .35s ease'; }, 10);
+    return;
+  }
+  _currentUser = {...user, authMethod:'pin'};
+  sessionStorage.setItem('ccs_session', JSON.stringify(_currentUser));
+  await showPortal();
+}
+
+// ─── MS LOGIN ─────────────────────────────────────────────────────────────
+async function loginWithMS() {
+  try {
+    if (!_msalApp) _msalApp = new msal.PublicClientApplication(MSAL_CFG);
+    const result = await _msalApp.loginPopup({scopes:['User.Read','openid','profile','email']});
+    await loginMS_continue(result.account);
+  } catch(e) {
+    showError('Inloggning misslyckades: ' + (e.message || 'Okänt fel'));
+  }
+}
+
+async function loginMS_continue(account) {
+  const email = account.username || '';
+  const user = _users.find(u => u.email && u.email.toLowerCase() === email.toLowerCase());
+  if (!user) {
+    showError('Kontot ' + email + ' finns inte i portalen. Kontakta administratören.');
+    return;
+  }
+  if (user.active === false) { showError('Kontot är inaktiverat.'); return; }
+  _currentUser = {...user, authMethod:'microsoft', msEmail: email};
+  sessionStorage.setItem('ccs_session', JSON.stringify(_currentUser));
+  await showPortal();
+}
+
+// ─── PORTAL VIEW ──────────────────────────────────────────────────────────
+async function showPortal() {
+  document.getElementById('screen-login').classList.remove('active');
+  document.getElementById('screen-portal').classList.add('active');
+  const u = _currentUser;
+  const initials = u.name.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase();
+  document.getElementById('portal-avatar').textContent = initials;
+  document.getElementById('portal-username').textContent = u.name;
+  document.getElementById('portal-role').textContent = u.role + (u.authMethod==='microsoft'?' · Microsoft 365':'');
+  renderApps();
+}
+
+function renderApps() {
+  const u = _currentUser;
+  const userApps = u.apps || [];
+  const accessible = ALL_APPS.filter(app =>
+    app.roles.includes(u.role) && (u.role==='Admin' || userApps.includes(app.id))
+  );
+  const el = document.getElementById('app-launcher-content');
+  if (!accessible.length) {
+    el.innerHTML = '<div class="no-access"><i class="ti ti-lock"></i><p>Du har inte tillgång till några applikationer.<br>Kontakta administratören.</p></div>';
+    return;
+  }
+  const mainApps = accessible.filter(a => a.id !== 'admin');
+  const adminApps = accessible.filter(a => a.id === 'admin');
+  let html = '';
+  if (mainApps.length) {
+    html += '<div class="section-label">Applikationer</div><div class="app-grid">';
+    mainApps.forEach(app => { html += appCardHTML(app); });
+    html += '</div>';
+  }
+  if (adminApps.length) {
+    html += '<div class="section-label">Systemadministration</div><div class="app-grid">';
+    adminApps.forEach(app => { html += appCardHTML(app); });
+    html += '</div>';
+  }
+  el.innerHTML = html;
+}
+
+function appCardHTML(app) {
+  const badge = app.badge ? `<div class="app-badge ${app.badge==='NY'?'app-badge-new':''}">${app.badge}</div>` : '';
+  const target = app.newTab ? 'target="_blank" rel="noopener"' : '';
+  return `<a class="app-card" href="${app.url}" ${target} onclick="setAppSession(event,'${app.id}')">
+    ${badge}
+    <div class="app-icon ${app.color}"><i class="ti ${app.icon}"></i></div>
+    <div class="app-name">${app.name}</div>
+    <div class="app-desc">${app.desc}</div>
+  </a>`;
+}
+
+function setAppSession(e, appId) {
+  // Pass current user session to app via sessionStorage
+  sessionStorage.setItem('ccs_portal_user', JSON.stringify(_currentUser));
+}
+
+function logout() {
+  sessionStorage.removeItem('ccs_session');
+  sessionStorage.removeItem('ccs_portal_user');
+  _currentUser = null;
+  _pinBuffer = '';
+  updatePinDots();
+  document.getElementById('screen-portal').classList.remove('active');
+  document.getElementById('screen-login').classList.add('active');
+  populateUserSelect();
+}
+
+function showError(msg) {
+  const el = document.getElementById('login-error');
+  el.textContent = msg;
+  el.classList.add('show');
+}
+function hideError() {
+  document.getElementById('login-error').classList.remove('show');
+}
+
+// Shake keyframes
+const style = document.createElement('style');
+style.textContent = '@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}';
+document.head.appendChild(style);
+
+init();
+</script>
+</body>
+</html>
