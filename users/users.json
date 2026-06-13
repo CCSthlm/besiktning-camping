@@ -180,6 +180,20 @@
           "manualReason": "",
           "edited": false,
           "campingId": "c7"
+        },
+        {
+          "id": "mqc72iqpmjph0",
+          "name": "TOlvan Tolvansson",
+          "pnr": "19121212-1212",
+          "date": "2026-06-13",
+          "timeIn": "09:10",
+          "timeOut": "",
+          "registeredBy": "Massimo Johansson",
+          "registeredAt": "2026-06-13T10:10:19.873Z",
+          "manual": true,
+          "manualReason": "GLömde stämpla in",
+          "edited": false,
+          "campingId": "c7"
         }
       ],
       "personal": [],
@@ -192,6 +206,15 @@
           "detail": "Massimo Johansson stämplade in 12:09 (2026-06-13)",
           "oldVal": "",
           "newVal": "12:09"
+        },
+        {
+          "id": "mqc72iqp4xf7c",
+          "ts": "2026-06-13T10:10:19.873Z",
+          "user": "Massimo Johansson",
+          "action": "in",
+          "detail": "Manuell registrering: TOlvan Tolvansson in 09:10 (2026-06-13) – GLömde stämpla in",
+          "oldVal": "",
+          "newVal": "09:10"
         }
       ]
     }
