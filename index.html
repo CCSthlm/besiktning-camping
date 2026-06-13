@@ -234,6 +234,7 @@ const MSAL_CFG = {
 const ALL_APPS = [
   {id:'besiktning', name:'Besiktningsprotokoll', desc:'Genomför och dokumentera campingbesiktningar. Generera intyg och spara historik.', icon:'ti-certificate', color:'app-icon-blue', url:'besiktning.html', roles:['Admin','Besiktningsman','Granskare'], badge:'', newTab:false},
   {id:'it-support', name:'IT-felanmälan', desc:'Rapportera IT-problem för CompuSuit, hårdvara eller ställ en allmän fråga.', icon:'ti-tool', color:'app-icon-amber', url:'it-support.html', roles:[], badge:'', newTab:false},
+  {id:'avvikelse-admin', name:'Avvikelsehantering', desc:'Dashboard, ärendelista, handläggning och statistik för avvikelser.', icon:'ti-dashboard', color:'app-icon-amber', url:'avvikelse-admin.html', roles:[], badge:'', newTab:false, adminRolesRequired:['global','avvikelse-admin','avvikelse-ledning','avvikelse-anlaggning','avvikelse-brand']},
   {id:'avvikelse', name:'Avvikelseregistrering', desc:'Registrera avvikelse, tillbud eller incident. Alla domänanvändare kan rapportera.', icon:'ti-alert-triangle', color:'app-icon-amber', url:'avvikelse.html', roles:[], badge:'', newTab:false},
   {id:'personalliggare', name:'Personalliggare', desc:'Digital personalliggare enligt Skatteverkets krav. Stämpla in/ut, ändringslogg, export.', icon:'ti-id-badge-2', color:'app-icon-green', url:'personalliggare.html', roles:['Admin','Besiktningsman','Granskare'], badge:'', newTab:false},
   {id:'admin', name:'Administration', desc:'Hantera användare, campingar och besiktningsmän. Systemkonfiguration.', icon:'ti-settings-2', color:'app-icon-amber', url:'admin.html', roles:['Admin'], badge:'ADMIN', newTab:false},
@@ -463,6 +464,10 @@ function renderApps() {
   const userApps = u.apps || [];
   const hasAdminRole = (u.adminRoles||[]).length > 0 || u.role === 'Admin';
   const accessible = ALL_APPS.filter(app => {
+    // Apps requiring specific admin roles (e.g. avvikelse-admin dashboard)
+    if (app.adminRolesRequired) {
+      return (u.adminRoles||[]).some(r => app.adminRolesRequired.includes(r));
+    }
     // Domain-only users: only see apps with no role restriction
     if (u.domainOnly) return app.roles.length === 0;
     // Empty roles = accessible to all logged-in users
