@@ -152,6 +152,8 @@ tr:hover td{background:var(--bg3);}
     <div class="nav-group-label">Besiktningsapp</div>
     <div class="nav-item" onclick="showPage('campings')"><i class="ti ti-tent"></i> Campingar</div>
     <div class="nav-item" onclick="showPage('inspectors')"><i class="ti ti-user-check"></i> Besiktningsmän</div>
+    <div class="nav-group-label">Personalliggare</div>
+    <div class="nav-item" onclick="showPage('pl-settings')"><i class="ti ti-building"></i> Företagsinställningar</div>
     <div class="nav-group-label">System</div>
     <div class="nav-item" onclick="showPage('settings')"><i class="ti ti-adjustments"></i> Inställningar</div>
   </div>
@@ -284,6 +286,34 @@ tr:hover td{background:var(--bg3);}
       </div>
     </div>
 
+    <!-- PL SETTINGS PAGE -->
+    <div class="page" id="page-pl-settings">
+      <div class="card">
+        <div class="card-header"><span class="card-title">Företagsinformation (Personalliggare)</span></div>
+        <div style="padding:20px;">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
+            <div class="form-field">
+              <label>Företagsnamn</label>
+              <input type="text" id="pl-company-name" placeholder="Caravan Club of Sweden AB">
+            </div>
+            <div class="form-field">
+              <label>Organisationsnummer</label>
+              <input type="text" id="pl-org-nr" placeholder="556xxx-xxxx">
+            </div>
+          </div>
+          <div style="font-size:12px;color:var(--text2);margin-bottom:14px;background:var(--amber-bg);padding:10px 14px;border-radius:var(--radius);border-left:3px solid var(--amber);">
+            <i class="ti ti-info-circle"></i> Dessa uppgifter visas i personalliggaren och på exporterade dokument. Varje camping kan också ha egna uppgifter.
+          </div>
+          <div id="pl-camping-overrides"></div>
+          <button class="btn-primary" onclick="savePLSettings()"><i class="ti ti-device-floppy"></i> Spara</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-title">Camping-specifika uppgifter</span></div>
+        <div style="padding:20px;" id="pl-camping-settings">Laddar…</div>
+      </div>
+    </div>
+
     <!-- SETTINGS PAGE -->
     <div class="page" id="page-settings">
       <div class="card">
@@ -351,6 +381,18 @@ tr:hover td{background:var(--bg3);}
           <label class="checkbox-item"><input type="checkbox" value="besiktning" checked> <i class="ti ti-certificate" style="font-size:14px;color:var(--accent)"></i> Besiktningsprotokoll</label>
         </div>
         <div class="form-help">Admin får alltid tillgång till administration.</div>
+      </div>
+      <div class="form-field">
+        <label>Personalliggare – camping/plats</label>
+        <select id="user-pl-camping">
+          <option value="">– Ej tilldelad –</option>
+        </select>
+        <div class="form-help">Välj vilken camping/restaurang personen tillhör i personalliggaren.</div>
+      </div>
+      <div class="form-field">
+        <label>Personnummer (personalliggare)</label>
+        <input type="text" id="user-pnr" placeholder="YYYYMMDD-XXXX">
+        <div class="form-help">Sparas krypterat. Används i personalliggaren.</div>
       </div>
       <div class="form-field">
         <label>Status</label>
@@ -514,6 +556,7 @@ const USERS_PATH = 'users/users.json';
 const APP_LIST = [
   {id:'besiktning', name:'Besiktningsprotokoll'},
   {id:'it-support', name:'IT-felanmälan'},
+  {id:'personalliggare', name:'Personalliggare'},
 ];
 
 // ─── STATE ────────────────────────────────────────────────────────────────
@@ -522,6 +565,46 @@ let _ghToken = '';
 let _currentUser = null;
 
 // ─── INIT ─────────────────────────────────────────────────────────────────
+// ── PERSONALLIGGARE SETTINGS ─────────────────────────────────────────────
+function renderPLSettings() {
+  const company = _data.company || {};
+  const el = document.getElementById('pl-company-name');
+  const el2 = document.getElementById('pl-org-nr');
+  if (el) el.value = company.name || '';
+  if (el2) el2.value = company.orgNr || '';
+  // Per-camping settings
+  const container = document.getElementById('pl-camping-settings');
+  if (!container) return;
+  if (!(_data.campings||[]).length) { container.innerHTML = '<p style="color:var(--text3);font-size:13px">Inga campingar konfigurerade.</p>'; return; }
+  container.innerHTML = (_data.campings||[]).map(c => {
+    const ov = ((_data.company||{}).campingOverrides||{})[c.id]||{};
+    return `<div style="background:var(--bg3);border-radius:var(--radius);padding:14px 16px;margin-bottom:10px;">
+      <div style="font-weight:600;font-size:13px;margin-bottom:10px;display:flex;align-items:center;gap:7px"><i class="ti ti-tent" style="color:var(--text3)"></i>${c.name}</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div class="form-field"><label style="font-size:10px">Eget företagsnamn (valfritt)</label>
+          <input type="text" id="pl-ov-name-${c.id}" value="${ov.name||''}" placeholder="Lämna tomt = använd globalt"></div>
+        <div class="form-field"><label style="font-size:10px">Eget org.nr (valfritt)</label>
+          <input type="text" id="pl-ov-orgnr-${c.id}" value="${ov.orgNr||''}" placeholder="Lämna tomt = använd globalt"></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function savePLSettings() {
+  if (!_data.company) _data.company = {};
+  _data.company.name = document.getElementById('pl-company-name').value.trim();
+  _data.company.orgNr = document.getElementById('pl-org-nr').value.trim();
+  if (!_data.company.campingOverrides) _data.company.campingOverrides = {};
+  (_data.campings||[]).forEach(c => {
+    const name = (document.getElementById('pl-ov-name-'+c.id)||{}).value||'';
+    const orgNr = (document.getElementById('pl-ov-orgnr-'+c.id)||{}).value||'';
+    if (name||orgNr) _data.company.campingOverrides[c.id] = {name,orgNr};
+    else delete _data.company.campingOverrides[c.id];
+  });
+  saveData();
+  toast('Företagsinställningar sparade.','ok');
+}
+
 async function init() {
   _ghToken = localStorage.getItem('gh_token') || '';
   // Load current session
@@ -702,6 +785,7 @@ function openAddUser() {
   document.getElementById('user-role').value = 'Besiktningsman';
   document.getElementById('user-active').value = 'true';
   buildAppCheckboxes([]);
+  populatePLCampingSelect('');
   openModal('modal-user');
 }
 
@@ -716,7 +800,16 @@ function openEditUser(id) {
   document.getElementById('user-role').value = u.role;
   document.getElementById('user-active').value = u.active===false?'false':'true';
   buildAppCheckboxes(u.apps||[]);
+  populatePLCampingSelect(u.plCampingId||'');
+  const pnrEl = document.getElementById('user-pnr'); if(pnrEl) pnrEl.value = u.pnr||'';
   openModal('modal-user');
+}
+
+function populatePLCampingSelect(selected) {
+  const sel = document.getElementById('user-pl-camping');
+  if (!sel) return;
+  sel.innerHTML = '<option value="">– Ej tilldelad –</option>' +
+    (_data.campings||[]).map(c => `<option value="${c.id}" ${c.id===selected?'selected':''}>${c.name}</option>`).join('');
 }
 
 function buildAppCheckboxes(selected) {
@@ -736,12 +829,14 @@ function saveUser() {
   if (role==='Admin') apps.push('admin');
   if (!name) { alert('Namn krävs.'); return; }
   if (!pin || !/^\d{4}$/.test(pin)) { alert('PIN-kod måste vara 4 siffror.'); return; }
+  const plCampingId = (document.getElementById('user-pl-camping')||{}).value||'';
+  const pnr = (document.getElementById('user-pnr')||{}).value?.trim()||'';
   const editId = document.getElementById('user-edit-id').value;
   if (editId) {
     const i = _data.users.findIndex(u=>u.id===editId);
-    if (i>=0) _data.users[i] = {..._data.users[i], name, email, pin, role, active, apps};
+    if (i>=0) _data.users[i] = {..._data.users[i], name, email, pin, role, active, apps, plCampingId, pnr};
   } else {
-    _data.users.push({id:'u'+uid(), name, email, pin, role, active, apps, created:today()});
+    _data.users.push({id:'u'+uid(), name, email, pin, role, active, apps, plCampingId, pnr, created:today()});
   }
   closeModal('modal-user');
   renderAll();
@@ -947,6 +1042,8 @@ const PAGE_META = {
   campings:{title:'Campingar',sub:'Campingar i besiktningsapplikationen'},
   inspectors:{title:'Besiktningsmän',sub:'Registrerade besiktningsmän'},
   settings:{title:'Inställningar',sub:'GitHub-integration och systemkonfiguration'},
+  'pl-settings':{title:'Företagsinställningar',sub:'Uppgifter för personalliggaren'},
+  'pl-users':{title:'Personalliggare – Användare',sub:'Hantera campingtillhörighet för personalliggare'},
 };
 
 function showPage(id) {
@@ -956,6 +1053,7 @@ function showPage(id) {
   event && event.currentTarget && event.currentTarget.classList.add('active');
   const m = PAGE_META[id]||{title:id,sub:''};
   document.getElementById('page-title').textContent = m.title;
+  if (id === 'pl-settings') renderPLSettings();
   document.getElementById('page-sub').textContent = m.sub;
   // Also highlight correct nav item
   document.querySelectorAll('.nav-item').forEach(n => {
