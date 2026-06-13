@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Avvikelseregistrering – CCSthlm</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/tabler-icons.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f5f5f3;--bg2:#ffffff;--bg3:#eeede8;--bg4:#e5e4de;
+  --text:#1a1a18;--text2:#5a5a57;--text3:#909088;
+  --accent:#3B6D11;--accent2:#27500A;--accent-glow:rgba(59,109,17,.1);
+  --red:#A32D2D;--red-bg:#FCEBEB;--red-text:#501313;
+  --amber:#854F0B;--amber-bg:#FAEEDA;--amber-text:#412402;
+  --green-bg:#EAF3DE;--green-text:#27500A;
+  --border:rgba(0,0,0,.10);--border2:rgba(0,0,0,.18);
+  --radius:8px;--radius-lg:14px;--shadow:0 2px 16px rgba(0,0,0,.09);
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:var(--bg3);color:var(--text);min-height:100vh;}
+
+/* PORTAL BAR */
+#portal-bar{position:sticky;top:0;z-index:999;background:var(--bg2);border-bottom:1px solid var(--border2);display:flex;align-items:center;padding:0 20px;height:46px;gap:0;font-size:13px;color:var(--text2);}
+.pb-avatar{width:28px;height:28px;border-radius:50%;background:var(--accent);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-right:10px;}
+.pb-info{flex:1;display:flex;align-items:center;gap:10px;min-width:0;}
+.pb-name{font-weight:600;color:var(--text);white-space:nowrap;}
+.pb-sep{width:1px;height:22px;background:var(--border2);margin:0 12px;flex-shrink:0;}
+.pb-btn{display:flex;align-items:center;gap:5px;padding:6px 12px;border-radius:7px;border:1px solid var(--border2);background:none;color:var(--text2);font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;white-space:nowrap;transition:background .15s;text-decoration:none;flex-shrink:0;margin-left:6px;}
+.pb-btn:hover{background:var(--bg3);color:var(--text);}
+.pb-btn-logout{background:var(--red-bg);color:var(--red);border-color:rgba(163,45,45,.25);}
+.pb-btn-logout:hover{background:var(--red);color:#fff;}
+
+/* LAYOUT */
+.page-wrap{max-width:720px;margin:0 auto;padding:28px 16px 60px;}
+
+/* STEP INDICATOR */
+.steps{display:flex;align-items:center;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:12px 18px;margin-bottom:22px;flex-wrap:wrap;gap:4px;}
+.step{display:flex;align-items:center;gap:7px;font-size:13px;color:var(--text3);flex:1;min-width:80px;}
+.step-num{width:24px;height:24px;border-radius:50%;background:var(--bg3);color:var(--text3);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;}
+.step.active .step-num{background:var(--accent);color:#fff;}
+.step.active{color:var(--text);font-weight:600;}
+.step.done .step-num{background:var(--green-bg);color:var(--accent);}
+.step-line{flex:1;height:1px;background:var(--border2);margin:0 6px;min-width:12px;}
+
+/* CARDS */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow);margin-bottom:14px;}
+.card-header{padding:13px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:9px;}
+.card-header-icon{font-size:17px;color:var(--text3);}
+.card-header-title{font-size:14px;font-weight:600;}
+.card-header-sub{font-size:12px;color:var(--text3);margin-top:1px;}
+.card-body{padding:18px;}
+
+/* CATEGORY GRID */
+.cat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:9px;}
+.cat-btn{display:flex;flex-direction:column;align-items:flex-start;gap:5px;padding:13px 13px;background:var(--bg3);border:2px solid var(--border);border-radius:var(--radius-lg);cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;color:var(--text2);transition:all .15s;text-align:left;}
+.cat-btn i{font-size:22px;color:var(--text3);}
+.cat-btn strong{font-size:13px;color:var(--text);}
+.cat-btn:hover{border-color:var(--accent);background:var(--green-bg);}
+.cat-btn:hover i{color:var(--accent);}
+.cat-btn.selected{border-color:var(--accent);background:var(--green-bg);}
+.cat-btn.selected i{color:var(--accent);}
+.cat-btn.selected strong{color:var(--accent2);}
+
+/* RISK BUTTONS */
+.risk-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+.risk-btn{padding:10px 8px;border-radius:var(--radius);border:2px solid var(--border);background:var(--bg3);cursor:pointer;font-family:inherit;font-size:12px;font-weight:600;text-align:center;transition:all .15s;display:flex;flex-direction:column;align-items:center;gap:4px;}
+.risk-btn i{font-size:18px;}
+.risk-1:hover,.risk-1.selected{border-color:#27500A;background:var(--green-bg);color:#27500A;}
+.risk-2:hover,.risk-2.selected{border-color:var(--amber);background:var(--amber-bg);color:var(--amber-text);}
+.risk-3:hover,.risk-3.selected{border-color:#c2410c;background:#fff3ed;color:#7c2d12;}
+.risk-4:hover,.risk-4.selected{border-color:var(--red);background:var(--red-bg);color:var(--red-text);}
+.risk-4{animation-name:none;}
+.risk-4.selected{animation:pulse-red 1.5s infinite;}
+@keyframes pulse-red{0%,100%{box-shadow:0 0 0 0 rgba(163,45,45,.3)}50%{box-shadow:0 0 0 6px rgba(163,45,45,0)}}
+
+/* FORM */
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-bottom:13px;}
+.form-row.full{grid-template-columns:1fr;}
+.form-row.trio{grid-template-columns:1fr 1fr 1fr;}
+.form-field{display:flex;flex-direction:column;gap:4px;}
+.form-field label{font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.04em;}
+.form-field input,.form-field select,.form-field textarea{padding:9px 12px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius);font-size:13px;color:var(--text);font-family:inherit;transition:border-color .2s;}
+.form-field input:focus,.form-field select:focus,.form-field textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow);}
+.form-field textarea{resize:vertical;min-height:80px;line-height:1.6;}
+.form-field input::placeholder,.form-field textarea::placeholder{color:var(--text3);}
+.req{color:var(--red);}
+
+/* DYNAMIC FIELDS SECTIONS */
+.dyn-section{background:var(--bg3);border-radius:var(--radius);padding:14px;margin-bottom:12px;border-left:3px solid var(--border2);}
+.dyn-section.brand{border-left-color:#e25822;}
+.dyn-section.arb{border-left-color:var(--amber);}
+.dyn-section.livs{border-left-color:#2563eb;}
+.dyn-section.sjuk{border-left-color:#7c3aed;}
+.dyn-section-title{font-size:12px;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+
+/* CHECKBOXES */
+.cb-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px;}
+.cb-item{display:flex;align-items:center;gap:7px;font-size:12px;cursor:pointer;padding:3px 0;}
+.cb-item input{width:14px;height:14px;accent-color:var(--accent);cursor:pointer;}
+
+/* PHOTO UPLOAD */
+.photo-zone{border:2px dashed var(--border2);border-radius:var(--radius-lg);padding:20px;text-align:center;cursor:pointer;transition:all .2s;background:var(--bg3);position:relative;}
+.photo-zone:hover,.photo-zone.drag-over{border-color:var(--accent);background:var(--green-bg);}
+.photo-zone input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+.photo-grid{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;}
+.photo-thumb{width:80px;height:80px;border-radius:var(--radius);object-fit:cover;border:1px solid var(--border2);cursor:pointer;}
+.photo-thumb-wrap{position:relative;display:inline-block;}
+.photo-remove{position:absolute;top:-5px;right:-5px;width:18px;height:18px;border-radius:50%;background:var(--red);color:#fff;border:none;cursor:pointer;font-size:10px;display:flex;align-items:center;justify-content:center;}
+
+/* ESCALATION WARNING */
+.escalation-warning{background:#fff3ed;border:2px solid #c2410c;border-radius:var(--radius-lg);padding:14px 16px;margin-bottom:14px;display:none;}
+.escalation-warning.show{display:flex;align-items:flex-start;gap:10px;}
+.escalation-warning i{font-size:22px;color:#c2410c;flex-shrink:0;margin-top:1px;}
+.escalation-warning strong{font-size:13px;color:#7c2d12;display:block;margin-bottom:3px;}
+.escalation-warning p{font-size:12px;color:#9a3412;line-height:1.6;}
+
+/* SUMMARY */
+.summary-box{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:14px;font-size:12px;line-height:2;}
+.summary-box strong{color:var(--text);min-width:160px;display:inline-block;}
+.summary-section{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin-top:10px;margin-bottom:2px;border-top:1px solid var(--border);padding-top:8px;}
+
+/* BUTTONS */
+.btn-row{display:flex;gap:9px;justify-content:space-between;align-items:center;margin-top:18px;flex-wrap:wrap;}
+.btn-primary{padding:11px 24px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:7px;transition:background .15s;}
+.btn-primary:hover{background:var(--accent2);}
+.btn-secondary{padding:10px 18px;background:var(--bg3);color:var(--text2);border:1px solid var(--border2);border-radius:var(--radius);font-size:13px;font-weight:500;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px;}
+.btn-secondary:hover{background:var(--bg4);}
+
+/* SENDING OVERLAY */
+.overlay{display:none;position:fixed;inset:0;background:rgba(245,245,243,.8);z-index:999;align-items:center;justify-content:center;flex-direction:column;gap:14px;}
+.overlay.show{display:flex;}
+.spinner{width:36px;height:36px;border:3px solid rgba(59,109,17,.2);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* SUCCESS */
+.success-screen{text-align:center;padding:48px 24px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow);}
+.success-icon{width:64px;height:64px;border-radius:50%;background:var(--green-bg);color:var(--accent);font-size:28px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;}
+.success-screen h2{font-size:20px;font-weight:700;margin-bottom:8px;}
+.success-screen p{font-size:13px;color:var(--text2);max-width:400px;margin:0 auto 24px;line-height:1.7;}
+
+/* ERROR */
+.error-bar{background:var(--red-bg);border:1px solid rgba(163,45,45,.25);border-radius:var(--radius);padding:11px 14px;font-size:13px;color:var(--red-text);display:none;align-items:center;gap:7px;margin-bottom:12px;}
+.error-bar.show{display:flex;}
+
+/* TOAST */
+#toast{position:fixed;bottom:22px;right:22px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);padding:10px 14px;font-size:13px;z-index:999;box-shadow:var(--shadow);opacity:0;transform:translateY(6px);transition:all .25s;pointer-events:none;display:flex;align-items:center;gap:6px;}
+
+.fade-in{animation:fadeIn .25s ease both;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:520px){.form-row{grid-template-columns:1fr;}.risk-grid{grid-template-columns:1fr 1fr;}.cat-grid{grid-template-columns:1fr 1fr;}}
+</style>
+</head>
+<body>
+
+<div id="portal-bar">
+  <div class="pb-avatar" id="pb-avatar">?</div>
+  <div class="pb-info">
+    <span class="pb-name" id="pb-name">–</span>
+  </div>
+  <div class="pb-sep"></div>
+  <a href="index.html" class="pb-btn"><i class="ti ti-arrow-left"></i> Portal</a>
+  <button class="pb-btn pb-btn-logout" onclick="portalLogout()"><i class="ti ti-logout"></i> Logga ut</button>
+</div>
+
+<div class="overlay" id="overlay"><div class="spinner"></div><div style="font-size:14px;font-weight:500;color:var(--text2)">Sparar avvikelse…</div></div>
+
+<div class="page-wrap">
+
+  <div style="margin-bottom:20px;">
+    <h1 style="font-size:22px;font-weight:700;display:flex;align-items:center;gap:10px;"><i class="ti ti-alert-triangle" style="color:var(--amber)"></i> Avvikelseregistrering</h1>
+    <p style="font-size:13px;color:var(--text2);margin-top:4px;">Registrera avvikelse, tillbud eller incident för Caravan Club Stockholm</p>
+  </div>
+
+  <!-- STEPS -->
+  <div class="steps" id="step-indicator">
+    <div class="step active" id="s1"><div class="step-num">1</div><span>Kategori</span></div>
+    <div class="step-line"></div>
+    <div class="step" id="s2"><div class="step-num">2</div><span>Detaljer</span></div>
+    <div class="step-line"></div>
+    <div class="step" id="s3"><div class="step-num">3</div><span>Åtgärd</span></div>
+    <div class="step-line"></div>
+    <div class="step" id="s4"><div class="step-num">4</div><span>Granska</span></div>
+  </div>
+
+  <!-- STEP 1: KATEGORI -->
+  <div id="view-s1">
+    <div class="card fade-in">
+      <div class="card-header"><i class="ti ti-category card-header-icon"></i><div><div class="card-header-title">Välj kategori</div><div class="card-header-sub">Vad handlar avvikelsen om?</div></div></div>
+      <div class="card-body">
+        <div class="cat-grid">
+          <button class="cat-btn" onclick="selectCat(0)" id="cat-0"><i class="ti ti-tool"></i><strong>Driftavvikelse</strong><span>Skador, fel, klagomål</span></button>
+          <button class="cat-btn" onclick="selectCat(1)" id="cat-1"><i class="ti ti-user-exclamation"></i><strong>Sjukdom / incident</strong><span>Gäst eller personal</span></button>
+          <button class="cat-btn" onclick="selectCat(2)" id="cat-2"><i class="ti ti-flame" style="color:#e25822"></i><strong>Brandtillbud / SBA</strong><span>Brand, rök, brandskydd</span></button>
+          <button class="cat-btn" onclick="selectCat(3)" id="cat-3"><i class="ti ti-shield-exclamation"></i><strong>Arbetsmiljö</strong><span>Tillbud, skada, risk</span></button>
+          <button class="cat-btn" onclick="selectCat(4)" id="cat-4"><i class="ti ti-soup"></i><strong>Livsmedel</strong><span>Kyl, allergen, hygien</span></button>
+          <button class="cat-btn" onclick="selectCat(5)" id="cat-5"><i class="ti ti-glass-full"></i><strong>Alkohol / servering</strong><span>Servering, ordning</span></button>
+          <button class="cat-btn" onclick="selectCat(6)" id="cat-6"><i class="ti ti-lock-exclamation"></i><strong>Säkerhet / ordning</strong><span>Stöld, hot, skadegörelse</span></button>
+          <button class="cat-btn" onclick="selectCat(7)" id="cat-7"><i class="ti ti-leaf"></i><strong>Miljö / kemikalier</strong><span>Spill, avfall, gasol</span></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card fade-in">
+      <div class="card-header"><i class="ti ti-alert-circle card-header-icon"></i><div><div class="card-header-title">Risknivå / allvarlighetsgrad</div></div></div>
+      <div class="card-body">
+        <div class="risk-grid">
+          <button class="risk-btn risk-1" onclick="selectRisk(1,this)"><i class="ti ti-circle-check"></i>Låg<span style="font-size:10px;font-weight:400">Ingen omedelbar fara</span></button>
+          <button class="risk-btn risk-2" onclick="selectRisk(2,this)"><i class="ti ti-alert-triangle"></i>Medel<span style="font-size:10px;font-weight:400">Påverkar verksamheten</span></button>
+          <button class="risk-btn risk-3" onclick="selectRisk(3,this)"><i class="ti ti-flame"></i>Hög<span style="font-size:10px;font-weight:400">Risk för person/skada</span></button>
+          <button class="risk-btn risk-4" onclick="selectRisk(4,this)"><i class="ti ti-urgent"></i>Akut<span style="font-size:10px;font-weight:400">Kräver omedelbar åtgärd</span></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="btn-row" style="justify-content:flex-end">
+      <button class="btn-primary" onclick="goStep2()">Nästa <i class="ti ti-arrow-right"></i></button>
+    </div>
+  </div>
+
+  <!-- STEP 2: DETALJER -->
+  <div id="view-s2" style="display:none">
+
+    <div class="escalation-warning" id="escalation-warn">
+      <i class="ti ti-siren"></i>
+      <div><strong>OBS — Allvarlig händelse</strong><p>Denna kategori och/eller risknivå kräver omedelbar eskalering. Avvikelsen flaggas automatiskt och ett mail skickas till ansvarig. Kontakta vid behov räddningstjänst (112) eller skyddsombud direkt.</p></div>
+    </div>
+
+    <!-- Grundinfo -->
+    <div class="card fade-in">
+      <div class="card-header"><i class="ti ti-info-circle card-header-icon"></i><div class="card-header-title">Grundinformation</div></div>
+      <div class="card-body">
+        <div class="form-row">
+          <div class="form-field">
+            <label>Anläggning <span class="req">*</span></label>
+            <select id="f-anlaggning"><option value="">– Välj –</option></select>
+          </div>
+          <div class="form-field">
+            <label>Plats på området</label>
+            <select id="f-plats"><option value="">– Välj –</option></select>
+          </div>
+        </div>
+        <div class="form-row trio">
+          <div class="form-field">
+            <label>Datum <span class="req">*</span></label>
+            <input type="date" id="f-datum">
+          </div>
+          <div class="form-field">
+            <label>Tid (ca)</label>
+            <input type="time" id="f-tid">
+          </div>
+          <div class="form-field">
+            <label>Rapporterat av</label>
+            <input type="text" id="f-rapportor" readonly style="background:var(--bg4);">
+          </div>
+        </div>
+        <div class="form-row full">
+          <div class="form-field">
+            <label>Beskrivning av händelsen <span class="req">*</span></label>
+            <textarea id="f-beskrivning" placeholder="Vad hände? Hur upptäcktes det? Vilka var inblandade? Skriv sakligt och detaljerat." style="min-height:110px;"></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dynamic fields per category -->
+    <div id="dynamic-fields"></div>
+
+    <!-- Foton -->
+    <div class="card fade-in">
+      <div class="card-header"><i class="ti ti-photo card-header-icon"></i><div><div class="card-header-title">Foton / bilagor</div><div class="card-header-sub">Valfritt – max 3 bilder, 1MB/bild</div></div></div>
+      <div class="card-body">
+        <div class="photo-zone" id="photo-zone" ondragover="dzOver(event)" ondragleave="dzLeave(event)" ondrop="dzDrop(event)">
+          <input type="file" id="photo-input" accept="image/*" multiple onchange="onPhotoSelect(this)">
+          <i class="ti ti-photo-up" style="font-size:28px;color:var(--text3);display:block;margin-bottom:6px"></i>
+          <div style="font-size:13px;color:var(--text2)">Dra bilder hit eller klicka för att välja</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:3px">PNG, JPG · max 1 MB/bild · Ctrl+V klistrar in</div>
+        </div>
+        <div class="photo-grid" id="photo-grid"></div>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-secondary" onclick="goStep1()"><i class="ti ti-arrow-left"></i> Tillbaka</button>
+      <button class="btn-primary" onclick="goStep3()">Nästa <i class="ti ti-arrow-right"></i></button>
+    </div>
+  </div>
+
+  <!-- STEP 3: ÅTGÄRD -->
+  <div id="view-s3" style="display:none">
+    <div class="card fade-in">
+      <div class="card-header"><i class="ti ti-tool card-header-icon"></i><div class="card-header-title">Åtgärdsinformation</div></div>
+      <div class="card-body">
+        <div class="form-row full">
+          <div class="form-field">
+            <label>Omedelbar åtgärd vidtagen</label>
+            <textarea id="f-omedelbar" placeholder="Vad gjordes direkt för att säkra situationen?" style="min-height:80px;"></textarea>
+          </div>
+        </div>
+        <div class="form-row full">
+          <div class="form-field">
+            <label>Ansvarig för utredning / åtgärd</label>
+            <input type="text" id="f-ansvarig" placeholder="Namn på ansvarig person">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-field">
+            <label>Deadline för åtgärd</label>
+            <input type="date" id="f-deadline">
+          </div>
+          <div class="form-field">
+            <label>Föreslagen status</label>
+            <select id="f-status">
+              <option value="ny">Ny – ej påbörjad</option>
+              <option value="pågående">Pågående – utreds</option>
+              <option value="eskalerad">Eskalerad – kräver omedelbar åtgärd</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row full">
+          <div class="form-field">
+            <label>Ytterligare kommentar</label>
+            <textarea id="f-kommentar" placeholder="Övrig information, synpunkter, förslag på förebyggande åtgärd…"></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-secondary" onclick="goStep2()"><i class="ti ti-arrow-left"></i> Tillbaka</button>
+      <button class="btn-primary" onclick="goStep4()">Granska <i class="ti ti-arrow-right"></i></button>
+    </div>
+  </div>
+
+  <!-- STEP 4: GRANSKA -->
+  <div id="view-s4" style="display:none">
+    <div class="card fade-in">
+      <div class="card-header"><i class="ti ti-eye card-header-icon"></i><div class="card-header-title">Granska och skicka</div></div>
+      <div class="card-body">
+        <div class="error-bar" id="send-error"><i class="ti ti-alert-circle"></i><span id="send-error-txt">–</span></div>
+        <div class="summary-box" id="summary"></div>
+        <div style="font-size:11px;color:var(--text3);margin-top:10px;display:flex;align-items:center;gap:5px;flex-wrap:wrap;">
+          <i class="ti ti-mail" style="font-size:12px"></i>
+          Notis skickas till: <strong style="color:var(--text2)" id="notify-email-display">–</strong>
+        </div>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-secondary" onclick="goStep3()"><i class="ti ti-arrow-left"></i> Ändra</button>
+      <button class="btn-primary" onclick="submitForm()"><i class="ti ti-send"></i> Skicka avvikelse</button>
+    </div>
+  </div>
+
+  <!-- SUCCESS -->
+  <div id="view-success" style="display:none">
+    <div class="success-screen fade-in">
+      <div class="success-icon"><i class="ti ti-check"></i></div>
+      <h2>Avvikelse registrerad!</h2>
+      <p id="success-text">Avvikelsen har sparats och en notis har skickats till ansvarig.</p>
+      <div style="font-size:13px;font-weight:600;color:var(--text3);margin-bottom:20px" id="success-id">–</div>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+        <button class="btn-primary" onclick="resetForm()"><i class="ti ti-plus"></i> Registrera ny</button>
+        <a href="index.html" class="btn-secondary"><i class="ti ti-arrow-left"></i> Tillbaka till portalen</a>
+        <a href="avvikelse-admin.html" class="btn-secondary" id="btn-to-admin" style="display:none"><i class="ti ti-dashboard"></i> Till handläggning</a>
+      </div>
+    </div>
+  </div>
+
+</div><!-- page-wrap -->
+<div id="toast"></div>
+
+<script>
+// ── CONFIG ────────────────────────────────────────────────────────────────
+const GH_REPO = 'CCSthlm/besiktning-camping';
+const DATA_PATH = 'avvikelse/data.json';
+
+// EmailJS — fill in from avvikelse-settings or shared config
+let EJS_PUBLIC_KEY  = '';
+let EJS_SERVICE_ID  = '';
+let EJS_TEMPLATE_ID = '';
+let NOTIFY_EMAIL    = 'massimo.johansson@cc-camping.se';
+
+// ── STATIC DATA ───────────────────────────────────────────────────────────
+const CAT_NAMES = ['Driftavvikelse','Sjukdom / gästincident','Brandtillbud / SBA','Arbetsmiljö / tillbud','Livsmedel / restaurang','Alkohol / servering','Säkerhet / ordning','Miljö / kemikalier'];
+const CAT_ICONS = ['ti-tool','ti-user-exclamation','ti-flame','ti-shield-exclamation','ti-soup','ti-glass-full','ti-lock-exclamation','ti-leaf'];
+const RISK_LABELS = ['','Låg','Medel','Hög','Akut'];
+const RISK_COLORS = ['','#27500A','#854F0B','#c2410c','#A32D2D'];
+const STATUS_LABELS = {ny:'Ny',pågående:'Pågående',åtgärdad:'Åtgärdad',verifierad:'Verifierad',stängd:'Stängd',eskalerad:'Eskalerad'};
+
+// Escalation triggers
+const ESCALATE_CATS  = [2,3]; // brand, arbetsmiljö
+const ESCALATE_RISKS = [3,4]; // hög, akut
+
+const PLATSER = ['Reception','Restaurang / kök','Servicehus','Lekplats','Brygga','Ställplats','Campingtomt','Förråd','Parkeringsplats','Entré / bom','Utomhusområde','Annan'];
+
+// ── STATE ─────────────────────────────────────────────────────────────────
+let _user = null;
+let _avData = {ärenden:[],inställningar:{ejsPublicKey:'',ejsServiceId:'',ejsTemplateId:'',notifyEmail:'massimo.johansson@cc-camping.se',anläggningar:[],kategorier:[]}};
+let _selectedCat = -1;
+let _selectedRisk = 0;
+let _photos = []; // [{name, b64}]
+let _ghSha = null;
+
+// ── INIT ──────────────────────────────────────────────────────────────────
+(async function init() {
+  const sess = sessionStorage.getItem('ccs_session') || sessionStorage.getItem('ccs_portal_user');
+  if (!sess) { window.location.replace('index.html'); return; }
+  try { _user = JSON.parse(sess); } catch(e) { window.location.replace('index.html'); return; }
+
+  const initials = _user.name.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase();
+  document.getElementById('pb-avatar').textContent = initials;
+  document.getElementById('pb-name').textContent = _user.name;
+  document.getElementById('f-rapportor').value = _user.name + (_user.email ? ' <'+_user.email+'>' : '');
+  document.getElementById('f-datum').value = todayStr();
+
+  // Check admin access
+  const adminRoles = _user.adminRoles || [];
+  if (adminRoles.some(r=>['global','avvikelse-admin','avvikelse-ledning','avvikelse-anlaggning'].includes(r))) {
+    document.getElementById('btn-to-admin').style.display = '';
+  }
+
+  await loadAvData();
+  applySettings();
+  populateAnlaggningar();
+  populatePlatser();
+})();
+
+async function loadAvData() {
+  const token = localStorage.getItem('gh_token') || '';
+  if (!token) return;
+  try {
+    const res = await fetch('https://api.github.com/repos/'+GH_REPO+'/contents/'+DATA_PATH,
+      {headers:{'Authorization':'token '+token}});
+    if (res.status === 404) return; // file doesn't exist yet
+    if (!res.ok) return;
+    const gh = await res.json();
+    _ghSha = gh.sha;
+    const bytes = Uint8Array.from(atob(gh.content.replace(/\n/g,'')), c=>c.charCodeAt(0));
+    const parsed = JSON.parse(new TextDecoder('utf-8').decode(bytes));
+    _avData = {ärenden:[],inställningar:{ejsPublicKey:'',ejsServiceId:'',ejsTemplateId:'',notifyEmail:'massimo.johansson@cc-camping.se',anläggningar:[],kategorier:[]},...parsed};
+  } catch(e) { console.warn('loadAvData:', e.message); }
+}
+
+function applySettings() {
+  const s = _avData.inställningar || {};
+  EJS_PUBLIC_KEY  = s.ejsPublicKey  || '';
+  EJS_SERVICE_ID  = s.ejsServiceId  || '';
+  EJS_TEMPLATE_ID = s.ejsTemplateId || '';
+  NOTIFY_EMAIL    = s.notifyEmail   || 'massimo.johansson@cc-camping.se';
+  document.getElementById('notify-email-display').textContent = NOTIFY_EMAIL;
+}
+
+function populateAnlaggningar() {
+  const sel = document.getElementById('f-anlaggning');
+  sel.innerHTML = '<option value="">– Välj anläggning –</option>';
+  const list = (_avData.inställningar?.anläggningar||[]).length
+    ? _avData.inställningar.anläggningar
+    : ['CC Björkö Örns Camping','CC Östnora Camping','CC Kapellskärs Camping','CC Mista Camping','CC Storsveds Camping','CC Örstigs Camping','Gräddös Pärla Kök & Bar','Östnora Kök & Bar'];
+  list.forEach(a => sel.insertAdjacentHTML('beforeend',`<option>${a}</option>`));
+}
+
+function populatePlatser() {
+  const sel = document.getElementById('f-plats');
+  sel.innerHTML = '<option value="">– Välj plats –</option>';
+  PLATSER.forEach(p => sel.insertAdjacentHTML('beforeend',`<option>${p}</option>`));
+}
+
+// ── CAT & RISK ────────────────────────────────────────────────────────────
+function selectCat(n) {
+  _selectedCat = n;
+  document.querySelectorAll('.cat-btn').forEach((b,i) => b.classList.toggle('selected', i===n));
+}
+
+function selectRisk(n, btn) {
+  _selectedRisk = n;
+  document.querySelectorAll('.risk-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+}
+
+// ── DYNAMIC FIELDS ────────────────────────────────────────────────────────
+function buildDynamicFields() {
+  const container = document.getElementById('dynamic-fields');
+  container.innerHTML = '';
+
+  // Check escalation
+  const shouldEscalate = ESCALATE_CATS.includes(_selectedCat) || ESCALATE_RISKS.includes(_selectedRisk);
+  document.getElementById('escalation-warn').classList.toggle('show', shouldEscalate);
+  if (shouldEscalate) document.getElementById('f-status').value = 'eskalerad';
+
+  if (_selectedCat === 1) buildFieldsSjuk(container);
+  else if (_selectedCat === 2) buildFieldsBrand(container);
+  else if (_selectedCat === 3) buildFieldsArb(container);
+  else if (_selectedCat === 4) buildFieldsLivs(container);
+  else if (_selectedCat === 5) buildFieldsAlk(container);
+}
+
+function field(id, label, type='text', placeholder='', required=false, opts=null) {
+  if (type === 'select') {
+    return `<div class="form-field"><label>${label}${required?'<span class="req"> *</span>':''}</label><select id="${id}"><option value="">– Välj –</option>${(opts||[]).map(o=>`<option>${o}</option>`).join('')}</select></div>`;
+  }
+  if (type === 'checkbox') {
+    return `<div style="display:flex;align-items:center;gap:7px;margin-top:4px;"><label style="display:flex;align-items:center;gap:7px;font-size:13px;cursor:pointer;"><input type="checkbox" id="${id}" style="width:14px;height:14px;accent-color:var(--accent)"> ${label}</label></div>`;
+  }
+  if (type === 'textarea') {
+    return `<div class="form-field"><label>${label}${required?'<span class="req"> *</span>':''}</label><textarea id="${id}" placeholder="${placeholder}"></textarea></div>`;
+  }
+  return `<div class="form-field"><label>${label}${required?'<span class="req"> *</span>':''}</label><input type="${type}" id="${id}" placeholder="${placeholder}"></div>`;
+}
+
+function section(cls, icon, title, content) {
+  return `<div class="dyn-section ${cls}"><div class="dyn-section-title"><i class="ti ${icon}"></i>${title}</div>${content}</div>`;
+}
+
+function buildFieldsSjuk(c) {
+  c.innerHTML = section('sjuk','ti-user-exclamation','Sjukdomsfall / gästincident',`
+    <div class="form-row">
+      ${field('d-typ','Typ av händelse','select','',false,['Sjukdom/magsjuka','Fallolycka','Skada','Allergisk reaktion','Misstänkt matförgiftning','Ambulans tillkallad','Annan'])}
+      ${field('d-person','Drabbad','select','',false,['Gäst','Personal','Annan'])}
+    </div>
+    <div class="form-row">
+      ${field('d-foerstahjälp','Första hjälpen gavs','checkbox')}
+      ${field('d-ambulans','Ambulans kontaktades','checkbox')}
+    </div>
+    <div class="form-row">
+      ${field('d-polis','Polis kontaktades','checkbox')}
+      ${field('d-anhörig','Anhörig kontaktades','checkbox')}
+    </div>
+    <div class="form-row full">
+      ${field('d-vittnen','Vittnen (namn)',  'text','Namn på eventuella vittnen')}
+    </div>
+    <div class="form-row full">
+      ${field('d-ansvar','Koppling till anläggningens ansvar','textarea','T.ex. halt golv, trasig trappa, bristande skyltning…')}
+    </div>`);
+}
+
+function buildFieldsBrand(c) {
+  c.innerHTML = section('brand','ti-flame','Brandtillbud / SBA',`
+    <div class="form-row">
+      ${field('d-brandtyp','Typ av brandhändelse','select','',false,['Brand','Rökutveckling','Brandlarm utlöst','Falsklarm','Blockerad utrymningsväg','Brist i brandsläckare','Elrisk','Gasolrisk','Grill-/eldningsincident','Fritös/köksincident','Annan'])}
+      ${field('d-orsak','Orsak (om känd)','text','Vad orsakade händelsen?')}
+    </div>
+    <div class="form-row">
+      ${field('d-raddning','Räddningstjänst kontaktades','checkbox')}
+      ${field('d-utrymning','Utrymning genomfördes','checkbox')}
+    </div>
+    <div class="form-row">
+      ${field('d-brandlarm','Brandlarm utlöstes','checkbox')}
+      ${field('d-utrustning','Utrustning som användes','text','T.ex. brandsläckare, brandfilt')}
+    </div>
+    <div class="form-row full">
+      ${field('d-sba','Koppling till SBA-kontrollpunkt','text','T.ex. kontrollpunkt 3.2 – brandsläckare servicehus')}
+    </div>`);
+}
+
+function buildFieldsArb(c) {
+  c.innerHTML = section('arb','ti-shield-exclamation','Arbetsmiljö / tillbud / arbetsskada',`
+    <div class="form-row">
+      ${field('d-arbtyp','Typ','select','',false,['Riskobservation','Tillbud (nästanolycka)','Olycka / arbetsskada','Hot / våld','Psykosocial arbetsmiljö','Maskin / fordon','Kemikalie','Ergonomi','Ensamarbete','Annan'])}
+      ${field('d-personal','Personalkategori','select','',false,['Anställd','Ideell','Inhyrd','Entreprenör','Annan'])}
+    </div>
+    <div class="form-row full">
+      ${field('d-vad-hände','Vad hände?','textarea','Beskriv händelseförloppet')}
+    </div>
+    <div class="form-row full">
+      ${field('d-vad-kunnat','Vad kunde ha hänt?','textarea','Beskriv det potentiella utfallet')}
+    </div>
+    <div class="form-row">
+      ${field('d-arbfoerstahjälp','Första hjälpen gavs','checkbox')}
+      ${field('d-arbambulans','Ambulans / vård kontaktades','checkbox')}
+    </div>
+    <div class="form-row">
+      ${field('d-skyddsombud','Skyddsombud informerades','checkbox')}
+      ${field('d-chef','Chef informerades','checkbox')}
+    </div>
+    <div style="background:var(--red-bg);border:1px solid rgba(163,45,45,.3);border-radius:var(--radius);padding:10px 13px;margin-top:8px;">
+      <label style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--red-text);cursor:pointer;">
+        <input type="checkbox" id="d-allvarligt" style="width:15px;height:15px;accent-color:var(--red)">
+        Kan detta vara ett allvarligt tillbud / allvarlig arbetsolycka? (anmälningspliktigt)
+      </label>
+    </div>
+    <div class="form-row" style="margin-top:10px">
+      ${field('d-amv','Anmälan till Arbetsmiljöverket gjord','checkbox')}
+      ${field('d-fk','Anmälan till Försäkringskassan gjord','checkbox')}
+    </div>`);
+}
+
+function buildFieldsLivs(c) {
+  c.innerHTML = section('livs','ti-soup','Livsmedel / restaurang',`
+    <div class="form-row">
+      ${field('d-livstyp','Typ av avvikelse','select','',false,['Kyltemperaturavvikelse','Frystemperaturavvikelse','Varmhållning','Allergenfel','Rengöringsbrist','Skadedjur','Misstänkt matförgiftning','Leveransavvikelse','Utgången vara','Hygienbrist','Annan'])}
+      ${field('d-produkt','Produkt / maträtt','text','Vad gäller avvikelsen?')}
+    </div>
+    <div class="form-row">
+      ${field('d-temp','Uppmätt temperatur (°C)','text','T.ex. +12°C (ska vara max +8°C)')}
+      ${field('d-batch','Batch / leverans','text','Leveransdatum, batchnummer')}
+    </div>
+    <div class="form-row">
+      ${field('d-berörda','Antal berörda gäster','text','Om känt')}
+      ${field('d-kasserade','Varor kasserades','checkbox')}
+    </div>
+    <div class="form-row">
+      ${field('d-miljöförv','Miljöförvaltning kontaktades','checkbox')}
+      ${field('d-livskorr','Korrigerande åtgärd','text','Vad gjordes?')}
+    </div>`);
+}
+
+function buildFieldsAlk(c) {
+  c.innerHTML = section('','ti-glass-full','Alkohol / servering',`
+    <div class="form-row">
+      ${field('d-alktyp','Typ','select','',false,['Överservering','Minderårig försökte köpa','Nekad servering','Stökig gäst','Ordningsstörning','Annan'])}
+      ${field('d-polis-alk','Polis kontaktades','checkbox')}
+    </div>
+    <div class="form-row full">
+      ${field('d-alk-komm','Kommentar','textarea','Beskriv händelsen')}
+    </div>`);
+}
+
+// ── PHOTO HANDLING ────────────────────────────────────────────────────────
+function dzOver(e){e.preventDefault();document.getElementById('photo-zone').classList.add('drag-over');}
+function dzLeave(){document.getElementById('photo-zone').classList.remove('drag-over');}
+function dzDrop(e){e.preventDefault();dzLeave();Array.from(e.dataTransfer.files).forEach(addPhoto);}
+function onPhotoSelect(input){Array.from(input.files).forEach(addPhoto);}
+document.addEventListener('paste',e=>{const items=e.clipboardData?.items||[];for(const item of items){if(item.type.startsWith('image/')){addPhoto(item.getAsFile());break;}}});
+
+function addPhoto(file) {
+  if (!file) return;
+  if (_photos.length >= 3) { toast('Max 3 bilder','warn'); return; }
+  if (file.size > 1.2*1024*1024) { toast('Bilden är för stor (max 1 MB)','warn'); return; }
+  const reader = new FileReader();
+  reader.onload = e => {
+    _photos.push({name:file.name, b64:e.target.result});
+    renderPhotoGrid();
+  };
+  reader.readAsDataURL(file);
+}
+
+function removePhoto(i) {
+  _photos.splice(i,1);
+  renderPhotoGrid();
+}
+
+function renderPhotoGrid() {
+  const grid = document.getElementById('photo-grid');
+  if (!_photos.length) { grid.innerHTML=''; return; }
+  grid.innerHTML = _photos.map((p,i) =>
+    `<div class="photo-thumb-wrap">
+      <img class="photo-thumb" src="${p.b64}" onclick="window.open(this.src,'_blank')" title="${p.name}">
+      <button class="photo-remove" onclick="removePhoto(${i})"><i class="ti ti-x" style="font-size:9px"></i></button>
+    </div>`).join('');
+}
+
+// ── NAVIGATION ────────────────────────────────────────────────────────────
+function goStep1() { setStep(1); show('view-s1'); hide('view-s2'); }
+function goStep2() {
+  if (_selectedCat < 0) { toast('Välj en kategori','warn'); return; }
+  if (!_selectedRisk) { toast('Välj risknivå','warn'); return; }
+  buildDynamicFields();
+  setStep(2); show('view-s2'); hide('view-s1');
+}
+function goStep3() {
+  if (!document.getElementById('f-anlaggning').value) { toast('Välj anläggning','warn'); return; }
+  if (!document.getElementById('f-beskrivning').value.trim()) { toast('Fyll i beskrivning','warn'); return; }
+  setStep(3); show('view-s3'); hide('view-s2');
+}
+function goStep4() {
+  buildSummary();
+  setStep(4); show('view-s4'); hide('view-s3');
+}
+function show(id){document.getElementById(id).style.display='';document.getElementById(id).classList.add('fade-in');}
+function hide(id){document.getElementById(id).style.display='none';}
+function setStep(n){[1,2,3,4].forEach(i=>{const el=document.getElementById('s'+i);el.classList.remove('active','done');if(i<n)el.classList.add('done');else if(i===n)el.classList.add('active');});}
+
+// ── SUMMARY ───────────────────────────────────────────────────────────────
+function buildSummary() {
+  const cat = _selectedCat >= 0 ? CAT_NAMES[_selectedCat] : '–';
+  const risk = _selectedRisk ? `<span style="color:${RISK_COLORS[_selectedRisk]};font-weight:600">${RISK_LABELS[_selectedRisk]}</span>` : '–';
+  const statusVal = document.getElementById('f-status').value;
+
+  let html = `
+    <div><strong>Kategori:</strong> ${cat}</div>
+    <div><strong>Risknivå:</strong> ${risk}</div>
+    <div><strong>Anläggning:</strong> ${document.getElementById('f-anlaggning').value||'–'}</div>
+    <div><strong>Plats:</strong> ${document.getElementById('f-plats').value||'–'}</div>
+    <div><strong>Datum / tid:</strong> ${document.getElementById('f-datum').value||'–'} ${document.getElementById('f-tid').value||''}</div>
+    <div><strong>Rapportör:</strong> ${document.getElementById('f-rapportor').value||'–'}</div>
+    <div class="summary-section">Händelse</div>
+    <div><strong>Beskrivning:</strong> ${document.getElementById('f-beskrivning').value||'–'}</div>
+    <div class="summary-section">Åtgärd</div>
+    <div><strong>Omedelbar åtgärd:</strong> ${document.getElementById('f-omedelbar').value||'–'}</div>
+    <div><strong>Ansvarig:</strong> ${document.getElementById('f-ansvarig').value||'–'}</div>
+    <div><strong>Deadline:</strong> ${document.getElementById('f-deadline').value||'–'}</div>
+    <div><strong>Status:</strong> ${STATUS_LABELS[statusVal]||statusVal}</div>`;
+
+  if (_photos.length) html += `<div class="summary-section">Bilagor</div><div>${_photos.length} bild(er) bifogade</div>`;
+  document.getElementById('summary').innerHTML = html;
+}
+
+// ── SUBMIT ────────────────────────────────────────────────────────────────
+async function submitForm() {
+  document.getElementById('send-error').classList.remove('show');
+  document.getElementById('overlay').classList.add('show');
+
+  const shouldEscalate = ESCALATE_CATS.includes(_selectedCat) || ESCALATE_RISKS.includes(_selectedRisk);
+  const ärende = {
+    id: ärendeId(),
+    ts: new Date().toISOString(),
+    kategori: CAT_NAMES[_selectedCat],
+    kategoriIndex: _selectedCat,
+    risk: RISK_LABELS[_selectedRisk],
+    riskNivå: _selectedRisk,
+    anläggning: document.getElementById('f-anlaggning').value,
+    plats: document.getElementById('f-plats').value,
+    datum: document.getElementById('f-datum').value,
+    tid: document.getElementById('f-tid').value,
+    rapportör: _user.name,
+    rapportörEmail: _user.email||'',
+    beskrivning: document.getElementById('f-beskrivning').value,
+    omedelbar: document.getElementById('f-omedelbar').value,
+    ansvarig: document.getElementById('f-ansvarig').value,
+    deadline: document.getElementById('f-deadline').value,
+    kommentar: document.getElementById('f-kommentar').value,
+    status: document.getElementById('f-status').value,
+    eskalerad: shouldEscalate,
+    bilder: _photos.map(p=>({name:p.name,b64:p.b64})),
+    dynamicFields: collectDynamicFields(),
+    historik: [{ts:new Date().toISOString(),av:_user.name,händelse:'Skapades',status:'ny'}],
+  };
+
+  // Save to GitHub
+  try {
+    await saveÄrende(ärende);
+  } catch(e) {
+    document.getElementById('overlay').classList.remove('show');
+    document.getElementById('send-error-txt').textContent = 'Fel vid sparande: ' + e.message;
+    document.getElementById('send-error').classList.add('show');
+    return;
+  }
+
+  // Send email notification
+  await sendNotification(ärende);
+
+  document.getElementById('overlay').classList.remove('show');
+  document.getElementById('success-text').textContent =
+    (shouldEscalate ? '⚠️ Allvarlig händelse — eskalering flaggad. ' : '') +
+    'Avvikelsen har sparats och ett informationsmail har skickats.';
+  document.getElementById('success-id').textContent = 'Ärendenummer: ' + ärende.id;
+  hide('view-s4'); show('view-success');
+  document.getElementById('view-success').style.display = '';
+}
+
+function collectDynamicFields() {
+  const ids = ['d-typ','d-person','d-foerstahjälp','d-ambulans','d-polis','d-anhörig','d-vittnen','d-ansvar',
+               'd-brandtyp','d-orsak','d-raddning','d-utrymning','d-brandlarm','d-utrustning','d-sba',
+               'd-arbtyp','d-personal','d-vad-hände','d-vad-kunnat','d-arbfoerstahjälp','d-arbambulans',
+               'd-skyddsombud','d-chef','d-allvarligt','d-amv','d-fk',
+               'd-livstyp','d-produkt','d-temp','d-batch','d-berörda','d-kasserade','d-miljöförv','d-livskorr',
+               'd-alktyp','d-polis-alk','d-alk-komm'];
+  const result = {};
+  ids.forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    result[id] = el.type === 'checkbox' ? el.checked : el.value;
+  });
+  return result;
+}
+
+async function saveÄrende(ärende) {
+  const token = localStorage.getItem('gh_token') || '';
+  if (!token) { toast('Ingen GitHub-token — sparas inte','warn'); return; }
+
+  if (!_avData.ärenden) _avData.ärenden = [];
+  _avData.ärenden.push(ärende);
+
+  const content = btoa(unescape(encodeURIComponent(JSON.stringify(_avData, null, 2))));
+  const payload = {message:'Ny avvikelse '+ärende.id, content, branch:'main'};
+  if (_ghSha) payload.sha = _ghSha;
+
+  const url = 'https://api.github.com/repos/'+GH_REPO+'/contents/'+DATA_PATH;
+  const res = await fetch(url, {
+    method:'PUT',
+    headers:{'Authorization':'token '+token,'Content-Type':'application/json'},
+    body:JSON.stringify(payload)
+  });
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.message || 'HTTP '+res.status);
+  }
+  const saved = await res.json();
+  _ghSha = saved.content?.sha || null;
+}
+
+async function sendNotification(ärende) {
+  if (!EJS_PUBLIC_KEY || EJS_PUBLIC_KEY === '') return; // demo mode
+
+  const riskColor = RISK_COLORS[ärende.riskNivå] || '#5a5a57';
+  const escalBanner = ärende.eskalerad
+    ? `<div style="background:#fff3ed;border:2px solid #c2410c;border-radius:6px;padding:12px;margin-bottom:14px;color:#7c2d12;font-weight:600">⚠️ ESKALERAD — Allvarlig händelse kräver omedelbar åtgärd</div>`
+    : '';
+
+  const dynamicRows = Object.entries(ärende.dynamicFields||{})
+    .filter(([k,v])=>v&&v!==false&&v!=='')
+    .map(([k,v])=>`<tr><td style="padding:5px 12px;color:#5a5a57;font-size:12px">${k}</td><td style="padding:5px 12px;font-size:12px">${v===true?'Ja':v}</td></tr>`)
+    .join('');
+
+  const bildHtml = (ärende.bilder||[]).map(b =>
+    `<img src="${b.b64}" alt="${b.name}" style="max-width:100%;border-radius:6px;border:1px solid #e0e0e0;margin-top:8px;display:block">`
+  ).join('');
+
+  const htmlBody = `
+<div style="font-family:Arial,sans-serif;max-width:640px;margin:0 auto;color:#1a1a18">
+  ${escalBanner}
+  <div style="background:#3B6D11;color:#fff;padding:18px 22px;border-radius:8px 8px 0 0">
+    <div style="font-size:11px;opacity:.8;margin-bottom:4px">AVVIKELSE — ${ärende.id}</div>
+    <h2 style="margin:0;font-size:19px">${ärende.kategori}</h2>
+    <p style="margin:4px 0 0;font-size:13px;opacity:.88">${ärende.anläggning}</p>
+  </div>
+  <table style="width:100%;border-collapse:collapse;background:#fff;border:1px solid #eee;border-top:none">
+    <tr><td style="padding:7px 12px;font-weight:600;color:#5a5a57;border-bottom:1px solid #eee;width:150px">Risknivå</td>
+        <td style="padding:7px 12px;border-bottom:1px solid #eee"><span style="background:${riskColor}15;color:${riskColor};padding:2px 10px;border-radius:20px;font-weight:700;font-size:12px">${ärende.risk}</span></td></tr>
+    <tr><td style="padding:7px 12px;font-weight:600;color:#5a5a57;border-bottom:1px solid #eee">Plats</td><td style="padding:7px 12px;border-bottom:1px solid #eee">${ärende.plats||'–'}</td></tr>
+    <tr><td style="padding:7px 12px;font-weight:600;color:#5a5a57;border-bottom:1px solid #eee">Datum / tid</td><td style="padding:7px 12px;border-bottom:1px solid #eee">${ärende.datum} ${ärende.tid||''}</td></tr>
+    <tr><td style="padding:7px 12px;font-weight:600;color:#5a5a57;border-bottom:1px solid #eee">Rapportör</td><td style="padding:7px 12px;border-bottom:1px solid #eee">${ärende.rapportör}</td></tr>
+    <tr><td style="padding:7px 12px;font-weight:600;color:#5a5a57;border-bottom:1px solid #eee">Beskrivning</td><td style="padding:7px 12px;border-bottom:1px solid #eee">${ärende.beskrivning}</td></tr>
+    <tr><td style="padding:7px 12px;font-weight:600;color:#5a5a57;border-bottom:1px solid #eee">Omedelbar åtgärd</td><td style="padding:7px 12px;border-bottom:1px solid #eee">${ärende.omedelbar||'–'}</td></tr>
+    <tr><td style="padding:7px 12px;font-weight:600;color:#5a5a57;border-bottom:1px solid #eee">Ansvarig</td><td style="padding:7px 12px;border-bottom:1px solid #eee">${ärende.ansvarig||'–'}</td></tr>
+    <tr><td style="padding:7px 12px;font-weight:600;color:#5a5a57;border-bottom:1px solid #eee">Deadline</td><td style="padding:7px 12px;border-bottom:1px solid #eee">${ärende.deadline||'–'}</td></tr>
+    ${dynamicRows ? '<tr><td colspan="2" style="padding:7px 12px;font-weight:700;font-size:11px;text-transform:uppercase;color:#909088;background:#f5f5f3">Specifik information</td></tr>'+dynamicRows : ''}
+  </table>
+  ${bildHtml ? '<div style="margin-top:14px"><strong style="font-size:12px;color:#5a5a57">Bilagor:</strong>'+bildHtml+'</div>' : ''}
+  <p style="font-size:11px;color:#909088;margin:12px 0 0">Registrerat: ${new Date().toLocaleString('sv-SE')} · CCSthlm Avvikelsehantering</p>
+  <p style="font-size:11px;color:#3B6D11;margin-top:4px"><a href="${window.location.origin}/avvikelse-admin.html" style="color:#3B6D11">Öppna i handläggningssystemet →</a></p>
+</div>`;
+
+  try {
+    emailjs.init({publicKey: EJS_PUBLIC_KEY});
+    await emailjs.send(EJS_SERVICE_ID, EJS_TEMPLATE_ID, {
+      to_email: NOTIFY_EMAIL,
+      reply_to: _user.email || '',
+      from_name: _user.name,
+      subject: (ärende.eskalerad ? '🚨 ESKALERAD: ' : '📋 Ny avvikelse: ') + ärende.kategori + ' – ' + ärende.anläggning,
+      html_body: htmlBody,
+      message: `Ny avvikelse ${ärende.id}: ${ärende.kategori} på ${ärende.anläggning}. Risknivå: ${ärende.risk}. Rapportör: ${ärende.rapportör}.`,
+    });
+  } catch(e) { console.warn('EmailJS:', e); }
+}
+
+// ── RESET ─────────────────────────────────────────────────────────────────
+function resetForm() {
+  _selectedCat = -1; _selectedRisk = 0; _photos = [];
+  document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('selected'));
+  document.querySelectorAll('.risk-btn').forEach(b=>b.classList.remove('selected'));
+  document.getElementById('dynamic-fields').innerHTML = '';
+  document.getElementById('photo-grid').innerHTML = '';
+  document.getElementById('f-beskrivning').value = '';
+  document.getElementById('f-omedelbar').value = '';
+  document.getElementById('f-ansvarig').value = '';
+  document.getElementById('f-deadline').value = '';
+  document.getElementById('f-kommentar').value = '';
+  document.getElementById('f-datum').value = todayStr();
+  document.getElementById('f-plats').value = '';
+  document.getElementById('f-anlaggning').value = '';
+  setStep(1);
+  hide('view-success'); show('view-s1');
+}
+
+// ── HELPERS ───────────────────────────────────────────────────────────────
+function todayStr(){return new Date().toISOString().slice(0,10);}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
+function ärendeId(){const d=new Date();return 'AV-'+d.getFullYear().toString().slice(2)+(d.getMonth()+1).toString().padStart(2,'0')+'-'+Math.random().toString(36).slice(2,6).toUpperCase();}
+function toast(msg,type='ok'){
+  const t=document.getElementById('toast');
+  t.style.background=type==='err'?'var(--red-bg)':type==='warn'?'var(--amber-bg)':'var(--green-bg)';
+  t.style.color=type==='err'?'var(--red-text)':type==='warn'?'var(--amber-text)':'var(--green-text)';
+  t.innerHTML=(type==='ok'?'<i class="ti ti-check"></i>':type==='warn'?'<i class="ti ti-alert-triangle"></i>':'<i class="ti ti-x"></i>')+' '+msg;
+  t.style.opacity='1';t.style.transform='translateY(0)';
+  setTimeout(()=>{t.style.opacity='0';t.style.transform='translateY(6px)';},2800);
+}
+function portalLogout(){sessionStorage.setItem('ccs_logged_out','1');sessionStorage.removeItem('ccs_session');sessionStorage.removeItem('ccs_portal_user');window.location.replace('index.html');}
+</script>
+</body>
+</html>
