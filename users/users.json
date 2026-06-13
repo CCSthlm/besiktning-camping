@@ -24,9 +24,7 @@
       "pin": "1111",
       "role": "Besiktningsman",
       "active": true,
-      "apps": [
-        "personalliggare"
-      ],
+      "apps": [],
       "created": "2026-06-12",
       "pnr": "",
       "adminRoles": [],
