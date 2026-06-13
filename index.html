@@ -232,12 +232,15 @@ const MSAL_CFG = {
 
 // ─── APP DEFINITIONS ──────────────────────────────────────────────────────
 const ALL_APPS = [
-  {id:'besiktning', name:'Besiktningsprotokoll', desc:'Genomför och dokumentera campingbesiktningar. Generera intyg och spara historik.', icon:'ti-certificate', color:'app-icon-blue', url:'besiktning.html', roles:['Admin','Besiktningsman','Granskare'], badge:'', newTab:false},
-  {id:'it-support', name:'IT-felanmälan', desc:'Rapportera IT-problem för CompuSuit, hårdvara eller ställ en allmän fråga.', icon:'ti-tool', color:'app-icon-amber', url:'it-support.html', roles:[], badge:'', newTab:false},
-  {id:'avvikelse-admin', name:'Avvikelsehantering', desc:'Dashboard, ärendelista, handläggning och statistik för avvikelser.', icon:'ti-dashboard', color:'app-icon-amber', url:'avvikelse-admin.html', roles:[], badge:'', newTab:false, adminRolesRequired:['global','avvikelse-admin','avvikelse-ledning','avvikelse-anlaggning','avvikelse-brand']},
-  {id:'avvikelse', name:'Avvikelseregistrering', desc:'Registrera avvikelse, tillbud eller incident. Alla domänanvändare kan rapportera.', icon:'ti-alert-triangle', color:'app-icon-amber', url:'avvikelse.html', roles:[], badge:'', newTab:false},
-  {id:'personalliggare', name:'Personalliggare', desc:'Digital personalliggare enligt Skatteverkets krav. Stämpla in/ut, ändringslogg, export.', icon:'ti-id-badge-2', color:'app-icon-green', url:'personalliggare.html', roles:['Admin','Besiktningsman','Granskare'], badge:'', newTab:false},
-  {id:'admin', name:'Administration', desc:'Hantera användare, campingar och besiktningsmän. Systemkonfiguration.', icon:'ti-settings-2', color:'app-icon-amber', url:'admin.html', roles:['Admin'], badge:'ADMIN', newTab:false},
+  // ── Generella applikationer (alla domänanvändare) ──
+  {id:'it-support',     name:'IT-felanmälan',         desc:'Rapportera IT-problem för CompuSuit, hårdvara eller ställ en allmän fråga.',          icon:'ti-tool',           color:'app-icon-amber', url:'it-support.html',        roles:[], badge:'', newTab:false, group:'generell'},
+  {id:'avvikelse',      name:'Avvikelseregistrering',  desc:'Registrera avvikelse, tillbud eller incident. Alla domänanvändare kan rapportera.',    icon:'ti-alert-triangle', color:'app-icon-amber', url:'avvikelse.html',         roles:[], badge:'', newTab:false, group:'generell'},
+  // ── Specifika applikationer (kräver tilldelning) ──
+  {id:'besiktning',     name:'Besiktningsprotokoll',   desc:'Genomför och dokumentera campingbesiktningar. Generera intyg och spara historik.',     icon:'ti-certificate',    color:'app-icon-blue',  url:'besiktning.html',        roles:['Admin','Besiktningsman','Granskare'], badge:'', newTab:false, group:'specifik'},
+  {id:'personalliggare',name:'Personalliggare',        desc:'Digital personalliggare enligt Skatteverkets krav. Stämpla in/ut, ändringslogg.',      icon:'ti-id-badge-2',     color:'app-icon-green', url:'personalliggare.html',   roles:['Admin','Besiktningsman','Granskare'], badge:'', newTab:false, group:'specifik'},
+  // ── Handläggning (kräver adminroll) ──
+  {id:'avvikelse-admin',name:'Avvikelsehantering',     desc:'Dashboard, ärendelista, handläggning och statistik för avvikelser.',                   icon:'ti-dashboard',      color:'app-icon-amber', url:'avvikelse-admin.html',   roles:[], badge:'', newTab:false, group:'admin', adminRolesRequired:['global','avvikelse-admin','avvikelse-ledning','avvikelse-anlaggning','avvikelse-brand']},
+  {id:'admin',          name:'Administration',         desc:'Hantera användare, campingar och systeminställningar.',                                  icon:'ti-settings-2',     color:'app-icon-amber', url:'admin.html',             roles:['Admin'], badge:'ADMIN', newTab:false, group:'admin'},
 ];
 
 // ─── STATE ────────────────────────────────────────────────────────────────
@@ -482,19 +485,23 @@ function renderApps() {
     el.innerHTML = '<div class="no-access"><i class="ti ti-lock"></i><p>Du har inte tillgång till några applikationer.<br>Kontakta administratören.</p></div>';
     return;
   }
-  const mainApps = accessible.filter(a => a.id !== 'admin');
-  const adminApps = accessible.filter(a => a.id === 'admin');
+
+  const groups = [
+    { key:'generell', label:'Generella applikationer', sub:'Tillgängliga för alla inloggade' },
+    { key:'specifik', label:'Applikationer',           sub:'Tilldelade din användare' },
+    { key:'admin',    label:'Administration',          sub:'Kräver adminbehörighet' },
+  ];
+
   let html = '';
-  if (mainApps.length) {
-    html += '<div class="section-label">Applikationer</div><div class="app-grid">';
-    mainApps.forEach(app => { html += appCardHTML(app); });
+  groups.forEach(g => {
+    const apps = accessible.filter(a => a.group === g.key);
+    if (!apps.length) return;
+    html += `<div class="section-label">${g.label}<span style="font-size:10px;font-weight:400;color:var(--text3);margin-left:6px">${g.sub}</span></div>`;
+    html += '<div class="app-grid">';
+    apps.forEach(app => { html += appCardHTML(app); });
     html += '</div>';
-  }
-  if (adminApps.length) {
-    html += '<div class="section-label">Systemadministration</div><div class="app-grid">';
-    adminApps.forEach(app => { html += appCardHTML(app); });
-    html += '</div>';
-  }
+  });
+
   el.innerHTML = html;
 }
 
