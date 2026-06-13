@@ -24,11 +24,13 @@
       "pin": "1111",
       "role": "Admin",
       "active": true,
-      "apps": [
-        "besiktning",
-        "admin"
+      "apps": [],
+      "created": "2026-06-12",
+      "pnr": "",
+      "adminRoles": [
+        "sektions"
       ],
-      "created": "2026-06-12"
+      "plCampingId": ""
     },
     {
       "id": "umqc037gewixb",
