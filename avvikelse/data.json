@@ -15,10 +15,10 @@
       "rapportörEmail": "oktoberfest2027@cc-camping.se",
       "beskrivning": "Var en otrevlig säsongsgäst som blev arg för att man måte besiktiga sin husvagn. ",
       "omedelbar": "",
-      "ansvarig": "",
-      "deadline": "",
-      "kommentar": "",
-      "status": "ny",
+      "ansvarig": "Massimo",
+      "deadline": "2026-06-19",
+      "kommentar": "*** Test ärende *** Vi hanterar det på styrelsemötet. Vi kommer ge en varning till vederbörande på grund av Kränkande särbehandling.",
+      "status": "pågående",
       "eskalerad": true,
       "bilder": [],
       "dynamicFields": {
@@ -40,6 +40,13 @@
           "av": "Utbildningsresa Oktoberfest 2027",
           "händelse": "Skapades",
           "status": "ny"
+        },
+        {
+          "ts": "2026-06-13T20:43:35.731Z",
+          "av": "Massimo Johansson",
+          "händelse": "Status: Ny → Pågående",
+          "kommentar": "*** Test ärende *** Vi hanterar det på styrelsemötet. Vi kommer ge en varning till vederbörande på grund av Kränkande särbehandling.",
+          "status": "pågående"
         }
       ]
     }
