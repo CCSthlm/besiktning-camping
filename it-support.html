@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>IT-felanmälan – CCSthlm</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/tabler-icons.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
@@ -482,10 +483,12 @@ body {
 </div><!-- end page-wrap -->
 
 <script>
-// ── CONFIG ────────────────────────────────────────────────────────────────
-// Klistra in din Power Automate HTTP-trigger URL här:
-const POWER_AUTOMATE_URL = 'DIN_POWER_AUTOMATE_URL_HÄR';
-const SUPPORT_EMAIL = 'support.compusoft@cc-camping.se';
+// ── EMAILJS CONFIG ────────────────────────────────────────────────────────
+// Fyll i dina EmailJS-uppgifter här (se EMAILJS_GUIDE.md)
+const EJS_PUBLIC_KEY    = 'Y7UNzb3nmTE9XPdHr';     // Account → General → Public Key
+const EJS_SERVICE_ID    = 'service_emsyoet';     // Email Services → Service ID
+const EJS_TEMPLATE_ID   = 'template_falx3lm';   // Email Templates → Template ID
+const SUPPORT_EMAIL     = 'support.compusoft@cc-camping.se';
 
 // ── STATE ─────────────────────────────────────────────────────────────────
 let _user = null;
@@ -737,70 +740,90 @@ async function submitForm() {
     ? 'CompuSuit – ' + (subLabels[_sub] || _sub)
     : catLabels[_category];
 
-  // Build email subject: [Typ] – Camping
   const subject = '[' + typeLabel + '] – ' + camping;
 
-  // Build form data object
-  const formData = { subject, typeLabel, camping, severity: sevLabels[_severity] };
+  // Collect all form field values
+  const formData = {};
   if (cfg) {
     cfg.fields.forEach(f => {
       const el = document.getElementById('f-' + f.id);
-      if (el) formData[f.id] = el.value.trim();
+      if (el) formData[f.label] = el.value.trim() || '–';
     });
   }
 
-  // Build HTML email body
-  const rows = Object.entries(formData)
-    .filter(([k]) => !['subject'].includes(k))
-    .map(([k, v]) => `<tr><td style="padding:6px 12px;font-weight:600;color:#5a5a57;white-space:nowrap;border-bottom:1px solid #eee">${k}</td><td style="padding:6px 12px;border-bottom:1px solid #eee">${v||'–'}</td></tr>`)
-    .join('');
+  // Build readable HTML table for email body
+  const fieldRows = Object.entries(formData)
+    .map(([k, v]) => `<tr>
+      <td style="padding:7px 14px;font-weight:600;color:#5a5a57;white-space:nowrap;border-bottom:1px solid #eee;width:160px">${k}</td>
+      <td style="padding:7px 14px;border-bottom:1px solid #eee">${v}</td>
+    </tr>`).join('');
+
+  const sevColor = { low:'#27500A', mid:'#854F0B', high:'#A32D2D' };
+  const sevBg    = { low:'#EAF3DE', mid:'#FAEEDA', high:'#FCEBEB' };
 
   const htmlBody = `
-    <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto">
-      <div style="background:#3B6D11;color:#fff;padding:16px 20px;border-radius:8px 8px 0 0">
-        <h2 style="margin:0;font-size:18px">IT-felanmälan: ${typeLabel}</h2>
-        <p style="margin:4px 0 0;font-size:13px;opacity:.85">${camping}</p>
-      </div>
-      <table style="width:100%;border-collapse:collapse;background:#fff;border:1px solid #eee;border-top:none;border-radius:0 0 8px 8px">
-        <tr><td style="padding:6px 12px;font-weight:600;color:#5a5a57;border-bottom:1px solid #eee">Anmälare</td>
-            <td style="padding:6px 12px;border-bottom:1px solid #eee">${_user.name} (${_user.email||'–'})</td></tr>
-        <tr><td style="padding:6px 12px;font-weight:600;color:#5a5a57;border-bottom:1px solid #eee">Allvarlighetsgrad</td>
-            <td style="padding:6px 12px;border-bottom:1px solid #eee">${sevLabels[_severity]}</td></tr>
-        ${rows}
-      </table>
-      <p style="font-size:11px;color:#909088;margin-top:12px">Skickat via CCSthlm IT-felanmälan · ${new Date().toLocaleString('sv-SE')}</p>
-    </div>`;
+<div style="font-family:Arial,sans-serif;max-width:620px;margin:0 auto;color:#1a1a18">
+  <div style="background:#3B6D11;color:#fff;padding:18px 22px;border-radius:8px 8px 0 0">
+    <h2 style="margin:0;font-size:19px;font-weight:700">IT-felanmälan</h2>
+    <p style="margin:5px 0 0;font-size:14px;opacity:.88">${typeLabel} &nbsp;·&nbsp; ${camping}</p>
+  </div>
+  <table style="width:100%;border-collapse:collapse;background:#fff;border:1px solid #e0e0e0;border-top:none">
+    <tr>
+      <td style="padding:7px 14px;font-weight:600;color:#5a5a57;border-bottom:1px solid #eee;width:160px">Anmälare</td>
+      <td style="padding:7px 14px;border-bottom:1px solid #eee">${_user.name}</td>
+    </tr>
+    <tr>
+      <td style="padding:7px 14px;font-weight:600;color:#5a5a57;border-bottom:1px solid #eee">E-post</td>
+      <td style="padding:7px 14px;border-bottom:1px solid #eee"><a href="mailto:${_user.email||''}" style="color:#3B6D11">${_user.email||'–'}</a></td>
+    </tr>
+    <tr>
+      <td style="padding:7px 14px;font-weight:600;color:#5a5a57;border-bottom:1px solid #eee">Camping</td>
+      <td style="padding:7px 14px;border-bottom:1px solid #eee">${camping}</td>
+    </tr>
+    <tr>
+      <td style="padding:7px 14px;font-weight:600;color:#5a5a57;border-bottom:1px solid #eee">Allvarlighetsgrad</td>
+      <td style="padding:7px 14px;border-bottom:1px solid #eee">
+        <span style="background:${sevBg[_severity]};color:${sevColor[_severity]};padding:2px 10px;border-radius:20px;font-size:12px;font-weight:600">${sevLabels[_severity]}</span>
+      </td>
+    </tr>
+    ${fieldRows}
+  </table>
+  <p style="font-size:11px;color:#909088;margin:10px 0 0;padding:0 2px">
+    Skickat via CCSthlm IT-felanmälan &nbsp;·&nbsp; ${new Date().toLocaleString('sv-SE')}
+  </p>
+</div>`;
 
-  const payload = {
-    to: SUPPORT_EMAIL,
-    from: _user.email || 'noreply@cc-camping.se',
-    fromName: _user.name,
-    subject,
-    htmlBody,
-    formData,
+  // EmailJS template parameters
+  const templateParams = {
+    to_email:    SUPPORT_EMAIL,
+    reply_to:    _user.email || '',
+    from_name:   _user.name,
+    subject:     subject,
+    html_body:   htmlBody,
+    // Plain text fallback
+    message:     `Anmälare: ${_user.name} (${_user.email||'–'})\nCamping: ${camping}\nTyp: ${typeLabel}\nAllvarlighetsgrad: ${sevLabels[_severity]}\n\n` +
+                 Object.entries(formData).map(([k,v]) => `${k}: ${v}`).join('\n'),
   };
 
   // Show sending overlay
   document.getElementById('sending-overlay').classList.add('show');
   document.getElementById('send-error').classList.remove('show');
 
+  // Demo mode if keys not configured
+  if (EJS_PUBLIC_KEY === 'DIN_PUBLIC_KEY') {
+    await new Promise(r => setTimeout(r, 1200));
+    showSuccess(typeLabel, camping);
+    return;
+  }
+
   try {
-    if (!POWER_AUTOMATE_URL || POWER_AUTOMATE_URL === 'DIN_POWER_AUTOMATE_URL_HÄR') {
-      // Demo mode — simulate send
-      await new Promise(r => setTimeout(r, 1200));
-      showSuccess(typeLabel, camping);
-      return;
-    }
-    const res = await fetch(POWER_AUTOMATE_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    });
-    if (!res.ok) throw new Error('HTTP ' + res.status);
+    emailjs.init({ publicKey: EJS_PUBLIC_KEY });
+    await emailjs.send(EJS_SERVICE_ID, EJS_TEMPLATE_ID, templateParams);
     showSuccess(typeLabel, camping);
   } catch(e) {
     document.getElementById('sending-overlay').classList.remove('show');
-    document.getElementById('send-error-text').textContent = 'Kunde inte skicka anmälan: ' + e.message + '. Kontrollera Power Automate-URL.';
+    const msg = typeof e === 'object' ? (e.text || e.message || JSON.stringify(e)) : e;
+    document.getElementById('send-error-text').textContent = 'Kunde inte skicka: ' + msg;
     document.getElementById('send-error').classList.add('show');
   }
 }
