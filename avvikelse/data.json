@@ -1,0 +1,55 @@
+{
+  "ärenden": [
+    {
+      "id": "AV-2606-GNL3",
+      "ts": "2026-06-13T20:36:02.222Z",
+      "kategori": "Arbetsmiljö / tillbud",
+      "kategoriIndex": 3,
+      "risk": "Medel",
+      "riskNivå": 2,
+      "anläggning": "CC Björkö Örns Camping",
+      "plats": "Reception",
+      "datum": "2026-06-13",
+      "tid": "20:33",
+      "rapportör": "Utbildningsresa Oktoberfest 2027",
+      "rapportörEmail": "oktoberfest2027@cc-camping.se",
+      "beskrivning": "Var en otrevlig säsongsgäst som blev arg för att man måte besiktiga sin husvagn. ",
+      "omedelbar": "",
+      "ansvarig": "",
+      "deadline": "",
+      "kommentar": "",
+      "status": "ny",
+      "eskalerad": true,
+      "bilder": [],
+      "dynamicFields": {
+        "d-arbtyp": "Psykosocial arbetsmiljö",
+        "d-personal": "Ideell",
+        "d-vad-hände": "Han kom in och sa att han inte hinner besiktiga och att han inte vill göra det för det är onödigt. ",
+        "d-vad-kunnat": "",
+        "d-arbfoerstahjälp": false,
+        "d-arbambulans": false,
+        "d-skyddsombud": false,
+        "d-chef": false,
+        "d-allvarligt": false,
+        "d-amv": false,
+        "d-fk": false
+      },
+      "historik": [
+        {
+          "ts": "2026-06-13T20:36:02.222Z",
+          "av": "Utbildningsresa Oktoberfest 2027",
+          "händelse": "Skapades",
+          "status": "ny"
+        }
+      ]
+    }
+  ],
+  "inställningar": {
+    "ejsPublicKey": "",
+    "ejsServiceId": "",
+    "ejsTemplateId": "",
+    "notifyEmail": "massimo.johansson@cc-camping.se",
+    "anläggningar": [],
+    "kategorier": []
+  }
+}
