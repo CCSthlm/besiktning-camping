@@ -993,61 +993,71 @@ function confirmDeletePerson(id, name) {
 // ── EXPORT ────────────────────────────────────────────────────────────────
 function exportExcel() {
   try {
-    // Get date and camping from dagslista filters, fall back to today/myCamping
     const dateEl = document.getElementById('dag-filter-date');
     const campingEl = document.getElementById('dag-filter-camping');
     const date = (dateEl && dateEl.value) ? dateEl.value : todayStr();
     const campingId = (campingEl && campingEl.value) ? campingEl.value : _myCampingId;
 
     ensureCampingData(campingId);
-    const campingName = (_data.campings||[]).find(c=>c.id===campingId)?.name || campingId;
+
+    // Safe campingName — always a string
+    const campingObj = (_data.campings||[]).find(c=>c.id===campingId);
+    const campingName = String(campingObj?.name || campingId || 'Export');
     const company = _data.company || {};
+
     const entries = (_data.personalliggare[campingId]?.entries||[])
       .filter(e=>e.date===date)
-      .sort((a,b)=>a.timeIn.localeCompare(b.timeIn));
+      .sort((a,b)=>String(a.timeIn||'').localeCompare(String(b.timeIn||'')));
 
-    if (!window.XLSX) { toast('Excel-biblioteket laddas – försök igen om ett ögonblick','warn'); return; }
+    if (!window.XLSX) { toast('Excel-biblioteket laddas – försök igen','warn'); return; }
 
     const wb = XLSX.utils.book_new();
 
-    // Sheet 1: Arbetspass
     const rows = [
       ['PERSONALLIGGARE – '+campingName],
-      ['Företag:', company.name||'–', '', 'Org.nr:', company.orgNr||'–'],
+      ['Företag:', String(company.name||'–'), '', 'Org.nr:', String(company.orgNr||'–')],
       ['Datum:', date, '', 'Exporterad:', new Date().toLocaleString('sv-SE')],
       [],
       ['Namn','Personnummer','Instämplad','Utstämplad','Total tid','Registrerad av','Manuell','Anledning'],
       ...entries.map(e=>[
-        e.name, e.pnr, e.timeIn, e.timeOut||'–',
-        e.timeOut ? calcDuration(e.timeIn,e.timeOut) : '–',
-        e.registeredBy||'–', e.manual?'Ja':'Nej', e.manualReason||''
+        String(e.name||''),
+        String(e.pnr||''),
+        String(e.timeIn||''),
+        String(e.timeOut||'–'),
+        (e.timeOut && e.timeIn) ? calcDuration(e.timeIn, e.timeOut) : '–',
+        String(e.registeredBy||'–'),
+        e.manual ? 'Ja' : 'Nej',
+        String(e.manualReason||'')
       ]),
     ];
     const ws = XLSX.utils.aoa_to_sheet(rows);
     ws['!cols']=[{wch:28},{wch:16},{wch:12},{wch:12},{wch:10},{wch:20},{wch:8},{wch:30}];
-    XLSX.utils.book_append_sheet(wb,'Arbetspass',ws);
+    XLSX.utils.book_append_sheet(wb, ws, 'Arbetspass');
 
-    // Sheet 2: Personallista
     const personal = _data.personalliggare[campingId]?.personal || [];
     const pRows = [
       ['PERSONALLISTA – '+campingName],
       [],
       ['Namn','Personnummer','Adress','Telefon','Typ','Aktiv'],
       ...personal.map(p=>[
-        p.fname+' '+p.lname, p.pnr, p.address||'', p.phone||'', p.type||'',
-        p.active!==false?'Ja':'Nej'
+        String((p.fname||'')+' '+(p.lname||'')).trim(),
+        String(p.pnr||''),
+        String(p.address||''),
+        String(p.phone||''),
+        String(p.type||''),
+        p.active!==false ? 'Ja' : 'Nej'
       ]),
     ];
     const ws2 = XLSX.utils.aoa_to_sheet(pRows);
     ws2['!cols']=[{wch:28},{wch:16},{wch:32},{wch:16},{wch:14},{wch:8}];
-    XLSX.utils.book_append_sheet(wb,'Personallista',ws2);
+    XLSX.utils.book_append_sheet(wb, ws2, 'Personallista');
 
-    const fileName = 'Personalliggare_' + campingName.replace(/[^a-zA-ZåäöÅÄÖ0-9]/g,'_') + '_' + date + '.xlsx';
-    XLSX.writeFile(wb, fileName);
+    const safeName = campingName.replace(/[:\\\/\?\*\[\]&]/g,'').replace(/\s+/g,'_').slice(0,40);
+    XLSX.writeFile(wb, 'Personalliggare_'+safeName+'_'+date+'.xlsx');
     toast('Excel exporterad','ok');
   } catch(e) {
-    toast('Export misslyckades: ' + e.message, 'err');
-    console.error('exportExcel:', e);
+    toast('Export misslyckades: '+e.message,'err');
+    console.error('exportExcel error:', e);
   }
 }
 
