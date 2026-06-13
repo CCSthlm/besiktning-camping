@@ -18,7 +18,7 @@
       "ansvarig": "Massimo",
       "deadline": "2026-06-19",
       "kommentar": "*** Test ärende *** Vi hanterar det på styrelsemötet. Vi kommer ge en varning till vederbörande på grund av Kränkande särbehandling.",
-      "status": "pågående",
+      "status": "stängd",
       "eskalerad": true,
       "bilder": [],
       "dynamicFields": {
@@ -47,6 +47,13 @@
           "händelse": "Status: Ny → Pågående",
           "kommentar": "*** Test ärende *** Vi hanterar det på styrelsemötet. Vi kommer ge en varning till vederbörande på grund av Kränkande särbehandling.",
           "status": "pågående"
+        },
+        {
+          "ts": "2026-06-13T20:43:49.358Z",
+          "av": "Massimo Johansson",
+          "händelse": "Status: Pågående → Stängd",
+          "kommentar": "",
+          "status": "stängd"
         }
       ]
     }
