@@ -193,12 +193,12 @@
           "pnr": "19121212-1212",
           "date": "2026-06-13",
           "timeIn": "09:10",
-          "timeOut": "",
+          "timeOut": "23:16",
           "registeredBy": "Massimo Johansson",
           "registeredAt": "2026-06-13T10:10:19.873Z",
           "manual": true,
           "manualReason": "GLömde stämpla in",
-          "edited": false,
+          "edited": true,
           "campingId": "c7"
         }
       ],
@@ -250,6 +250,15 @@
           "detail": "Lade till person: Molly Johansson",
           "oldVal": "",
           "newVal": ""
+        },
+        {
+          "id": "mqcuvfvoz1py2",
+          "ts": "2026-06-13T21:16:40.356Z",
+          "user": "Massimo Johansson",
+          "action": "out",
+          "detail": "TOlvan Tolvansson stämplade ut 23:16 [REDIGERAD]",
+          "oldVal": "",
+          "newVal": "23:16"
         }
       ]
     }
