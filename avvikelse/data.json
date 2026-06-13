@@ -56,6 +56,46 @@
           "status": "stängd"
         }
       ]
+    },
+    {
+      "id": "AV-2606-QWIJ",
+      "ts": "2026-06-13T21:06:54.232Z",
+      "kategori": "Sjukdom / gästincident",
+      "kategoriIndex": 1,
+      "risk": "Låg",
+      "riskNivå": 1,
+      "anläggning": "CC Björkö Örns Camping",
+      "plats": "Campingtomt",
+      "datum": "2026-06-12",
+      "tid": "21:00",
+      "rapportör": "Utbildningsresa Oktoberfest 2027",
+      "rapportörEmail": "oktoberfest2027@cc-camping.se",
+      "beskrivning": "Misstänkt hjärtstopp",
+      "omedelbar": "HLR med hjärtstartare",
+      "ansvarig": "Massimo Johansson",
+      "deadline": "",
+      "kommentar": "",
+      "status": "ny",
+      "eskalerad": false,
+      "bilder": [],
+      "dynamicFields": {
+        "d-typ": "Ambulans tillkallad",
+        "d-person": "Gäst",
+        "d-foerstahjälp": true,
+        "d-ambulans": true,
+        "d-polis": false,
+        "d-anhörig": false,
+        "d-vittnen": "",
+        "d-ansvar": ""
+      },
+      "historik": [
+        {
+          "ts": "2026-06-13T21:06:54.232Z",
+          "av": "Utbildningsresa Oktoberfest 2027",
+          "händelse": "Skapades",
+          "status": "ny"
+        }
+      ]
     }
   ],
   "inställningar": {
