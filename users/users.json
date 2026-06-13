@@ -200,7 +200,18 @@
           "campingId": "c7"
         }
       ],
-      "personal": [],
+      "personal": [
+        {
+          "id": "mqc8sy48kv8lz",
+          "fname": "Molly",
+          "lname": "Johansson",
+          "pnr": "2020121212-1111",
+          "address": "HEmma",
+          "phone": "0762275266",
+          "type": "anställd",
+          "active": true
+        }
+      ],
       "auditlog": [
         {
           "id": "mqc71gbthdgbx",
@@ -228,6 +239,15 @@
           "detail": "Massimo Johansson stämplade ut 12:10",
           "oldVal": "",
           "newVal": "12:10"
+        },
+        {
+          "id": "mqc8sy48kqzrd",
+          "ts": "2026-06-13T10:58:52.472Z",
+          "user": "Massimo Johansson",
+          "action": "in",
+          "detail": "Lade till person: Molly Johansson",
+          "oldVal": "",
+          "newVal": ""
         }
       ]
     }
