@@ -233,7 +233,7 @@ const MSAL_CFG = {
 // ─── APP DEFINITIONS ──────────────────────────────────────────────────────
 const ALL_APPS = [
   {id:'besiktning', name:'Besiktningsprotokoll', desc:'Genomför och dokumentera campingbesiktningar. Generera intyg och spara historik.', icon:'ti-certificate', color:'app-icon-blue', url:'besiktning.html', roles:['Admin','Besiktningsman','Granskare'], badge:'', newTab:false},
-  {id:'it-support', name:'IT-felanmälan', desc:'Rapportera IT-problem för CompuSuit, hårdvara eller ställ en allmän fråga.', icon:'ti-tool', color:'app-icon-amber', url:'it-support.html', roles:['Admin','Besiktningsman','Granskare'], badge:'', newTab:false},
+  {id:'it-support', name:'IT-felanmälan', desc:'Rapportera IT-problem för CompuSuit, hårdvara eller ställ en allmän fråga.', icon:'ti-tool', color:'app-icon-amber', url:'it-support.html', roles:[], badge:'', newTab:false},
   {id:'personalliggare', name:'Personalliggare', desc:'Digital personalliggare enligt Skatteverkets krav. Stämpla in/ut, ändringslogg, export.', icon:'ti-id-badge-2', color:'app-icon-green', url:'personalliggare.html', roles:['Admin','Besiktningsman','Granskare'], badge:'', newTab:false},
   {id:'admin', name:'Administration', desc:'Hantera användare, campingar och besiktningsmän. Systemkonfiguration.', icon:'ti-settings-2', color:'app-icon-amber', url:'admin.html', roles:['Admin'], badge:'ADMIN', newTab:false},
 ];
@@ -334,7 +334,7 @@ async function loadUsers() {
 function loadDefaultUsers() {
   // Fallback users for first-time setup or when GitHub is unreachable
   _users = [
-    {id:'admin1', name:'Massimo Johansson', email:'massimo@cc-camping.se', role:'Admin', pin:'1234', apps:['besiktning','admin'], active:true, created:'2025-01-01'},
+    {id:'admin1', name:'Massimo Johansson', email:'massimo@cc-camping.se', role:'Admin', adminRoles:['global'], pin:'1234', apps:['besiktning','it-support','personalliggare','admin'], active:true, created:'2025-01-01'},
     {id:'u_stefan', name:'Stefan Leijon', email:'', role:'Besiktningsman', pin:'2345', apps:['besiktning'], active:true, created:'2025-01-01'},
     {id:'u_hans', name:'Hans Östman', email:'', role:'Besiktningsman', pin:'3456', apps:['besiktning'], active:true, created:'2025-01-01'},
   ];
@@ -436,9 +436,15 @@ async function showPortal() {
 function renderApps() {
   const u = _currentUser;
   const userApps = u.apps || [];
-  const accessible = ALL_APPS.filter(app =>
-    app.roles.includes(u.role) && (u.role==='Admin' || userApps.includes(app.id))
-  );
+  const hasAdminRole = (u.adminRoles||[]).length > 0 || u.role === 'Admin';
+  const accessible = ALL_APPS.filter(app => {
+    // Empty roles = accessible to all logged-in users
+    if (app.roles.length === 0) return true;
+    // Admin page — requires adminRoles or legacy Admin role
+    if (app.id === 'admin') return hasAdminRole;
+    // Other apps — role match + app assigned to user (or user is Admin)
+    return app.roles.includes(u.role) && (u.role==='Admin' || userApps.includes(app.id));
+  });
   const el = document.getElementById('app-launcher-content');
   if (!accessible.length) {
     el.innerHTML = '<div class="no-access"><i class="ti ti-lock"></i><p>Du har inte tillgång till några applikationer.<br>Kontakta administratören.</p></div>';
