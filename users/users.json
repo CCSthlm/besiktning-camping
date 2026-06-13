@@ -22,12 +22,14 @@
       "name": "Joachim Säfqvist",
       "email": "joachim.safqvist@cc-camping.se",
       "pin": "1111",
-      "role": "Besiktningsman",
+      "role": "Admin",
       "active": true,
       "apps": [],
       "created": "2026-06-12",
       "pnr": "",
-      "adminRoles": [],
+      "adminRoles": [
+        "personal"
+      ],
       "plCampingId": ""
     },
     {
