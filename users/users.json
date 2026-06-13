@@ -163,7 +163,11 @@
       "active": true
     }
   ],
-  "company": {},
+  "company": {
+    "name": "Caravan Club of Sweden",
+    "orgNr": "802008-8301",
+    "campingOverrides": {}
+  },
   "personalliggare": {
     "c7": {
       "entries": [
