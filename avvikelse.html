@@ -376,10 +376,11 @@ const GH_REPO = 'CCSthlm/besiktning-camping';
 const DATA_PATH = 'avvikelse/data.json';
 
 // EmailJS — fill in from avvikelse-settings or shared config
-let EJS_PUBLIC_KEY  = '';
-let EJS_SERVICE_ID  = '';
-let EJS_TEMPLATE_ID = '';
-let NOTIFY_EMAIL    = 'massimo.johansson@cc-camping.se';
+// ── EMAILJS CONFIG — fyll i dina uppgifter här ────────────────────────────
+const EJS_PUBLIC_KEY  = 'Y7UNzb3nmTE9XPdHr';      // Account → General → Public Key
+const EJS_SERVICE_ID  = 'service_emsyoet';      // Email Services → Service ID
+const EJS_TEMPLATE_ID = 'template_lnc7tz6';     // Email Templates → Template ID
+const NOTIFY_EMAIL    = 'massimo.johansson@cc-camping.se';
 
 // ── STATIC DATA ───────────────────────────────────────────────────────────
 const CAT_NAMES = ['Driftavvikelse','Sjukdom / gästincident','Brandtillbud / SBA','Arbetsmiljö / tillbud','Livsmedel / restaurang','Alkohol / servering','Säkerhet / ordning','Miljö / kemikalier'];
@@ -443,11 +444,7 @@ async function loadAvData() {
 }
 
 function applySettings() {
-  const s = _avData.inställningar || {};
-  EJS_PUBLIC_KEY  = s.ejsPublicKey  || '';
-  EJS_SERVICE_ID  = s.ejsServiceId  || '';
-  EJS_TEMPLATE_ID = s.ejsTemplateId || '';
-  NOTIFY_EMAIL    = s.notifyEmail   || 'massimo.johansson@cc-camping.se';
+  // EmailJS config is hardcoded above — just update the display
   document.getElementById('notify-email-display').textContent = NOTIFY_EMAIL;
 }
 
@@ -791,7 +788,10 @@ async function saveÄrende(ärende) {
 }
 
 async function sendNotification(ärende) {
-  if (!EJS_PUBLIC_KEY || EJS_PUBLIC_KEY === '') return; // demo mode
+  if (!EJS_PUBLIC_KEY || EJS_PUBLIC_KEY === 'DIN_PUBLIC_KEY') {
+    console.log('EmailJS ej konfigurerat — demoläge, inget mail skickas');
+    return;
+  }
 
   const riskColor = RISK_COLORS[ärende.riskNivå] || '#5a5a57';
   const escalBanner = ärende.eskalerad
