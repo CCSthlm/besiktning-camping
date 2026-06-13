@@ -409,14 +409,35 @@ async function loginWithMS() {
 }
 
 async function loginMS_continue(account) {
-  const email = account.username || '';
-  const user = _users.find(u => u.email && u.email.toLowerCase() === email.toLowerCase());
-  if (!user) {
-    showError('Kontot ' + email + ' finns inte i portalen. Kontakta administratören.');
+  const email = (account.username || '').toLowerCase();
+  const name  = account.name || email.split('@')[0];
+
+  // Check if user exists in list
+  const user = _users.find(u => u.email && u.email.toLowerCase() === email);
+
+  if (user) {
+    // Known user — full access per their settings
+    if (user.active === false) { showError('Kontot är inaktiverat.'); return; }
+    _currentUser = {...user, authMethod:'microsoft', msEmail: email};
+  } else if (email.endsWith('@cc-camping.se')) {
+    // Unknown but domain member — limited access (only public apps)
+    _currentUser = {
+      id: 'domain_' + email,
+      name: name,
+      email: email,
+      role: 'Domänanvändare',
+      adminRoles: [],
+      apps: [],
+      active: true,
+      authMethod: 'microsoft',
+      msEmail: email,
+      domainOnly: true,   // flag — only sees apps with roles:[]
+    };
+  } else {
+    showError('Kontot ' + email + ' har inte tillgång till portalen. Kontakta administratören.');
     return;
   }
-  if (user.active === false) { showError('Kontot är inaktiverat.'); return; }
-  _currentUser = {...user, authMethod:'microsoft', msEmail: email};
+
   startSession(_currentUser);
   await showPortal();
 }
@@ -430,6 +451,9 @@ async function showPortal() {
   document.getElementById('portal-avatar').textContent = initials;
   document.getElementById('portal-username').textContent = u.name;
   document.getElementById('portal-role').textContent = u.role + (u.authMethod==='microsoft'?' · Microsoft 365':'');
+  if (u.domainOnly) {
+    document.getElementById('portal-role').innerHTML = 'Domänanvändare · Microsoft 365 &nbsp;<span style="font-size:10px;background:var(--amber-bg);color:var(--amber-text);padding:1px 7px;border-radius:20px;font-weight:600">Begränsad åtkomst</span>';
+  }
   renderApps();
 }
 
@@ -438,6 +462,8 @@ function renderApps() {
   const userApps = u.apps || [];
   const hasAdminRole = (u.adminRoles||[]).length > 0 || u.role === 'Admin';
   const accessible = ALL_APPS.filter(app => {
+    // Domain-only users: only see apps with no role restriction
+    if (u.domainOnly) return app.roles.length === 0;
     // Empty roles = accessible to all logged-in users
     if (app.roles.length === 0) return true;
     // Admin page — requires adminRoles or legacy Admin role
