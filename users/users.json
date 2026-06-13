@@ -9,10 +9,13 @@
       "apps": [
         "besiktning",
         "it-support",
+        "personalliggare",
         "admin"
       ],
       "active": true,
-      "created": "2025-01-01"
+      "created": "2025-01-01",
+      "plCampingId": "c7",
+      "pnr": "19751118-3571"
     },
     {
       "id": "umqbd61uqljhs",
