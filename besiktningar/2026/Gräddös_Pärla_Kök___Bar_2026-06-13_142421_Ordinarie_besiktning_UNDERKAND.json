@@ -1,0 +1,73 @@
+{
+  "meta": {
+    "camping": "c7",
+    "campingName": "Gräddös Pärla Kök & Bar",
+    "date": "2026-06-13",
+    "inspector": "Massimo Johansson",
+    "type": "Ordinarie besiktning",
+    "savedAt": "2026-06-13T12:24:23.974Z"
+  },
+  "sections": {
+    "ankomst": {},
+    "sanitet": {},
+    "gemensamma": {},
+    "vardskap": {},
+    "sakerhet": {},
+    "teknisk": {}
+  },
+  "sc": {},
+  "srv": {
+    "0": "ja",
+    "1": "ja",
+    "2": "ja",
+    "3": "ja",
+    "4": "ja",
+    "5": "ja",
+    "6": "nej",
+    "7": "ja",
+    "8": "nej",
+    "9": "nej",
+    "10": "nej",
+    "11": "ja",
+    "12": "ja",
+    "13": "nej",
+    "14": "ja",
+    "15": "ja",
+    "16": "ja",
+    "17": "ja",
+    "18": "ja",
+    "19": "ja",
+    "20": "ja",
+    "21": "ja",
+    "22": "ja",
+    "23": "ja",
+    "24": "ja",
+    "25": "ja"
+  },
+  "naScores": {
+    "ankomst": {},
+    "sanitet": {},
+    "gemensamma": {},
+    "vardskap": {},
+    "sakerhet": {},
+    "teknisk": {}
+  },
+  "scNaScores": {},
+  "srvNaScores": {
+    "26": true,
+    "27": true
+  },
+  "itemComments": {
+    "srv-0": "Teams och alkoholrummet",
+    "srv-1": "Alla restaurang gruppen",
+    "srv-2": "11-23 ute och 01 inne",
+    "srv-6": "Ej dokumenterat",
+    "srv-17": "Kommer att sättas upp",
+    "srv-18": "Bör märkas kylen"
+  },
+  "notes": {},
+  "srvCtrl": {
+    "1": "8",
+    "7": "Esmiley"
+  }
+}
