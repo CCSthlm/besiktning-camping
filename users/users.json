@@ -173,7 +173,7 @@
           "pnr": "",
           "date": "2026-06-13",
           "timeIn": "12:09",
-          "timeOut": "",
+          "timeOut": "12:10",
           "registeredBy": "Massimo Johansson",
           "registeredAt": "2026-06-13T10:09:30.089Z",
           "manual": false,
@@ -215,6 +215,15 @@
           "detail": "Manuell registrering: TOlvan Tolvansson in 09:10 (2026-06-13) – GLömde stämpla in",
           "oldVal": "",
           "newVal": "09:10"
+        },
+        {
+          "id": "mqc737fwsmnt3",
+          "ts": "2026-06-13T10:10:51.884Z",
+          "user": "Massimo Johansson",
+          "action": "out",
+          "detail": "Massimo Johansson stämplade ut 12:10",
+          "oldVal": "",
+          "newVal": "12:10"
         }
       ]
     }
