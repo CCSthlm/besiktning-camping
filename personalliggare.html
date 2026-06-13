@@ -1,0 +1,1120 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Personalliggare – CCSthlm</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/tabler-icons.min.css">
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f5f5f3;--bg2:#ffffff;--bg3:#eeede8;--bg4:#e5e4de;
+  --text:#1a1a18;--text2:#5a5a57;--text3:#909088;
+  --accent:#3B6D11;--accent2:#27500A;--accent-glow:rgba(59,109,17,.1);
+  --red:#A32D2D;--red-bg:#FCEBEB;--red-text:#501313;
+  --amber:#854F0B;--amber-bg:#FAEEDA;--amber-text:#412402;
+  --green-bg:#EAF3DE;--green-text:#27500A;
+  --border:rgba(0,0,0,.10);--border2:rgba(0,0,0,.18);
+  --radius:8px;--radius-lg:14px;--shadow:0 2px 16px rgba(0,0,0,.09);
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:var(--bg3);color:var(--text);min-height:100vh;}
+
+/* PORTAL BAR */
+#portal-bar{position:sticky;top:0;z-index:999;background:var(--bg2);border-bottom:1px solid var(--border2);display:flex;align-items:center;padding:0 20px;height:46px;gap:0;font-size:13px;color:var(--text2);}
+.pb-avatar{width:28px;height:28px;border-radius:50%;background:var(--accent);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-right:10px;}
+.pb-info{flex:1;display:flex;align-items:center;gap:10px;min-width:0;}
+.pb-name{font-weight:600;color:var(--text);white-space:nowrap;}
+.pb-camping{font-size:11px;font-weight:500;padding:2px 8px;border-radius:20px;background:var(--green-bg);color:var(--green-text);white-space:nowrap;}
+.pb-sep{width:1px;height:22px;background:var(--border2);margin:0 12px;flex-shrink:0;}
+.pb-btn{display:flex;align-items:center;gap:5px;padding:6px 12px;border-radius:7px;border:1px solid var(--border2);background:none;color:var(--text2);font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;white-space:nowrap;transition:background .15s;text-decoration:none;flex-shrink:0;margin-left:6px;}
+.pb-btn:hover{background:var(--bg3);color:var(--text);}
+.pb-btn-logout{background:var(--red-bg);color:var(--red);border-color:rgba(163,45,45,.25);}
+.pb-btn-logout:hover{background:var(--red);color:#fff;}
+@media(max-width:560px){.pb-sep{display:none;}}
+
+/* LAYOUT */
+.page-wrap{max-width:960px;margin:0 auto;padding:24px 16px 60px;}
+
+/* TABS */
+.tab-bar{display:flex;gap:0;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:5px;margin-bottom:20px;flex-wrap:wrap;gap:4px;}
+.tab-btn{flex:1;min-width:120px;padding:9px 14px;border-radius:10px;border:none;background:none;font-size:13px;font-weight:500;color:var(--text2);cursor:pointer;font-family:inherit;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:6px;}
+.tab-btn:hover{background:var(--bg3);}
+.tab-btn.active{background:var(--accent);color:#fff;box-shadow:0 2px 8px var(--accent-glow);}
+.tab-btn i{font-size:15px;}
+
+/* CARDS */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow);margin-bottom:16px;}
+.card-header{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+.card-title{font-size:14px;font-weight:600;display:flex;align-items:center;gap:8px;}
+.card-body{padding:20px;}
+
+/* STÄMPELKLOCKA */
+.clock-display{text-align:center;padding:32px 20px;}
+.clock-time{font-size:56px;font-weight:700;letter-spacing:.02em;color:var(--text);font-variant-numeric:tabular-nums;}
+.clock-date{font-size:14px;color:var(--text2);margin-top:4px;}
+.clock-status{margin:20px auto;max-width:320px;}
+.status-badge{display:inline-flex;align-items:center;gap:8px;padding:8px 18px;border-radius:20px;font-size:13px;font-weight:600;}
+.status-in{background:var(--green-bg);color:var(--green-text);}
+.status-out{background:var(--bg3);color:var(--text3);}
+.status-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.dot-in{background:var(--accent);animation:pulse 2s infinite;}
+.dot-out{background:var(--text3);}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+.stamp-btn{width:100%;max-width:320px;padding:18px;font-size:18px;font-weight:700;border:none;border-radius:var(--radius-lg);cursor:pointer;font-family:inherit;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:10px;margin:16px auto 0;}
+.stamp-in{background:var(--accent);color:#fff;box-shadow:0 4px 16px var(--accent-glow);}
+.stamp-in:hover{background:var(--accent2);}
+.stamp-out{background:var(--red);color:#fff;box-shadow:0 4px 12px rgba(163,45,45,.25);}
+.stamp-out:hover{background:#8a1e1e;}
+.stamp-duration{font-size:12px;color:var(--text3);text-align:center;margin-top:8px;}
+
+/* DAGENS LISTA */
+table{width:100%;border-collapse:collapse;}
+th{text-align:left;padding:10px 14px;font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--border2);background:var(--bg3);}
+td{padding:11px 14px;font-size:13px;border-bottom:1px solid var(--border);vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:rgba(59,109,17,.03);}
+.status-cell-in{color:var(--accent);font-weight:600;display:flex;align-items:center;gap:5px;}
+.status-cell-out{color:var(--text3);}
+.duration-badge{background:var(--bg3);color:var(--text2);font-size:11px;padding:2px 8px;border-radius:20px;font-weight:500;}
+.no-entries{text-align:center;padding:40px;color:var(--text3);}
+.no-entries i{font-size:32px;display:block;margin-bottom:8px;}
+
+/* FORM FIELDS */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
+.form-grid.full{grid-template-columns:1fr;}
+.form-grid.trio{grid-template-columns:1fr 1fr 1fr;}
+.form-field{display:flex;flex-direction:column;gap:5px;}
+.form-field label{font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.04em;}
+.form-field input,.form-field select{padding:10px 12px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius);font-size:13px;color:var(--text);font-family:inherit;transition:border-color .2s;}
+.form-field input:focus,.form-field select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow);}
+.req{color:var(--red);}
+
+/* BUTTONS */
+.btn-primary{padding:10px 20px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px;transition:background .15s;}
+.btn-primary:hover{background:var(--accent2);}
+.btn-secondary{padding:9px 16px;background:var(--bg3);color:var(--text2);border:1px solid var(--border2);border-radius:var(--radius);font-size:13px;font-weight:500;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px;}
+.btn-secondary:hover{background:var(--bg4);}
+.btn-danger{padding:9px 16px;background:var(--red-bg);color:var(--red);border:1px solid rgba(163,45,45,.25);border-radius:var(--radius);font-size:13px;font-weight:500;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px;}
+.btn-icon{padding:6px 9px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius);cursor:pointer;font-size:13px;color:var(--text2);display:inline-flex;align-items:center;gap:4px;font-family:inherit;transition:all .15s;}
+.btn-icon:hover{border-color:var(--accent);color:var(--accent);}
+.btn-icon.red:hover{border-color:var(--red);color:var(--red);}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;align-items:center;justify-content:center;padding:16px;}
+.modal-overlay.show{display:flex;}
+.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius-lg);width:100%;max-width:480px;max-height:90vh;overflow-y:auto;box-shadow:0 8px 40px rgba(0,0,0,.18);}
+.modal-header{padding:18px 20px 14px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+.modal-title{font-size:15px;font-weight:700;}
+.modal-close{background:none;border:none;cursor:pointer;color:var(--text3);font-size:18px;}
+.modal-body{padding:18px 20px;}
+.modal-footer{padding:12px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px;}
+
+/* ÄNDRINGSLOGG */
+.log-entry{padding:10px 14px;border-left:3px solid var(--border2);margin-bottom:8px;background:var(--bg3);border-radius:0 var(--radius) var(--radius) 0;font-size:12px;}
+.log-entry.log-edit{border-left-color:var(--amber);}
+.log-entry.log-in{border-left-color:var(--accent);}
+.log-entry.log-out{border-left-color:var(--red);}
+.log-meta{color:var(--text3);font-size:11px;margin-top:3px;}
+
+/* FILTER ROW */
+.filter-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:16px;}
+.filter-row select,.filter-row input{padding:8px 11px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);font-size:13px;color:var(--text);font-family:inherit;}
+
+/* PERSONNUMMER MASK */
+.pnr-hint{font-size:11px;color:var(--text3);margin-top:3px;}
+
+/* EXPORT BAR */
+.export-bar{display:flex;gap:8px;flex-wrap:wrap;}
+
+/* ACTIVE INDICATOR */
+.active-count{background:var(--accent);color:#fff;font-size:11px;font-weight:700;padding:1px 7px;border-radius:20px;margin-left:6px;}
+
+/* PRINT */
+@media print{
+  #portal-bar,.tab-bar,.export-bar,.btn-row,.no-print{display:none!important;}
+  body{background:#fff;}
+  .card{box-shadow:none;border:1px solid #ccc;}
+  .page-wrap{max-width:none;padding:0;}
+}
+@media(max-width:600px){
+  .form-grid{grid-template-columns:1fr;}
+  .form-grid.trio{grid-template-columns:1fr 1fr;}
+  .clock-time{font-size:40px;}
+}
+</style>
+</head>
+<body>
+
+<!-- PORTAL BAR -->
+<div id="portal-bar">
+  <div class="pb-avatar" id="pb-avatar">?</div>
+  <div class="pb-info">
+    <span class="pb-name" id="pb-name">–</span>
+    <span class="pb-camping" id="pb-camping-badge">–</span>
+  </div>
+  <div class="pb-sep"></div>
+  <a href="index.html" class="pb-btn"><i class="ti ti-arrow-left"></i> Portal</a>
+  <button class="pb-btn pb-btn-logout" onclick="portalLogout()"><i class="ti ti-logout"></i> Logga ut</button>
+</div>
+
+<div class="page-wrap">
+
+  <!-- HEADER -->
+  <div style="margin-bottom:20px;">
+    <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
+      <div style="flex:1;min-width:200px;">
+        <h1 style="font-size:22px;font-weight:700;">Personalliggare</h1>
+        <div id="company-sub" style="font-size:13px;color:var(--text2);margin-top:3px;">Laddar…</div>
+      </div>
+      <div class="export-bar no-print">
+        <button class="btn-secondary" onclick="exportExcel()"><i class="ti ti-table-export"></i> Excel</button>
+        <button class="btn-secondary" onclick="exportPDF()"><i class="ti ti-file-type-pdf"></i> PDF</button>
+        <button class="btn-secondary" onclick="window.print()"><i class="ti ti-printer"></i> Skriv ut</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tab-bar">
+    <button class="tab-btn active" id="tab-stämpel" onclick="showTab('stämpel')">
+      <i class="ti ti-clock"></i> Stämpelklocka
+      <span class="active-count" id="active-count" style="display:none">0</span>
+    </button>
+    <button class="tab-btn" id="tab-dag" onclick="showTab('dag')">
+      <i class="ti ti-calendar-day"></i> Dagslista
+    </button>
+    <button class="tab-btn" id="tab-personal" onclick="showTab('personal')">
+      <i class="ti ti-users"></i> Personallista
+    </button>
+    <button class="tab-btn" id="tab-logg" onclick="showTab('logg')">
+      <i class="ti ti-history"></i> Ändringslogg
+    </button>
+  </div>
+
+  <!-- ── TAB: STÄMPELKLOCKA ── -->
+  <div id="view-stämpel">
+    <div class="card">
+      <div class="card-body">
+        <div class="clock-display">
+          <div class="clock-time" id="clock-time">00:00:00</div>
+          <div class="clock-date" id="clock-date">–</div>
+          <div class="clock-status" id="clock-status-wrap">
+            <span class="status-badge status-out" id="my-status-badge">
+              <span class="status-dot dot-out" id="my-status-dot"></span>
+              <span id="my-status-text">Ej instämplad</span>
+            </span>
+          </div>
+          <button class="stamp-btn stamp-in" id="main-stamp-btn" onclick="handleMainStamp()">
+            <i class="ti ti-clock-play" id="stamp-btn-icon"></i>
+            <span id="stamp-btn-text">Stämpla in</span>
+          </button>
+          <div class="stamp-duration" id="stamp-duration"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Registrera för annan / tillbaka i tid -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title"><i class="ti ti-user-plus"></i> Registrera in/ut för annan person</span>
+        <button class="btn-secondary" onclick="openManualModal(null)"><i class="ti ti-plus"></i> Lägg till</button>
+      </div>
+      <div style="overflow-x:auto">
+        <table id="today-table">
+          <thead>
+            <tr>
+              <th>Namn</th>
+              <th>Personnummer</th>
+              <th>Instämplad</th>
+              <th>Utstämplad</th>
+              <th>Tid</th>
+              <th>Status</th>
+              <th style="text-align:right" class="no-print">Åtgärder</th>
+            </tr>
+          </thead>
+          <tbody id="today-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── TAB: DAGSLISTA ── -->
+  <div id="view-dag" style="display:none">
+    <div class="filter-row no-print">
+      <input type="date" id="dag-filter-date">
+      <select id="dag-filter-camping">
+        <option value="">Alla campingar</option>
+      </select>
+      <button class="btn-secondary" onclick="renderDagslista()"><i class="ti ti-refresh"></i></button>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title" id="dag-title"><i class="ti ti-list"></i> Arbetspass</span>
+        <span id="dag-summary" style="font-size:12px;color:var(--text3)"></span>
+      </div>
+      <div style="overflow-x:auto">
+        <table>
+          <thead>
+            <tr><th>Namn</th><th>Personnummer</th><th>In</th><th>Ut</th><th>Tid</th><th>Registrerad av</th><th style="text-align:right" class="no-print">Åtgärder</th></tr>
+          </thead>
+          <tbody id="dag-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── TAB: PERSONALLISTA ── -->
+  <div id="view-personal" style="display:none">
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title"><i class="ti ti-users"></i> Personal – <span id="personal-camping-name">–</span></span>
+        <button class="btn-primary no-print" onclick="openPersonalModal(null)"><i class="ti ti-plus"></i> Lägg till person</button>
+      </div>
+      <div style="overflow-x:auto">
+        <table>
+          <thead>
+            <tr><th>Namn</th><th>Personnummer</th><th>Adress</th><th>Telefon</th><th>Typ</th><th>Aktiv</th><th style="text-align:right" class="no-print">Åtgärder</th></tr>
+          </thead>
+          <tbody id="personal-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── TAB: ÄNDRINGSLOGG ── -->
+  <div id="view-logg" style="display:none">
+    <div class="filter-row no-print">
+      <input type="date" id="logg-filter-date">
+      <select id="logg-filter-type">
+        <option value="">Alla händelser</option>
+        <option value="in">Instämpling</option>
+        <option value="out">Utstämpling</option>
+        <option value="edit">Redigering</option>
+        <option value="delete">Borttagning</option>
+      </select>
+      <button class="btn-secondary" onclick="renderLogg()"><i class="ti ti-refresh"></i></button>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-title"><i class="ti ti-history"></i> Ändringslogg</span></div>
+      <div class="card-body" id="logg-body"></div>
+    </div>
+  </div>
+
+</div><!-- end page-wrap -->
+
+<!-- ── MODAL: MANUELL REGISTRERING ── -->
+<div class="modal-overlay" id="modal-manual">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="modal-manual-title">Registrera arbetspass</span>
+      <button class="modal-close" onclick="closeModal('modal-manual')"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="manual-edit-id">
+      <div class="form-grid">
+        <div class="form-field">
+          <label>Person <span class="req">*</span></label>
+          <select id="manual-person" onchange="onPersonSelect()">
+            <option value="">– Välj person –</option>
+            <option value="__new__">+ Ny person (ej i listan)</option>
+          </select>
+        </div>
+        <div class="form-field" id="manual-pnr-field">
+          <label>Personnummer <span class="req">*</span></label>
+          <input type="text" id="manual-pnr" placeholder="YYYYMMDD-XXXX">
+          <div class="pnr-hint">Format: YYYYMMDD-XXXX eller samordningsnr</div>
+        </div>
+      </div>
+      <div id="manual-name-row" style="display:none" class="form-grid full">
+        <div class="form-field">
+          <label>För- och efternamn <span class="req">*</span></label>
+          <input type="text" id="manual-name" placeholder="Anna Andersson">
+        </div>
+      </div>
+      <div class="form-grid trio">
+        <div class="form-field">
+          <label>Datum <span class="req">*</span></label>
+          <input type="date" id="manual-date">
+        </div>
+        <div class="form-field">
+          <label>Instämplad <span class="req">*</span></label>
+          <input type="time" id="manual-in">
+        </div>
+        <div class="form-field">
+          <label>Utstämplad</label>
+          <input type="time" id="manual-out" placeholder="–">
+        </div>
+      </div>
+      <div class="form-grid full">
+        <div class="form-field">
+          <label>Anledning till manuell registrering <span class="req">*</span></label>
+          <input type="text" id="manual-reason" placeholder="Glömde stämpla in, tillbaka i tid, etc.">
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeModal('modal-manual')">Avbryt</button>
+      <button class="btn-primary" onclick="saveManualEntry()"><i class="ti ti-check"></i> Spara</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── MODAL: PERSON ── -->
+<div class="modal-overlay" id="modal-personal">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="modal-personal-title">Lägg till person</span>
+      <button class="modal-close" onclick="closeModal('modal-personal')"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="personal-edit-id">
+      <div class="form-grid">
+        <div class="form-field">
+          <label>Förnamn <span class="req">*</span></label>
+          <input type="text" id="p-fname" placeholder="Anna">
+        </div>
+        <div class="form-field">
+          <label>Efternamn <span class="req">*</span></label>
+          <input type="text" id="p-lname" placeholder="Andersson">
+        </div>
+      </div>
+      <div class="form-grid full">
+        <div class="form-field">
+          <label>Personnummer / samordningsnummer <span class="req">*</span></label>
+          <input type="text" id="p-pnr" placeholder="YYYYMMDD-XXXX">
+        </div>
+      </div>
+      <div class="form-grid full">
+        <div class="form-field">
+          <label>Adress</label>
+          <input type="text" id="p-address" placeholder="Storgatan 1, 123 45 Stockholm">
+        </div>
+      </div>
+      <div class="form-grid">
+        <div class="form-field">
+          <label>Telefon</label>
+          <input type="tel" id="p-phone" placeholder="070-xxx xx xx">
+        </div>
+        <div class="form-field">
+          <label>Typ av anställning</label>
+          <select id="p-type">
+            <option value="anställd">Anställd</option>
+            <option value="extrapersonal">Extrapersonal</option>
+            <option value="praktikant">Praktikant</option>
+            <option value="inhyrd">Inhyrd personal</option>
+            <option value="oavlönad">Oavlönad</option>
+            <option value="släkting">Släkting/anhörig</option>
+            <option value="övrigt">Övrigt</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-grid full">
+        <div class="form-field">
+          <label>Status</label>
+          <select id="p-active">
+            <option value="true">Aktiv</option>
+            <option value="false">Inaktiv</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeModal('modal-personal')">Avbryt</button>
+      <button class="btn-primary" onclick="savePerson()"><i class="ti ti-check"></i> Spara</button>
+    </div>
+  </div>
+</div>
+
+<!-- DELETE CONFIRM -->
+<div class="modal-overlay" id="modal-delete">
+  <div class="modal" style="max-width:380px">
+    <div class="modal-header">
+      <span class="modal-title" style="color:var(--red)"><i class="ti ti-alert-triangle"></i> Bekräfta</span>
+      <button class="modal-close" onclick="closeModal('modal-delete')"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:13px;color:var(--text2);line-height:1.6" id="delete-text">Är du säker?</p>
+      <div style="font-size:11px;color:var(--amber);margin-top:10px;background:var(--amber-bg);padding:8px 10px;border-radius:var(--radius)"><i class="ti ti-alert-triangle"></i> Borttagningen loggas i ändringsloggen enligt lag.</div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeModal('modal-delete')">Avbryt</button>
+      <button class="btn-danger" id="delete-confirm-btn">Ta bort</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast" style="position:fixed;bottom:24px;right:24px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);padding:11px 16px;font-size:13px;z-index:999;box-shadow:var(--shadow);opacity:0;transform:translateY(6px);transition:all .25s;pointer-events:none;display:flex;align-items:center;gap:7px;"></div>
+
+<script>
+// ── CONFIG ────────────────────────────────────────────────────────────────
+const GH_REPO = 'CCSthlm/besiktning-camping';
+
+// ── STATE ─────────────────────────────────────────────────────────────────
+let _user = null;
+let _data = { users:[], campings:[], inspectors:[], company:{}, personalliggare:{} };
+// personalliggare structure:
+// { campingId: { entries:[...], personal:[...], auditlog:[...] } }
+// entry: { id, name, pnr, date, timeIn, timeOut, registeredBy, registeredAt, manual, manualReason, edited }
+// personal: { id, fname, lname, pnr, address, phone, type, active }
+// auditlog: { id, ts, user, action, detail, oldVal, newVal }
+
+let _myCampingId = '';
+let _myCampingName = '';
+let _myEntryId = null;  // current open entry for logged-in user
+let _clockInterval = null;
+let _durationInterval = null;
+
+// ── INIT ──────────────────────────────────────────────────────────────────
+async function init() {
+  const sess = sessionStorage.getItem('ccs_session') || sessionStorage.getItem('ccs_portal_user');
+  if (!sess) { window.location.replace('index.html'); return; }
+  try { _user = JSON.parse(sess); } catch(e) { window.location.replace('index.html'); return; }
+
+  const initials = _user.name.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase();
+  document.getElementById('pb-avatar').textContent = initials;
+  document.getElementById('pb-name').textContent = _user.name;
+
+  await loadData();
+
+  // Get user's camping assignment for personalliggare
+  const userRecord = _data.users.find(u => u.id === _user.id || u.name === _user.name);
+  _myCampingId = userRecord?.plCampingId || _data.campings[0]?.id || '';
+  _myCampingName = _data.campings.find(c=>c.id===_myCampingId)?.name || _myCampingId;
+
+  document.getElementById('pb-camping-badge').textContent = _myCampingName;
+  document.getElementById('personal-camping-name').textContent = _myCampingName;
+
+  const company = _data.company || {};
+  document.getElementById('company-sub').textContent =
+    [company.name, company.orgNr ? 'Org.nr: '+company.orgNr : ''].filter(Boolean).join(' · ') || 'Personalliggare';
+
+  // Populate camping filter in dagslista
+  const dagSel = document.getElementById('dag-filter-camping');
+  (_data.campings||[]).forEach(c => {
+    const o = document.createElement('option');
+    o.value = c.id; o.textContent = c.name;
+    dagSel.appendChild(o);
+  });
+  dagSel.value = _myCampingId;
+
+  // Set today's date as default
+  const today = todayStr();
+  document.getElementById('dag-filter-date').value = today;
+  document.getElementById('logg-filter-date').value = today;
+  document.getElementById('manual-date').value = today;
+
+  // Check if user has open entry today
+  ensureCampingData(_myCampingId);
+  const entries = _data.personalliggare[_myCampingId].entries;
+  const myName = _user.name;
+  const openEntry = entries.find(e => e.date === today && e.name === myName && !e.timeOut);
+  if (openEntry) _myEntryId = openEntry.id;
+
+  startClock();
+  updateStampUI();
+  renderTodayTable();
+  renderPersonalLista();
+  renderLogg();
+  updateActiveCount();
+}
+
+// ── DATA ──────────────────────────────────────────────────────────────────
+async function loadData() {
+  const token = localStorage.getItem('gh_token') || '';
+  if (!token) { loadDefaultData(); return; }
+  try {
+    const res = await fetch('https://api.github.com/repos/'+GH_REPO+'/contents/users/users.json',
+      {headers:{'Authorization':'token '+token}});
+    if (!res.ok) { loadDefaultData(); return; }
+    const gh = await res.json();
+    const bytes = Uint8Array.from(atob(gh.content.replace(/\n/g,'')), c=>c.charCodeAt(0));
+    const parsed = JSON.parse(new TextDecoder('utf-8').decode(bytes));
+    _data = { users:[], campings:[], inspectors:[], company:{}, personalliggare:{}, ...parsed };
+    if (!_data.personalliggare) _data.personalliggare = {};
+    if (!_data.company) _data.company = {};
+  } catch(e) { loadDefaultData(); }
+}
+
+function loadDefaultData() {
+  _data = { users:[], campings:[{id:'c1',name:'CC Björkö Örns Camping',active:true}], inspectors:[], company:{name:'Caravan Club of Sweden',orgNr:''}, personalliggare:{} };
+}
+
+function ensureCampingData(cid) {
+  if (!_data.personalliggare[cid]) _data.personalliggare[cid] = { entries:[], personal:[], auditlog:[] };
+  if (!_data.personalliggare[cid].entries) _data.personalliggare[cid].entries = [];
+  if (!_data.personalliggare[cid].personal) _data.personalliggare[cid].personal = [];
+  if (!_data.personalliggare[cid].auditlog) _data.personalliggare[cid].auditlog = [];
+}
+
+async function saveData() {
+  const token = localStorage.getItem('gh_token') || '';
+  if (!token) { toast('Sparas bara lokalt (GitHub-token saknas)','warn'); return; }
+  const url = 'https://api.github.com/repos/'+GH_REPO+'/contents/users/users.json';
+  try {
+    let sha = null;
+    const chk = await fetch(url,{headers:{'Authorization':'token '+token}});
+    if (chk.ok) sha = (await chk.json()).sha;
+    const content = btoa(unescape(encodeURIComponent(JSON.stringify(_data,null,2))));
+    const payload = {message:'Personalliggare '+todayStr(), content, branch:'main'};
+    if (sha) payload.sha = sha;
+    const res = await fetch(url,{method:'PUT',headers:{'Authorization':'token '+token,'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    if (!res.ok) throw new Error((await res.json()).message||res.status);
+  } catch(e) { toast('Fel vid sparande: '+e.message,'err'); }
+}
+
+// ── CLOCK ─────────────────────────────────────────────────────────────────
+function startClock() {
+  function tick() {
+    const now = new Date();
+    document.getElementById('clock-time').textContent = now.toLocaleTimeString('sv-SE');
+    document.getElementById('clock-date').textContent = now.toLocaleDateString('sv-SE',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+    if (_myEntryId) updateDuration();
+  }
+  tick();
+  _clockInterval = setInterval(tick, 1000);
+}
+
+function updateDuration() {
+  const entry = getMyEntry();
+  if (!entry) return;
+  const diffMs = Date.now() - new Date(entry.date+'T'+entry.timeIn).getTime();
+  const h = Math.floor(diffMs/3600000), m = Math.floor((diffMs%3600000)/60000);
+  document.getElementById('stamp-duration').textContent = 'Instämplad sedan: ' + h + 'h ' + m + 'min';
+}
+
+function getMyEntry() {
+  if (!_myEntryId) return null;
+  ensureCampingData(_myCampingId);
+  return _data.personalliggare[_myCampingId].entries.find(e=>e.id===_myEntryId)||null;
+}
+
+// ── STÄMPELKLOCKA ─────────────────────────────────────────────────────────
+function updateStampUI() {
+  const isIn = !!_myEntryId && !getMyEntry()?.timeOut;
+  const btn = document.getElementById('main-stamp-btn');
+  const icon = document.getElementById('stamp-btn-icon');
+  const text = document.getElementById('stamp-btn-text');
+  const badge = document.getElementById('my-status-badge');
+  const dot = document.getElementById('my-status-dot');
+  const statusText = document.getElementById('my-status-text');
+  const dur = document.getElementById('stamp-duration');
+
+  if (isIn) {
+    btn.className = 'stamp-btn stamp-out';
+    icon.className = 'ti ti-clock-stop';
+    text.textContent = 'Stämpla ut';
+    badge.className = 'status-badge status-in';
+    dot.className = 'status-dot dot-in';
+    const e = getMyEntry();
+    statusText.textContent = 'Instämplad sedan ' + e.timeIn;
+  } else {
+    btn.className = 'stamp-btn stamp-in';
+    icon.className = 'ti ti-clock-play';
+    text.textContent = 'Stämpla in';
+    badge.className = 'status-badge status-out';
+    dot.className = 'status-dot dot-out';
+    statusText.textContent = 'Ej instämplad';
+    dur.textContent = '';
+  }
+}
+
+function handleMainStamp() {
+  const isIn = !!_myEntryId && !getMyEntry()?.timeOut;
+  if (isIn) {
+    stampOut(_myEntryId, nowTimeStr(), false);
+  } else {
+    stampIn(_user.name, _user.pnr||'', todayStr(), nowTimeStr(), false, '');
+  }
+}
+
+function stampIn(name, pnr, date, time, isManual, reason) {
+  ensureCampingData(_myCampingId);
+  const id = uid();
+  const entry = {
+    id, name, pnr, date,
+    timeIn: time, timeOut: '',
+    registeredBy: _user.name,
+    registeredAt: nowISO(),
+    manual: isManual,
+    manualReason: reason || '',
+    edited: false,
+    campingId: _myCampingId,
+  };
+  _data.personalliggare[_myCampingId].entries.push(entry);
+  addAuditLog('in', name + ' stämplade in ' + time + ' (' + date + ')' + (isManual?' [MANUELL: '+reason+']':''), '', time);
+  if (name === _user.name && date === todayStr()) _myEntryId = id;
+  updateStampUI();
+  renderTodayTable();
+  updateActiveCount();
+  saveData();
+  toast('Instämplad ' + time, 'ok');
+}
+
+function stampOut(entryId, time, isEdit) {
+  ensureCampingData(_myCampingId);
+  const entry = _data.personalliggare[_myCampingId].entries.find(e=>e.id===entryId);
+  if (!entry) return;
+  const oldOut = entry.timeOut;
+  entry.timeOut = time;
+  if (isEdit) entry.edited = true;
+  addAuditLog('out', entry.name + ' stämplade ut ' + time + (isEdit?' [REDIGERAD]':''), oldOut, time);
+  if (entryId === _myEntryId && !isEdit) { _myEntryId = null; updateStampUI(); }
+  renderTodayTable();
+  updateActiveCount();
+  saveData();
+  toast('Utstämplad ' + time, 'ok');
+}
+
+// ── MANUELL REGISTRERING ─────────────────────────────────────────────────
+function openManualModal(editEntry) {
+  document.getElementById('modal-manual-title').textContent = editEntry ? 'Redigera arbetspass' : 'Registrera arbetspass';
+  document.getElementById('manual-edit-id').value = editEntry?.id || '';
+  document.getElementById('manual-date').value = editEntry?.date || todayStr();
+  document.getElementById('manual-in').value = editEntry?.timeIn || '';
+  document.getElementById('manual-out').value = editEntry?.timeOut || '';
+  document.getElementById('manual-reason').value = editEntry?.manualReason || '';
+  // Populate person select
+  ensureCampingData(_myCampingId);
+  const personal = _data.personalliggare[_myCampingId].personal;
+  const sel = document.getElementById('manual-person');
+  sel.innerHTML = '<option value="">– Välj person –</option><option value="__new__">+ Ny person (ej i listan)</option>';
+  personal.filter(p=>p.active!==false).forEach(p => {
+    const o = document.createElement('option');
+    o.value = p.id;
+    o.textContent = p.fname + ' ' + p.lname;
+    o.dataset.pnr = p.pnr;
+    sel.appendChild(o);
+  });
+  if (editEntry) {
+    const match = personal.find(p=>(p.fname+' '+p.lname)===editEntry.name);
+    sel.value = match?.id || '__new__';
+    document.getElementById('manual-name').value = editEntry.name;
+    document.getElementById('manual-pnr').value = editEntry.pnr;
+  } else {
+    sel.value = '';
+    document.getElementById('manual-name').value = '';
+    document.getElementById('manual-pnr').value = '';
+  }
+  onPersonSelect();
+  openModal('modal-manual');
+}
+
+function onPersonSelect() {
+  const sel = document.getElementById('manual-person');
+  const val = sel.value;
+  const nameRow = document.getElementById('manual-name-row');
+  const pnrField = document.getElementById('manual-pnr-field');
+  if (val === '__new__') {
+    nameRow.style.display = '';
+    pnrField.style.display = '';
+    document.getElementById('manual-pnr').value = '';
+  } else if (val) {
+    nameRow.style.display = 'none';
+    pnrField.style.display = '';
+    const opt = sel.options[sel.selectedIndex];
+    document.getElementById('manual-pnr').value = opt.dataset.pnr || '';
+  } else {
+    nameRow.style.display = 'none';
+    pnrField.style.display = '';
+  }
+}
+
+function saveManualEntry() {
+  const editId = document.getElementById('manual-edit-id').value;
+  const selVal = document.getElementById('manual-person').value;
+  const date = document.getElementById('manual-date').value;
+  const timeIn = document.getElementById('manual-in').value;
+  const timeOut = document.getElementById('manual-out').value;
+  const reason = document.getElementById('manual-reason').value.trim();
+  if (!date||!timeIn||!reason) { alert('Fyll i datum, instämplingstid och anledning.'); return; }
+
+  let name = '', pnr = '';
+  ensureCampingData(_myCampingId);
+  if (selVal === '__new__') {
+    name = document.getElementById('manual-name').value.trim();
+    pnr = document.getElementById('manual-pnr').value.trim();
+    if (!name) { alert('Ange namn.'); return; }
+  } else if (selVal) {
+    const p = _data.personalliggare[_myCampingId].personal.find(p=>p.id===selVal);
+    name = p ? p.fname+' '+p.lname : '';
+    pnr = p?.pnr || document.getElementById('manual-pnr').value.trim();
+  } else {
+    alert('Välj person eller "Ny person".'); return;
+  }
+
+  if (editId) {
+    // Edit existing
+    const entry = _data.personalliggare[_myCampingId].entries.find(e=>e.id===editId);
+    if (entry) {
+      const old = {timeIn:entry.timeIn,timeOut:entry.timeOut};
+      entry.timeIn = timeIn; entry.timeOut = timeOut; entry.edited = true;
+      entry.manualReason = reason;
+      addAuditLog('edit', 'Redigerade post för '+name+' ('+date+')', JSON.stringify(old), JSON.stringify({timeIn,timeOut}));
+    }
+  } else {
+    // New entry
+    const id = uid();
+    _data.personalliggare[_myCampingId].entries.push({
+      id, name, pnr, date,
+      timeIn, timeOut,
+      registeredBy: _user.name,
+      registeredAt: nowISO(),
+      manual: true, manualReason: reason, edited: false,
+      campingId: _myCampingId,
+    });
+    addAuditLog('in', 'Manuell registrering: '+name+' in '+timeIn+(timeOut?' ut '+timeOut:'')+ ' ('+date+') – '+reason, '', timeIn);
+  }
+
+  closeModal('modal-manual');
+  renderTodayTable();
+  renderDagslista();
+  updateActiveCount();
+  saveData();
+  toast(editId ? 'Uppdaterad' : 'Registrerad', 'ok');
+}
+
+// ── RENDER TODAY TABLE ────────────────────────────────────────────────────
+function renderTodayTable() {
+  ensureCampingData(_myCampingId);
+  const today = todayStr();
+  const entries = _data.personalliggare[_myCampingId].entries.filter(e=>e.date===today)
+    .sort((a,b)=>a.timeIn.localeCompare(b.timeIn));
+  const tbody = document.getElementById('today-tbody');
+  if (!entries.length) {
+    tbody.innerHTML = '<tr><td colspan="7"><div class="no-entries"><i class="ti ti-users"></i>Inga registrerade arbetspass idag</div></td></tr>';
+    return;
+  }
+  tbody.innerHTML = entries.map(e => {
+    const isOpen = !e.timeOut;
+    const dur = e.timeOut ? calcDuration(e.timeIn, e.timeOut) : '–';
+    const statusCell = isOpen
+      ? `<td><span class="status-cell-in"><span class="status-dot dot-in" style="width:7px;height:7px;border-radius:50%;background:var(--accent);flex-shrink:0;animation:pulse 2s infinite"></span> Instämplad</span></td>`
+      : `<td class="status-cell-out">Utcheckad</td>`;
+    const manualBadge = e.manual||e.edited ? `<span style="font-size:10px;background:var(--amber-bg);color:var(--amber-text);padding:1px 6px;border-radius:10px;margin-left:5px" title="${e.manualReason||''}">M</span>` : '';
+    return `<tr>
+      <td style="font-weight:500">${e.name}${manualBadge}</td>
+      <td style="color:var(--text3);font-size:12px">${maskPnr(e.pnr)}</td>
+      <td>${e.timeIn}</td>
+      <td>${e.timeOut||'–'}</td>
+      <td><span class="duration-badge">${dur}</span></td>
+      ${statusCell}
+      <td class="no-print"><div style="display:flex;gap:5px;justify-content:flex-end">
+        ${isOpen ? `<button class="btn-icon" onclick="stampOut('${e.id}','${nowTimeStr()}',true)" title="Stämpla ut nu"><i class="ti ti-clock-stop"></i></button>` : ''}
+        <button class="btn-icon" onclick="openManualModal(${JSON.stringify(e).replace(/"/g,'&quot;')})" title="Redigera"><i class="ti ti-pencil"></i></button>
+        <button class="btn-icon red" onclick="confirmDeleteEntry('${e.id}','${e.name}')" title="Ta bort"><i class="ti ti-trash"></i></button>
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+
+// ── RENDER DAGSLISTA ──────────────────────────────────────────────────────
+function renderDagslista() {
+  const date = document.getElementById('dag-filter-date').value || todayStr();
+  const campingId = document.getElementById('dag-filter-camping').value || _myCampingId;
+  ensureCampingData(campingId);
+  const campingName = _data.campings.find(c=>c.id===campingId)?.name || campingId;
+  document.getElementById('dag-title').innerHTML = `<i class="ti ti-list"></i> ${campingName} – ${date}`;
+  const entries = _data.personalliggare[campingId].entries.filter(e=>e.date===date)
+    .sort((a,b)=>a.timeIn.localeCompare(b.timeIn));
+  document.getElementById('dag-summary').textContent = entries.length + ' person(er), ' + entries.filter(e=>!e.timeOut).length + ' instämplade';
+  const tbody = document.getElementById('dag-tbody');
+  if (!entries.length) {
+    tbody.innerHTML = '<tr><td colspan="7"><div class="no-entries"><i class="ti ti-calendar-off"></i>Inga arbetspass denna dag</div></td></tr>';
+    return;
+  }
+  tbody.innerHTML = entries.map(e => {
+    const dur = e.timeOut ? calcDuration(e.timeIn,e.timeOut) : '–';
+    const manualBadge = e.manual||e.edited ? `<span title="${e.manualReason||''}" style="font-size:10px;background:var(--amber-bg);color:var(--amber-text);padding:1px 6px;border-radius:10px;margin-left:4px">M</span>`:'';
+    return `<tr>
+      <td style="font-weight:500">${e.name}${manualBadge}</td>
+      <td style="color:var(--text3);font-size:12px">${maskPnr(e.pnr)}</td>
+      <td>${e.timeIn}</td>
+      <td>${e.timeOut||'–'}</td>
+      <td><span class="duration-badge">${dur}</span></td>
+      <td style="color:var(--text3);font-size:12px">${e.registeredBy||'–'}</td>
+      <td class="no-print"><div style="display:flex;gap:5px;justify-content:flex-end">
+        <button class="btn-icon" onclick="openManualModalCamping(${JSON.stringify(e).replace(/"/g,'&quot;')},'${campingId}')" title="Redigera"><i class="ti ti-pencil"></i></button>
+        <button class="btn-icon red" onclick="confirmDeleteEntryCamping('${e.id}','${e.name}','${campingId}')" title="Ta bort"><i class="ti ti-trash"></i></button>
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+
+function openManualModalCamping(entry, campingId) {
+  const prev = _myCampingId;
+  _myCampingId = campingId;
+  openManualModal(entry);
+  _myCampingId = prev;
+}
+
+// ── PERSONALLISTA ─────────────────────────────────────────────────────────
+function renderPersonalLista() {
+  ensureCampingData(_myCampingId);
+  const personal = _data.personalliggare[_myCampingId].personal || [];
+  const tbody = document.getElementById('personal-tbody');
+  if (!personal.length) {
+    tbody.innerHTML = '<tr><td colspan="7"><div class="no-entries"><i class="ti ti-user-x"></i>Inga personer i listan</div></td></tr>';
+    return;
+  }
+  tbody.innerHTML = personal.map(p => {
+    const aktiv = p.active!==false ? '<span style="font-size:11px;background:var(--green-bg);color:var(--green-text);padding:2px 8px;border-radius:20px">Aktiv</span>' : '<span style="font-size:11px;background:var(--red-bg);color:var(--red-text);padding:2px 8px;border-radius:20px">Inaktiv</span>';
+    return `<tr>
+      <td style="font-weight:500">${p.fname} ${p.lname}</td>
+      <td style="font-size:12px;color:var(--text3)">${maskPnr(p.pnr)}</td>
+      <td style="font-size:12px;color:var(--text2)">${p.address||'–'}</td>
+      <td style="font-size:12px">${p.phone||'–'}</td>
+      <td style="font-size:12px;color:var(--text2)">${p.type||'–'}</td>
+      <td>${aktiv}</td>
+      <td class="no-print"><div style="display:flex;gap:5px;justify-content:flex-end">
+        <button class="btn-icon" onclick="openPersonalModal(${JSON.stringify(p).replace(/"/g,'&quot;')})" title="Redigera"><i class="ti ti-pencil"></i></button>
+        <button class="btn-icon red" onclick="confirmDeletePerson('${p.id}','${p.fname} ${p.lname}')" title="Ta bort"><i class="ti ti-trash"></i></button>
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+
+function openPersonalModal(person) {
+  document.getElementById('modal-personal-title').textContent = person ? 'Redigera person' : 'Lägg till person';
+  document.getElementById('personal-edit-id').value = person?.id||'';
+  document.getElementById('p-fname').value = person?.fname||'';
+  document.getElementById('p-lname').value = person?.lname||'';
+  document.getElementById('p-pnr').value = person?.pnr||'';
+  document.getElementById('p-address').value = person?.address||'';
+  document.getElementById('p-phone').value = person?.phone||'';
+  document.getElementById('p-type').value = person?.type||'anställd';
+  document.getElementById('p-active').value = person?.active===false?'false':'true';
+  openModal('modal-personal');
+}
+
+function savePerson() {
+  const fname = document.getElementById('p-fname').value.trim();
+  const lname = document.getElementById('p-lname').value.trim();
+  const pnr = document.getElementById('p-pnr').value.trim();
+  if (!fname||!lname||!pnr) { alert('Namn och personnummer krävs.'); return; }
+  ensureCampingData(_myCampingId);
+  const obj = {
+    fname,lname,pnr,
+    address:document.getElementById('p-address').value.trim(),
+    phone:document.getElementById('p-phone').value.trim(),
+    type:document.getElementById('p-type').value,
+    active:document.getElementById('p-active').value==='true',
+  };
+  const editId = document.getElementById('personal-edit-id').value;
+  if (editId) {
+    const i = _data.personalliggare[_myCampingId].personal.findIndex(p=>p.id===editId);
+    if (i>=0) { const old=_data.personalliggare[_myCampingId].personal[i]; _data.personalliggare[_myCampingId].personal[i]={...old,...obj}; addAuditLog('edit','Uppdaterade person: '+fname+' '+lname,'',JSON.stringify(obj)); }
+  } else {
+    const id=uid();
+    _data.personalliggare[_myCampingId].personal.push({id,...obj});
+    addAuditLog('in','Lade till person: '+fname+' '+lname,'','');
+  }
+  closeModal('modal-personal');
+  renderPersonalLista();
+  // Re-populate manual person select
+  const sel=document.getElementById('manual-person');
+  if(sel) {/* will repopulate when modal opens */}
+  saveData();
+  toast('Sparad','ok');
+}
+
+// ── ÄNDRINGSLOGG ──────────────────────────────────────────────────────────
+function addAuditLog(action, detail, oldVal, newVal) {
+  ensureCampingData(_myCampingId);
+  _data.personalliggare[_myCampingId].auditlog.push({
+    id: uid(),
+    ts: nowISO(),
+    user: _user.name,
+    action,   // 'in'|'out'|'edit'|'delete'
+    detail,
+    oldVal: oldVal||'',
+    newVal: newVal||'',
+  });
+}
+
+function renderLogg() {
+  const dateF = document.getElementById('logg-filter-date').value;
+  const typeF = document.getElementById('logg-filter-type').value;
+  ensureCampingData(_myCampingId);
+  let logs = [...(_data.personalliggare[_myCampingId].auditlog||[])].reverse();
+  if (dateF) logs = logs.filter(l=>l.ts.startsWith(dateF));
+  if (typeF) logs = logs.filter(l=>l.action===typeF);
+  const body = document.getElementById('logg-body');
+  if (!logs.length) { body.innerHTML = '<div class="no-entries"><i class="ti ti-history"></i>Inga loggposter för valt filter</div>'; return; }
+  body.innerHTML = logs.map(l => {
+    const cls = l.action==='edit'?'log-edit':l.action==='in'?'log-in':l.action==='delete'?'log-edit':'log-out';
+    const icon = l.action==='in'?'ti-clock-play':l.action==='out'?'ti-clock-stop':l.action==='edit'?'ti-pencil':'ti-trash';
+    const change = (l.oldVal&&l.newVal) ? `<span style="color:var(--red-text)">${l.oldVal}</span> → <span style="color:var(--green-text)">${l.newVal}</span>` : '';
+    return `<div class="log-entry ${cls}">
+      <div style="display:flex;align-items:center;gap:6px"><i class="ti ${icon}" style="font-size:13px"></i> ${l.detail}</div>
+      ${change ? '<div style="margin-top:3px">'+change+'</div>' : ''}
+      <div class="log-meta"><i class="ti ti-user" style="font-size:10px"></i> ${l.user} &nbsp;·&nbsp; ${new Date(l.ts).toLocaleString('sv-SE')}</div>
+    </div>`;
+  }).join('');
+}
+
+// ── DELETE ────────────────────────────────────────────────────────────────
+function confirmDeleteEntry(id, name) { confirmDeleteEntryCamping(id, name, _myCampingId); }
+function confirmDeleteEntryCamping(id, name, campingId) {
+  document.getElementById('delete-text').textContent = 'Ta bort arbetspasset för "'+name+'"? Borttagningen loggas.';
+  document.getElementById('delete-confirm-btn').onclick = () => {
+    ensureCampingData(campingId);
+    const entry = _data.personalliggare[campingId].entries.find(e=>e.id===id);
+    addAuditLog('delete','Tog bort arbetspass: '+(entry?.name||name)+' '+( entry?.date||''), JSON.stringify(entry),'');
+    _data.personalliggare[campingId].entries = _data.personalliggare[campingId].entries.filter(e=>e.id!==id);
+    if (id===_myEntryId) { _myEntryId=null; updateStampUI(); }
+    closeModal('modal-delete');
+    renderTodayTable();
+    renderDagslista();
+    updateActiveCount();
+    saveData();
+    toast('Borttaget','ok');
+  };
+  openModal('modal-delete');
+}
+
+function confirmDeletePerson(id, name) {
+  document.getElementById('delete-text').textContent = 'Ta bort "'+name+'" från personallistan? Borttagningen loggas.';
+  document.getElementById('delete-confirm-btn').onclick = () => {
+    ensureCampingData(_myCampingId);
+    addAuditLog('delete','Tog bort person: '+name,'','');
+    _data.personalliggare[_myCampingId].personal = _data.personalliggare[_myCampingId].personal.filter(p=>p.id!==id);
+    closeModal('modal-delete');
+    renderPersonalLista();
+    saveData();
+    toast('Borttaget','ok');
+  };
+  openModal('modal-delete');
+}
+
+// ── EXPORT ────────────────────────────────────────────────────────────────
+function exportExcel() {
+  const date = document.getElementById('dag-filter-date').value || todayStr();
+  const campingId = document.getElementById('dag-filter-camping').value || _myCampingId;
+  ensureCampingData(campingId);
+  const campingName = _data.campings.find(c=>c.id===campingId)?.name||campingId;
+  const company = _data.company||{};
+  const entries = _data.personalliggare[campingId].entries.filter(e=>e.date===date).sort((a,b)=>a.timeIn.localeCompare(b.timeIn));
+  const wb = XLSX.utils.book_new();
+  // Sheet 1: Arbetspass
+  const rows = [
+    ['PERSONALLIGGARE – '+campingName],
+    ['Företag:', company.name||'–', '', 'Org.nr:', company.orgNr||'–'],
+    ['Datum:', date, '', 'Exporterad:', new Date().toLocaleString('sv-SE')],
+    [],
+    ['Namn','Personnummer','Instämplad','Utstämplad','Total tid','Registrerad av','Manuell','Anledning'],
+    ...entries.map(e=>[e.name,e.pnr,e.timeIn,e.timeOut||'–',e.timeOut?calcDuration(e.timeIn,e.timeOut):'–',e.registeredBy||'–',e.manual?'Ja':'Nej',e.manualReason||'']),
+  ];
+  const ws = XLSX.utils.aoa_to_sheet(rows);
+  ws['!cols']=[{wch:28},{wch:16},{wch:12},{wch:12},{wch:10},{wch:20},{wch:8},{wch:30}];
+  XLSX.utils.book_append_sheet(wb,'Arbetspass',ws);
+  // Sheet 2: Personal
+  const personal = _data.personalliggare[campingId].personal||[];
+  const pRows = [
+    ['PERSONALLISTA – '+campingName],
+    [],
+    ['Namn','Personnummer','Adress','Telefon','Typ','Aktiv'],
+    ...personal.map(p=>[p.fname+' '+p.lname,p.pnr,p.address||'',p.phone||'',p.type||'',p.active!==false?'Ja':'Nej']),
+  ];
+  const ws2 = XLSX.utils.aoa_to_sheet(pRows);
+  ws2['!cols']=[{wch:28},{wch:16},{wch:32},{wch:16},{wch:14},{wch:8}];
+  XLSX.utils.book_append_sheet(wb,'Personallista',ws2);
+  XLSX.writeFile(wb,'Personalliggare_'+campingName.replace(/[^a-zA-ZåäöÅÄÖ0-9]/g,'_')+'_'+date+'.xlsx');
+}
+
+function exportPDF() {
+  const date = document.getElementById('dag-filter-date').value || todayStr();
+  const campingId = document.getElementById('dag-filter-camping').value || _myCampingId;
+  ensureCampingData(campingId);
+  const campingName = _data.campings.find(c=>c.id===campingId)?.name||campingId;
+  const company = _data.company||{};
+  const entries = _data.personalliggare[campingId].entries.filter(e=>e.date===date).sort((a,b)=>a.timeIn.localeCompare(b.timeIn));
+
+  const rows = entries.map(e=>`<tr>
+    <td>${e.name}</td><td>${e.pnr}</td><td>${e.timeIn}</td>
+    <td>${e.timeOut||'–'}</td><td>${e.timeOut?calcDuration(e.timeIn,e.timeOut):'–'}</td>
+    <td>${e.registeredBy||'–'}</td><td>${e.manual?'Ja':'Nej'}</td>
+  </tr>`).join('');
+
+  const html = `<!DOCTYPE html><html lang="sv"><head><meta charset="UTF-8">
+  <title>Personalliggare ${campingName} ${date}</title>
+  <style>
+    body{font-family:Arial,sans-serif;font-size:12px;margin:24px}
+    h1{font-size:18px;margin-bottom:4px}
+    .meta{color:#666;margin-bottom:16px;font-size:11px}
+    table{width:100%;border-collapse:collapse;margin-top:12px}
+    th{background:#3B6D11;color:#fff;padding:7px 10px;text-align:left;font-size:11px}
+    td{padding:6px 10px;border-bottom:1px solid #eee}
+    tr:nth-child(even) td{background:#f5f5f3}
+    .footer{margin-top:24px;font-size:10px;color:#999;border-top:1px solid #ddd;padding-top:8px}
+  </style></head><body>
+  <h1>Personalliggare – ${campingName}</h1>
+  <div class="meta">Företag: ${company.name||'–'} &nbsp;|&nbsp; Org.nr: ${company.orgNr||'–'} &nbsp;|&nbsp; Datum: ${date}</div>
+  <table><thead><tr><th>Namn</th><th>Personnummer</th><th>In</th><th>Ut</th><th>Tid</th><th>Registrerad av</th><th>Manuell</th></tr></thead>
+  <tbody>${rows||'<tr><td colspan="7">Inga poster</td></tr>'}</tbody></table>
+  <div class="footer">Exporterad: ${new Date().toLocaleString('sv-SE')} &nbsp;·&nbsp; CCSthlm Personalliggare</div>
+  </body></html>`;
+
+  const win = window.open('','_blank');
+  win.document.write(html);
+  win.document.close();
+  setTimeout(()=>win.print(),400);
+}
+
+// ── TABS ──────────────────────────────────────────────────────────────────
+function showTab(tab) {
+  ['stämpel','dag','personal','logg'].forEach(t=>{
+    document.getElementById('view-'+t).style.display = t===tab?'':'none';
+    document.getElementById('tab-'+t).classList.toggle('active',t===tab);
+  });
+  if (tab==='dag') renderDagslista();
+  if (tab==='logg') renderLogg();
+}
+
+// ── HELPERS ───────────────────────────────────────────────────────────────
+function todayStr() { return new Date().toISOString().slice(0,10); }
+function nowTimeStr() { return new Date().toLocaleTimeString('sv-SE',{hour:'2-digit',minute:'2-digit'}); }
+function nowISO() { return new Date().toISOString(); }
+function uid() { return Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
+function maskPnr(pnr) { if(!pnr) return '–'; return pnr.slice(0,8)+'****'; }
+function calcDuration(tIn,tOut) {
+  if(!tIn||!tOut) return '–';
+  const [ih,im]=(tIn||'00:00').split(':').map(Number);
+  const [oh,om]=(tOut||'00:00').split(':').map(Number);
+  let mins=(oh*60+om)-(ih*60+im);
+  if(mins<0) mins+=1440;
+  return Math.floor(mins/60)+'h '+('0'+mins%60).slice(-2)+'min';
+}
+function updateActiveCount() {
+  ensureCampingData(_myCampingId);
+  const c = _data.personalliggare[_myCampingId].entries.filter(e=>e.date===todayStr()&&!e.timeOut).length;
+  const el = document.getElementById('active-count');
+  el.textContent = c; el.style.display = c>0?'':'none';
+}
+function openModal(id) { document.getElementById(id).classList.add('show'); }
+function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+document.addEventListener('click',e=>{ if(e.target.classList.contains('modal-overlay')) e.target.classList.remove('show'); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') document.querySelectorAll('.modal-overlay.show').forEach(m=>m.classList.remove('show')); });
+function toast(msg,type='ok') {
+  const t=document.getElementById('toast');
+  const colors={ok:'var(--green-bg)',err:'var(--red-bg)',warn:'var(--amber-bg)'};
+  const icons={ok:'ti-check',err:'ti-x',warn:'ti-alert-triangle'};
+  t.innerHTML=`<i class="ti ${icons[type]||'ti-info-circle'}" style="font-size:14px"></i> ${msg}`;
+  t.style.background=colors[type]||colors.ok;
+  t.style.opacity='1'; t.style.transform='translateY(0)';
+  setTimeout(()=>{ t.style.opacity='0'; t.style.transform='translateY(6px)'; },2800);
+}
+function portalLogout() {
+  sessionStorage.setItem('ccs_logged_out','1');
+  sessionStorage.removeItem('ccs_session');
+  sessionStorage.removeItem('ccs_portal_user');
+  window.location.replace('index.html');
+}
+
+init();
+</script>
+</body>
+</html>
