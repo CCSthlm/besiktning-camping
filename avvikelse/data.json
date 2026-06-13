@@ -16,9 +16,9 @@
       "beskrivning": "Misstänkt hjärtstopp",
       "omedelbar": "HLR med hjärtstartare",
       "ansvarig": "Massimo Johansson",
-      "deadline": "",
+      "deadline": "2026-06-13",
       "kommentar": "Ingen utredning, personalen hanterade enligt rutin",
-      "status": "eskalerad",
+      "status": "stängd",
       "eskalerad": false,
       "bilder": [],
       "dynamicFields": {
@@ -44,6 +44,13 @@
           "händelse": "Status: Ny → Eskalerad",
           "kommentar": "Ingen utredning, personalen hanterade enligt rutin",
           "status": "eskalerad"
+        },
+        {
+          "ts": "2026-06-13T21:09:43.489Z",
+          "av": "Massimo Johansson",
+          "händelse": "Status: Eskalerad → Stängd",
+          "kommentar": "",
+          "status": "stängd"
         }
       ]
     },
