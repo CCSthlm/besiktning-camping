@@ -162,5 +162,38 @@
       "note": "",
       "active": true
     }
-  ]
+  ],
+  "company": {},
+  "personalliggare": {
+    "c7": {
+      "entries": [
+        {
+          "id": "mqc71gbtbspvm",
+          "name": "Massimo Johansson",
+          "pnr": "",
+          "date": "2026-06-13",
+          "timeIn": "12:09",
+          "timeOut": "",
+          "registeredBy": "Massimo Johansson",
+          "registeredAt": "2026-06-13T10:09:30.089Z",
+          "manual": false,
+          "manualReason": "",
+          "edited": false,
+          "campingId": "c7"
+        }
+      ],
+      "personal": [],
+      "auditlog": [
+        {
+          "id": "mqc71gbthdgbx",
+          "ts": "2026-06-13T10:09:30.089Z",
+          "user": "Massimo Johansson",
+          "action": "in",
+          "detail": "Massimo Johansson stämplade in 12:09 (2026-06-13)",
+          "oldVal": "",
+          "newVal": "12:09"
+        }
+      ]
+    }
+  }
 }
