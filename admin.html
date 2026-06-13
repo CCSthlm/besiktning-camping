@@ -297,6 +297,42 @@ tr:hover td{background:var(--bg3);}
       </div>
     </div>
 
+    <!-- AVVIKELSE SETTINGS -->
+    <div class="page" id="page-av-settings">
+      <div class="card"><div class="card-header"><span class="card-title">E-post och notifieringar</span></div>
+        <div style="padding:20px">
+          <div class="form-grid">
+            <div class="form-field"><label>Notifieringsmail (ny avvikelse)</label><input type="text" id="av-notify-email" placeholder="massimo.johansson@cc-camping.se"></div>
+            <div class="form-field"><label>EmailJS Public Key</label><input type="text" id="av-ejs-key" placeholder="din_public_key"></div>
+          </div>
+          <div class="form-grid">
+            <div class="form-field"><label>EmailJS Service ID</label><input type="text" id="av-ejs-service" placeholder="service_xxxxxxx"></div>
+            <div class="form-field"><label>EmailJS Template ID</label><input type="text" id="av-ejs-template" placeholder="template_xxxxxxx"></div>
+          </div>
+          <button class="btn-primary" onclick="saveAvSettings()"><i class="ti ti-device-floppy"></i> Spara</button>
+        </div>
+      </div>
+      <div class="card"><div class="card-header"><span class="card-title">Anläggningar i avvikelsesystemet</span></div>
+        <div style="padding:20px">
+          <div style="font-size:12px;color:var(--text2);margin-bottom:12px">Anläggningar hämtas från campinglistan. Nedanstående listas för referens.</div>
+          <div id="av-anl-list" style="display:flex;flex-direction:column;gap:6px"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AVVIKELSE ROLES INFO -->
+    <div class="page" id="page-av-roles">
+      <div class="card"><div class="card-header"><span class="card-title">Avvikelseroller</span></div>
+        <div style="padding:20px;display:flex;flex-direction:column;gap:10px;">
+          <div class="role-section" style="border-left-color:#854F0B;padding:10px 14px"><div class="role-section-title"><i class="ti ti-alert-triangle" style="color:#854F0B"></i> Avvikelseadmin</div><div style="font-size:13px;color:var(--text2)">Hanterar alla inställningar och konfiguration för avvikelsesystemet. Ser alla ärenden.</div></div>
+          <div class="role-section" style="border-left-color:#7c3aed;padding:10px 14px"><div class="role-section-title"><i class="ti ti-chart-bar" style="color:#7c3aed"></i> Ledning / styrelse</div><div style="font-size:13px;color:var(--text2)">Ser statistik, dashboard, rapporter och alla allvarliga ärenden oavsett anläggning.</div></div>
+          <div class="role-section" style="border-left-color:#3B6D11;padding:10px 14px"><div class="role-section-title"><i class="ti ti-tent" style="color:#3B6D11"></i> Anläggningsansvarig</div><div style="font-size:13px;color:var(--text2)">Ser och hanterar alla ärenden på sina tilldelade anläggningar/campingar.</div></div>
+          <div class="role-section" style="border-left-color:#c2410c;padding:10px 14px"><div class="role-section-title"><i class="ti ti-flame" style="color:#c2410c"></i> Brandskyddsansvarig</div><div style="font-size:13px;color:var(--text2)">Ser brand- och SBA-ärenden samt allvarliga arbetsmiljöärenden oavsett anläggning.</div></div>
+          <div style="background:var(--bg3);border-radius:var(--radius);padding:12px 14px;font-size:13px;color:var(--text2)"><i class="ti ti-users"></i> <strong>Rapportör</strong> — alla inloggade användare i domänen cc-camping.se. Ingen speciell roll krävs för att registrera avvikelse.</div>
+        </div>
+      </div>
+    </div>
+
     <!-- ACCESS DENIED -->
     <div class="page" id="page-denied">
       <div class="access-denied"><i class="ti ti-lock"></i><h2 style="font-size:18px;margin-bottom:8px">Åtkomst nekad</h2><p style="font-size:13px">Du har inte behörighet till detta avsnitt.</p></div>
@@ -337,6 +373,19 @@ tr:hover td{background:var(--bg3);}
           </div>
           <div class="role-section role-personal" style="padding:10px 12px;">
             <label class="checkbox-item"><input type="checkbox" id="role-personal"> <i class="ti ti-id-badge-2" style="font-size:14px;color:#2563eb"></i> <span><strong>Personaladmin</strong> – personallista för sin camping</span></label>
+          </div>
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin:10px 0 6px;padding-top:8px;border-top:1px solid var(--border)">Avvikelsehantering</div>
+          <div class="role-section" style="padding:9px 12px;border-left:3px solid #854F0B;">
+            <label class="checkbox-item"><input type="checkbox" id="role-avvikelse-admin"> <i class="ti ti-alert-triangle" style="font-size:14px;color:#854F0B"></i> <span><strong>Avvikelseadmin</strong> – all administration</span></label>
+          </div>
+          <div class="role-section" style="padding:9px 12px;border-left:3px solid #7c3aed;">
+            <label class="checkbox-item"><input type="checkbox" id="role-avvikelse-ledning"> <i class="ti ti-chart-bar" style="font-size:14px;color:#7c3aed"></i> <span><strong>Ledning / styrelse</strong> – alla ärenden, statistik</span></label>
+          </div>
+          <div class="role-section" style="padding:9px 12px;border-left:3px solid #3B6D11;">
+            <label class="checkbox-item"><input type="checkbox" id="role-avvikelse-anlaggning"> <i class="ti ti-tent" style="font-size:14px;color:#3B6D11"></i> <span><strong>Anläggningsansvarig</strong> – sina campingars ärenden</span></label>
+          </div>
+          <div class="role-section" style="padding:9px 12px;border-left:3px solid #c2410c;">
+            <label class="checkbox-item"><input type="checkbox" id="role-avvikelse-brand"> <i class="ti ti-flame" style="font-size:14px;color:#c2410c"></i> <span><strong>Brandskyddsansvarig</strong> – brand/SBA-ärenden</span></label>
           </div>
         </div>
       </div>
@@ -447,6 +496,10 @@ const ADMIN_ROLES = {
   sektions:    { key:'sektions',    label:'Sektionsadmin',     icon:'ti-building',    color:'var(--amber)', badge:'badge-sektions' },
   besiktnings: { key:'besiktnings', label:'Besiktningsadmin',  icon:'ti-certificate', color:'var(--accent)', badge:'badge-besiktnings' },
   personal:    { key:'personal',    label:'Personaladmin',     icon:'ti-id-badge-2',  color:'#2563eb', badge:'badge-personal' },
+  'avvikelse-admin':    { key:'avvikelse-admin',    label:'Avvikelseadmin',        icon:'ti-alert-triangle', color:'#854F0B', badge:'badge-sektions' },
+  'avvikelse-ledning':  { key:'avvikelse-ledning',  label:'Ledning / styrelse',    icon:'ti-chart-bar',      color:'#7c3aed', badge:'badge-global' },
+  'avvikelse-anlaggning':{ key:'avvikelse-anlaggning', label:'Anläggningsansvarig', icon:'ti-tent',           color:'#3B6D11', badge:'badge-besiktnings' },
+  'avvikelse-brand':    { key:'avvikelse-brand',    label:'Brandskyddsansvarig',   icon:'ti-flame',          color:'#c2410c', badge:'badge-personal' },
 };
 
 const APP_LIST = [
@@ -464,6 +517,8 @@ const PAGE_ACCESS = {
   inspectors:   ['global','besiktnings'],
   'pl-settings':['global','sektions'],
   settings:     ['global'],
+  'av-settings':['global','avvikelse-admin'],
+  'av-roles':   ['global','avvikelse-admin'],
 };
 
 const PAGE_META = {
@@ -475,6 +530,8 @@ const PAGE_META = {
   'pl-settings': {title:'Företagsinställningar',   sub:'Uppgifter för personalliggaren'},
   settings:      {title:'Inställningar',           sub:'GitHub-integration och systemkonfiguration'},
   denied:        {title:'Åtkomst nekad',           sub:''},
+  'av-settings': {title:'Avvikelse – Inställningar', sub:'E-post, anläggningar och konfiguration'},
+  'av-roles':    {title:'Avvikelse – Roller',         sub:'Beskrivning av avvikelseroller'},
 };
 
 // ── STATE ─────────────────────────────────────────────────────────────────
@@ -549,6 +606,13 @@ function buildSidebar() {
   if (isGlobal) {
     html += `<div class="nav-group-label"><i class="ti ti-adjustments"></i> System</div>`;
     html += `<div class="nav-item" onclick="showPage('settings')"><i class="ti ti-settings"></i> Inställningar</div>`;
+  }
+
+  const hasAvAdmin = _myAdminRoles.some(r=>['global','avvikelse-admin'].includes(r));
+  if (hasAvAdmin) {
+    html += `<div class="nav-group-label"><i class="ti ti-alert-triangle"></i> Avvikelsehantering</div>`;
+    html += `<div class="nav-item" onclick="showPage('av-settings')"><i class="ti ti-settings-2"></i> Inställningar</div>`;
+    html += `<div class="nav-item" onclick="showPage('av-roles')"><i class="ti ti-shield-check"></i> Roller & behörigheter</div>`;
   }
 
   document.getElementById('sidebar-nav').innerHTML = html;
@@ -686,7 +750,7 @@ function openAddUser() {
   document.getElementById('user-pin').value = '';
   document.getElementById('user-pnr').value = '';
   document.getElementById('user-active').value = 'true';
-  ['global','sektions','besiktnings','personal'].forEach(r => { const el=document.getElementById('role-'+r); if(el) el.checked=false; });
+  ['global','sektions','besiktnings','personal','avvikelse-admin','avvikelse-ledning','avvikelse-anlaggning','avvikelse-brand'].forEach(r => { const el=document.getElementById('role-'+r); if(el) el.checked=false; });
   buildAppCheckboxes([]);
   populatePLCampingSelect('');
   openModal('modal-user');
@@ -704,7 +768,7 @@ function openEditUser(id) {
   document.getElementById('user-active').value = u.active===false?'false':'true';
   // Set admin role checkboxes
   const roles = u.adminRoles || (u.role==='Admin'?['global']:[]);
-  ['global','sektions','besiktnings','personal'].forEach(r => {
+  ['global','sektions','besiktnings','personal','avvikelse-admin','avvikelse-ledning','avvikelse-anlaggning','avvikelse-brand'].forEach(r => {
     const el=document.getElementById('role-'+r);
     if(el) el.checked = roles.includes(r);
   });
@@ -732,7 +796,7 @@ function saveUser() {
   const pin = document.getElementById('user-pin').value.trim();
   if (!name) { alert('Namn krävs.'); return; }
   if (!pin || !/^\d{4}$/.test(pin)) { alert('PIN-kod måste vara 4 siffror.'); return; }
-  const adminRoles = ['global','sektions','besiktnings','personal'].filter(r => document.getElementById('role-'+r)?.checked);
+  const adminRoles = ['global','sektions','besiktnings','personal','avvikelse-admin','avvikelse-ledning','avvikelse-anlaggning','avvikelse-brand'].filter(r => document.getElementById('role-'+r)?.checked);
   const apps = Array.from(document.querySelectorAll('#user-apps-check input:checked')).map(e=>e.value);
   const editId = document.getElementById('user-edit-id').value;
   const obj = {
