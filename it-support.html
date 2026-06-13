@@ -259,6 +259,46 @@ body {
 .fade-in { animation: fadeIn .25s ease both; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
+/* ── SCREENSHOT DROP ZONE ── */
+.drop-zone {
+  border: 2px dashed var(--border2); border-radius: var(--radius-lg);
+  padding: 28px 20px; text-align: center; cursor: pointer;
+  transition: border-color .2s, background .2s; background: var(--bg3);
+  position: relative;
+}
+.drop-zone:hover, .drop-zone.drag-over {
+  border-color: var(--accent); background: var(--green-bg);
+}
+.drop-zone input[type=file] {
+  position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+}
+.drop-zone-icon { font-size: 28px; color: var(--text3); margin-bottom: 8px; }
+.drop-zone-text { font-size: 13px; color: var(--text2); line-height: 1.6; }
+.drop-zone-hint { font-size: 11px; color: var(--text3); margin-top: 4px; }
+.screenshot-preview {
+  margin-top: 12px; border-radius: var(--radius); overflow: hidden;
+  border: 1px solid var(--border2); position: relative; display: none;
+}
+.screenshot-preview img {
+  width: 100%; max-height: 280px; object-fit: contain;
+  background: var(--bg4); display: block;
+}
+.screenshot-preview-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 7px 12px; background: var(--bg3); border-top: 1px solid var(--border);
+  font-size: 12px; color: var(--text2);
+}
+.btn-remove-img {
+  background: none; border: none; cursor: pointer; color: var(--red);
+  font-size: 12px; font-weight: 500; font-family: inherit;
+  display: flex; align-items: center; gap: 4px; padding: 0;
+}
+.btn-remove-img:hover { text-decoration: underline; }
+.paste-hint {
+  font-size:11px; color:var(--text3); margin-top:6px;
+  display:flex; align-items:center; gap:4px;
+}
+
 @media(max-width:500px) {
   .form-row { grid-template-columns: 1fr; }
   .form-row.trio { grid-template-columns: 1fr 1fr; }
@@ -423,6 +463,33 @@ body {
       </div>
     </div>
 
+    <!-- Screenshot card -->
+    <div class="card fade-in" id="screenshot-card">
+      <div class="card-header">
+        <i class="ti ti-screenshot card-header-icon"></i>
+        <span class="card-header-title">Skärmdump <span style="font-size:11px;color:var(--text3);font-weight:400">(valfritt)</span></span>
+      </div>
+      <div class="card-body">
+        <div class="drop-zone" id="drop-zone"
+             ondragover="dzDragOver(event)" ondragleave="dzDragLeave(event)" ondrop="dzDrop(event)">
+          <input type="file" id="screenshot-input" accept="image/*" onchange="onFileSelect(this)">
+          <div class="drop-zone-icon"><i class="ti ti-photo-up"></i></div>
+          <div class="drop-zone-text">Dra och släpp en bild här, eller klicka för att välja fil</div>
+          <div class="drop-zone-hint">PNG, JPG, GIF · max 1 MB</div>
+        </div>
+        <div class="paste-hint"><i class="ti ti-clipboard" style="font-size:12px"></i> Du kan också klistra in med <kbd style="background:var(--bg4);border:1px solid var(--border2);padding:1px 5px;border-radius:4px;font-size:10px">Ctrl+V</kbd> eller <kbd style="background:var(--bg4);border:1px solid var(--border2);padding:1px 5px;border-radius:4px;font-size:10px">⌘V</kbd></div>
+        <div class="screenshot-preview" id="screenshot-preview">
+          <img id="screenshot-img" src="" alt="Förhandsgranskning">
+          <div class="screenshot-preview-bar">
+            <span id="screenshot-name">bild.png</span>
+            <button class="btn-remove-img" onclick="removeScreenshot()">
+              <i class="ti ti-trash" style="font-size:12px"></i> Ta bort
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="btn-row">
       <button class="btn-secondary" onclick="goToStep1()">
         <i class="ti ti-arrow-left"></i> Tillbaka
@@ -496,6 +563,8 @@ let _category = '';   // 'compusuit' | 'hardware' | 'general'
 let _sub = '';        // 'bokning' | 'kassa' | 'compumat' | 'aterbetalning' | 'ovrigt_cs'
 let _severity = '';
 let _campings = [];
+let _screenshotB64 = '';   // base64 data URL of screenshot
+let _screenshotName = '';
 
 // ── INIT ──────────────────────────────────────────────────────────────────
 (function init() {
@@ -723,11 +792,67 @@ function buildSummary() {
     });
   }
 
+  const screenshotRow = _screenshotB64
+    ? '<div style="margin-top:8px;border-top:1px solid var(--border);padding-top:8px"><strong>Skärmdump:</strong> <span style="color:var(--accent)">✓ Bifogad (' + _screenshotName + ')</span></div>'
+    : '';
   document.getElementById('summary-content').innerHTML =
-    rows.map(([k,v]) => `<div><strong>${k}:</strong> ${v}</div>`).join('');
+    rows.map(([k,v]) => `<div><strong>${k}:</strong> ${v}</div>`).join('') + screenshotRow;
 }
 
 // ── SUBMIT ────────────────────────────────────────────────────────────────
+// ── SCREENSHOT HANDLING ───────────────────────────────────────────────────
+function dzDragOver(e) {
+  e.preventDefault();
+  document.getElementById('drop-zone').classList.add('drag-over');
+}
+function dzDragLeave(e) {
+  document.getElementById('drop-zone').classList.remove('drag-over');
+}
+function dzDrop(e) {
+  e.preventDefault();
+  document.getElementById('drop-zone').classList.remove('drag-over');
+  const file = e.dataTransfer.files[0];
+  if (file) processImageFile(file);
+}
+function onFileSelect(input) {
+  if (input.files[0]) processImageFile(input.files[0]);
+}
+
+function processImageFile(file) {
+  if (!file.type.startsWith('image/')) { alert('Välj en bildfil (PNG, JPG, GIF).'); return; }
+  if (file.size > 1.5 * 1024 * 1024) { alert('Bilden är för stor (max 1,5 MB). Komprimera eller ta en mindre skärmdump.'); return; }
+  const reader = new FileReader();
+  reader.onload = e => {
+    _screenshotB64 = e.target.result;
+    _screenshotName = file.name;
+    document.getElementById('screenshot-img').src = _screenshotB64;
+    document.getElementById('screenshot-name').textContent = file.name + ' (' + (file.size/1024).toFixed(0) + ' KB)';
+    document.getElementById('screenshot-preview').style.display = '';
+    document.getElementById('drop-zone').style.display = 'none';
+  };
+  reader.readAsDataURL(file);
+}
+
+function removeScreenshot() {
+  _screenshotB64 = ''; _screenshotName = '';
+  document.getElementById('screenshot-img').src = '';
+  document.getElementById('screenshot-preview').style.display = 'none';
+  document.getElementById('drop-zone').style.display = '';
+  document.getElementById('screenshot-input').value = '';
+}
+
+// Paste from clipboard (Ctrl+V anywhere on page)
+document.addEventListener('paste', e => {
+  const items = e.clipboardData && e.clipboardData.items;
+  if (!items) return;
+  for (const item of items) {
+    if (item.type.startsWith('image/')) {
+      const file = item.getAsFile();
+      if (file) { processImageFile(file); break; }
+    }
+  }
+});
+
 async function submitForm() {
   const key = _category === 'compusuit' ? _sub : _category;
   const cfg = FORM_CONFIGS[key];
@@ -791,6 +916,7 @@ async function submitForm() {
   <p style="font-size:11px;color:#909088;margin:10px 0 0;padding:0 2px">
     Skickat via CCSthlm IT-felanmälan &nbsp;·&nbsp; ${new Date().toLocaleString('sv-SE')}
   </p>
+  ${_screenshotB64 ? `<div style="margin-top:16px"><p style="font-size:12px;font-weight:600;color:#5a5a57;margin:0 0 8px">Skärmdump:</p><img src="${_screenshotB64}" alt="Skärmdump" style="max-width:100%;border-radius:6px;border:1px solid #e0e0e0;display:block"></div>` : ''}
 </div>`;
 
   // EmailJS template parameters
@@ -839,6 +965,7 @@ function showSuccess(type, camping) {
 
 function resetForm() {
   _category = ''; _sub = ''; _severity = '';
+  removeScreenshot();
   ['compusuit','hardware','general'].forEach(c =>
     document.getElementById('cat-' + c).classList.remove('selected'));
   document.getElementById('sub-card').style.display = 'none';
