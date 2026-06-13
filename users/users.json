@@ -26,6 +26,18 @@
         "admin"
       ],
       "created": "2026-06-12"
+    },
+    {
+      "id": "umqc037gewixb",
+      "name": "Receptionen Björkö Örn",
+      "email": "info.bjorko@cc-camping.se",
+      "pin": "1968",
+      "role": "Granskare",
+      "active": true,
+      "apps": [
+        "it-support"
+      ],
+      "created": "2026-06-13"
     }
   ],
   "campings": [
