@@ -1107,12 +1107,16 @@ function nowISO() { return new Date().toISOString(); }
 function uid() { return Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
 function maskPnr(pnr) { if(!pnr) return '–'; return pnr.slice(0,8)+'****'; }
 function calcDuration(tIn,tOut) {
-  if(!tIn||!tOut) return '–';
-  const [ih,im]=(tIn||'00:00').split(':').map(Number);
-  const [oh,om]=(tOut||'00:00').split(':').map(Number);
-  let mins=(oh*60+om)-(ih*60+im);
-  if(mins<0) mins+=1440;
-  return Math.floor(mins/60)+'h '+('0'+mins%60).slice(-2)+'min';
+  if (!tIn || !tOut) return '–';
+  const inStr  = String(tIn).trim();
+  const outStr = String(tOut).trim();
+  if (!inStr.includes(':') || !outStr.includes(':')) return '–';
+  const [ih,im] = inStr.split(':').map(Number);
+  const [oh,om] = outStr.split(':').map(Number);
+  if (isNaN(ih)||isNaN(im)||isNaN(oh)||isNaN(om)) return '–';
+  let mins = (oh*60+om) - (ih*60+im);
+  if (mins < 0) mins += 1440;
+  return Math.floor(mins/60) + 'h ' + ('0'+mins%60).slice(-2) + 'min';
 }
 function updateActiveCount() {
   ensureCampingData(_myCampingId);
