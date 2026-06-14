@@ -340,7 +340,7 @@ tr:hover td{background:rgba(59,109,17,.025);}
     </div>
     <div class="modal-tabs">
       <button class="modal-tab active" onclick="showDetTab('info')">Information</button>
-      <button class="modal-tab" onclick="showDetTab('kommentarer')">Kommentarer & historik</button>
+      <button class="modal-tab" onclick="showDetTab('kommentarer')">Kommentarer & historik <span id="det-comment-count" style="display:none;background:var(--accent);color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:20px;margin-left:4px">0</span></button>
     </div>
     <div class="modal-body" id="det-body"></div>
     <div class="modal-footer" id="det-footer"></div>
@@ -565,11 +565,13 @@ function renderTable() {
       <td>${levChip}</td>
       <td><span class="age-badge ${ageCls}">${ageStr}</span></td>
       <td style="font-size:12px;color:var(--text2)">${a.ansvarig||'–'}</td>
-      <td><div style="display:flex;gap:4px;justify-content:flex-end">
-        <button class="btn-icon" onclick="openDetail('${a.id}')" title="Visa" style="background:var(--blue-bg);color:var(--blue-text);border-color:rgba(26,79,122,.2)"><i class="ti ti-eye"></i></button>
-        <button class="btn-icon" onclick="openEdit('${a.id}')" title="Redigera" style="background:var(--green-bg);color:var(--green-text);border-color:rgba(59,109,17,.2)"><i class="ti ti-pencil"></i></button>
-        <button class="btn-icon" onclick="openComment('${a.id}')" title="Kommentar" style="background:var(--amber-bg);color:var(--amber-text);border-color:rgba(133,79,11,.2)"><i class="ti ti-message-plus"></i></button>
-      </div></td>
+      <td style="white-space:nowrap;text-align:right">
+        <span onclick="openDetail('${a.id}')" style="cursor:pointer;color:var(--blue-text);font-size:12px;font-weight:500" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">Visa</span>
+        <span style="color:var(--border2);margin:0 5px">·</span>
+        <span onclick="openEdit('${a.id}')" style="cursor:pointer;color:var(--accent);font-size:12px;font-weight:500" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">Redigera</span>
+        <span style="color:var(--border2);margin:0 5px">·</span>
+        <span onclick="openComment('${a.id}')" style="cursor:pointer;color:var(--amber);font-size:12px;font-weight:500" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">Kommentar</span>
+      </td>
     </tr>`;
   }).join('');
 }
@@ -715,6 +717,11 @@ function renderDetailModal() {
   const a = _currentÄrende;
   document.getElementById('det-title').textContent = a.titel;
   document.getElementById('det-meta').textContent = a.id + ' · Skapad ' + fmtDate(a.skapad) + ' av ' + a.rapportör;
+  // Comment count — only count user comments and status changes, not the initial create entry
+  const commentCount = (a.logg||[]).filter(l=>l.typ!=='create').length;
+  const countEl = document.getElementById('det-comment-count');
+  countEl.textContent = commentCount;
+  countEl.style.display = commentCount > 0 ? '' : 'none';
   renderDetBody();
   document.getElementById('det-footer').innerHTML = `
     <button class="btn-secondary" onclick="closeModal('modal-detail')">Stäng</button>
