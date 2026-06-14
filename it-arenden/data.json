@@ -27,6 +27,34 @@
           "text": "Ärende skapat"
         }
       ]
+    },
+    {
+      "id": "IT-2606-WPMX",
+      "titel": "Temporary open the gate or door",
+      "beskrivning": "I need to know how we temporary opens up for example toilet doors for a few hours when we have special functions and the same way we want to set the gate open for a few hours when we are driving in/out continuisly under few hours.\n\nHow do we set this up.",
+      "system": "CompuSuit",
+      "kategori": "Fråga",
+      "prioritet": "Normal",
+      "anläggning": "Caravan Club Björkö Örns Camping",
+      "ansvarig": "Massimo Johansson",
+      "status": "leverantör",
+      "leverantör": "CompuSoft",
+      "leverantörDatum": "2026-06-14",
+      "leverantörNr": "551369",
+      "åtgärd": "",
+      "lösning": "",
+      "rapportör": "Massimo Johansson",
+      "rapportörEmail": "massimo.johansson@cc-camping.se",
+      "skapad": "2026-06-14T20:34:11.132Z",
+      "uppdaterad": "2026-06-14T20:34:11.132Z",
+      "logg": [
+        {
+          "ts": "2026-06-14T20:34:11.132Z",
+          "av": "Massimo Johansson",
+          "typ": "create",
+          "text": "Ärende skapat"
+        }
+      ]
     }
   ],
   "settings": {}
