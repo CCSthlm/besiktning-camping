@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IT-ärendehantering – CCSthlm</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/tabler-icons.min.css">
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f5f5f3;--bg2:#ffffff;--bg3:#eeede8;--bg4:#e5e4de;
+  --text:#1a1a18;--text2:#5a5a57;--text3:#909088;
+  --accent:#3B6D11;--accent2:#27500A;--accent-glow:rgba(59,109,17,.1);
+  --red:#A32D2D;--red-bg:#FCEBEB;--red-text:#501313;
+  --amber:#854F0B;--amber-bg:#FAEEDA;--amber-text:#412402;
+  --green-bg:#EAF3DE;--green-text:#27500A;
+  --blue-bg:#e0f0ff;--blue-text:#1a4f7a;
+  --border:rgba(0,0,0,.10);--border2:rgba(0,0,0,.18);
+  --radius:8px;--radius-lg:14px;--shadow:0 2px 16px rgba(0,0,0,.08);
+  --sidebar:240px;
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:var(--bg3);color:var(--text);min-height:100vh;display:flex;}
+
+/* SIDEBAR */
+.sidebar{width:var(--sidebar);flex-shrink:0;background:var(--bg2);border-right:1px solid var(--border2);display:flex;flex-direction:column;position:fixed;inset:0 auto 0 0;z-index:10;}
+.sidebar-logo{padding:16px 18px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:9px;}
+.sidebar-logo i{font-size:22px;color:var(--blue-text);}
+.sidebar-logo-text{font-size:14px;font-weight:700;}
+.sidebar-logo-sub{font-size:10px;color:var(--text3);}
+.sidebar-nav{flex:1;padding:8px 0;overflow-y:auto;}
+.nav-group{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);padding:12px 18px 4px;}
+.nav-item{display:flex;align-items:center;gap:9px;padding:9px 18px;cursor:pointer;font-size:13px;color:var(--text2);border-left:2px solid transparent;transition:all .15s;user-select:none;}
+.nav-item:hover{background:var(--bg3);color:var(--text);}
+.nav-item.active{background:var(--bg3);color:var(--accent2);border-left-color:var(--accent);font-weight:600;}
+.nav-item i{font-size:15px;flex-shrink:0;}
+.nav-badge{background:var(--red);color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:20px;margin-left:auto;}
+.nav-badge-amber{background:var(--amber);color:#fff;}
+.sidebar-footer{padding:12px 18px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:7px;}
+.sb-user{display:flex;align-items:center;gap:8px;padding-bottom:8px;border-bottom:1px solid var(--border);margin-bottom:2px;}
+.sb-avatar{width:28px;height:28px;border-radius:50%;background:var(--accent);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+
+/* MAIN */
+.main{margin-left:var(--sidebar);flex:1;display:flex;flex-direction:column;min-height:100vh;}
+.topbar{padding:14px 24px;border-bottom:1px solid var(--border2);display:flex;justify-content:space-between;align-items:center;background:var(--bg2);position:sticky;top:0;z-index:5;gap:10px;flex-wrap:wrap;}
+.topbar h1{font-size:17px;font-weight:700;}
+.topbar-sub{font-size:12px;color:var(--text2);margin-top:1px;}
+.content{padding:20px 24px;flex:1;}
+
+/* CARDS */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:16px;box-shadow:var(--shadow);}
+.card-header{padding:12px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+.card-title{font-size:14px;font-weight:600;display:flex;align-items:center;gap:7px;}
+
+/* QUICK STATS */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px;}
+.stat{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:border-color .15s;}
+.stat:hover{border-color:var(--accent);}
+.stat-icon{width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.si-blue{background:var(--blue-bg);color:var(--blue-text);}
+.si-amber{background:var(--amber-bg);color:var(--amber);}
+.si-red{background:var(--red-bg);color:var(--red);}
+.si-green{background:var(--green-bg);color:var(--accent);}
+.stat-val{font-size:22px;font-weight:700;line-height:1;}
+.stat-lbl{font-size:11px;color:var(--text3);}
+
+/* FILTER BAR */
+.filter-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;align-items:center;}
+.filter-bar select,.filter-bar input[type=text],.filter-bar input[type=date]{padding:7px 10px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);font-size:12px;color:var(--text);font-family:inherit;}
+.filter-bar select:focus,.filter-bar input:focus{outline:none;border-color:var(--accent);}
+
+/* QUICK FILTER TABS */
+.qfilter-bar{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;}
+.qf-btn{padding:7px 14px;border-radius:20px;border:1px solid var(--border2);background:var(--bg3);font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;color:var(--text2);transition:all .15s;display:flex;align-items:center;gap:5px;}
+.qf-btn:hover{border-color:var(--accent);color:var(--accent2);}
+.qf-btn.active{background:var(--accent);color:#fff;border-color:var(--accent);}
+.qf-count{background:rgba(255,255,255,.3);padding:0 5px;border-radius:10px;font-size:10px;}
+.qf-btn:not(.active) .qf-count{background:var(--bg4);color:var(--text3);}
+
+/* TABLE */
+table{width:100%;border-collapse:collapse;}
+th{text-align:left;padding:9px 12px;font-size:11px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--border);background:var(--bg3);white-space:nowrap;}
+td{padding:10px 12px;font-size:13px;border-bottom:1px solid var(--border);vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:rgba(59,109,17,.025);}
+.td-id{font-family:monospace;font-size:11px;color:var(--text3);}
+.td-title{font-weight:500;max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+
+/* AGE INDICATOR */
+.age-badge{display:inline-flex;align-items:center;font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;white-space:nowrap;}
+.age-fresh{background:var(--green-bg);color:var(--green-text);}
+.age-mid{background:var(--amber-bg);color:var(--amber-text);}
+.age-old{background:var(--red-bg);color:var(--red-text);}
+
+/* STATUS BADGES */
+.s-badge{display:inline-flex;font-size:11px;font-weight:600;padding:2px 9px;border-radius:20px;white-space:nowrap;}
+.s-ny{background:var(--blue-bg);color:var(--blue-text);}
+.s-pågående{background:var(--green-bg);color:var(--green-text);}
+.s-leverantör{background:#fff3ed;color:#7c2d12;}
+.s-inväntar{background:var(--amber-bg);color:var(--amber-text);}
+.s-löst{background:#ede9f7;color:#4a1d96;}
+.s-stängd{background:var(--bg3);color:var(--text3);}
+
+/* PRIORITY */
+.p-badge{display:inline-flex;font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;}
+.p-låg{background:var(--bg3);color:var(--text3);}
+.p-normal{background:var(--blue-bg);color:var(--blue-text);}
+.p-hög{background:var(--amber-bg);color:var(--amber-text);}
+.p-kritisk{background:var(--red-bg);color:var(--red-text);}
+
+/* LEVERANTÖR INDICATOR */
+.lev-chip{display:inline-flex;align-items:center;gap:4px;font-size:11px;background:var(--bg3);border:1px solid var(--border2);padding:2px 8px;border-radius:20px;color:var(--text2);}
+.lev-chip.sent{background:#fff3ed;border-color:rgba(194,65,12,.2);color:#7c2d12;}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto;}
+.modal-overlay.show{display:flex;}
+.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius-lg);width:100%;max-width:660px;margin:auto;box-shadow:0 8px 40px rgba(0,0,0,.2);animation:scaleIn .2s ease;}
+@keyframes scaleIn{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
+.modal-header{padding:16px 20px 12px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:flex-start;position:sticky;top:0;background:var(--bg2);z-index:1;}
+.modal-title{font-size:15px;font-weight:700;}
+.modal-close{background:none;border:none;cursor:pointer;color:var(--text3);font-size:20px;flex-shrink:0;}
+.modal-body{padding:18px 20px;}
+.modal-footer{padding:12px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px;position:sticky;bottom:0;background:var(--bg2);}
+.modal-tabs{display:flex;gap:0;border-bottom:1px solid var(--border);padding:0 20px;margin-bottom:18px;}
+.modal-tab{padding:9px 14px;font-size:13px;font-weight:500;color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;font-family:inherit;background:none;border-top:none;border-left:none;border-right:none;}
+.modal-tab.active{color:var(--accent);border-bottom-color:var(--accent);}
+
+/* FORM */
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
+.fg.full{grid-template-columns:1fr;}
+.fg.trio{grid-template-columns:1fr 1fr 1fr;}
+.ff{display:flex;flex-direction:column;gap:4px;}
+.ff label{font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.04em;}
+.ff input,.ff select,.ff textarea{padding:9px 11px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius);font-size:13px;color:var(--text);font-family:inherit;transition:border-color .2s;}
+.ff input:focus,.ff select:focus,.ff textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow);}
+.ff textarea{resize:vertical;min-height:75px;line-height:1.6;}
+.ff input::placeholder,.ff textarea::placeholder{color:var(--text3);}
+.req{color:var(--red);}
+.fhelp{font-size:11px;color:var(--text3);margin-top:2px;}
+
+/* COMMENT BOX */
+.comment-entry{padding:10px 12px;background:var(--bg3);border-radius:var(--radius);margin-bottom:7px;font-size:12px;line-height:1.6;}
+.comment-meta{font-size:11px;color:var(--text3);margin-top:3px;}
+.comment-system{border-left:3px solid var(--accent);background:var(--green-bg);}
+.comment-user{border-left:3px solid var(--blue-text);}
+.comment-status{border-left:3px solid var(--amber);}
+
+/* DETAIL ROWS */
+.dr{display:flex;margin-bottom:8px;font-size:13px;gap:10px;}
+.dl{min-width:160px;color:var(--text2);font-weight:500;flex-shrink:0;font-size:12px;}
+.dv{flex:1;color:var(--text);}
+.dsec{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);padding:10px 0 5px;border-bottom:1px solid var(--border);margin:14px 0 8px;}
+
+/* LEVER SECTION */
+.lev-box{background:var(--bg3);border-radius:var(--radius);padding:12px 14px;border-left:3px solid #c2410c;margin-bottom:14px;}
+.lev-box-title{font-size:12px;font-weight:700;color:#7c2d12;margin-bottom:8px;display:flex;align-items:center;gap:5px;}
+
+/* BUTTONS */
+.btn-primary{padding:9px 18px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px;transition:background .15s;}
+.btn-primary:hover{background:var(--accent2);}
+.btn-secondary{padding:8px 14px;background:var(--bg3);color:var(--text2);border:1px solid var(--border2);border-radius:var(--radius);font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:5px;transition:background .15s;}
+.btn-secondary:hover{background:var(--bg4);}
+.btn-add{padding:9px 16px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius);font-size:13px;font-weight:500;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px;transition:background .15s;}
+.btn-add:hover{background:var(--accent2);}
+.btn-icon{padding:5px 8px;border:1px solid var(--border2);border-radius:var(--radius);background:var(--bg3);cursor:pointer;color:var(--text2);transition:all .15s;display:inline-flex;align-items:center;font-size:13px;}
+.btn-icon:hover{border-color:var(--accent);color:var(--accent);}
+.btn-portal{width:100%;padding:8px;background:var(--bg3);color:var(--text2);border:1px solid var(--border2);border-radius:var(--radius);font-size:12px;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:7px;}
+.btn-portal:hover{background:var(--bg4);}
+.btn-logout{width:100%;padding:8px;background:var(--red-bg);color:var(--red);border:1px solid rgba(163,45,45,.2);border-radius:var(--radius);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:7px;}
+.btn-logout:hover{background:var(--red);color:#fff;}
+
+/* NO DATA */
+.no-data{text-align:center;padding:48px 20px;color:var(--text3);}
+.no-data i{font-size:40px;display:block;margin-bottom:10px;}
+
+/* TOAST */
+#toast{position:fixed;bottom:22px;right:22px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);padding:10px 14px;font-size:13px;z-index:999;box-shadow:var(--shadow);opacity:0;transform:translateY(6px);transition:all .25s;pointer-events:none;display:flex;align-items:center;gap:6px;}
+
+@media(max-width:700px){.sidebar{display:none;}.main{margin-left:0;}.stats-row{grid-template-columns:1fr 1fr;}.fg{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<nav class="sidebar">
+  <div class="sidebar-logo">
+    <i class="ti ti-ticket"></i>
+    <div><div class="sidebar-logo-text">IT-ärendehantering</div><div class="sidebar-logo-sub">CCSthlm</div></div>
+  </div>
+  <div class="sidebar-nav">
+    <div class="nav-item active" id="nav-ärenden" onclick="showView('ärenden')"><i class="ti ti-list"></i> Alla ärenden <span class="nav-badge" id="nav-open-count" style="display:none">0</span></div>
+    <div class="nav-group">Snabbvy</div>
+    <div class="nav-item" id="nav-öppna" onclick="showView('öppna')"><i class="ti ti-clock"></i> Öppna ärenden</div>
+    <div class="nav-item" id="nav-leverantör" onclick="showView('leverantör')"><i class="ti ti-send"></i> Hos leverantör <span class="nav-badge nav-badge-amber" id="nav-lev-count" style="display:none">0</span></div>
+  </div>
+  <div class="sidebar-footer">
+    <div class="sb-user">
+      <div class="sb-avatar" id="sb-avatar">?</div>
+      <div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" id="sb-name">–</div><div style="font-size:10px;color:var(--text3)">IT-ärendehantering</div></div>
+    </div>
+    <button class="btn-portal" onclick="window.location.href='index.html'"><i class="ti ti-arrow-left"></i> Portal</button>
+    <button class="btn-logout" onclick="portalLogout()"><i class="ti ti-logout"></i> Logga ut</button>
+  </div>
+</nav>
+
+<div class="main">
+  <div class="topbar">
+    <div><h1 id="view-title">Alla ärenden</h1><div class="topbar-sub" id="view-sub">Samtliga IT-ärenden</div></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+      <button class="btn-secondary" onclick="exportExcel()"><i class="ti ti-table-export"></i> Excel</button>
+      <button class="btn-add" onclick="openNewModal()"><i class="ti ti-plus"></i> Nytt ärende</button>
+    </div>
+  </div>
+  <div class="content">
+
+    <!-- STATS -->
+    <div class="stats-row">
+      <div class="stat" onclick="showView('öppna')"><div class="stat-icon si-blue"><i class="ti ti-ticket"></i></div><div><div class="stat-val" id="st-öppna">–</div><div class="stat-lbl">Öppna ärenden</div></div></div>
+      <div class="stat" onclick="showView('leverantör')"><div class="stat-icon si-amber"><i class="ti ti-send"></i></div><div><div class="stat-val" id="st-lev">–</div><div class="stat-lbl">Hos leverantör</div></div></div>
+      <div class="stat"><div class="stat-icon si-red"><i class="ti ti-alarm"></i></div><div><div class="stat-val" id="st-gamla">–</div><div class="stat-lbl">Äldre än 30 dagar</div></div></div>
+      <div class="stat"><div class="stat-icon si-green"><i class="ti ti-check"></i></div><div><div class="stat-val" id="st-stängda">–</div><div class="stat-lbl">Stängda (30 dagar)</div></div></div>
+    </div>
+
+    <!-- QUICK FILTER TABS -->
+    <div class="qfilter-bar" id="qfilter-bar">
+      <button class="qf-btn active" id="qf-alla" onclick="setQFilter('alla')"><i class="ti ti-list" style="font-size:12px"></i> Alla <span class="qf-count" id="qfc-alla">0</span></button>
+      <button class="qf-btn" id="qf-öppna" onclick="setQFilter('öppna')"><i class="ti ti-clock" style="font-size:12px"></i> Öppna <span class="qf-count" id="qfc-öppna">0</span></button>
+      <button class="qf-btn" id="qf-leverantör" onclick="setQFilter('leverantör')"><i class="ti ti-send" style="font-size:12px"></i> Hos leverantör <span class="qf-count" id="qfc-leverantör">0</span></button>
+      <button class="qf-btn" id="qf-gamla" onclick="setQFilter('gamla')"><i class="ti ti-alarm" style="font-size:12px"></i> Äldre än 30 dagar <span class="qf-count" id="qfc-gamla">0</span></button>
+      <button class="qf-btn" id="qf-stängda" onclick="setQFilter('stängda')"><i class="ti ti-check" style="font-size:12px"></i> Stängda <span class="qf-count" id="qfc-stängda">0</span></button>
+    </div>
+
+    <!-- FILTER BAR -->
+    <div class="filter-bar">
+      <select id="f-system" onchange="renderTable()"><option value="">Alla system</option></select>
+      <select id="f-prio" onchange="renderTable()"><option value="">Alla prioriteter</option><option>Låg</option><option>Normal</option><option>Hög</option><option>Kritisk</option></select>
+      <select id="f-ansvarig" onchange="renderTable()"><option value="">Alla ansvariga</option></select>
+      <input type="text" id="f-sok" placeholder="🔍 Sök titel, ID, beskrivning…" oninput="renderTable()" style="min-width:200px">
+      <button class="btn-secondary" onclick="clearFilters()"><i class="ti ti-x"></i></button>
+    </div>
+
+    <!-- TABLE -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title" id="table-title"><i class="ti ti-list"></i> Ärenden</span>
+        <span id="table-count" style="font-size:11px;color:var(--text3)">0 ärenden</span>
+      </div>
+      <div style="overflow-x:auto">
+        <table>
+          <thead>
+            <tr>
+              <th onclick="sortBy('id')" style="cursor:pointer">ID ↕</th>
+              <th onclick="sortBy('title')" style="cursor:pointer">Titel ↕</th>
+              <th>System</th>
+              <th>Prioritet</th>
+              <th onclick="sortBy('status')" style="cursor:pointer">Status ↕</th>
+              <th>Leverantör</th>
+              <th onclick="sortBy('age')" style="cursor:pointer">Ålder ↕</th>
+              <th>Ansvarig</th>
+              <th style="text-align:right">Åtgärd</th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div><!-- main -->
+
+<!-- NEW / EDIT MODAL -->
+<div class="modal-overlay" id="modal-form">
+  <div class="modal">
+    <div class="modal-header">
+      <div><div class="modal-title" id="form-modal-title">Nytt ärende</div><div style="font-size:11px;color:var(--text3);margin-top:2px" id="form-modal-id"></div></div>
+      <button class="modal-close" onclick="closeModal('modal-form')"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="edit-id">
+
+      <div class="fg">
+        <div class="ff"><label>Titel <span class="req">*</span></label><input type="text" id="f-titel" placeholder="Kort beskrivande rubrik"></div>
+        <div class="ff"><label>System <span class="req">*</span></label><select id="f-system-val"></select></div>
+      </div>
+      <div class="fg">
+        <div class="ff"><label>Kategori</label><select id="f-kategori"><option>Fel</option><option>Önskemål</option><option>Fråga</option><option>Förbättring</option></select></div>
+        <div class="ff"><label>Prioritet</label><select id="f-prio-val"><option>Låg</option><option selected>Normal</option><option>Hög</option><option>Kritisk</option></select></div>
+      </div>
+      <div class="fg">
+        <div class="ff"><label>Anläggning</label><select id="f-anlaggning"></select></div>
+        <div class="ff"><label>Ansvarig internt</label><input type="text" id="f-ansvarig-val" placeholder="Namn"></div>
+      </div>
+      <div class="fg full">
+        <div class="ff"><label>Beskrivning <span class="req">*</span></label><textarea id="f-beskrivning" placeholder="Vad är problemet? Beskriv detaljerat, inklusive felmeddelanden, när det uppstår och hur ofta."></textarea></div>
+      </div>
+      <div class="fg full">
+        <div class="ff"><label>Status</label><select id="f-status-val">
+          <option value="ny">Ny</option>
+          <option value="pågående">Pågående</option>
+          <option value="leverantör">Hos leverantör</option>
+          <option value="inväntar">Inväntar svar</option>
+          <option value="löst">Löst</option>
+          <option value="stängd">Stängd</option>
+        </select></div>
+      </div>
+
+      <!-- Leverantörsinformation -->
+      <div style="background:var(--bg3);border-radius:var(--radius);padding:12px 14px;border-left:3px solid #c2410c;margin-bottom:12px;">
+        <div style="font-size:12px;font-weight:700;color:#7c2d12;margin-bottom:8px;display:flex;align-items:center;gap:5px;"><i class="ti ti-send" style="font-size:13px"></i> Leverantörsinformation</div>
+        <div class="fg trio">
+          <div class="ff"><label>Leverantör</label><select id="f-lev"><option value="">– Ingen –</option><option>CompuSoft</option><option>Microsoft</option><option>Annan</option></select></div>
+          <div class="ff"><label>Skickat datum</label><input type="date" id="f-lev-datum"></div>
+          <div class="ff"><label>Lev. ärendenr</label><input type="text" id="f-lev-nr" placeholder="Tex CS-12345"></div>
+        </div>
+      </div>
+
+      <div class="fg full">
+        <div class="ff"><label>Åtgärdsbeskrivning</label><textarea id="f-åtgärd" placeholder="Vad har gjorts hittills? Steg som provats, kontakter tagna…"></textarea></div>
+      </div>
+      <div class="fg full" id="losning-wrap">
+        <div class="ff"><label>Lösningsbeskrivning</label><textarea id="f-losning" placeholder="Hur löstes ärendet? Fyll i vid stängning."></textarea></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeModal('modal-form')">Avbryt</button>
+      <button class="btn-primary" onclick="saveÄrende()"><i class="ti ti-check"></i> Spara</button>
+    </div>
+  </div>
+</div>
+
+<!-- DETAIL MODAL -->
+<div class="modal-overlay" id="modal-detail">
+  <div class="modal" style="max-width:700px">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title" id="det-title">–</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:2px" id="det-meta">–</div>
+      </div>
+      <button class="modal-close" onclick="closeModal('modal-detail')"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="modal-tabs">
+      <button class="modal-tab active" onclick="showDetTab('info')">Information</button>
+      <button class="modal-tab" onclick="showDetTab('kommentarer')">Kommentarer & historik</button>
+    </div>
+    <div class="modal-body" id="det-body"></div>
+    <div class="modal-footer" id="det-footer"></div>
+  </div>
+</div>
+
+<!-- QUICK COMMENT MODAL -->
+<div class="modal-overlay" id="modal-comment">
+  <div class="modal" style="max-width:460px">
+    <div class="modal-header"><span class="modal-title">Lägg till kommentar</span><button class="modal-close" onclick="closeModal('modal-comment')"><i class="ti ti-x"></i></button></div>
+    <div class="modal-body">
+      <input type="hidden" id="comment-ärende-id">
+      <div class="ff" style="margin-bottom:10px"><label>Kommentar / åtgärdsuppdatering</label><textarea id="comment-text" placeholder="Beskriv vad som gjorts, status-uppdatering, svar från leverantör…" style="min-height:90px"></textarea></div>
+      <div class="fg">
+        <div class="ff"><label>Uppdatera status</label><select id="comment-status">
+          <option value="">Ändra inte</option>
+          <option value="ny">Ny</option>
+          <option value="pågående">Pågående</option>
+          <option value="leverantör">Hos leverantör</option>
+          <option value="inväntar">Inväntar svar</option>
+          <option value="löst">Löst</option>
+          <option value="stängd">Stängd</option>
+        </select></div>
+      </div>
+    </div>
+    <div class="modal-footer"><button class="btn-secondary" onclick="closeModal('modal-comment')">Avbryt</button><button class="btn-primary" onclick="saveComment()"><i class="ti ti-check"></i> Spara</button></div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+const GH_REPO = 'CCSthlm/besiktning-camping';
+const DATA_PATH = 'it-arenden/data.json';
+
+const SYSTEMS = ['CompuSuit','Microsoft 365','CompuMat','Hårdvara','Nätverk / Internet','GitHub / Webb','Skrivare / Periferiutrustning','Övrigt'];
+const STATUS_LABEL = {ny:'Ny',pågående:'Pågående',leverantör:'Hos leverantör',inväntar:'Inväntar svar',löst:'Löst',stängd:'Stängd'};
+const STATUS_BADGE = {ny:'s-ny',pågående:'s-pågående',leverantör:'s-leverantör',inväntar:'s-inväntar',löst:'s-löst',stängd:'s-stängd'};
+const PRIO_BADGE  = {Låg:'p-låg',Normal:'p-normal',Hög:'p-hög',Kritisk:'p-kritisk'};
+const OPEN_STATUSES = ['ny','pågående','leverantör','inväntar'];
+
+let _user = null;
+let _data = { ärenden:[], settings:{} };
+let _ghSha = null;
+let _campings = [];
+let _currentView = 'ärenden';
+let _qFilter = 'alla';
+let _sortCol = 'age';
+let _sortAsc = false;
+let _currentÄrende = null;
+let _detTab = 'info';
+
+// ── INIT ──────────────────────────────────────────────────────────────────
+(async function init() {
+  const sess = sessionStorage.getItem('ccs_session') || sessionStorage.getItem('ccs_portal_user');
+  if (!sess) { window.location.replace('index.html'); return; }
+  try { _user = JSON.parse(sess); } catch(e) { window.location.replace('index.html'); return; }
+
+  const initials = _user.name.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase();
+  document.getElementById('sb-avatar').textContent = initials;
+  document.getElementById('sb-name').textContent = _user.name;
+
+  await loadData();
+  populateFormSelects();
+  renderStats();
+  renderTable();
+})();
+
+// ── DATA ──────────────────────────────────────────────────────────────────
+async function loadData() {
+  const token = localStorage.getItem('gh_token') || '';
+  if (!token) return;
+  try {
+    // Load campings from users.json
+    const ures = await fetch('https://api.github.com/repos/'+GH_REPO+'/contents/users/users.json',
+      {headers:{'Authorization':'token '+token}});
+    if (ures.ok) {
+      const ugh = await ures.json();
+      const ubytes = Uint8Array.from(atob(ugh.content.replace(/\n/g,'')), c=>c.charCodeAt(0));
+      const udata = JSON.parse(new TextDecoder('utf-8').decode(ubytes));
+      _campings = (udata.campings||[]).map(c=>c.name);
+    }
+    // Load IT ärenden
+    const res = await fetch('https://api.github.com/repos/'+GH_REPO+'/contents/'+DATA_PATH,
+      {headers:{'Authorization':'token '+token}});
+    if (res.status === 404) return;
+    if (!res.ok) return;
+    const gh = await res.json();
+    _ghSha = gh.sha;
+    const bytes = Uint8Array.from(atob(gh.content.replace(/\n/g,'')), c=>c.charCodeAt(0));
+    _data = JSON.parse(new TextDecoder('utf-8').decode(bytes));
+    if (!_data.ärenden) _data.ärenden = [];
+  } catch(e) { console.warn('loadData:', e.message); }
+}
+
+async function saveData() {
+  const token = localStorage.getItem('gh_token') || '';
+  if (!token) { toast('GitHub-token saknas','warn'); return; }
+  const url = 'https://api.github.com/repos/'+GH_REPO+'/contents/'+DATA_PATH;
+  try {
+    const content = btoa(unescape(encodeURIComponent(JSON.stringify(_data,null,2))));
+    const payload = {message:'IT-ärende '+new Date().toISOString().slice(0,10), content, branch:'main'};
+    if (_ghSha) payload.sha = _ghSha;
+    const res = await fetch(url,{method:'PUT',headers:{'Authorization':'token '+token,'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    if (!res.ok) throw new Error((await res.json()).message||res.status);
+    _ghSha = (await res.json()).content?.sha || _ghSha;
+    toast('Sparat','ok');
+  } catch(e) { toast('Fel: '+e.message,'err'); }
+}
+
+// ── POPULATE SELECTS ──────────────────────────────────────────────────────
+function populateFormSelects() {
+  // System dropdown in form
+  const sysSel = document.getElementById('f-system-val');
+  SYSTEMS.forEach(s => sysSel.insertAdjacentHTML('beforeend',`<option>${s}</option>`));
+
+  // System filter
+  const sysFilter = document.getElementById('f-system');
+  SYSTEMS.forEach(s => sysFilter.insertAdjacentHTML('beforeend',`<option>${s}</option>`));
+
+  // Anläggning
+  const anlSel = document.getElementById('f-anlaggning');
+  anlSel.innerHTML = '<option value="">– Ej anläggningsspecifik –</option>';
+  const campList = _campings.length ? _campings :
+    ['CC Björkö Örns Camping','CC Östnora Camping','CC Kapellskärs Camping','CC Mista Camping','CC Storsveds Camping','CC Örstigs Camping','Gräddös Pärla Kök & Bar','Östnora Kök & Bar'];
+  campList.forEach(c => anlSel.insertAdjacentHTML('beforeend',`<option>${c}</option>`));
+}
+
+// ── STATS ─────────────────────────────────────────────────────────────────
+function renderStats() {
+  const all = _data.ärenden;
+  const öppna = all.filter(a=>OPEN_STATUSES.includes(a.status));
+  const lev = all.filter(a=>['leverantör','inväntar'].includes(a.status));
+  const gamla = öppna.filter(a=>ageDays(a.skapad)>30);
+  const stängda30 = all.filter(a=>['löst','stängd'].includes(a.status)&&ageDays(a.stängd||a.skapad)<=30);
+
+  document.getElementById('st-öppna').textContent = öppna.length;
+  document.getElementById('st-lev').textContent = lev.length;
+  document.getElementById('st-gamla').textContent = gamla.length;
+  document.getElementById('st-stängda').textContent = stängda30.length;
+
+  // Quick filter counts
+  document.getElementById('qfc-alla').textContent = all.length;
+  document.getElementById('qfc-öppna').textContent = öppna.length;
+  document.getElementById('qfc-leverantör').textContent = lev.length;
+  document.getElementById('qfc-gamla').textContent = gamla.length;
+  document.getElementById('qfc-stängda').textContent = all.filter(a=>['löst','stängd'].includes(a.status)).length;
+
+  // Nav badges
+  const openBadge = document.getElementById('nav-open-count');
+  openBadge.textContent = öppna.length;
+  openBadge.style.display = öppna.length ? '' : 'none';
+  const levBadge = document.getElementById('nav-lev-count');
+  levBadge.textContent = lev.length;
+  levBadge.style.display = lev.length ? '' : 'none';
+
+  // Ansvarig filter
+  const ans = [...new Set(all.map(a=>a.ansvarig).filter(Boolean))].sort();
+  const ansSel = document.getElementById('f-ansvarig');
+  const cur = ansSel.value;
+  ansSel.innerHTML = '<option value="">Alla ansvariga</option>';
+  ans.forEach(a=>ansSel.insertAdjacentHTML('beforeend',`<option ${a===cur?'selected':''}>${a}</option>`));
+}
+
+// ── TABLE ─────────────────────────────────────────────────────────────────
+function getFilteredList() {
+  let list = [..._data.ärenden];
+
+  // Quick filter
+  if (_qFilter === 'öppna') list = list.filter(a=>OPEN_STATUSES.includes(a.status));
+  else if (_qFilter === 'leverantör') list = list.filter(a=>['leverantör','inväntar'].includes(a.status));
+  else if (_qFilter === 'gamla') list = list.filter(a=>OPEN_STATUSES.includes(a.status)&&ageDays(a.skapad)>30);
+  else if (_qFilter === 'stängda') list = list.filter(a=>['löst','stängd'].includes(a.status));
+
+  // Field filters
+  const sys = document.getElementById('f-system').value;
+  const prio = document.getElementById('f-prio').value;
+  const ans = document.getElementById('f-ansvarig').value;
+  const sok = (document.getElementById('f-sok').value||'').toLowerCase();
+
+  if (sys)  list = list.filter(a=>a.system===sys);
+  if (prio) list = list.filter(a=>a.prioritet===prio);
+  if (ans)  list = list.filter(a=>a.ansvarig===ans);
+  if (sok)  list = list.filter(a=>(a.id+a.titel+a.beskrivning+a.system).toLowerCase().includes(sok));
+
+  // Sort
+  list.sort((a,b)=>{
+    let av, bv;
+    if (_sortCol==='id')     { av=a.id; bv=b.id; }
+    else if (_sortCol==='title') { av=a.titel||''; bv=b.titel||''; }
+    else if (_sortCol==='status') { av=a.status||''; bv=b.status||''; }
+    else { av=ageDays(a.skapad); bv=ageDays(b.skapad); } // age
+    if (av<bv) return _sortAsc?-1:1;
+    if (av>bv) return _sortAsc?1:-1;
+    return 0;
+  });
+  return list;
+}
+
+function renderTable() {
+  const list = getFilteredList();
+  document.getElementById('table-count').textContent = list.length + ' ärenden';
+
+  const tbody = document.getElementById('tbody');
+  if (!list.length) {
+    tbody.innerHTML = `<tr><td colspan="9"><div class="no-data"><i class="ti ti-ticket"></i>Inga ärenden matchar filtret</div></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = list.map(a=>{
+    const age = ageDays(a.skapad);
+    const ageCls = age<=7?'age-fresh':age<=30?'age-mid':'age-old';
+    const ageStr = age===0?'Idag':age===1?'1 dag':age+' dagar';
+    const levChip = a.leverantör
+      ? `<span class="lev-chip sent"><i class="ti ti-send" style="font-size:10px"></i>${a.leverantör}${a.leverantörNr?' #'+a.leverantörNr:''}</span>`
+      : '<span style="color:var(--text3);font-size:12px">–</span>';
+    return `<tr>
+      <td class="td-id">${a.id}</td>
+      <td class="td-title" title="${a.titel}">${a.titel}</td>
+      <td style="white-space:nowrap;font-size:12px;color:var(--text2)">${a.system}</td>
+      <td><span class="p-badge ${PRIO_BADGE[a.prioritet]||''}">${a.prioritet}</span></td>
+      <td><span class="s-badge ${STATUS_BADGE[a.status]||''}">${STATUS_LABEL[a.status]||a.status}</span></td>
+      <td>${levChip}</td>
+      <td><span class="age-badge ${ageCls}">${ageStr}</span></td>
+      <td style="font-size:12px;color:var(--text2)">${a.ansvarig||'–'}</td>
+      <td><div style="display:flex;gap:4px;justify-content:flex-end">
+        <button class="btn-icon" onclick="openDetail('${a.id}')" title="Visa"><i class="ti ti-eye"></i></button>
+        <button class="btn-icon" onclick="openEdit('${a.id}')" title="Redigera"><i class="ti ti-pencil"></i></button>
+        <button class="btn-icon" onclick="openComment('${a.id}')" title="Kommentar"><i class="ti ti-message-plus"></i></button>
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+
+function sortBy(col) {
+  if (_sortCol===col) _sortAsc=!_sortAsc;
+  else { _sortCol=col; _sortAsc=true; }
+  renderTable();
+}
+
+function clearFilters() {
+  document.getElementById('f-system').value='';
+  document.getElementById('f-prio').value='';
+  document.getElementById('f-ansvarig').value='';
+  document.getElementById('f-sok').value='';
+  _qFilter='alla';
+  document.querySelectorAll('.qf-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('qf-alla').classList.add('active');
+  renderTable();
+}
+
+function setQFilter(f) {
+  _qFilter=f;
+  document.querySelectorAll('.qf-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('qf-'+f).classList.add('active');
+  renderTable();
+}
+
+// ── NEW / EDIT ÄRENDE ─────────────────────────────────────────────────────
+function openNewModal() {
+  document.getElementById('form-modal-title').textContent = 'Nytt ärende';
+  document.getElementById('form-modal-id').textContent = '';
+  document.getElementById('edit-id').value = '';
+  document.getElementById('f-titel').value = '';
+  document.getElementById('f-beskrivning').value = '';
+  document.getElementById('f-åtgärd').value = '';
+  document.getElementById('f-losning').value = '';
+  document.getElementById('f-system-val').value = SYSTEMS[0];
+  document.getElementById('f-kategori').value = 'Fel';
+  document.getElementById('f-prio-val').value = 'Normal';
+  document.getElementById('f-anlaggning').value = '';
+  document.getElementById('f-ansvarig-val').value = _user.name;
+  document.getElementById('f-status-val').value = 'ny';
+  document.getElementById('f-lev').value = '';
+  document.getElementById('f-lev-datum').value = '';
+  document.getElementById('f-lev-nr').value = '';
+  openModal('modal-form');
+}
+
+function openEdit(id) {
+  const a = _data.ärenden.find(x=>x.id===id);
+  if (!a) return;
+  document.getElementById('form-modal-title').textContent = 'Redigera ärende';
+  document.getElementById('form-modal-id').textContent = a.id;
+  document.getElementById('edit-id').value = a.id;
+  document.getElementById('f-titel').value = a.titel||'';
+  document.getElementById('f-beskrivning').value = a.beskrivning||'';
+  document.getElementById('f-åtgärd').value = a.åtgärd||'';
+  document.getElementById('f-losning').value = a.lösning||'';
+  document.getElementById('f-system-val').value = a.system||SYSTEMS[0];
+  document.getElementById('f-kategori').value = a.kategori||'Fel';
+  document.getElementById('f-prio-val').value = a.prioritet||'Normal';
+  document.getElementById('f-anlaggning').value = a.anläggning||'';
+  document.getElementById('f-ansvarig-val').value = a.ansvarig||'';
+  document.getElementById('f-status-val').value = a.status||'ny';
+  document.getElementById('f-lev').value = a.leverantör||'';
+  document.getElementById('f-lev-datum').value = a.leverantörDatum||'';
+  document.getElementById('f-lev-nr').value = a.leverantörNr||'';
+  openModal('modal-form');
+}
+
+function saveÄrende() {
+  const titel = document.getElementById('f-titel').value.trim();
+  const beskrivning = document.getElementById('f-beskrivning').value.trim();
+  if (!titel) { toast('Titel krävs','warn'); return; }
+  if (!beskrivning) { toast('Beskrivning krävs','warn'); return; }
+
+  const editId = document.getElementById('edit-id').value;
+  const newStatus = document.getElementById('f-status-val').value;
+
+  const obj = {
+    titel,
+    beskrivning,
+    system: document.getElementById('f-system-val').value,
+    kategori: document.getElementById('f-kategori').value,
+    prioritet: document.getElementById('f-prio-val').value,
+    anläggning: document.getElementById('f-anlaggning').value,
+    ansvarig: document.getElementById('f-ansvarig-val').value,
+    status: newStatus,
+    leverantör: document.getElementById('f-lev').value,
+    leverantörDatum: document.getElementById('f-lev-datum').value,
+    leverantörNr: document.getElementById('f-lev-nr').value,
+    åtgärd: document.getElementById('f-åtgärd').value,
+    lösning: document.getElementById('f-losning').value,
+  };
+
+  if (editId) {
+    const i = _data.ärenden.findIndex(a=>a.id===editId);
+    if (i>=0) {
+      const old = _data.ärenden[i];
+      _data.ärenden[i] = {...old, ...obj, uppdaterad: nowISO()};
+      if (old.status !== newStatus) {
+        addLog(editId, 'status', `Status ändrad: ${STATUS_LABEL[old.status]||old.status} → ${STATUS_LABEL[newStatus]||newStatus}`);
+      } else {
+        addLog(editId, 'edit', 'Ärende uppdaterat');
+      }
+      if (['löst','stängd'].includes(newStatus) && !old.stängd) _data.ärenden[i].stängd = nowISO();
+    }
+  } else {
+    const id = genId();
+    _data.ärenden.push({
+      id, ...obj,
+      rapportör: _user.name,
+      rapportörEmail: _user.email||'',
+      skapad: nowISO(),
+      uppdaterad: nowISO(),
+      logg: [{ts:nowISO(), av:_user.name, typ:'create', text:'Ärende skapat'}],
+    });
+  }
+
+  closeModal('modal-form');
+  renderStats();
+  renderTable();
+  saveData();
+}
+
+// ── DETAIL VIEW ───────────────────────────────────────────────────────────
+function openDetail(id) {
+  _currentÄrende = _data.ärenden.find(a=>a.id===id);
+  if (!_currentÄrende) return;
+  _detTab = 'info';
+  renderDetailModal();
+  openModal('modal-detail');
+}
+
+function showDetTab(tab) {
+  _detTab = tab;
+  document.querySelectorAll('.modal-tab').forEach((t,i)=>t.classList.toggle('active', ['info','kommentarer'][i]===tab));
+  renderDetBody();
+}
+
+function renderDetailModal() {
+  const a = _currentÄrende;
+  document.getElementById('det-title').textContent = a.titel;
+  document.getElementById('det-meta').textContent = a.id + ' · Skapad ' + fmtDate(a.skapad) + ' av ' + a.rapportör;
+  renderDetBody();
+  document.getElementById('det-footer').innerHTML = `
+    <button class="btn-secondary" onclick="closeModal('modal-detail')">Stäng</button>
+    <button class="btn-secondary" onclick="closeModal('modal-detail');openEdit('${a.id}')"><i class="ti ti-pencil"></i> Redigera</button>
+    <button class="btn-primary" onclick="closeModal('modal-detail');openComment('${a.id}')"><i class="ti ti-message-plus"></i> Kommentar</button>`;
+}
+
+function renderDetBody() {
+  const a = _currentÄrende;
+  const age = ageDays(a.skapad);
+  const ageCls = age<=7?'age-fresh':age<=30?'age-mid':'age-old';
+
+  if (_detTab === 'info') {
+    const levSection = a.leverantör ? `
+      <div class="dsec">Leverantörsinformation</div>
+      <div class="lev-box">
+        <div class="lev-box-title"><i class="ti ti-send"></i> Skickat till ${a.leverantör}</div>
+        <div class="dr"><span class="dl">Skickat datum</span><span class="dv">${a.leverantörDatum||'–'}</span></div>
+        <div class="dr"><span class="dl">Leverantörens ärendenr</span><span class="dv" style="font-weight:600">${a.leverantörNr||'–'}</span></div>
+        <div class="dr"><span class="dl">Tid hos leverantör</span><span class="dv"><span class="age-badge ${ageCls}">${age} dagar sedan skickat</span></span></div>
+      </div>` : '';
+
+    document.getElementById('det-body').innerHTML = `
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
+        <span class="s-badge ${STATUS_BADGE[a.status]||''}">${STATUS_LABEL[a.status]||a.status}</span>
+        <span class="p-badge ${PRIO_BADGE[a.prioritet]||''}">${a.prioritet}</span>
+        <span class="age-badge ${ageCls}"><i class="ti ti-clock" style="font-size:11px"></i> ${age===0?'Skapad idag':age+' dagar gammalt'}</span>
+      </div>
+      <div class="dsec">Grundinformation</div>
+      <div class="dr"><span class="dl">System</span><span class="dv">${a.system}</span></div>
+      <div class="dr"><span class="dl">Kategori</span><span class="dv">${a.kategori}</span></div>
+      <div class="dr"><span class="dl">Anläggning</span><span class="dv">${a.anläggning||'–'}</span></div>
+      <div class="dr"><span class="dl">Ansvarig</span><span class="dv">${a.ansvarig||'–'}</span></div>
+      <div class="dr"><span class="dl">Rapportör</span><span class="dv">${a.rapportör}</span></div>
+      <div class="dr"><span class="dl">Skapad</span><span class="dv">${fmtDate(a.skapad)}</span></div>
+      <div class="dr"><span class="dl">Senast uppdaterad</span><span class="dv">${fmtDate(a.uppdaterad)}</span></div>
+      <div class="dsec">Beskrivning</div>
+      <div style="font-size:13px;line-height:1.7;color:var(--text);white-space:pre-wrap">${a.beskrivning||'–'}</div>
+      <div class="dsec">Åtgärdsbeskrivning</div>
+      <div style="font-size:13px;line-height:1.7;color:var(--text);white-space:pre-wrap">${a.åtgärd||'–'}</div>
+      ${a.lösning?`<div class="dsec">Lösningsbeskrivning</div><div style="font-size:13px;line-height:1.7;color:var(--text);white-space:pre-wrap">${a.lösning}</div>`:''}
+      ${levSection}`;
+  } else {
+    const logg = (a.logg||[]).slice().reverse();
+    const html = logg.length
+      ? logg.map(l=>`<div class="comment-entry comment-${l.typ==='create'?'system':l.typ==='status'?'status':'user'}">
+          <div>${l.text}</div>
+          <div class="comment-meta">${l.av} · ${fmtDate(l.ts)}</div>
+        </div>`).join('')
+      : '<div style="color:var(--text3);font-size:12px;padding:8px">Ingen historik</div>';
+    document.getElementById('det-body').innerHTML = html;
+  }
+}
+
+// ── COMMENT ───────────────────────────────────────────────────────────────
+function openComment(id) {
+  document.getElementById('comment-ärende-id').value = id;
+  document.getElementById('comment-text').value = '';
+  document.getElementById('comment-status').value = '';
+  openModal('modal-comment');
+}
+
+function saveComment() {
+  const id = document.getElementById('comment-ärende-id').value;
+  const text = document.getElementById('comment-text').value.trim();
+  const newStatus = document.getElementById('comment-status').value;
+  if (!text) { toast('Skriv en kommentar','warn'); return; }
+
+  const i = _data.ärenden.findIndex(a=>a.id===id);
+  if (i<0) return;
+  const a = _data.ärenden[i];
+
+  if (newStatus && newStatus !== a.status) {
+    addLog(id, 'status', `Status: ${STATUS_LABEL[a.status]||a.status} → ${STATUS_LABEL[newStatus]||newStatus}. ${text}`);
+    a.status = newStatus;
+    if (['löst','stängd'].includes(newStatus)) a.stängd = nowISO();
+  } else {
+    addLog(id, 'comment', text);
+  }
+  a.uppdaterad = nowISO();
+
+  closeModal('modal-comment');
+  // Refresh detail if open
+  if (_currentÄrende?.id === id) {
+    _currentÄrende = _data.ärenden[i];
+    renderDetBody();
+  }
+  renderStats();
+  renderTable();
+  saveData();
+}
+
+function addLog(id, typ, text) {
+  const a = _data.ärenden.find(x=>x.id===id);
+  if (!a) return;
+  if (!a.logg) a.logg = [];
+  a.logg.push({ts:nowISO(), av:_user.name, typ, text});
+}
+
+// ── EXPORT ────────────────────────────────────────────────────────────────
+function exportExcel() {
+  try {
+    const list = getFilteredList();
+    const wb = XLSX.utils.book_new();
+
+    const rows = [
+      ['IT-ÄRENDEHANTERING – CCSthlm'],
+      ['Exporterad:', new Date().toLocaleString('sv-SE')],
+      [],
+      ['ID','Titel','System','Kategori','Prioritet','Status','Anläggning','Ansvarig','Rapportör','Skapad','Ålder (dagar)','Leverantör','Lev. datum','Lev. ärendenr','Åtgärd','Lösning'],
+      ...list.map(a=>[
+        a.id, a.titel, a.system, a.kategori, a.prioritet,
+        STATUS_LABEL[a.status]||a.status,
+        a.anläggning||'', a.ansvarig||'', a.rapportör,
+        fmtDate(a.skapad), ageDays(a.skapad),
+        a.leverantör||'', a.leverantörDatum||'', a.leverantörNr||'',
+        a.åtgärd||'', a.lösning||''
+      ])
+    ];
+    const ws = XLSX.utils.aoa_to_sheet(rows);
+    ws['!cols'] = [
+      {wch:14},{wch:35},{wch:18},{wch:14},{wch:10},{wch:16},
+      {wch:24},{wch:18},{wch:18},{wch:12},{wch:10},
+      {wch:14},{wch:12},{wch:14},{wch:40},{wch:40}
+    ];
+    XLSX.utils.book_append_sheet(wb, ws, 'Ärenden');
+
+    // Sheet 2: Hos leverantör
+    const levList = _data.ärenden.filter(a=>['leverantör','inväntar'].includes(a.status));
+    if (levList.length) {
+      const levRows = [
+        ['HOS LEVERANTÖR'],
+        [],
+        ['ID','Titel','System','Leverantör','Skickat datum','Lev. ärendenr','Ålder (dagar)','Status','Ansvarig'],
+        ...levList.map(a=>[a.id,a.titel,a.system,a.leverantör||'',a.leverantörDatum||'',a.leverantörNr||'',ageDays(a.skapad),STATUS_LABEL[a.status]||a.status,a.ansvarig||''])
+      ];
+      const ws2 = XLSX.utils.aoa_to_sheet(levRows);
+      ws2['!cols']=[{wch:14},{wch:35},{wch:18},{wch:14},{wch:12},{wch:14},{wch:10},{wch:16},{wch:18}];
+      XLSX.utils.book_append_sheet(wb, ws2, 'Hos leverantör');
+    }
+
+    XLSX.writeFile(wb, 'IT_Arenden_CCSthlm_'+new Date().toISOString().slice(0,10)+'.xlsx');
+    toast('Excel exporterad','ok');
+  } catch(e) {
+    toast('Fel: '+e.message,'err');
+    console.error(e);
+  }
+}
+
+// ── VIEW NAV ──────────────────────────────────────────────────────────────
+const VIEW_META = {
+  ärenden:   {title:'Alla ärenden',     sub:'Samtliga IT-ärenden'},
+  öppna:     {title:'Öppna ärenden',    sub:'Ärenden som inte är lösta eller stängda, sorterade på ålder'},
+  leverantör:{title:'Hos leverantör',   sub:'Ärenden skickade till extern leverantör'},
+};
+function showView(v) {
+  _currentView = v;
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('nav-'+v)?.classList.add('active');
+  const m = VIEW_META[v]||{title:v,sub:''};
+  document.getElementById('view-title').textContent = m.title;
+  document.getElementById('view-sub').textContent = m.sub;
+  // Apply quick filter
+  if (v==='öppna') setQFilter('öppna');
+  else if (v==='leverantör') setQFilter('leverantör');
+  else setQFilter('alla');
+}
+
+// ── HELPERS ───────────────────────────────────────────────────────────────
+function genId() {
+  const d = new Date();
+  return 'IT-'+d.getFullYear().toString().slice(2)+(d.getMonth()+1).toString().padStart(2,'0')+'-'+Math.random().toString(36).slice(2,6).toUpperCase();
+}
+function ageDays(iso) {
+  if (!iso) return 0;
+  return Math.floor((Date.now()-new Date(iso))/(1000*60*60*24));
+}
+function nowISO() { return new Date().toISOString(); }
+function fmtDate(iso) {
+  if (!iso) return '–';
+  try { return new Date(iso).toLocaleString('sv-SE',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}); }
+  catch(e) { return iso; }
+}
+function openModal(id) { document.getElementById(id).classList.add('show'); }
+function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+document.addEventListener('click',e=>{if(e.target.classList.contains('modal-overlay'))e.target.classList.remove('show');});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.modal-overlay.show').forEach(m=>m.classList.remove('show'));});
+function toast(msg,type='ok'){
+  const t=document.getElementById('toast');
+  t.style.background=type==='err'?'var(--red-bg)':type==='warn'?'var(--amber-bg)':'var(--green-bg)';
+  t.style.color=type==='err'?'var(--red-text)':type==='warn'?'var(--amber-text)':'var(--green-text)';
+  t.innerHTML=(type==='ok'?'<i class="ti ti-check"></i>':type==='warn'?'<i class="ti ti-alert-triangle"></i>':'<i class="ti ti-x"></i>')+' '+msg;
+  t.style.opacity='1';t.style.transform='translateY(0)';
+  setTimeout(()=>{t.style.opacity='0';t.style.transform='translateY(6px)';},2800);
+}
+function portalLogout(){sessionStorage.setItem('ccs_logged_out','1');sessionStorage.removeItem('ccs_session');sessionStorage.removeItem('ccs_portal_user');window.location.replace('index.html');}
+</script>
+</body>
+</html>
