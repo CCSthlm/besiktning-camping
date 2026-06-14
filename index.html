@@ -140,12 +140,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
         <div class="token-ok" id="token-ok"><i class="ti ti-check"></i> Token sparad – laddar användare…</div>
       </div>
       <div class="login-tabs">
-        <div class="login-tab active" id="tab-pin" onclick="switchTab('pin')"><i class="ti ti-keypad" style="font-size:14px;margin-right:5px"></i>PIN-kod</div>
-        <div class="login-tab" id="tab-ms" onclick="switchTab('ms')"><i class="ti ti-brand-windows" style="font-size:14px;margin-right:5px"></i>Microsoft 365</div>
+        <div class="login-tab" id="tab-pin" onclick="switchTab('pin')"><i class="ti ti-keypad" style="font-size:14px;margin-right:5px"></i>PIN-kod</div>
+        <div class="login-tab active" id="tab-ms" onclick="switchTab('ms')"><i class="ti ti-brand-windows" style="font-size:14px;margin-right:5px"></i>Microsoft 365</div>
       </div>
 
       <!-- PIN LOGIN -->
-      <div id="pane-pin">
+      <div id="pane-pin" style="display:none">
         <div class="form-field">
           <label>Välj användare</label>
           <select id="user-select" onchange="onUserSelect()">
@@ -175,7 +175,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
       </div>
 
       <!-- MS LOGIN -->
-      <div id="pane-ms" style="display:none;padding:8px 0;">
+      <div id="pane-ms" style="padding:8px 0;">
         <p style="font-size:13px;color:var(--text2);margin-bottom:20px;text-align:center;line-height:1.6;">Logga in med ditt cc-camping.se Microsoft-konto för att komma åt portalen.</p>
         <button class="btn-ms" onclick="loginWithMS()">
           <svg class="ms-logo" viewBox="0 0 23 23" xmlns="http://www.w3.org/2000/svg"><path fill="#f25022" d="M0 0h11v11H0z"/><path fill="#00a4ef" d="M12 0h11v11H12z"/><path fill="#7fba00" d="M0 12h11v11H0z"/><path fill="#ffb900" d="M12 12h11v11H12z"/></svg>
