@@ -1,0 +1,33 @@
+{
+  "ärenden": [
+    {
+      "id": "IT-2606-2H2G",
+      "titel": "AutoCheckin - Bommen",
+      "beskrivning": "I want to enable AutoCheckIn when a guest type there PIN code in the gate. (IN)\nI also what a guest to be AutoCheckOut 2:00 pm (14:00) on their departure day if they are still checked In.",
+      "system": "CompuSuit",
+      "kategori": "Fråga",
+      "prioritet": "Hög",
+      "anläggning": "Caravan Club Björkö Örns Camping",
+      "ansvarig": "Massimo Johansson",
+      "status": "leverantör",
+      "leverantör": "CompuSoft",
+      "leverantörDatum": "2026-06-14",
+      "leverantörNr": "551368",
+      "åtgärd": "",
+      "lösning": "",
+      "rapportör": "Massimo Johansson",
+      "rapportörEmail": "massimo.johansson@cc-camping.se",
+      "skapad": "2026-06-14T20:33:00.992Z",
+      "uppdaterad": "2026-06-14T20:33:00.992Z",
+      "logg": [
+        {
+          "ts": "2026-06-14T20:33:00.992Z",
+          "av": "Massimo Johansson",
+          "typ": "create",
+          "text": "Ärende skapat"
+        }
+      ]
+    }
+  ],
+  "settings": {}
+}
