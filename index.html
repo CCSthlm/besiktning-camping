@@ -120,23 +120,38 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
 
 /* ── NEWS & DISRUPTION BANNERS ── */
 .banner-zone{display:flex;flex-direction:column;gap:8px;margin-bottom:16px;}
-.banner{border-radius:var(--radius-lg);padding:13px 18px;display:flex;align-items:flex-start;gap:12px;cursor:default;animation:fadeIn .3s ease;}
-.banner-disruption{background:#fff3ed;border:1.5px solid #c2410c;}
+.banner{border-radius:var(--radius-lg);padding:13px 18px;display:flex;align-items:flex-start;gap:12px;animation:fadeIn .3s ease;}
+.banner-disruption{background:#fff3ed;border:2px solid #c2410c;animation:fadeIn .3s ease, pulse-border 2s ease-in-out infinite;}
 .banner-news{background:var(--amber-bg);border:1.5px solid rgba(133,79,11,.3);}
 .banner-info{background:var(--blue-bg);border:1.5px solid rgba(26,79,122,.2);}
-.banner-icon{font-size:18px;flex-shrink:0;margin-top:1px;}
-.banner-disruption .banner-icon{color:#c2410c;}
-.banner-news .banner-icon{color:var(--amber);}
-.banner-info .banner-icon{color:var(--blue-text);}
+@keyframes pulse-border{
+  0%,100%{border-color:#c2410c;box-shadow:0 0 0 0 rgba(194,65,12,0);}
+  50%{border-color:#ef4444;box-shadow:0 0 0 5px rgba(194,65,12,.15);}
+}
+.banner-icon-wrap{flex-shrink:0;margin-top:1px;}
+.banner-disruption-icon{
+  width:36px;height:36px;border-radius:50%;
+  background:#c2410c;color:#fff;
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;
+  animation:pulse-icon 2s ease-in-out infinite;
+}
+@keyframes pulse-icon{
+  0%,100%{transform:scale(1);box-shadow:0 0 0 0 rgba(194,65,12,.4);}
+  50%{transform:scale(1.08);box-shadow:0 0 0 7px rgba(194,65,12,0);}
+}
+.banner-news-icon{font-size:20px;color:var(--amber);}
+.banner-info-icon{font-size:20px;color:var(--blue-text);}
 .banner-body{flex:1;min-width:0;}
 .banner-title{font-size:13px;font-weight:700;margin-bottom:2px;}
 .banner-disruption .banner-title{color:#7c2d12;}
 .banner-news .banner-title{color:var(--amber-text);}
 .banner-info .banner-title{color:var(--blue-text);}
 .banner-text{font-size:12px;line-height:1.6;color:var(--text2);}
-.banner-meta{font-size:10px;color:var(--text3);margin-top:3px;}
-.banner-system{font-size:10px;font-weight:600;padding:1px 7px;border-radius:20px;margin-left:6px;}
+.banner-meta{font-size:10px;color:var(--text3);margin-top:3px;display:flex;align-items:center;gap:5px;}
+.banner-system{font-size:10px;font-weight:600;padding:1px 7px;border-radius:20px;margin-left:4px;}
 .banner-disruption .banner-system{background:rgba(194,65,12,.15);color:#7c2d12;}
+.banner-disruption-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#c2410c;margin-bottom:3px;display:flex;align-items:center;gap:4px;}
 .news-archive-link{font-size:12px;color:var(--text3);display:flex;align-items:center;gap:4px;cursor:pointer;margin-bottom:16px;width:fit-content;}
 .news-archive-link:hover{color:var(--accent);}
 
@@ -607,26 +622,45 @@ function renderBanners() {
     if (n.startDate && new Date(n.startDate) > now) return false;
     if (n.endDate && new Date(n.endDate) < now) return false;
     return true;
-  }).sort((a,b) => {
-    // Disruptions first, then by startDate desc
-    if (a.type === 'disruption' && b.type !== 'disruption') return -1;
-    if (b.type === 'disruption' && a.type !== 'disruption') return 1;
-    return new Date(b.startDate||b.created||0) - new Date(a.startDate||a.created||0);
-  });
+  }).sort((a,b) => new Date(b.startDate||b.created||0) - new Date(a.startDate||a.created||0));
+
+  // All disruptions, only latest news and info
+  const disruptions = active.filter(n => n.type === 'disruption');
+  const latestNews  = active.filter(n => n.type === 'news').slice(0,1);
+  const latestInfo  = active.filter(n => n.type === 'info').slice(0,1);
+  const toShow = [...disruptions, ...latestNews, ...latestInfo];
 
   const zone = document.getElementById('banner-zone');
   const archiveWrap = document.getElementById('news-archive-wrap');
 
-  zone.innerHTML = active.map(n => {
-    const cls = n.type==='disruption'?'banner-disruption':n.type==='info'?'banner-info':'banner-news';
-    const icon = n.type==='disruption'?'ti-alert-octagon':n.type==='info'?'ti-info-circle':'ti-speakerphone';
+  zone.innerHTML = toShow.map(n => {
+    const cls  = n.type==='disruption'?'banner-disruption':n.type==='info'?'banner-info':'banner-news';
     const sysTag = n.system ? `<span class="banner-system">${n.system}</span>` : '';
+    const metaDate = fmtBannerDate(n.startDate||n.created);
+
+    if (n.type === 'disruption') {
+      return `<div class="banner ${cls}">
+        <div class="banner-icon-wrap">
+          <div class="banner-disruption-icon"><i class="ti ti-alert-octagon"></i></div>
+        </div>
+        <div class="banner-body">
+          <div class="banner-disruption-label"><i class="ti ti-siren" style="font-size:11px"></i> DRIFTSTÖRNING${sysTag}</div>
+          <div class="banner-title">${n.title}</div>
+          ${n.text ? `<div class="banner-text">${n.text}</div>` : ''}
+          <div class="banner-meta"><i class="ti ti-clock" style="font-size:11px"></i>${metaDate}</div>
+        </div>
+      </div>`;
+    }
+    const icon = n.type==='info' ? 'ti-info-circle' : 'ti-speakerphone';
+    const iconCls = n.type==='info' ? 'banner-info-icon' : 'banner-news-icon';
     return `<div class="banner ${cls}">
-      <i class="ti ${icon} banner-icon"></i>
+      <div class="banner-icon-wrap">
+        <i class="ti ${icon} ${iconCls}"></i>
+      </div>
       <div class="banner-body">
-        <div class="banner-title">${n.title}${sysTag}</div>
+        <div class="banner-title">${n.title}</div>
         ${n.text ? `<div class="banner-text">${n.text}</div>` : ''}
-        <div class="banner-meta">${fmtBannerDate(n.startDate||n.created)}</div>
+        <div class="banner-meta"><i class="ti ti-clock" style="font-size:11px"></i>${metaDate}</div>
       </div>
     </div>`;
   }).join('');
