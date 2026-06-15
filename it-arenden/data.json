@@ -12,13 +12,13 @@
       "status": "inväntar",
       "leverantör": "CompuSoft",
       "leverantörDatum": "2026-06-14",
-      "leverantörNr": "551368",
+      "leverantörNr": "551368, 550992",
       "åtgärd": "",
       "lösning": "",
       "rapportör": "Massimo Johansson",
       "rapportörEmail": "massimo.johansson@cc-camping.se",
       "skapad": "2026-06-14T20:33:00.992Z",
-      "uppdaterad": "2026-06-14T20:43:04.838Z",
+      "uppdaterad": "2026-06-15T08:11:33.987Z",
       "logg": [
         {
           "ts": "2026-06-14T20:33:00.992Z",
@@ -31,6 +31,12 @@
           "av": "Joachim Säfqvist",
           "typ": "status",
           "text": "Status: Hos leverantör → Inväntar svar. De skulle fixa detta på måndagen 15 juni"
+        },
+        {
+          "ts": "2026-06-15T08:11:33.987Z",
+          "av": "Massimo Johansson",
+          "typ": "edit",
+          "text": "Ärende uppdaterat"
         }
       ]
     },
