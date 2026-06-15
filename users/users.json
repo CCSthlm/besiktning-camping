@@ -314,6 +314,18 @@
       "active": true,
       "created": "2026-06-15T17:28:46.915Z",
       "createdBy": "Massimo Johansson"
+    },
+    {
+      "id": "mqfhmx6bynnt",
+      "type": "news",
+      "system": "",
+      "title": "TEstar",
+      "text": "sdfsdfsdfdsf",
+      "startDate": "2026-06-15T15:29:00.000Z",
+      "endDate": "",
+      "active": true,
+      "created": "2026-06-15T17:29:26.387Z",
+      "createdBy": "Massimo Johansson"
     }
   ]
 }
