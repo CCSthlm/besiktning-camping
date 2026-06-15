@@ -52,19 +52,25 @@
       "status": "leverantör",
       "leverantör": "CompuSoft",
       "leverantörDatum": "2026-06-14",
-      "leverantörNr": "551369",
+      "leverantörNr": "551369, 550992",
       "åtgärd": "",
       "lösning": "",
       "rapportör": "Massimo Johansson",
       "rapportörEmail": "massimo.johansson@cc-camping.se",
       "skapad": "2026-06-14T20:34:11.132Z",
-      "uppdaterad": "2026-06-14T20:34:11.132Z",
+      "uppdaterad": "2026-06-15T08:11:50.339Z",
       "logg": [
         {
           "ts": "2026-06-14T20:34:11.132Z",
           "av": "Massimo Johansson",
           "typ": "create",
           "text": "Ärende skapat"
+        },
+        {
+          "ts": "2026-06-15T08:11:50.339Z",
+          "av": "Massimo Johansson",
+          "typ": "edit",
+          "text": "Ärende uppdaterat"
         }
       ]
     }
