@@ -328,6 +328,10 @@ const ALL_APPS = [
 let _users = [];
 let _portalLinks = [];
 let _portalNews = [];
+let _newsSha = null;
+let _linksSha = null;
+const NEWS_PATH  = 'portal/news.json';
+const LINKS_PATH = 'portal/links.json';
 let _currentUser = null;
 let _pinBuffer = '';
 let _msalApp = null;
@@ -380,6 +384,8 @@ async function init() {
   }
   // Load users first — always populate select regardless of outcome
   await loadUsers();
+  await loadPortalNews();
+  await loadPortalLinks();
   populateUserSelect();
   checkTokenBanner();
   // MSAL redirect callback — run after users are loaded, don't let it block
@@ -394,6 +400,34 @@ async function init() {
 }
 
 // ─── USERS FROM GITHUB ────────────────────────────────────────────────────
+async function loadPortalNews() {
+  const token = localStorage.getItem('gh_token') || '';
+  if (!token) return;
+  try {
+    const res = await fetch('https://api.github.com/repos/'+GH_REPO+'/contents/'+NEWS_PATH,
+      {headers:{'Authorization':'token '+token}});
+    if (!res.ok) return;
+    const gh = await res.json();
+    const bytes = Uint8Array.from(atob(gh.content.replace(/\n/g,'')), c=>c.charCodeAt(0));
+    const parsed = JSON.parse(new TextDecoder('utf-8').decode(bytes));
+    _portalNews = parsed.items || [];
+  } catch(e) { _portalNews = []; }
+}
+
+async function loadPortalLinks() {
+  const token = localStorage.getItem('gh_token') || '';
+  if (!token) return;
+  try {
+    const res = await fetch('https://api.github.com/repos/'+GH_REPO+'/contents/'+LINKS_PATH,
+      {headers:{'Authorization':'token '+token}});
+    if (!res.ok) return;
+    const gh = await res.json();
+    const bytes = Uint8Array.from(atob(gh.content.replace(/\n/g,'')), c=>c.charCodeAt(0));
+    const parsed = JSON.parse(new TextDecoder('utf-8').decode(bytes));
+    _portalLinks = parsed.items || [];
+  } catch(e) { _portalLinks = []; }
+}
+
 async function loadUsers() {
   const token = localStorage.getItem('gh_token') || '';
   // No token = no fetch, go straight to fallback
@@ -411,8 +445,7 @@ async function loadUsers() {
       _users = parsed;
     } else if (parsed && Array.isArray(parsed.users)) {
       _users = parsed.users;
-      _portalLinks = parsed.portalLinks || [];
-      _portalNews = parsed.portalNews || [];
+
     } else {
       loadDefaultUsers();
     }
@@ -544,6 +577,8 @@ async function showPortal() {
   if (u.domainOnly) {
     document.getElementById('portal-role').innerHTML = 'Domänanvändare · Microsoft 365 &nbsp;<span style="font-size:10px;background:var(--amber-bg);color:var(--amber-text);padding:1px 7px;border-radius:20px;font-weight:600">Begränsad åtkomst</span>';
   }
+  await loadPortalNews();
+  await loadPortalLinks();
   renderApps();
   renderLinks();
   renderBanners();
@@ -716,6 +751,8 @@ async function logout() {
   document.getElementById('screen-login').classList.add('active');
   // Reload users so the select is populated without needing a page refresh
   await loadUsers();
+  await loadPortalNews();
+  await loadPortalLinks();
   populateUserSelect();
   checkTokenBanner();
 }
