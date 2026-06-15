@@ -73,6 +73,34 @@
           "text": "Ärende uppdaterat"
         }
       ]
+    },
+    {
+      "id": "IT-2606-Q5JE",
+      "titel": "Går ej att betala via CWallet",
+      "beskrivning": "Vid betalning i CWallet får man följande felmeddelande.\nInvalid version of dibs in paymentprovider",
+      "system": "CompuSuit",
+      "kategori": "Fel",
+      "prioritet": "Hög",
+      "anläggning": "",
+      "ansvarig": "Massimo Johansson",
+      "status": "löst",
+      "leverantör": "CompuSoft",
+      "leverantörDatum": "2026-06-12",
+      "leverantörNr": "551215, 551362",
+      "åtgärd": "Har anmält det till 24/7 supporten på söndagen men de kunde inte lösa det. ",
+      "lösning": "Fick klarttecken och jag har provat och det fungerar nu. Har begärd vad det var som var fel.",
+      "rapportör": "Massimo Johansson",
+      "rapportörEmail": "massimo.johansson@cc-camping.se",
+      "skapad": "2026-06-15T08:19:20.664Z",
+      "uppdaterad": "2026-06-15T08:19:20.665Z",
+      "logg": [
+        {
+          "ts": "2026-06-15T08:19:20.665Z",
+          "av": "Massimo Johansson",
+          "typ": "create",
+          "text": "Ärende skapat"
+        }
+      ]
     }
   ],
   "settings": {}
