@@ -654,6 +654,7 @@ let _newsData = {items:[]};
 let _linksData = {items:[]};
 let _newsSha = null;
 let _linksSha = null;
+const GH_REPO    = 'CCSthlm/besiktning-camping';
 const NEWS_PATH  = 'portal/news.json';
 const LINKS_PATH = 'portal/links.json';
 let _currentUser = null;
@@ -937,7 +938,7 @@ async function loadData() {
   const token = localStorage.getItem('gh_token') || '';
   if (!token) { loadDefaultData(); return; }
   try {
-    const res = await fetch('https://api.github.com/repos/CCSthlm/besiktning-camping/contents/users/users.json',
+    const res = await fetch('https://api.github.com/repos/'+GH_REPO+'/contents/users/users.json',
       {headers:{'Authorization':'token '+token}});
     if (!res.ok) { loadDefaultData(); return; }
     const gh = await res.json();
@@ -1045,7 +1046,7 @@ async function saveLinksData() {
 async function saveData() {
   const token = localStorage.getItem('gh_token') || '';
   if (!token) { toast('GitHub-token saknas','warn'); return; }
-  const url = 'https://api.github.com/repos/CCSthlm/besiktning-camping/contents/users/users.json';
+  const url = 'https://api.github.com/repos/'+GH_REPO+'/contents/users/users.json';
   try {
     let sha = null;
     const chk = await fetch(url,{headers:{'Authorization':'token '+token}});
@@ -1414,18 +1415,18 @@ async function testGHConnection(){
   const token=localStorage.getItem('gh_token')||'';
   if(!token){toast('Lägg till token först','err');return;}
   try {
-    const res=await fetch('https://api.github.com/repos/CCSthlm/besiktning-camping',{headers:{'Authorization':'token '+token}});
+    const res=await fetch('https://api.github.com/repos/'+GH_REPO+',',{headers:{'Authorization':'token '+token}});
     const data=await res.json();
     if(res.ok){
       // Check scopes from response header
       const scopes = res.headers.get('x-oauth-scopes')||'(ej synligt)';
       toast('✓ Anslutning fungerar. Scopes: '+scopes,'ok');
       // Try a test write to verify write access
-      const testRes = await fetch('https://api.github.com/repos/CCSthlm/besiktning-camping/contents/portal/.gitkeep',{headers:{'Authorization':'token '+token}});
+      const testRes = await fetch('https://api.github.com/repos/'+GH_REPO+'/contents/portal/.gitkeep',{headers:{'Authorization':'token '+token}});
       if(testRes.status===404){
         // File doesn't exist, try creating it as a test
         const testPayload={message:'Init portal folder',content:btoa(''),branch:'main'};
-        const createRes=await fetch('https://api.github.com/repos/CCSthlm/besiktning-camping/contents/portal/.gitkeep',{method:'PUT',headers:{'Authorization':'token '+token,'Content-Type':'application/json'},body:JSON.stringify(testPayload)});
+        const createRes=await fetch('https://api.github.com/repos/'+GH_REPO+'/contents/portal/.gitkeep',{method:'PUT',headers:{'Authorization':'token '+token,'Content-Type':'application/json'},body:JSON.stringify(testPayload)});
         if(createRes.ok) toast('✓ Skrivrättigheter OK – portal/-mapp skapad','ok');
         else toast('⚠ Token saknar skrivrättigheter (repo-scope)','warn');
       } else {
