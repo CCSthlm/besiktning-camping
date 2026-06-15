@@ -394,7 +394,7 @@ body {
             <i class="ti ti-calendar"></i> Bokning
           </button>
           <button class="sub-btn" onclick="selectSub('kassa')" id="sub-kassa">
-            <i class="ti ti-receipt"></i> Kassa
+            <i class="ti ti-receipt"></i> Kassa / POS
           </button>
           <button class="sub-btn" onclick="selectSub('compumat')" id="sub-compumat">
             <i class="ti ti-barrier-block"></i> CompuMat
@@ -552,9 +552,9 @@ body {
 <script>
 // ── EMAILJS CONFIG ────────────────────────────────────────────────────────
 // Fyll i dina EmailJS-uppgifter här (se EMAILJS_GUIDE.md)
-const EJS_PUBLIC_KEY    = 'Y7UNzb3nmTE9XPdHr';     // Account → General → Public Key
-const EJS_SERVICE_ID    = 'service_emsyoet';     // Email Services → Service ID
-const EJS_TEMPLATE_ID   = 'template_falx3lm';   // Email Templates → Template ID
+const EJS_PUBLIC_KEY    = 'DIN_PUBLIC_KEY';     // Account → General → Public Key
+const EJS_SERVICE_ID    = 'DIN_SERVICE_ID';     // Email Services → Service ID
+const EJS_TEMPLATE_ID   = 'DIN_TEMPLATE_ID';   // Email Templates → Template ID
 const SUPPORT_EMAIL     = 'support.compusoft@cc-camping.se';
 
 // ── STATE ─────────────────────────────────────────────────────────────────
@@ -657,7 +657,7 @@ const FORM_CONFIGS = {
     ]
   },
   kassa: {
-    icon: 'ti-receipt', title: 'Kassaproblem',
+    icon: 'ti-receipt', title: 'Kassa / POS – Problem',
     fields: [
       { id: 'kassa_id', label: 'Kassa-ID', type: 'text', placeholder: 'KASSA-01', required: true, col: 'half' },
       { id: 'fragestellning', label: 'Frågeställning', type: 'textarea', placeholder: 'Beskriv problemet…', required: true, col: 'full' },
@@ -776,7 +776,7 @@ function buildSummary() {
   const cfg = FORM_CONFIGS[key];
   const sevLabels = { low: '🟢 Låg', mid: '🟡 Medel', high: '🔴 Hög' };
   const catLabels = { compusuit: 'CompuSuit', hardware: 'Hårdvara', general: 'Allmän fråga' };
-  const subLabels = { bokning:'Bokning', kassa:'Kassa', compumat:'CompuMat', aterbetalning:'Återbetalning', ovrigt_cs:'Övrigt' };
+  const subLabels = { bokning:'Bokning', kassa:'Kassa / POS', compumat:'CompuMat', aterbetalning:'Återbetalning', ovrigt_cs:'Övrigt' };
 
   let rows = [
     ['Kategori', catLabels[_category] + (_sub ? ' – ' + subLabels[_sub] : '')],
@@ -858,7 +858,7 @@ async function submitForm() {
   const cfg = FORM_CONFIGS[key];
   const camping = document.getElementById('f-camping').value;
   const catLabels = { compusuit:'CompuSuit', hardware:'Hårdvara', general:'Allmän fråga' };
-  const subLabels = { bokning:'Bokning', kassa:'Kassa', compumat:'CompuMat', aterbetalning:'Återbetalning', ovrigt_cs:'Övrigt' };
+  const subLabels = { bokning:'Bokning', kassa:'Kassa / POS', compumat:'CompuMat', aterbetalning:'Återbetalning', ovrigt_cs:'Övrigt' };
   const sevLabels = { low:'Låg', mid:'Medel', high:'Hög – STOPP' };
 
   const typeLabel = _category === 'compusuit'
