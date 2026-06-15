@@ -47,6 +47,18 @@
       "active": true,
       "created": "2026-06-15T18:00:34.832Z",
       "createdBy": "Massimo Johansson"
+    },
+    {
+      "id": "mqfir7n6phq3",
+      "type": "news",
+      "system": "",
+      "title": "mer information  igen",
+      "text": "mer information  igenmer information  igen",
+      "startDate": "2026-06-15T16:00:00.000Z",
+      "endDate": "",
+      "active": true,
+      "created": "2026-06-15T18:00:46.194Z",
+      "createdBy": "Massimo Johansson"
     }
   ]
 }
