@@ -302,6 +302,18 @@
       "active": true,
       "created": "2026-06-15T17:28:07.060Z",
       "createdBy": "Massimo Johansson"
+    },
+    {
+      "id": "mqfhm2pve0eg",
+      "type": "disruption",
+      "system": "CompuSuit",
+      "title": "Betalningar i Cwallet",
+      "text": "Just nu har vi driftstörningar i betalning i CWallet. Åtgärder pågår av leverantören.",
+      "startDate": "2026-06-15T15:28:00.000Z",
+      "endDate": "",
+      "active": true,
+      "created": "2026-06-15T17:28:46.915Z",
+      "createdBy": "Massimo Johansson"
     }
   ]
 }
