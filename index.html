@@ -66,7 +66,18 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
 .login-footer{text-align:center;margin-top:20px;font-size:11px;color:var(--text3);}
 
 /* ─── APP LAUNCHER ─── */
-.portal-wrap{width:100%;max-width:580px;animation:fadeUp .45s ease both;}
+.portal-wrap{width:100%;max-width:960px;animation:fadeUp .45s ease both;}
+.portal-main{display:flex;gap:20px;align-items:flex-start;}
+.portal-apps{flex:1;min-width:0;}
+.portal-links{width:220px;flex-shrink:0;}
+.links-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;}
+.links-card-header{padding:11px 16px;border-bottom:1px solid var(--border);font-size:12px;font-weight:600;color:var(--text2);display:flex;align-items:center;gap:6px;}
+.links-list{padding:8px 0;}
+.link-item{display:flex;align-items:center;gap:8px;padding:8px 16px;font-size:13px;color:var(--accent);text-decoration:none;transition:background .15s;cursor:pointer;}
+.link-item:hover{background:var(--bg3);color:var(--accent2);}
+.link-item i{font-size:13px;color:var(--text3);flex-shrink:0;}
+.links-empty{padding:14px 16px;font-size:12px;color:var(--text3);font-style:italic;}
+@media(max-width:700px){.portal-main{flex-direction:column;}.portal-links{width:100%;}}
 .portal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:32px;flex-wrap:wrap;gap:12px;}
 .portal-header-left{display:flex;align-items:center;gap:14px;}
 .portal-header-left img{width:52px;height:auto;}
@@ -105,6 +116,46 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
 /* ─── HIDDEN STATES ─── */
 .screen{display:none;}
 .screen.active{display:block;}
+
+/* ── NEWS & DISRUPTION BANNERS ── */
+.banner-zone{display:flex;flex-direction:column;gap:8px;margin-bottom:16px;}
+.banner{border-radius:var(--radius-lg);padding:13px 18px;display:flex;align-items:flex-start;gap:12px;cursor:default;animation:fadeIn .3s ease;}
+.banner-disruption{background:#fff3ed;border:1.5px solid #c2410c;}
+.banner-news{background:var(--amber-bg);border:1.5px solid rgba(133,79,11,.3);}
+.banner-info{background:var(--blue-bg);border:1.5px solid rgba(26,79,122,.2);}
+.banner-icon{font-size:18px;flex-shrink:0;margin-top:1px;}
+.banner-disruption .banner-icon{color:#c2410c;}
+.banner-news .banner-icon{color:var(--amber);}
+.banner-info .banner-icon{color:var(--blue-text);}
+.banner-body{flex:1;min-width:0;}
+.banner-title{font-size:13px;font-weight:700;margin-bottom:2px;}
+.banner-disruption .banner-title{color:#7c2d12;}
+.banner-news .banner-title{color:var(--amber-text);}
+.banner-info .banner-title{color:var(--blue-text);}
+.banner-text{font-size:12px;line-height:1.6;color:var(--text2);}
+.banner-meta{font-size:10px;color:var(--text3);margin-top:3px;}
+.banner-system{font-size:10px;font-weight:600;padding:1px 7px;border-radius:20px;margin-left:6px;}
+.banner-disruption .banner-system{background:rgba(194,65,12,.15);color:#7c2d12;}
+.news-archive-link{font-size:12px;color:var(--text3);display:flex;align-items:center;gap:4px;cursor:pointer;margin-bottom:16px;width:fit-content;}
+.news-archive-link:hover{color:var(--accent);}
+
+/* NEWS ARCHIVE MODAL */
+.news-modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto;}
+.news-modal-overlay.show{display:flex;}
+.news-modal{background:var(--bg2);border-radius:var(--radius-lg);width:100%;max-width:600px;margin:auto;box-shadow:0 8px 40px rgba(0,0,0,.2);}
+.news-modal-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--bg2);}
+.news-card{padding:14px 16px;border-radius:var(--radius);margin-bottom:8px;border:1px solid var(--border);}
+.news-card-disruption{background:#fff3ed;border-color:rgba(194,65,12,.2);}
+.news-card-news{background:var(--amber-bg);border-color:rgba(133,79,11,.2);}
+.news-card-info{background:var(--blue-bg);border-color:rgba(26,79,122,.15);}
+.news-card-expired{opacity:.55;filter:grayscale(.3);}
+.news-card-title{font-size:14px;font-weight:700;margin-bottom:4px;}
+.news-card-text{font-size:12px;line-height:1.7;color:var(--text2);}
+.news-card-footer{font-size:11px;color:var(--text3);margin-top:6px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.nc-badge{font-size:10px;font-weight:600;padding:1px 7px;border-radius:20px;}
+.nc-active{background:var(--green-bg);color:var(--green-text);}
+.nc-expired{background:var(--bg3);color:var(--text3);}
+.nc-upcoming{background:var(--blue-bg);color:var(--blue-text);}
 
 @media(max-width:500px){.login-card{padding:24px 18px;}.app-grid{grid-template-columns:1fr;}}
 .token-banner{background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.25);border-radius:var(--radius);padding:12px 14px;margin-bottom:18px;display:none;}
@@ -215,9 +266,38 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
       </div>
     </div>
 
-    <div id="app-launcher-content">
-      <!-- Populated by JS -->
+    <!-- BANNERS -->
+    <div class="banner-zone" id="banner-zone"></div>
+    <div id="news-archive-wrap" style="display:none">
+      <div class="news-archive-link" onclick="openNewsArchive()">
+        <i class="ti ti-history" style="font-size:13px"></i> Visa alla nyheter &amp; historik
+      </div>
     </div>
+
+    <div class="portal-main">
+      <div class="portal-apps" id="app-launcher-content">
+        <!-- Populated by JS -->
+      </div>
+      <div class="portal-links">
+        <div class="links-card">
+          <div class="links-card-header"><i class="ti ti-link"></i> Länkar</div>
+          <div class="links-list" id="portal-links-list">
+            <div class="links-empty">Inga länkar konfigurerade</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- NEWS ARCHIVE MODAL -->
+<div class="news-modal-overlay" id="news-modal" onclick="if(event.target===this)this.classList.remove('show')">
+  <div class="news-modal">
+    <div class="news-modal-header">
+      <span style="font-size:15px;font-weight:700">Nyheter &amp; driftstörningar</span>
+      <button onclick="document.getElementById('news-modal').classList.remove('show')" style="background:none;border:none;cursor:pointer;font-size:20px;color:var(--text3)"><i class="ti ti-x"></i></button>
+    </div>
+    <div style="padding:16px 20px" id="news-archive-body"></div>
   </div>
 </div>
 
@@ -246,6 +326,8 @@ const ALL_APPS = [
 
 // ─── STATE ────────────────────────────────────────────────────────────────
 let _users = [];
+let _portalLinks = [];
+let _portalNews = [];
 let _currentUser = null;
 let _pinBuffer = '';
 let _msalApp = null;
@@ -329,6 +411,8 @@ async function loadUsers() {
       _users = parsed;
     } else if (parsed && Array.isArray(parsed.users)) {
       _users = parsed.users;
+      _portalLinks = parsed.portalLinks || [];
+      _portalNews = parsed.portalNews || [];
     } else {
       loadDefaultUsers();
     }
@@ -461,6 +545,95 @@ async function showPortal() {
     document.getElementById('portal-role').innerHTML = 'Domänanvändare · Microsoft 365 &nbsp;<span style="font-size:10px;background:var(--amber-bg);color:var(--amber-text);padding:1px 7px;border-radius:20px;font-weight:600">Begränsad åtkomst</span>';
   }
   renderApps();
+  renderLinks();
+  renderBanners();
+}
+
+function renderLinks() {
+  const links = _portalLinks.filter(l => l.active !== false);
+  const el = document.getElementById('portal-links-list');
+  if (!links.length) {
+    el.innerHTML = '<div class="links-empty">Inga länkar konfigurerade</div>';
+    return;
+  }
+  el.innerHTML = links.map(l =>
+    `<a class="link-item" href="${l.url}" target="_blank" rel="noopener" title="${l.url}">
+      <i class="ti ti-external-link"></i>
+      <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${l.name}</span>
+    </a>`
+  ).join('');
+}
+
+function renderBanners() {
+  const now = new Date();
+  const active = _portalNews.filter(n => {
+    if (!n.active) return false;
+    if (n.startDate && new Date(n.startDate) > now) return false;
+    if (n.endDate && new Date(n.endDate) < now) return false;
+    return true;
+  }).sort((a,b) => {
+    // Disruptions first, then by startDate desc
+    if (a.type === 'disruption' && b.type !== 'disruption') return -1;
+    if (b.type === 'disruption' && a.type !== 'disruption') return 1;
+    return new Date(b.startDate||b.created||0) - new Date(a.startDate||a.created||0);
+  });
+
+  const zone = document.getElementById('banner-zone');
+  const archiveWrap = document.getElementById('news-archive-wrap');
+
+  zone.innerHTML = active.map(n => {
+    const cls = n.type==='disruption'?'banner-disruption':n.type==='info'?'banner-info':'banner-news';
+    const icon = n.type==='disruption'?'ti-alert-octagon':n.type==='info'?'ti-info-circle':'ti-speakerphone';
+    const sysTag = n.system ? `<span class="banner-system">${n.system}</span>` : '';
+    return `<div class="banner ${cls}">
+      <i class="ti ${icon} banner-icon"></i>
+      <div class="banner-body">
+        <div class="banner-title">${n.title}${sysTag}</div>
+        ${n.text ? `<div class="banner-text">${n.text}</div>` : ''}
+        <div class="banner-meta">${fmtBannerDate(n.startDate||n.created)}</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  archiveWrap.style.display = _portalNews.length ? '' : 'none';
+}
+
+function fmtBannerDate(iso) {
+  if (!iso) return '';
+  try { return new Date(iso).toLocaleDateString('sv-SE', {year:'numeric',month:'long',day:'numeric',hour:'2-digit',minute:'2-digit'}); }
+  catch(e) { return iso; }
+}
+
+function openNewsArchive() {
+  const now = new Date();
+  const sorted = [..._portalNews].sort((a,b) =>
+    new Date(b.startDate||b.created||0) - new Date(a.startDate||a.created||0)
+  );
+  const body = document.getElementById('news-archive-body');
+  if (!sorted.length) { body.innerHTML = '<p style="color:var(--text3);font-size:13px;text-align:center;padding:20px">Inga nyheter publicerade ännu.</p>'; }
+  else {
+    body.innerHTML = sorted.map(n => {
+      const isExpired = n.endDate && new Date(n.endDate) < now;
+      const isUpcoming = n.startDate && new Date(n.startDate) > now;
+      const isActive = n.active && !isExpired && !isUpcoming;
+      const cls = n.type==='disruption'?'news-card-disruption':n.type==='info'?'news-card-info':'news-card-news';
+      const expiredCls = (isExpired || !n.active) ? 'news-card-expired' : '';
+      const statusBadge = isExpired?'nc-expired':isUpcoming?'nc-upcoming':isActive?'nc-active':'nc-expired';
+      const statusLabel = isExpired?'Utgången':isUpcoming?'Kommande':isActive?'Aktiv':'Inaktiv';
+      const typeLabel = n.type==='disruption'?'Driftstörning':n.type==='info'?'Information':'Nyhet';
+      return `<div class="news-card ${cls} ${expiredCls}">
+        <div class="news-card-title">${n.title}</div>
+        ${n.text?`<div class="news-card-text">${n.text}</div>`:''}
+        <div class="news-card-footer">
+          <span class="nc-badge ${statusBadge}">${statusLabel}</span>
+          <span>${typeLabel}${n.system?' · '+n.system:''}</span>
+          <span>${fmtBannerDate(n.startDate||n.created)}</span>
+          ${n.endDate?`<span>– ${fmtBannerDate(n.endDate)}</span>`:''}
+        </div>
+      </div>`;
+    }).join('');
+  }
+  document.getElementById('news-modal').classList.add('show');
 }
 
 function renderApps() {
