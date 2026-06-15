@@ -171,6 +171,16 @@
       "cert": false,
       "note": "",
       "active": true
+    },
+    {
+      "id": "imqfhdg4yxc6r",
+      "name": "Joachim Säfqvist",
+      "email": "joachim.safqvist@cc-camping.se",
+      "phone": "0709209338",
+      "note": "",
+      "cert": true,
+      "active": true,
+      "created": "2026-06-15"
     }
   ],
   "company": {
