@@ -101,6 +101,34 @@
           "text": "Ärende skapat"
         }
       ]
+    },
+    {
+      "id": "IT-2606-KFTN",
+      "titel": "verifone p400 opsætning",
+      "beskrivning": "May 15, 2026 4:26 PM - Oliver Holbech Sørensen\" \nCan not get connection to terminal.\nSays communication error",
+      "system": "CompuSuit",
+      "kategori": "Fel",
+      "prioritet": "Normal",
+      "anläggning": "",
+      "ansvarig": "Massimo Johansson",
+      "status": "inväntar",
+      "leverantör": "CompuSoft",
+      "leverantörDatum": "2026-05-15",
+      "leverantörNr": "549801",
+      "åtgärd": "",
+      "lösning": "",
+      "rapportör": "Massimo Johansson",
+      "rapportörEmail": "massimo.johansson@cc-camping.se",
+      "skapad": "2026-06-15T08:27:00.109Z",
+      "uppdaterad": "2026-06-15T08:27:00.109Z",
+      "logg": [
+        {
+          "ts": "2026-06-15T08:27:00.109Z",
+          "av": "Massimo Johansson",
+          "typ": "create",
+          "text": "Ärende skapat"
+        }
+      ]
     }
   ],
   "settings": {}
