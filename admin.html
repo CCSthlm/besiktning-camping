@@ -1008,14 +1008,15 @@ async function saveNewsData() {
   if (!token) { toast('GitHub-token saknas','warn'); return; }
   const url = 'https://api.github.com/repos/'+GH_REPO+'/contents/'+NEWS_PATH;
   try {
-    const content = btoa(unescape(encodeURIComponent(JSON.stringify(_newsData,null,2))));
-    const payload = {message:'Nyheter uppdaterade '+today(), content, branch:'main'};
+    const jsonContent = btoa(unescape(encodeURIComponent(JSON.stringify(_newsData,null,2))));
+    const payload = {message:'Nyheter uppdaterade '+today(), content:jsonContent, branch:'main'};
     if (_newsSha) payload.sha = _newsSha;
     const res = await fetch(url,{method:'PUT',headers:{'Authorization':'token '+token,'Content-Type':'application/json'},body:JSON.stringify(payload)});
-    if (!res.ok) throw new Error((await res.json()).message||res.status);
-    _newsSha = (await res.json()).content?.sha || _newsSha;
-    toast('Sparat','ok');
-  } catch(e) { toast('Fel: '+e.message,'err'); }
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message||res.status);
+    _newsSha = data.content?.sha || _newsSha;
+    toast('Nyhet sparad','ok');
+  } catch(e) { toast('Fel vid sparande: '+e.message,'err'); console.error('saveNewsData:',e); }
 }
 
 async function saveLinksData() {
@@ -1023,14 +1024,15 @@ async function saveLinksData() {
   if (!token) { toast('GitHub-token saknas','warn'); return; }
   const url = 'https://api.github.com/repos/'+GH_REPO+'/contents/'+LINKS_PATH;
   try {
-    const content = btoa(unescape(encodeURIComponent(JSON.stringify(_linksData,null,2))));
-    const payload = {message:'Länkar uppdaterade '+today(), content, branch:'main'};
+    const jsonContent = btoa(unescape(encodeURIComponent(JSON.stringify(_linksData,null,2))));
+    const payload = {message:'Länkar uppdaterade '+today(), content:jsonContent, branch:'main'};
     if (_linksSha) payload.sha = _linksSha;
     const res = await fetch(url,{method:'PUT',headers:{'Authorization':'token '+token,'Content-Type':'application/json'},body:JSON.stringify(payload)});
-    if (!res.ok) throw new Error((await res.json()).message||res.status);
-    _linksSha = (await res.json()).content?.sha || _linksSha;
-    toast('Sparat','ok');
-  } catch(e) { toast('Fel: '+e.message,'err'); }
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message||res.status);
+    _linksSha = data.content?.sha || _linksSha;
+    toast('Länk sparad','ok');
+  } catch(e) { toast('Fel vid sparande: '+e.message,'err'); console.error('saveLinksData:',e); }
 }
 
 async function saveData() {
@@ -1404,9 +1406,28 @@ function saveSettings(){const t=document.getElementById('settings-gh-token').val
 async function testGHConnection(){
   const token=localStorage.getItem('gh_token')||'';
   if(!token){toast('Lägg till token först','err');return;}
-  const res=await fetch('https://api.github.com/repos/CCSthlm/besiktning-camping',{headers:{'Authorization':'token '+token}}).catch(()=>null);
-  if(res&&res.ok)toast('✓ Anslutning fungerar','ok');
-  else toast('Fel – kontrollera token','err');
+  try {
+    const res=await fetch('https://api.github.com/repos/CCSthlm/besiktning-camping',{headers:{'Authorization':'token '+token}});
+    const data=await res.json();
+    if(res.ok){
+      // Check scopes from response header
+      const scopes = res.headers.get('x-oauth-scopes')||'(ej synligt)';
+      toast('✓ Anslutning fungerar. Scopes: '+scopes,'ok');
+      // Try a test write to verify write access
+      const testRes = await fetch('https://api.github.com/repos/CCSthlm/besiktning-camping/contents/portal/.gitkeep',{headers:{'Authorization':'token '+token}});
+      if(testRes.status===404){
+        // File doesn't exist, try creating it as a test
+        const testPayload={message:'Init portal folder',content:btoa(''),branch:'main'};
+        const createRes=await fetch('https://api.github.com/repos/CCSthlm/besiktning-camping/contents/portal/.gitkeep',{method:'PUT',headers:{'Authorization':'token '+token,'Content-Type':'application/json'},body:JSON.stringify(testPayload)});
+        if(createRes.ok) toast('✓ Skrivrättigheter OK – portal/-mapp skapad','ok');
+        else toast('⚠ Token saknar skrivrättigheter (repo-scope)','warn');
+      } else {
+        toast('✓ Anslutning och skrivrättigheter OK','ok');
+      }
+    } else {
+      toast('Fel – '+data.message,'err');
+    }
+  } catch(e){toast('Anslutningsfel: '+e.message,'err');}
 }
 function exportAllData(){const blob=new Blob([JSON.stringify(_data,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='ccsthlm_data_'+today()+'.json';a.click();}
 async function reloadData(){await loadData();renderAll();toast('Data laddad om','ok');}
