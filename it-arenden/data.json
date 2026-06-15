@@ -188,19 +188,25 @@
       "status": "leverantör",
       "leverantör": "CompuSoft",
       "leverantörDatum": "2026-06-15",
-      "leverantörNr": "",
+      "leverantörNr": "551470",
       "åtgärd": "Har skickat en changerequest till CompuSuit",
       "lösning": "",
       "rapportör": "Massimo Johansson",
       "rapportörEmail": "massimo.johansson@cc-camping.se",
       "skapad": "2026-06-15T18:50:39.422Z",
-      "uppdaterad": "2026-06-15T18:50:39.422Z",
+      "uppdaterad": "2026-06-15T18:51:28.560Z",
       "logg": [
         {
           "ts": "2026-06-15T18:50:39.422Z",
           "av": "Massimo Johansson",
           "typ": "create",
           "text": "Ärende skapat"
+        },
+        {
+          "ts": "2026-06-15T18:51:28.560Z",
+          "av": "Massimo Johansson",
+          "typ": "edit",
+          "text": "Ärende uppdaterat"
         }
       ]
     }
