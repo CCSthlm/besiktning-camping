@@ -726,22 +726,22 @@ function openEditNews(i) {
   openModal('modal-news');
 }
 
-function saveNews() {
+async function saveNews() {
   const title = document.getElementById('news-title').value.trim();
   if (!title) { toast('Titel krävs','warn'); return; }
   if (!_newsData.items) _newsData.items = [];
   const startVal = document.getElementById('news-start').value;
-  const endVal = document.getElementById('news-end').value;
+  const endVal   = document.getElementById('news-end').value;
   const obj = {
     id: uid(),
-    type: document.getElementById('news-type').value,
-    system: document.getElementById('news-system').value,
+    type:      document.getElementById('news-type').value,
+    system:    document.getElementById('news-system').value,
     title,
-    text: document.getElementById('news-text').value.trim(),
+    text:      document.getElementById('news-text').value.trim(),
     startDate: startVal ? new Date(startVal).toISOString() : new Date().toISOString(),
-    endDate: endVal ? new Date(endVal).toISOString() : '',
-    active: document.getElementById('news-active').value === 'true',
-    created: new Date().toISOString(),
+    endDate:   endVal   ? new Date(endVal).toISOString()   : '',
+    active:    document.getElementById('news-active').value === 'true',
+    created:   new Date().toISOString(),
     createdBy: _currentUser?.name || '–',
   };
   const editId = document.getElementById('news-edit-id').value;
@@ -752,8 +752,7 @@ function saveNews() {
   }
   closeModal('modal-news');
   renderNews();
-  saveNewsData();
-  toast('Publicerad','ok');
+  await saveNewsData();
 }
 
 function toggleNewsActive(i) {
@@ -1008,6 +1007,11 @@ async function saveNewsData() {
   if (!token) { toast('GitHub-token saknas','warn'); return; }
   const url = 'https://api.github.com/repos/'+GH_REPO+'/contents/'+NEWS_PATH;
   try {
+    // Always fetch current SHA before writing to avoid conflicts
+    if (!_newsSha) {
+      const check = await fetch(url, {headers:{'Authorization':'token '+token}});
+      if (check.ok) { const d = await check.json(); _newsSha = d.sha; }
+    }
     const jsonContent = btoa(unescape(encodeURIComponent(JSON.stringify(_newsData,null,2))));
     const payload = {message:'Nyheter uppdaterade '+today(), content:jsonContent, branch:'main'};
     if (_newsSha) payload.sha = _newsSha;
@@ -1015,8 +1019,11 @@ async function saveNewsData() {
     const data = await res.json();
     if (!res.ok) throw new Error(data.message||res.status);
     _newsSha = data.content?.sha || _newsSha;
-    toast('Nyhet sparad','ok');
-  } catch(e) { toast('Fel vid sparande: '+e.message,'err'); console.error('saveNewsData:',e); }
+    toast('Nyhet sparad ✓','ok');
+  } catch(e) {
+    toast('Fel vid sparande: '+e.message,'err');
+    console.error('saveNewsData:', e);
+  }
 }
 
 async function saveLinksData() {
