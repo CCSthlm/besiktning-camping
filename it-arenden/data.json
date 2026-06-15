@@ -160,13 +160,19 @@
       "rapportör": "Massimo Johansson",
       "rapportörEmail": "massimo.johansson@cc-camping.se",
       "skapad": "2026-06-15T08:59:35.785Z",
-      "uppdaterad": "2026-06-15T08:59:35.785Z",
+      "uppdaterad": "2026-06-15T08:59:57.912Z",
       "logg": [
         {
           "ts": "2026-06-15T08:59:35.785Z",
           "av": "Massimo Johansson",
           "typ": "create",
           "text": "Ärende skapat"
+        },
+        {
+          "ts": "2026-06-15T08:59:57.912Z",
+          "av": "Massimo Johansson",
+          "typ": "comment",
+          "text": "Pratade med supporten som tittar på det nu och kommer att återkomma."
         }
       ]
     }
