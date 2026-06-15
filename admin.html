@@ -598,6 +598,11 @@ tr:hover td{background:var(--bg3);}
 <div class="toast" id="toast"></div>
 
 <script>
+// ── CONFIG ────────────────────────────────────────────────────────────────
+const GH_REPO    = 'CCSthlm/besiktning-camping';
+const NEWS_PATH  = 'portal/news.json';
+const LINKS_PATH = 'portal/links.json';
+
 // ── ROLES ─────────────────────────────────────────────────────────────────
 const ADMIN_ROLES = {
   global:      { key:'global',      label:'Global admin',      icon:'ti-crown',       color:'#7c3aed', badge:'badge-global' },
@@ -654,9 +659,6 @@ let _newsData = {items:[]};
 let _linksData = {items:[]};
 let _newsSha = null;
 let _linksSha = null;
-const GH_REPO    = 'CCSthlm/besiktning-camping';
-const NEWS_PATH  = 'portal/news.json';
-const LINKS_PATH = 'portal/links.json';
 let _currentUser = null;
 let _myAdminRoles = [];  // array of role keys
 
