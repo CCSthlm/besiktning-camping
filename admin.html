@@ -626,7 +626,7 @@ const PAGE_ACCESS = {
   campings:     ['global','sektions'],
   inspectors:   ['global','besiktnings'],
   'pl-settings':['global','sektions'],
-  links:        ['global','sektions'],
+  links:        ['global'],
   news:         ['global','nyhetsadmin'],
   settings:     ['global'],
   'av-settings':['global','avvikelse-admin'],
@@ -650,12 +650,18 @@ const PAGE_META = {
 
 // ── STATE ─────────────────────────────────────────────────────────────────
 let _data = {users:[], campings:[], inspectors:[], company:{}, personalliggare:{}};
+let _newsData = {items:[]};
+let _linksData = {items:[]};
+let _newsSha = null;
+let _linksSha = null;
+const NEWS_PATH  = 'portal/news.json';
+const LINKS_PATH = 'portal/links.json';
 let _currentUser = null;
 let _myAdminRoles = [];  // array of role keys
 
 // ── NEWS FUNCTIONS ───────────────────────────────────────────────────────
 function renderNews() {
-  const news = _data.portalNews || [];
+  const news = _newsData.items || [];
   const tbody = document.getElementById('news-tbody');
   if (!tbody) return;
   if (!news.length) {
@@ -706,7 +712,7 @@ function openAddNews() {
 }
 
 function openEditNews(i) {
-  const n = (_data.portalNews||[])[i];
+  const n = (_newsData.items||[])[i];
   if (!n) return;
   document.getElementById('modal-news-title').textContent = 'Redigera nyhet';
   document.getElementById('news-edit-id').value = i;
@@ -723,7 +729,7 @@ function openEditNews(i) {
 function saveNews() {
   const title = document.getElementById('news-title').value.trim();
   if (!title) { toast('Titel krävs','warn'); return; }
-  if (!_data.portalNews) _data.portalNews = [];
+  if (!_newsData.items) _newsData.items = [];
   const startVal = document.getElementById('news-start').value;
   const endVal = document.getElementById('news-end').value;
   const obj = {
@@ -740,27 +746,27 @@ function saveNews() {
   };
   const editId = document.getElementById('news-edit-id').value;
   if (editId !== '') {
-    _data.portalNews[parseInt(editId)] = {..._data.portalNews[parseInt(editId)], ...obj};
+    _newsData.items[parseInt(editId)] = {..._newsData.items[parseInt(editId)], ...obj};
   } else {
-    _data.portalNews.push(obj);
+    _newsData.items.push(obj);
   }
   closeModal('modal-news');
   renderNews();
-  saveData();
+  saveNewsData();
   toast('Publicerad','ok');
 }
 
 function toggleNewsActive(i) {
-  if (!_data.portalNews?.[i]) return;
-  _data.portalNews[i].active = !_data.portalNews[i].active;
+  if (!_newsData.items?.[i]) return;
+  _newsData.items[i].active = !_newsData.items[i].active;
   renderNews();
-  saveData();
-  toast(_data.portalNews[i].active ? 'Aktiverad' : 'Inaktiverad', 'ok');
+  saveNewsData();
+  toast(_newsData.items[i].active ? 'Aktiverad' : 'Inaktiverad', 'ok');
 }
 
 // ── LINKS ─────────────────────────────────────────────────────────────────
 function renderLinks() {
-  const links = _data.portalLinks || [];
+  const links = _linksData.items || [];
   const tbody = document.getElementById('links-tbody');
   if (!tbody) return;
   if (!links.length) {
@@ -790,7 +796,7 @@ function openAddLink() {
 }
 
 function openEditLink(i) {
-  const l = (_data.portalLinks||[])[i];
+  const l = (_linksData.items||[])[i];
   if (!l) return;
   document.getElementById('modal-link-title').textContent = 'Redigera länk';
   document.getElementById('link-edit-id').value = i;
@@ -805,32 +811,32 @@ function saveLink() {
   const url  = document.getElementById('link-url').value.trim();
   if (!name) { toast('Namn krävs','warn'); return; }
   if (!url || !url.startsWith('http')) { toast('Ange en giltig URL (börja med https://)','warn'); return; }
-  if (!_data.portalLinks) _data.portalLinks = [];
+  if (!_linksData.items) _linksData.items = [];
   const obj = { id: uid(), name, url, active: document.getElementById('link-active').value === 'true' };
   const editId = document.getElementById('link-edit-id').value;
   if (editId !== '') {
-    _data.portalLinks[parseInt(editId)] = { ..._data.portalLinks[parseInt(editId)], ...obj };
+    _linksData.items[parseInt(editId)] = { ..._linksData.items[parseInt(editId)], ...obj };
   } else {
-    _data.portalLinks.push(obj);
+    _linksData.items.push(obj);
   }
   closeModal('modal-link');
   renderLinks();
-  saveData();
+  saveLinksData();
   toast('Länk sparad','ok');
 }
 
 function moveLinkUp(i) {
   if (i===0) return;
-  const l = _data.portalLinks;
+  const l = _linksData.items;
   [l[i-1],l[i]]=[l[i],l[i-1]];
-  renderLinks(); saveData();
+  renderLinks(); saveLinksData();
 }
 
 function moveLinkDown(i) {
-  const l = _data.portalLinks;
+  const l = _linksData.items;
   if (i>=l.length-1) return;
   [l[i],l[i+1]]=[l[i+1],l[i]];
-  renderLinks(); saveData();
+  renderLinks(); saveLinksData();
 }
 
 async function init() {
@@ -867,6 +873,8 @@ async function init() {
 
   buildSidebar();
   await loadData();
+  await loadNewsData();
+  await loadLinksData();
   renderAll();
   renderDashboard();
 }
@@ -889,7 +897,6 @@ function buildSidebar() {
     html += `<div class="nav-item" onclick="showPage('roles')"><i class="ti ti-shield-check"></i> Roller & behörigheter</div>`;
     html += `<div class="nav-item" onclick="showPage('campings')"><i class="ti ti-tent"></i> Campingar</div>`;
     html += `<div class="nav-item" onclick="showPage('pl-settings')"><i class="ti ti-building-skyscraper"></i> Företagsinställningar</div>`;
-    html += `<div class="nav-item" onclick="showPage('links')"><i class="ti ti-link"></i> Portalens länkar</div>`;
   }
 
   if (isBesiktnings) {
@@ -905,6 +912,7 @@ function buildSidebar() {
 
   if (isGlobal) {
     html += `<div class="nav-group-label"><i class="ti ti-adjustments"></i> System</div>`;
+    html += `<div class="nav-item" onclick="showPage('links')"><i class="ti ti-link"></i> Portalens länkar</div>`;
     html += `<div class="nav-item" onclick="showPage('settings')"><i class="ti ti-settings"></i> Inställningar</div>`;
   }
 
@@ -937,6 +945,8 @@ async function loadData() {
     const bytes = Uint8Array.from(atob(gh.content.replace(/\n/g,'')), c=>c.charCodeAt(0));
     const parsed = JSON.parse(new TextDecoder('utf-8').decode(bytes));
     _data = {users:[],campings:[],inspectors:[],company:{},personalliggare:{},...parsed};
+    if (!_data.portalNews)  _data.portalNews  = [];
+    if (!_linksData.items) _linksData.items = [];
   } catch(e) { loadDefaultData(); }
 }
 
@@ -954,11 +964,73 @@ function loadDefaultData() {
     ],
     company:{name:'Caravan Club of Sweden',orgNr:''},
     personalliggare:{},
-    portalNews:[],
-    portalLinks:[
-      {id:'link1',name:'CompuSoft manualer',url:'https://caravanclubofswedenstockhol.sharepoint.com/sites/CaravanClubofSweden-Stockholmssektionen/Delade%20dokument/Forms/AllItems.aspx?FolderCTID=0x012000AC2D75CBA7C21C4686FB768A00B68FC7&id=%2Fsites%2FCaravanClubofSweden%2DStockholmssektionen%2FDelade%20dokument%2FGeneral%2FGemensam%20filarea%2FManualer%2FManualer%20Compusoft',active:true},
-    ]
+
   };
+}
+
+async function loadNewsData() {
+  const token = localStorage.getItem('gh_token') || '';
+  if (!token) return;
+  try {
+    const res = await fetch('https://api.github.com/repos/'+GH_REPO+'/contents/'+NEWS_PATH,
+      {headers:{'Authorization':'token '+token}});
+    if (res.status === 404) { _newsData = {items:[]}; return; }
+    if (!res.ok) return;
+    const gh = await res.json();
+    _newsSha = gh.sha;
+    const bytes = Uint8Array.from(atob(gh.content.replace(/\n/g,'')), c=>c.charCodeAt(0));
+    _newsData = JSON.parse(new TextDecoder('utf-8').decode(bytes));
+    if (!_newsData.items) _newsData.items = [];
+  } catch(e) { _newsData = {items:[]}; }
+}
+
+async function loadLinksData() {
+  const token = localStorage.getItem('gh_token') || '';
+  if (!token) return;
+  try {
+    const res = await fetch('https://api.github.com/repos/'+GH_REPO+'/contents/'+LINKS_PATH,
+      {headers:{'Authorization':'token '+token}});
+    if (res.status === 404) {
+      _linksData = {items:[{id:'link1',name:'CompuSoft manualer',url:'https://caravanclubofswedenstockhol.sharepoint.com/sites/CaravanClubofSweden-Stockholmssektionen/Delade%20dokument/Forms/AllItems.aspx?FolderCTID=0x012000AC2D75CBA7C21C4686FB768A00B68FC7&id=%2Fsites%2FCaravanClubofSweden%2DStockholmssektionen%2FDelade%20dokument%2FGeneral%2FGemensam%20filarea%2FManualer%2FManualer%20Compusoft',active:true}]};
+      return;
+    }
+    if (!res.ok) return;
+    const gh = await res.json();
+    _linksSha = gh.sha;
+    const bytes = Uint8Array.from(atob(gh.content.replace(/\n/g,'')), c=>c.charCodeAt(0));
+    _linksData = JSON.parse(new TextDecoder('utf-8').decode(bytes));
+    if (!_linksData.items) _linksData.items = [];
+  } catch(e) { _linksData = {items:[]}; }
+}
+
+async function saveNewsData() {
+  const token = localStorage.getItem('gh_token') || '';
+  if (!token) { toast('GitHub-token saknas','warn'); return; }
+  const url = 'https://api.github.com/repos/'+GH_REPO+'/contents/'+NEWS_PATH;
+  try {
+    const content = btoa(unescape(encodeURIComponent(JSON.stringify(_newsData,null,2))));
+    const payload = {message:'Nyheter uppdaterade '+today(), content, branch:'main'};
+    if (_newsSha) payload.sha = _newsSha;
+    const res = await fetch(url,{method:'PUT',headers:{'Authorization':'token '+token,'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    if (!res.ok) throw new Error((await res.json()).message||res.status);
+    _newsSha = (await res.json()).content?.sha || _newsSha;
+    toast('Sparat','ok');
+  } catch(e) { toast('Fel: '+e.message,'err'); }
+}
+
+async function saveLinksData() {
+  const token = localStorage.getItem('gh_token') || '';
+  if (!token) { toast('GitHub-token saknas','warn'); return; }
+  const url = 'https://api.github.com/repos/'+GH_REPO+'/contents/'+LINKS_PATH;
+  try {
+    const content = btoa(unescape(encodeURIComponent(JSON.stringify(_linksData,null,2))));
+    const payload = {message:'Länkar uppdaterade '+today(), content, branch:'main'};
+    if (_linksSha) payload.sha = _linksSha;
+    const res = await fetch(url,{method:'PUT',headers:{'Authorization':'token '+token,'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    if (!res.ok) throw new Error((await res.json()).message||res.status);
+    _linksSha = (await res.json()).content?.sha || _linksSha;
+    toast('Sparat','ok');
+  } catch(e) { toast('Fel: '+e.message,'err'); }
 }
 
 async function saveData() {
@@ -1316,8 +1388,8 @@ function savePLSettings() {
 function confirmDelete(type,id,name) {
   document.getElementById('delete-confirm-text').textContent='Ta bort "'+name+'"? Detta kan inte ångras.';
   document.getElementById('delete-confirm-btn').onclick=()=>{
-    if(type==='news'){const ni=parseInt(id);if(!isNaN(ni))_data.portalNews.splice(ni,1);renderNews();}
-    else if(type==='link'){const idx=parseInt(id);if(!isNaN(idx))_data.portalLinks.splice(idx,1);else _data.portalLinks=(_data.portalLinks||[]).filter(l=>l.id!==id);renderLinks();}
+    if(type==='news'){const ni=parseInt(id);if(!isNaN(ni))_newsData.items.splice(ni,1);renderNews();saveNewsData();}
+    else if(type==='link'){const idx=parseInt(id);if(!isNaN(idx))_linksData.items.splice(idx,1);else _linksData.items=(_linksData.items||[]).filter(l=>l.id!==id);renderLinks();saveLinksData();}
     else if(type==='user')_data.users=_data.users.filter(u=>u.id!==id);
     else if(type==='camping')_data.campings=(_data.campings||[]).filter(c=>c.id!==id);
     else if(type==='inspector')_data.inspectors=(_data.inspectors||[]).filter(i=>i.id!==id);
@@ -1351,8 +1423,11 @@ function showPage(id) {
   const m=PAGE_META[id]||{title:id,sub:''};
   document.getElementById('page-title').textContent=m.title;
   document.getElementById('page-sub').textContent=m.sub;
-  if(id==='pl-settings')renderPLSettings();
-  if(id==='dashboard')renderDashboard();
+  if(id==='pl-settings') renderPLSettings();
+  if(id==='dashboard')   renderDashboard();
+  if(id==='news')        renderNews();
+  if(id==='links')       renderLinks();
+  if(id==='av-settings') { if(typeof renderAvSettings==='function') renderAvSettings(); }
 }
 
 function goPortal(){window.location.href='index.html';}
