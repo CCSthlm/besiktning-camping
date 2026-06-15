@@ -175,6 +175,34 @@
           "text": "Pratade med supporten som tittar på det nu och kommer att återkomma."
         }
       ]
+    },
+    {
+      "id": "IT-2606-48N0",
+      "titel": "Support for finnish language",
+      "beskrivning": "We want to have the translation into finnish aswell as the other languages.",
+      "system": "CompuSuit",
+      "kategori": "Önskemål",
+      "prioritet": "Hög",
+      "anläggning": "",
+      "ansvarig": "Massimo Johansson",
+      "status": "leverantör",
+      "leverantör": "CompuSoft",
+      "leverantörDatum": "2026-06-15",
+      "leverantörNr": "",
+      "åtgärd": "Har skickat en changerequest till CompuSuit",
+      "lösning": "",
+      "rapportör": "Massimo Johansson",
+      "rapportörEmail": "massimo.johansson@cc-camping.se",
+      "skapad": "2026-06-15T18:50:39.422Z",
+      "uppdaterad": "2026-06-15T18:50:39.422Z",
+      "logg": [
+        {
+          "ts": "2026-06-15T18:50:39.422Z",
+          "av": "Massimo Johansson",
+          "typ": "create",
+          "text": "Ärende skapat"
+        }
+      ]
     }
   ],
   "settings": {}
