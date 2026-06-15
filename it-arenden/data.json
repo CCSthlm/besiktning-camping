@@ -120,7 +120,7 @@
       "rapportör": "Massimo Johansson",
       "rapportörEmail": "massimo.johansson@cc-camping.se",
       "skapad": "2026-06-15T08:27:00.109Z",
-      "uppdaterad": "2026-06-15T08:27:48.097Z",
+      "uppdaterad": "2026-06-15T08:28:15.653Z",
       "logg": [
         {
           "ts": "2026-06-15T08:27:00.109Z",
@@ -133,6 +133,12 @@
           "av": "Massimo Johansson",
           "typ": "comment",
           "text": "Hi\nI've booked you in my calendar for friday 9/6, 9 o'clock.\nDo let me know if I should change the time.\n\n**Vi hade inte möjlighet**"
+        },
+        {
+          "ts": "2026-06-15T08:28:15.653Z",
+          "av": "Massimo Johansson",
+          "typ": "comment",
+          "text": "June 15, 2026 12:23 PM - Massimo Johansson\"\nLet us get back. Our challenges is that we are not working in the campsites during weekdays. We are there from fri 16-18 until Sundays.\nAs looks now we might be there on Thursday after 12.\nAre you available that time?"
         }
       ]
     }
