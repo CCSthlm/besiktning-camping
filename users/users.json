@@ -289,5 +289,19 @@
       "url": "https://caravanclubofswedenstockhol.sharepoint.com/sites/CaravanClubofSweden-Stockholmssektionen/Delade%20dokument/Forms/AllItems.aspx?FolderCTID=0x012000AC2D75CBA7C21C4686FB768A00B68FC7&id=%2Fsites%2FCaravanClubofSweden%2DStockholmssektionen%2FDelade%20dokument%2FGeneral%2FGemensam%20filarea%2FManualer%2FManualer%20Compusoft",
       "active": true
     }
+  ],
+  "portalNews": [
+    {
+      "id": "mqfhl7yszj6s",
+      "type": "news",
+      "system": "",
+      "title": "Nu kommer vi publicera nyheter här framöver",
+      "text": "Här kommer ni alltid att se alla viktiga informationsmängder frammåt.",
+      "startDate": "2026-06-15T15:27:00.000Z",
+      "endDate": "",
+      "active": true,
+      "created": "2026-06-15T17:28:07.060Z",
+      "createdBy": "Massimo Johansson"
+    }
   ]
 }
