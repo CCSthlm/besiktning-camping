@@ -141,6 +141,34 @@
           "text": "June 15, 2026 12:23 PM - Massimo Johansson\"\nLet us get back. Our challenges is that we are not working in the campsites during weekdays. We are there from fri 16-18 until Sundays.\nAs looks now we might be there on Thursday after 12.\nAre you available that time?"
         }
       ]
+    },
+    {
+      "id": "IT-2606-9MGJ",
+      "titel": "Kvittat faktura 913: -2000kr",
+      "beskrivning": "Hej så här är det nu.\n\nNär man skapar en faktura på en extra ekonomi som vi gör på alla campingar.\n\nJag testade att lägga en artikel med 5 kr. Lägger den på mig som kund och väljer då extra ekonomi. Inget konstigt.\nNär jag sedan öppnar den extra ekonomin och lägger till en betalning -> faktura och då väljer skriv ut och väljer fakturabekräftelse ser allt bra ut förutom:\nDet kommer en extra rad med antal 1, Beskrivning: Kvittad: Faktura 913, -2000.\nAlltså i summeringen står det att jag har fortsatt -1995 kr tillgodo.\nLägger jag då in en annan artikel tex Bastu 2001kr och göra samma process kommer det ut en faktura bekräftelse på att jag skall betala 1 kr.\nJag öppnar upp länken och skall då betala den 1 kronan. Då visar dete i onlinebetalningen att jag skall betala 2001 kr.\nDetta måste fixas ASAP för vi kan inte skicka ut fakturor på Kapellskärs camping.\nskickar också med en bild på faktura 913.\nMen tänk på att denna raden som beskrivs i den första bilden på på ALLA fakturor oavsett kund.",
+      "system": "CompuSuit",
+      "kategori": "Fel",
+      "prioritet": "Normal",
+      "anläggning": "Caravan Club Kapellskärs Camping",
+      "ansvarig": "Massimo Johansson",
+      "status": "inväntar",
+      "leverantör": "CompuSoft",
+      "leverantörDatum": "2026-05-12",
+      "leverantörNr": "549641",
+      "åtgärd": "Anmält och pratat med supporten",
+      "lösning": "",
+      "rapportör": "Massimo Johansson",
+      "rapportörEmail": "massimo.johansson@cc-camping.se",
+      "skapad": "2026-06-15T08:59:35.785Z",
+      "uppdaterad": "2026-06-15T08:59:35.785Z",
+      "logg": [
+        {
+          "ts": "2026-06-15T08:59:35.785Z",
+          "av": "Massimo Johansson",
+          "typ": "create",
+          "text": "Ärende skapat"
+        }
+      ]
     }
   ],
   "settings": {}
