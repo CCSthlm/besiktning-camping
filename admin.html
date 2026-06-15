@@ -297,6 +297,42 @@ tr:hover td{background:var(--bg3);}
       </div>
     </div>
 
+    <!-- NEWS PAGE -->
+    <div class="page" id="page-news">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Nyheter &amp; driftstörningar</span>
+          <button class="btn-add" onclick="openAddNews()"><i class="ti ti-plus"></i> Publicera nyhet</button>
+        </div>
+        <div style="padding:12px 18px;font-size:12px;color:var(--text2);background:var(--bg3);border-bottom:1px solid var(--border);display:flex;gap:16px;flex-wrap:wrap;">
+          <span><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#c2410c;margin-right:4px"></span>Driftstörning — röd banner</span>
+          <span><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--amber);margin-right:4px"></span>Nyhet — amber banner</span>
+          <span><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--blue-text);margin-right:4px"></span>Information — blå banner</span>
+        </div>
+        <div style="overflow-x:auto"><table>
+          <thead><tr><th>Typ</th><th>Titel</th><th>System</th><th>Aktiv</th><th>Startar</th><th>Slutar</th><th>Status</th><th style="text-align:right">Åtgärder</th></tr></thead>
+          <tbody id="news-tbody"></tbody>
+        </table></div>
+      </div>
+    </div>
+
+    <!-- LINKS PAGE -->
+    <div class="page" id="page-links">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Portalens snabblänkar</span>
+          <button class="btn-add" onclick="openAddLink()"><i class="ti ti-plus"></i> Lägg till länk</button>
+        </div>
+        <div style="padding:14px 20px;font-size:12px;color:var(--text2);background:var(--green-bg);border-bottom:1px solid var(--border)">
+          <i class="ti ti-info-circle"></i> Länkarna visas i en kolumn till höger om applikationerna i portalen, synliga för alla inloggade.
+        </div>
+        <div style="overflow-x:auto"><table>
+          <thead><tr><th>Namn</th><th>URL</th><th>Synlig</th><th style="text-align:right">Åtgärder</th></tr></thead>
+          <tbody id="links-tbody"></tbody>
+        </table></div>
+      </div>
+    </div>
+
     <!-- AVVIKELSE SETTINGS -->
     <div class="page" id="page-av-settings">
       <div class="card"><div class="card-header"><span class="card-title">E-post och notifieringar</span></div>
@@ -343,6 +379,74 @@ tr:hover td{background:var(--bg3);}
 
 <!-- MODALS -->
 
+<!-- NEWS MODAL -->
+<div class="modal-overlay" id="modal-news">
+  <div class="modal" style="max-width:520px">
+    <div class="modal-header"><span class="modal-title" id="modal-news-title">Publicera nyhet</span><button class="modal-close" onclick="closeModal('modal-news')"><i class="ti ti-x"></i></button></div>
+    <div class="modal-body">
+      <input type="hidden" id="news-edit-id">
+      <div class="form-grid">
+        <div class="form-field"><label>Typ <span style="color:var(--red)">*</span></label>
+          <select id="news-type">
+            <option value="disruption">🔴 Driftstörning</option>
+            <option value="news">🟡 Nyhet</option>
+            <option value="info">🔵 Information</option>
+          </select>
+        </div>
+        <div class="form-field"><label>System (valfritt)</label>
+          <select id="news-system">
+            <option value="">– Inget –</option>
+            <option>CompuSuit</option><option>Microsoft 365</option><option>CompuMat</option>
+            <option>Nätverk</option><option>GitHub / Webb</option><option>Övrigt</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-grid full" style="margin-bottom:12px">
+        <div class="form-field"><label>Titel <span style="color:var(--red)">*</span></label><input type="text" id="news-title" placeholder="T.ex. CompuSuit är nere för underhåll"></div>
+      </div>
+      <div class="form-grid full" style="margin-bottom:12px">
+        <div class="form-field"><label>Text</label><textarea id="news-text" placeholder="Mer information, förväntad åtgärdstid, kontaktperson…"></textarea></div>
+      </div>
+      <div class="form-grid">
+        <div class="form-field"><label>Startar</label><input type="datetime-local" id="news-start"></div>
+        <div class="form-field"><label>Slutar (auto-döljs)</label><input type="datetime-local" id="news-end"><div class="form-help">Lämna tomt = visas tills du stänger av den manuellt</div></div>
+      </div>
+      <div class="form-grid">
+        <div class="form-field"><label>Synlig i portalen</label>
+          <select id="news-active"><option value="true">Ja – visa nu</option><option value="false">Nej – spara som utkast</option></select>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeModal('modal-news')">Avbryt</button>
+      <button class="btn-primary" onclick="saveNews()"><i class="ti ti-send"></i> Publicera</button>
+    </div>
+  </div>
+</div>
+
+<!-- LINK MODAL -->
+<div class="modal-overlay" id="modal-link">
+  <div class="modal" style="max-width:440px">
+    <div class="modal-header"><span class="modal-title" id="modal-link-title">Lägg till länk</span><button class="modal-close" onclick="closeModal('modal-link')"><i class="ti ti-x"></i></button></div>
+    <div class="modal-body">
+      <input type="hidden" id="link-edit-id">
+      <div class="form-grid full" style="margin-bottom:12px">
+        <div class="form-field"><label>Namn <span style="color:var(--red)">*</span></label><input type="text" id="link-name" placeholder="CompuSoft manualer"></div>
+      </div>
+      <div class="form-grid full" style="margin-bottom:12px">
+        <div class="form-field"><label>URL <span style="color:var(--red)">*</span></label><input type="text" id="link-url" placeholder="https://…"><div class="form-help">Klistra in hela webbadressen inklusive https://</div></div>
+      </div>
+      <div class="form-grid full">
+        <div class="form-field"><label>Synlighet</label><select id="link-active"><option value="true">Synlig för alla inloggade</option><option value="false">Dold</option></select></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeModal('modal-link')">Avbryt</button>
+      <button class="btn-primary" onclick="saveLink()"><i class="ti ti-check"></i> Spara</button>
+    </div>
+  </div>
+</div>
+
 <!-- USER MODAL -->
 <div class="modal-overlay" id="modal-user">
   <div class="modal">
@@ -386,6 +490,10 @@ tr:hover td{background:var(--bg3);}
           </div>
           <div class="role-section" style="padding:9px 12px;border-left:3px solid #c2410c;">
             <label class="checkbox-item"><input type="checkbox" id="role-avvikelse-brand"> <i class="ti ti-flame" style="font-size:14px;color:#c2410c"></i> <span><strong>Brandskyddsansvarig</strong> – brand/SBA-ärenden</span></label>
+          </div>
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin:10px 0 6px;padding-top:8px;border-top:1px solid var(--border)">Nyheter & driftstörningar</div>
+          <div class="role-section" style="padding:9px 12px;border-left:3px solid #7c3aed;">
+            <label class="checkbox-item"><input type="checkbox" id="role-nyhetsadmin"> <i class="ti ti-speakerphone" style="font-size:14px;color:#7c3aed"></i> <span><strong>Nyhetsadmin</strong> – publicera nyheter och driftstörningar</span></label>
           </div>
         </div>
       </div>
@@ -500,6 +608,7 @@ const ADMIN_ROLES = {
   'avvikelse-ledning':  { key:'avvikelse-ledning',  label:'Ledning / styrelse',    icon:'ti-chart-bar',      color:'#7c3aed', badge:'badge-global' },
   'avvikelse-anlaggning':{ key:'avvikelse-anlaggning', label:'Anläggningsansvarig', icon:'ti-tent',           color:'#3B6D11', badge:'badge-besiktnings' },
   'avvikelse-brand':    { key:'avvikelse-brand',    label:'Brandskyddsansvarig',   icon:'ti-flame',          color:'#c2410c', badge:'badge-personal' },
+  'nyhetsadmin':        { key:'nyhetsadmin',        label:'Nyhetsadmin',           icon:'ti-speakerphone',   color:'#7c3aed', badge:'badge-global' },
 };
 
 const APP_LIST = [
@@ -517,6 +626,8 @@ const PAGE_ACCESS = {
   campings:     ['global','sektions'],
   inspectors:   ['global','besiktnings'],
   'pl-settings':['global','sektions'],
+  links:        ['global','sektions'],
+  news:         ['global','nyhetsadmin'],
   settings:     ['global'],
   'av-settings':['global','avvikelse-admin'],
   'av-roles':   ['global','avvikelse-admin'],
@@ -531,6 +642,8 @@ const PAGE_META = {
   'pl-settings': {title:'Företagsinställningar',   sub:'Uppgifter för personalliggaren'},
   settings:      {title:'Inställningar',           sub:'GitHub-integration och systemkonfiguration'},
   denied:        {title:'Åtkomst nekad',           sub:''},
+  links:         {title:'Portalens länkar',           sub:'Hantera snabblänkar som visas i portalen'},
+  news:          {title:'Nyheter & driftstörningar',   sub:'Publicera nyheter och driftstörningar i portalen'},
   'av-settings': {title:'Avvikelse – Inställningar', sub:'E-post, anläggningar och konfiguration'},
   'av-roles':    {title:'Avvikelse – Roller',         sub:'Beskrivning av avvikelseroller'},
 };
@@ -540,7 +653,186 @@ let _data = {users:[], campings:[], inspectors:[], company:{}, personalliggare:{
 let _currentUser = null;
 let _myAdminRoles = [];  // array of role keys
 
-// ── INIT ──────────────────────────────────────────────────────────────────
+// ── NEWS FUNCTIONS ───────────────────────────────────────────────────────
+function renderNews() {
+  const news = _data.portalNews || [];
+  const tbody = document.getElementById('news-tbody');
+  if (!tbody) return;
+  if (!news.length) {
+    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:24px;color:var(--text3)">Inga nyheter publicerade</td></tr>';
+    return;
+  }
+  const now = new Date();
+  tbody.innerHTML = [...news].reverse().map((n,ri) => {
+    const i = news.length - 1 - ri;
+    const isExpired = n.endDate && new Date(n.endDate) < now;
+    const isUpcoming = n.startDate && new Date(n.startDate) > now;
+    const statusLabel = isExpired?'<span class="badge badge-inactive">Utgången</span>':isUpcoming?'<span class="badge" style="background:var(--blue-bg);color:var(--blue-text)">Kommande</span>':n.active?'<span class="badge badge-ok">Aktiv</span>':'<span class="badge badge-inactive">Utkast</span>';
+    const typeIcon = n.type==='disruption'?'<i class="ti ti-alert-octagon" style="color:#c2410c"></i>':n.type==='info'?'<i class="ti ti-info-circle" style="color:var(--blue-text)"></i>':'<i class="ti ti-speakerphone" style="color:var(--amber)"></i>';
+    const typeLabel = n.type==='disruption'?'Driftstörning':n.type==='info'?'Information':'Nyhet';
+    return `<tr>
+      <td><div style="display:flex;align-items:center;gap:5px">${typeIcon}<span style="font-size:12px">${typeLabel}</span></div></td>
+      <td style="font-weight:500;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${n.title}</td>
+      <td style="font-size:12px;color:var(--text2)">${n.system||'–'}</td>
+      <td>${n.active?'<span class="badge badge-ok">Ja</span>':'<span class="badge badge-inactive">Nej</span>'}</td>
+      <td style="font-size:12px;color:var(--text2)">${n.startDate?fmtNewsDate(n.startDate):'–'}</td>
+      <td style="font-size:12px;color:var(--text2)">${n.endDate?fmtNewsDate(n.endDate):'–'}</td>
+      <td>${statusLabel}</td>
+      <td><div style="display:flex;gap:5px;justify-content:flex-end">
+        <button class="btn-icon" onclick="toggleNewsActive(${i})" title="${n.active?'Inaktivera':'Aktivera'}">${n.active?'<i class="ti ti-eye-off"></i>':'<i class="ti ti-eye"></i>'}</button>
+        <button class="btn-icon" onclick="openEditNews(${i})"><i class="ti ti-pencil"></i></button>
+        <button class="btn-icon danger" onclick="confirmDelete('news','${i}','${n.title}')"><i class="ti ti-trash"></i></button>
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+
+function fmtNewsDate(iso) {
+  try { return new Date(iso).toLocaleString('sv-SE',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}); }
+  catch(e) { return iso; }
+}
+
+function openAddNews() {
+  document.getElementById('modal-news-title').textContent = 'Publicera nyhet';
+  document.getElementById('news-edit-id').value = '';
+  document.getElementById('news-type').value = 'news';
+  document.getElementById('news-system').value = '';
+  document.getElementById('news-title').value = '';
+  document.getElementById('news-text').value = '';
+  document.getElementById('news-start').value = new Date().toISOString().slice(0,16);
+  document.getElementById('news-end').value = '';
+  document.getElementById('news-active').value = 'true';
+  openModal('modal-news');
+}
+
+function openEditNews(i) {
+  const n = (_data.portalNews||[])[i];
+  if (!n) return;
+  document.getElementById('modal-news-title').textContent = 'Redigera nyhet';
+  document.getElementById('news-edit-id').value = i;
+  document.getElementById('news-type').value = n.type||'news';
+  document.getElementById('news-system').value = n.system||'';
+  document.getElementById('news-title').value = n.title||'';
+  document.getElementById('news-text').value = n.text||'';
+  document.getElementById('news-start').value = n.startDate?n.startDate.slice(0,16):'';
+  document.getElementById('news-end').value = n.endDate?n.endDate.slice(0,16):'';
+  document.getElementById('news-active').value = n.active?'true':'false';
+  openModal('modal-news');
+}
+
+function saveNews() {
+  const title = document.getElementById('news-title').value.trim();
+  if (!title) { toast('Titel krävs','warn'); return; }
+  if (!_data.portalNews) _data.portalNews = [];
+  const startVal = document.getElementById('news-start').value;
+  const endVal = document.getElementById('news-end').value;
+  const obj = {
+    id: uid(),
+    type: document.getElementById('news-type').value,
+    system: document.getElementById('news-system').value,
+    title,
+    text: document.getElementById('news-text').value.trim(),
+    startDate: startVal ? new Date(startVal).toISOString() : new Date().toISOString(),
+    endDate: endVal ? new Date(endVal).toISOString() : '',
+    active: document.getElementById('news-active').value === 'true',
+    created: new Date().toISOString(),
+    createdBy: _currentUser?.name || '–',
+  };
+  const editId = document.getElementById('news-edit-id').value;
+  if (editId !== '') {
+    _data.portalNews[parseInt(editId)] = {..._data.portalNews[parseInt(editId)], ...obj};
+  } else {
+    _data.portalNews.push(obj);
+  }
+  closeModal('modal-news');
+  renderNews();
+  saveData();
+  toast('Publicerad','ok');
+}
+
+function toggleNewsActive(i) {
+  if (!_data.portalNews?.[i]) return;
+  _data.portalNews[i].active = !_data.portalNews[i].active;
+  renderNews();
+  saveData();
+  toast(_data.portalNews[i].active ? 'Aktiverad' : 'Inaktiverad', 'ok');
+}
+
+// ── LINKS ─────────────────────────────────────────────────────────────────
+function renderLinks() {
+  const links = _data.portalLinks || [];
+  const tbody = document.getElementById('links-tbody');
+  if (!tbody) return;
+  if (!links.length) {
+    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:24px;color:var(--text3)">Inga länkar tillagda</td></tr>';
+    return;
+  }
+  tbody.innerHTML = links.map((l,i) => `<tr>
+    <td style="font-weight:500">${l.name}</td>
+    <td style="font-size:12px;color:var(--text2);max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"><a href="${l.url}" target="_blank" style="color:var(--accent)">${l.url}</a></td>
+    <td>${l.active!==false?'<span class="badge badge-ok">Synlig</span>':'<span class="badge badge-inactive">Dold</span>'}</td>
+    <td><div style="display:flex;gap:5px;justify-content:flex-end">
+      <button class="btn-icon" onclick="moveLinkUp(${i})" title="Flytta upp"><i class="ti ti-arrow-up"></i></button>
+      <button class="btn-icon" onclick="moveLinkDown(${i})" title="Flytta ner"><i class="ti ti-arrow-down"></i></button>
+      <button class="btn-icon" onclick="openEditLink(${i})"><i class="ti ti-pencil"></i></button>
+      <button class="btn-icon danger" onclick="confirmDelete('link','${l.id||i}','${l.name}')"><i class="ti ti-trash"></i></button>
+    </div></td>
+  </tr>`).join('');
+}
+
+function openAddLink() {
+  document.getElementById('modal-link-title').textContent = 'Lägg till länk';
+  document.getElementById('link-edit-id').value = '';
+  document.getElementById('link-name').value = '';
+  document.getElementById('link-url').value = '';
+  document.getElementById('link-active').value = 'true';
+  openModal('modal-link');
+}
+
+function openEditLink(i) {
+  const l = (_data.portalLinks||[])[i];
+  if (!l) return;
+  document.getElementById('modal-link-title').textContent = 'Redigera länk';
+  document.getElementById('link-edit-id').value = i;
+  document.getElementById('link-name').value = l.name;
+  document.getElementById('link-url').value = l.url;
+  document.getElementById('link-active').value = l.active===false?'false':'true';
+  openModal('modal-link');
+}
+
+function saveLink() {
+  const name = document.getElementById('link-name').value.trim();
+  const url  = document.getElementById('link-url').value.trim();
+  if (!name) { toast('Namn krävs','warn'); return; }
+  if (!url || !url.startsWith('http')) { toast('Ange en giltig URL (börja med https://)','warn'); return; }
+  if (!_data.portalLinks) _data.portalLinks = [];
+  const obj = { id: uid(), name, url, active: document.getElementById('link-active').value === 'true' };
+  const editId = document.getElementById('link-edit-id').value;
+  if (editId !== '') {
+    _data.portalLinks[parseInt(editId)] = { ..._data.portalLinks[parseInt(editId)], ...obj };
+  } else {
+    _data.portalLinks.push(obj);
+  }
+  closeModal('modal-link');
+  renderLinks();
+  saveData();
+  toast('Länk sparad','ok');
+}
+
+function moveLinkUp(i) {
+  if (i===0) return;
+  const l = _data.portalLinks;
+  [l[i-1],l[i]]=[l[i],l[i-1]];
+  renderLinks(); saveData();
+}
+
+function moveLinkDown(i) {
+  const l = _data.portalLinks;
+  if (i>=l.length-1) return;
+  [l[i],l[i+1]]=[l[i+1],l[i]];
+  renderLinks(); saveData();
+}
+
 async function init() {
   const sess = sessionStorage.getItem('ccs_session') || sessionStorage.getItem('ccs_portal_user');
   if (sess) {
@@ -597,11 +889,18 @@ function buildSidebar() {
     html += `<div class="nav-item" onclick="showPage('roles')"><i class="ti ti-shield-check"></i> Roller & behörigheter</div>`;
     html += `<div class="nav-item" onclick="showPage('campings')"><i class="ti ti-tent"></i> Campingar</div>`;
     html += `<div class="nav-item" onclick="showPage('pl-settings')"><i class="ti ti-building-skyscraper"></i> Företagsinställningar</div>`;
+    html += `<div class="nav-item" onclick="showPage('links')"><i class="ti ti-link"></i> Portalens länkar</div>`;
   }
 
   if (isBesiktnings) {
     html += `<div class="nav-group-label"><i class="ti ti-certificate"></i> Besiktningsapp</div>`;
     html += `<div class="nav-item" onclick="showPage('inspectors')"><i class="ti ti-user-check"></i> Besiktningsmän</div>`;
+  }
+
+  const isNyhets = _myAdminRoles.some(r=>['global','nyhetsadmin'].includes(r));
+  if (isNyhets) {
+    html += `<div class="nav-group-label"><i class="ti ti-speakerphone"></i> Nyheter & driftstörningar</div>`;
+    html += `<div class="nav-item" onclick="showPage('news')"><i class="ti ti-news"></i> Hantera nyheter</div>`;
   }
 
   if (isGlobal) {
@@ -654,7 +953,11 @@ function loadDefaultData() {
       {id:'i2',name:'Stefan Leijon',email:'',phone:'',cert:true,note:'',active:true},
     ],
     company:{name:'Caravan Club of Sweden',orgNr:''},
-    personalliggare:{}
+    personalliggare:{},
+    portalNews:[],
+    portalLinks:[
+      {id:'link1',name:'CompuSoft manualer',url:'https://caravanclubofswedenstockhol.sharepoint.com/sites/CaravanClubofSweden-Stockholmssektionen/Delade%20dokument/Forms/AllItems.aspx?FolderCTID=0x012000AC2D75CBA7C21C4686FB768A00B68FC7&id=%2Fsites%2FCaravanClubofSweden%2DStockholmssektionen%2FDelade%20dokument%2FGeneral%2FGemensam%20filarea%2FManualer%2FManualer%20Compusoft',active:true},
+    ]
   };
 }
 
@@ -751,7 +1054,7 @@ function openAddUser() {
   document.getElementById('user-pin').value = '';
   document.getElementById('user-pnr').value = '';
   document.getElementById('user-active').value = 'true';
-  ['global','sektions','besiktnings','personal','avvikelse-admin','avvikelse-ledning','avvikelse-anlaggning','avvikelse-brand'].forEach(r => { const el=document.getElementById('role-'+r); if(el) el.checked=false; });
+  ['global','sektions','besiktnings','personal','avvikelse-admin','avvikelse-ledning','avvikelse-anlaggning','avvikelse-brand','nyhetsadmin'].forEach(r => { const el=document.getElementById('role-'+r); if(el) el.checked=false; });
   buildAppCheckboxes([]);
   populatePLCampingSelect('');
   openModal('modal-user');
@@ -769,7 +1072,7 @@ function openEditUser(id) {
   document.getElementById('user-active').value = u.active===false?'false':'true';
   // Set admin role checkboxes
   const roles = u.adminRoles || (u.role==='Admin'?['global']:[]);
-  ['global','sektions','besiktnings','personal','avvikelse-admin','avvikelse-ledning','avvikelse-anlaggning','avvikelse-brand'].forEach(r => {
+  ['global','sektions','besiktnings','personal','avvikelse-admin','avvikelse-ledning','avvikelse-anlaggning','avvikelse-brand','nyhetsadmin'].forEach(r => {
     const el=document.getElementById('role-'+r);
     if(el) el.checked = roles.includes(r);
   });
@@ -797,7 +1100,7 @@ function saveUser() {
   const pin = document.getElementById('user-pin').value.trim();
   if (!name) { alert('Namn krävs.'); return; }
   if (!pin || !/^\d{4}$/.test(pin)) { alert('PIN-kod måste vara 4 siffror.'); return; }
-  const adminRoles = ['global','sektions','besiktnings','personal','avvikelse-admin','avvikelse-ledning','avvikelse-anlaggning','avvikelse-brand'].filter(r => document.getElementById('role-'+r)?.checked);
+  const adminRoles = ['global','sektions','besiktnings','personal','avvikelse-admin','avvikelse-ledning','avvikelse-anlaggning','avvikelse-brand','nyhetsadmin'].filter(r => document.getElementById('role-'+r)?.checked);
   const apps = Array.from(document.querySelectorAll('#user-apps-check input:checked')).map(e=>e.value);
   const editId = document.getElementById('user-edit-id').value;
   const obj = {
@@ -1013,7 +1316,9 @@ function savePLSettings() {
 function confirmDelete(type,id,name) {
   document.getElementById('delete-confirm-text').textContent='Ta bort "'+name+'"? Detta kan inte ångras.';
   document.getElementById('delete-confirm-btn').onclick=()=>{
-    if(type==='user')_data.users=_data.users.filter(u=>u.id!==id);
+    if(type==='news'){const ni=parseInt(id);if(!isNaN(ni))_data.portalNews.splice(ni,1);renderNews();}
+    else if(type==='link'){const idx=parseInt(id);if(!isNaN(idx))_data.portalLinks.splice(idx,1);else _data.portalLinks=(_data.portalLinks||[]).filter(l=>l.id!==id);renderLinks();}
+    else if(type==='user')_data.users=_data.users.filter(u=>u.id!==id);
     else if(type==='camping')_data.campings=(_data.campings||[]).filter(c=>c.id!==id);
     else if(type==='inspector')_data.inspectors=(_data.inspectors||[]).filter(i=>i.id!==id);
     closeModal('modal-delete');renderAll();saveData();toast('Borttaget','ok');
