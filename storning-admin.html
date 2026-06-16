@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Störningsrapporter – CCSthlm</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏕️</text></svg>">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/tabler-icons.min.css">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f5f5f3;--bg2:#ffffff;--bg3:#eeede8;--bg4:#e5e4de;
+  --text:#1a1a18;--text2:#5a5a57;--text3:#909088;
+  --accent:#3B6D11;--accent2:#27500A;--accent-glow:rgba(59,109,17,.1);
+  --red:#A32D2D;--red-bg:#FCEBEB;--red-text:#501313;
+  --amber:#854F0B;--amber-bg:#FAEEDA;--amber-text:#412402;
+  --green-bg:#EAF3DE;--green-text:#27500A;
+  --purple:#7c3aed;--purple-bg:#ede9f7;
+  --border:rgba(0,0,0,.10);--border2:rgba(0,0,0,.18);
+  --radius:8px;--radius-lg:14px;--shadow:0 2px 16px rgba(0,0,0,.08);
+  --sidebar:240px;
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:var(--bg3);color:var(--text);min-height:100vh;display:flex;}
+.sidebar{width:var(--sidebar);flex-shrink:0;background:var(--bg2);border-right:1px solid var(--border2);display:flex;flex-direction:column;position:fixed;inset:0 auto 0 0;z-index:10;}
+.sidebar-logo{padding:16px 18px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:9px;}
+.sidebar-logo i{font-size:22px;color:var(--purple);}
+.sidebar-logo-text{font-size:14px;font-weight:700;}
+.sidebar-logo-sub{font-size:10px;color:var(--text3);}
+.sidebar-nav{flex:1;padding:8px 0;}
+.nav-item{display:flex;align-items:center;gap:9px;padding:9px 18px;cursor:pointer;font-size:13px;color:var(--text2);border-left:2px solid transparent;transition:all .15s;}
+.nav-item:hover{background:var(--bg3);color:var(--text);}
+.nav-item.active{background:var(--bg3);color:var(--accent2);border-left-color:var(--accent);font-weight:600;}
+.nav-item i{font-size:15px;}
+.sidebar-footer{padding:12px 18px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:7px;}
+.sb-user{display:flex;align-items:center;gap:8px;padding-bottom:8px;border-bottom:1px solid var(--border);margin-bottom:2px;}
+.sb-avatar{width:28px;height:28px;border-radius:50%;background:var(--accent);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.main{margin-left:var(--sidebar);flex:1;display:flex;flex-direction:column;min-height:100vh;}
+.topbar{padding:14px 24px;border-bottom:1px solid var(--border2);display:flex;justify-content:space-between;align-items:center;background:var(--bg2);position:sticky;top:0;z-index:5;flex-wrap:wrap;gap:10px;}
+.topbar h1{font-size:17px;font-weight:700;}
+.topbar-sub{font-size:12px;color:var(--text2);margin-top:1px;}
+.content{padding:20px 24px;flex:1;}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:16px;box-shadow:var(--shadow);}
+.card-header{padding:12px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+.card-title{font-size:14px;font-weight:600;}
+table{width:100%;border-collapse:collapse;}
+th{text-align:left;padding:9px 13px;font-size:11px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--border);background:var(--bg3);}
+td{padding:11px 13px;font-size:13px;border-bottom:1px solid var(--border);vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:rgba(59,109,17,.025);}
+.badge{display:inline-flex;font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;}
+.b-ny{background:var(--green-bg);color:var(--green-text);}
+.b-beslutad{background:var(--amber-bg);color:var(--amber-text);}
+.b-uteslutning{background:var(--red-bg);color:var(--red-text);}
+.b-nerlagd{background:var(--bg3);color:var(--text3);}
+.risk-b{display:inline-flex;font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;}
+.r1{background:var(--green-bg);color:var(--green-text);}
+.r2{background:var(--amber-bg);color:var(--amber-text);}
+.r3{background:#fff3ed;color:#7c2d12;}
+.r4{background:var(--red-bg);color:var(--red-text);}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto;}
+.modal-overlay.show{display:flex;}
+.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius-lg);width:100%;max-width:640px;margin:auto;box-shadow:0 8px 40px rgba(0,0,0,.2);}
+.modal-header{padding:16px 20px 12px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--bg2);z-index:1;}
+.modal-title{font-size:15px;font-weight:700;}
+.modal-close{background:none;border:none;cursor:pointer;color:var(--text3);font-size:20px;}
+.modal-body{padding:18px 20px;}
+.modal-footer{padding:12px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px;position:sticky;bottom:0;background:var(--bg2);}
+.ff{display:flex;flex-direction:column;gap:4px;margin-bottom:12px;}
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
+.fg.full{grid-template-columns:1fr;}
+.ff label{font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.04em;}
+.ff input,.ff select,.ff textarea{padding:9px 11px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius);font-size:13px;color:var(--text);font-family:inherit;}
+.ff input:focus,.ff select:focus,.ff textarea:focus{outline:none;border-color:var(--accent);}
+.ff textarea{resize:vertical;min-height:80px;line-height:1.6;}
+.dr{display:flex;margin-bottom:8px;font-size:13px;gap:10px;}
+.dl{min-width:160px;color:var(--text2);font-weight:500;flex-shrink:0;font-size:12px;}
+.dsec{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);padding:8px 0 5px;border-bottom:1px solid var(--border);margin:12px 0 8px;}
+.beslut-box{background:var(--amber-bg);border:1px solid rgba(133,79,11,.3);border-radius:var(--radius);padding:12px 14px;margin-top:12px;}
+.uteslutning-row{background:var(--red-bg);border:1px solid rgba(163,45,45,.2);border-radius:var(--radius);padding:10px 14px;display:flex;align-items:center;gap:9px;font-size:13px;color:var(--red-text);}
+.uteslutning-row input{width:16px;height:16px;accent-color:var(--red);}
+.btn-primary{padding:9px 18px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px;}
+.btn-primary:hover{background:var(--accent2);}
+.btn-secondary{padding:8px 14px;background:var(--bg3);color:var(--text2);border:1px solid var(--border2);border-radius:var(--radius);font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:5px;}
+.btn-secondary:hover{background:var(--bg4);}
+.btn-print{padding:8px 14px;background:var(--purple-bg);color:var(--purple);border:1px solid rgba(124,58,237,.2);border-radius:var(--radius);font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:5px;}
+.btn-portal{width:100%;padding:8px;background:var(--bg3);color:var(--text2);border:1px solid var(--border2);border-radius:var(--radius);font-size:12px;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:7px;}
+.btn-portal:hover{background:var(--bg4);}
+.btn-logout{width:100%;padding:8px;background:var(--red-bg);color:var(--red);border:1px solid rgba(163,45,45,.2);border-radius:var(--radius);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:7px;}
+.btn-logout:hover{background:var(--red);color:#fff;}
+.filter-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
+.filter-bar select,.filter-bar input{padding:7px 10px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);font-size:12px;font-family:inherit;}
+.no-data{text-align:center;padding:40px;color:var(--text3);}
+.no-data i{font-size:36px;display:block;margin-bottom:10px;}
+#toast{position:fixed;bottom:22px;right:22px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);padding:10px 14px;font-size:13px;z-index:999;box-shadow:var(--shadow);opacity:0;transform:translateY(6px);transition:all .25s;pointer-events:none;display:flex;align-items:center;gap:6px;}
+@media(max-width:700px){.sidebar{display:none;}.main{margin-left:0;}}
+</style>
+</head>
+<body>
+
+<nav class="sidebar">
+  <div class="sidebar-logo">
+    <i class="ti ti-file-alert"></i>
+    <div><div class="sidebar-logo-text">Störningsrapporter</div><div class="sidebar-logo-sub">CCSthlm</div></div>
+  </div>
+  <div class="sidebar-nav">
+    <div class="nav-item active" id="nav-lista" onclick="showView('lista')"><i class="ti ti-list"></i> Alla rapporter</div>
+    <div class="nav-item" id="nav-öppna" onclick="showView('öppna')"><i class="ti ti-clock"></i> Öppna / Ej beslutade</div>
+    <div class="nav-item" id="nav-uteslutning" onclick="showView('uteslutning')"><i class="ti ti-user-x"></i> Vidare för uteslutning</div>
+  </div>
+  <div class="sidebar-footer">
+    <div class="sb-user">
+      <div class="sb-avatar" id="sb-avatar">?</div>
+      <div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" id="sb-name">–</div><div style="font-size:10px;color:var(--text3)">Störningsadmin</div></div>
+    </div>
+    <button class="btn-portal" onclick="window.location.href='index.html'"><i class="ti ti-arrow-left"></i> Portal</button>
+    <button class="btn-logout" onclick="portalLogout()"><i class="ti ti-logout"></i> Logga ut</button>
+  </div>
+</nav>
+
+<div class="main">
+  <div class="topbar">
+    <div><h1 id="view-title">Alla störningsrapporter</h1><div class="topbar-sub" id="view-sub">Registrerade störningsrapporter</div></div>
+    <button class="btn-secondary" onclick="exportExcel()"><i class="ti ti-table-export"></i> Excel</button>
+  </div>
+  <div class="content">
+    <div class="filter-bar">
+      <select id="f-anl" onchange="renderTable()"><option value="">Alla anläggningar</option></select>
+      <select id="f-status" onchange="renderTable()">
+        <option value="">Alla statusar</option>
+        <option value="ny">Ny</option>
+        <option value="beslutad">Beslutad</option>
+        <option value="nerlagd">Nerlagd</option>
+        <option value="uteslutning">Vidare för uteslutning</option>
+      </select>
+      <input type="date" id="f-from" onchange="renderTable()">
+      <input type="date" id="f-to" onchange="renderTable()">
+      <button class="btn-secondary" onclick="clearFilters()"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Störningsrapporter <span id="count" style="font-size:11px;color:var(--text3);background:var(--bg3);padding:1px 8px;border-radius:20px;margin-left:6px">0</span></span>
+      </div>
+      <div style="overflow-x:auto">
+        <table>
+          <thead><tr><th>Rapport-nr</th><th>Anläggning</th><th>Plats nr</th><th>CC-nr</th><th>Gästtyp</th><th>Datum</th><th>Risk</th><th>Status</th><th style="text-align:right">Åtgärd</th></tr></thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DETAIL + BESLUT MODAL -->
+<div class="modal-overlay" id="modal-detail">
+  <div class="modal">
+    <div class="modal-header">
+      <div><div class="modal-title" id="det-title">–</div><div style="font-size:11px;color:var(--text3);margin-top:2px" id="det-meta">–</div></div>
+      <button class="modal-close" onclick="closeModal('modal-detail')"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="modal-body" id="det-body"></div>
+    <div class="modal-footer" id="det-footer"></div>
+  </div>
+</div>
+
+<!-- BESLUT MODAL -->
+<div class="modal-overlay" id="modal-beslut">
+  <div class="modal" style="max-width:500px">
+    <div class="modal-header">
+      <span class="modal-title">Skriv beslut</span>
+      <button class="modal-close" onclick="closeModal('modal-beslut')"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="beslut-rapport-id">
+      <div class="fg">
+        <div class="ff"><label>Beslutstyp <span style="color:var(--red)">*</span></label>
+          <select id="beslut-typ">
+            <option value="">– Välj –</option>
+            <option value="Nerlagd">Nerlagd</option>
+            <option value="Muntlig tillsägelse">Muntlig tillsägelse</option>
+            <option value="Varning">Varning</option>
+            <option value="Avvisning">Avvisning</option>
+          </select>
+        </div>
+        <div class="ff"><label>Beslutsdag <span style="color:var(--red)">*</span></label>
+          <input type="date" id="beslut-datum">
+        </div>
+      </div>
+      <div class="ff">
+        <label>Beskrivning av beslut <span style="color:var(--red)">*</span></label>
+        <textarea id="beslut-text" placeholder="Beskriv beslutet och motivering. Styrelsen står bakom beslutet." style="min-height:100px"></textarea>
+      </div>
+      <div class="uteslutning-row">
+        <input type="checkbox" id="beslut-uteslutning">
+        <label for="beslut-uteslutning" style="cursor:pointer"><strong>Skicka vidare för uteslutning från CC</strong> — markeras i systemet</label>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeModal('modal-beslut')">Avbryt</button>
+      <button class="btn-primary" onclick="saveBeslut()"><i class="ti ti-check"></i> Spara beslut</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script>
+const GH_REPO = 'CCSthlm/besiktning-camping';
+const STORNING_PATH = 'avvikelse/storningsrapporter.json';
+const RISK_LABELS = ['','Låg','Medel','Hög','Akut'];
+const RISK_CLASS  = {1:'r1',2:'r2',3:'r3',4:'r4'};
+const STATUS_BADGE = {ny:'b-ny',beslutad:'b-beslutad',nerlagd:'b-nerlagd',uteslutning:'b-uteslutning'};
+const STATUS_LABEL = {ny:'Ny',beslutad:'Beslutad',nerlagd:'Nerlagd',uteslutning:'Vidare för uteslutning'};
+
+let _user = null;
+let _data = {rapporter:[]};
+let _ghSha = null;
+let _currentView = 'lista';
+let _currentRapport = null;
+
+(async function init() {
+  const sess = sessionStorage.getItem('ccs_session') || sessionStorage.getItem('ccs_portal_user');
+  if (!sess) { window.location.replace('index.html'); return; }
+  try { _user = JSON.parse(sess); } catch(e) { window.location.replace('index.html'); return; }
+
+  const roles = _user.adminRoles || [];
+  const ok = roles.some(r=>['global','störningsadmin'].includes(r)) || _user.role==='Admin';
+  if (!ok) { alert('Du har inte behörighet till störningsrapporter.'); window.location.replace('index.html'); return; }
+
+  const initials = _user.name.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase();
+  document.getElementById('sb-avatar').textContent = initials;
+  document.getElementById('sb-name').textContent = _user.name;
+
+  await loadData();
+  populateFilters();
+  renderTable();
+})();
+
+async function loadData() {
+  const token = localStorage.getItem('gh_token') || '';
+  if (!token) return;
+  try {
+    const res = await fetch('https://api.github.com/repos/'+GH_REPO+'/contents/'+STORNING_PATH,
+      {headers:{'Authorization':'token '+token}});
+    if (!res.ok) return;
+    const gh = await res.json();
+    _ghSha = gh.sha;
+    const bytes = Uint8Array.from(atob(gh.content.replace(/\n/g,'')), c=>c.charCodeAt(0));
+    _data = JSON.parse(new TextDecoder('utf-8').decode(bytes));
+    if (!_data.rapporter) _data.rapporter = [];
+  } catch(e) { console.warn('loadData:', e); }
+}
+
+async function saveData() {
+  const token = localStorage.getItem('gh_token') || '';
+  if (!token) { toast('Token saknas','warn'); return; }
+  const url = 'https://api.github.com/repos/'+GH_REPO+'/contents/'+STORNING_PATH;
+  try {
+    if (!_ghSha) {
+      const chk = await fetch(url,{headers:{'Authorization':'token '+token}});
+      if (chk.ok) _ghSha = (await chk.json()).sha;
+    }
+    const content = btoa(unescape(encodeURIComponent(JSON.stringify(_data,null,2))));
+    const payload = {message:'Störningsrapport uppdaterad '+new Date().toISOString().slice(0,10), content, branch:'main'};
+    if (_ghSha) payload.sha = _ghSha;
+    const res = await fetch(url,{method:'PUT',headers:{'Authorization':'token '+token,'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    const d = await res.json();
+    if (!res.ok) throw new Error(d.message||res.status);
+    _ghSha = d.content?.sha || _ghSha;
+    toast('Sparat','ok');
+  } catch(e) { toast('Fel: '+e.message,'err'); }
+}
+
+function populateFilters() {
+  const anls = [...new Set(_data.rapporter.map(r=>r.anläggning).filter(Boolean))].sort();
+  const sel = document.getElementById('f-anl');
+  anls.forEach(a=>sel.insertAdjacentHTML('beforeend',`<option>${a}</option>`));
+}
+
+function getFiltered() {
+  let list = [..._data.rapporter];
+  if (_currentView==='öppna')      list = list.filter(r=>r.status==='ny'||!r.status);
+  if (_currentView==='uteslutning') list = list.filter(r=>r.status==='uteslutning');
+  const anl = document.getElementById('f-anl').value;
+  const st  = document.getElementById('f-status').value;
+  const fr  = document.getElementById('f-from').value;
+  const to  = document.getElementById('f-to').value;
+  if (anl) list = list.filter(r=>r.anläggning===anl);
+  if (st)  list = list.filter(r=>(r.status||'ny')===st);
+  if (fr)  list = list.filter(r=>r.datum>=fr);
+  if (to)  list = list.filter(r=>r.datum<=to);
+  return list.sort((a,b)=>b.ts?.localeCompare(a.ts||''));
+}
+
+function renderTable() {
+  const list = getFiltered();
+  document.getElementById('count').textContent = list.length;
+  const tbody = document.getElementById('tbody');
+  if (!list.length) {
+    tbody.innerHTML = '<tr><td colspan="9"><div class="no-data"><i class="ti ti-file-x"></i>Inga störningsrapporter</div></td></tr>';
+    return;
+  }
+  tbody.innerHTML = list.map(r => {
+    const status = r.status||'ny';
+    const riskCls = RISK_CLASS[r.riskNivå]||'r1';
+    return `<tr>
+      <td style="font-family:monospace;font-size:11px;color:var(--text3)">${r.id}</td>
+      <td style="font-weight:500">${r.anläggning||'–'}</td>
+      <td>${r.platsNr||'–'}</td>
+      <td>${r.ccNr||'–'}</td>
+      <td style="font-size:12px;color:var(--text2)">${r.gästTyp||'–'}</td>
+      <td>${r.datum||'–'}</td>
+      <td><span class="risk-b ${riskCls}">${RISK_LABELS[r.riskNivå]||'–'}</span></td>
+      <td><span class="badge ${STATUS_BADGE[status]||'b-ny'}">${STATUS_LABEL[status]||status}</span></td>
+      <td style="text-align:right;white-space:nowrap">
+        <span onclick="openDetail('${r.id}')" style="cursor:pointer;color:var(--accent);font-size:12px;font-weight:500" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">Visa</span>
+        <span style="color:var(--border2);margin:0 5px">·</span>
+        <span onclick="openBeslut('${r.id}')" style="cursor:pointer;color:var(--amber);font-size:12px;font-weight:500" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">Beslut</span>
+        <span style="color:var(--border2);margin:0 5px">·</span>
+        <span onclick="printRapport('${r.id}')" style="cursor:pointer;color:var(--purple);font-size:12px;font-weight:500" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">Skriv ut</span>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function openDetail(id) {
+  const r = _data.rapporter.find(x=>x.id===id);
+  if (!r) return;
+  _currentRapport = r;
+  document.getElementById('det-title').textContent = r.id;
+  document.getElementById('det-meta').textContent = 'Registrerad: ' + fmtDate(r.ts) + ' av ' + r.rapportör;
+  const status = r.status||'ny';
+  const riskCls = RISK_CLASS[r.riskNivå]||'r1';
+  document.getElementById('det-body').innerHTML = `
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
+      <span class="badge ${STATUS_BADGE[status]||'b-ny'}">${STATUS_LABEL[status]||status}</span>
+      <span class="risk-b ${riskCls}">${RISK_LABELS[r.riskNivå]||'–'}</span>
+    </div>
+    <div class="dsec">Grundinformation</div>
+    <div class="dr"><span class="dl">Anläggning</span><span>${r.anläggning||'–'}</span></div>
+    <div class="dr"><span class="dl">Platsnummer</span><span>${r.platsNr||'–'}</span></div>
+    <div class="dr"><span class="dl">CC-nummer</span><span>${r.ccNr||'–'}</span></div>
+    <div class="dr"><span class="dl">Gästtyp</span><span>${r.gästTyp||'–'}</span></div>
+    <div class="dr"><span class="dl">Plats på området</span><span>${r.platsOmråde||'–'}</span></div>
+    <div class="dr"><span class="dl">Datum / tid</span><span>${r.datum||'–'} ${r.tid||''}</span></div>
+    <div class="dr"><span class="dl">Rapporterat av</span><span>${r.rapportör||'–'}</span></div>
+    <div class="dsec">Beskrivning / Redogörelse</div>
+    <div style="font-size:13px;line-height:1.7;background:var(--bg3);padding:12px;border-radius:var(--radius);white-space:pre-wrap">${r.beskrivning||'–'}</div>
+    ${r.beslut ? `
+    <div class="dsec">Beslut</div>
+    <div class="beslut-box">
+      <div style="font-weight:700;color:var(--amber-text);margin-bottom:6px">${r.beslut.typ}</div>
+      <div style="font-size:12px;line-height:1.7">${(r.beslut.beskrivning||'').replace(/\n/g,'<br>')}</div>
+      <div style="font-size:11px;color:var(--text3);margin-top:6px">Beslutsdag: ${r.beslut.datum||'–'} · Styrelsen</div>
+      ${r.beslut.uteslutning?'<div style="font-size:11px;font-weight:700;color:var(--red);margin-top:6px">⚑ Vidare för uteslutning från CC</div>':''}
+    </div>` : ''}
+  `;
+  document.getElementById('det-footer').innerHTML = `
+    <button class="btn-secondary" onclick="closeModal('modal-detail')">Stäng</button>
+    <button class="btn-print" onclick="printRapport('${r.id}')"><i class="ti ti-printer"></i> Skriv ut</button>
+    <button class="btn-primary" onclick="closeModal('modal-detail');openBeslut('${r.id}')"><i class="ti ti-gavel"></i> Skriv beslut</button>
+  `;
+  openModal('modal-detail');
+}
+
+function openBeslut(id) {
+  const r = _data.rapporter.find(x=>x.id===id);
+  if (!r) return;
+  document.getElementById('beslut-rapport-id').value = id;
+  document.getElementById('beslut-typ').value = r.beslut?.typ||'';
+  document.getElementById('beslut-datum').value = r.beslut?.datum||new Date().toISOString().slice(0,10);
+  document.getElementById('beslut-text').value = r.beslut?.beskrivning||'';
+  document.getElementById('beslut-uteslutning').checked = r.beslut?.uteslutning||false;
+  openModal('modal-beslut');
+}
+
+async function saveBeslut() {
+  const id  = document.getElementById('beslut-rapport-id').value;
+  const typ = document.getElementById('beslut-typ').value;
+  const dat = document.getElementById('beslut-datum').value;
+  const txt = document.getElementById('beslut-text').value.trim();
+  if (!typ)  { toast('Välj beslutstyp','warn'); return; }
+  if (!dat)  { toast('Ange beslutsdag','warn'); return; }
+  if (!txt)  { toast('Ange beslutsbeskrivning','warn'); return; }
+
+  const i = _data.rapporter.findIndex(r=>r.id===id);
+  if (i<0) return;
+  const uteslutning = document.getElementById('beslut-uteslutning').checked;
+  _data.rapporter[i].beslut = {typ, datum:dat, beskrivning:txt, uteslutning, av:_user.name, ts:new Date().toISOString()};
+  _data.rapporter[i].status = uteslutning ? 'uteslutning' : typ==='Nerlagd' ? 'nerlagd' : 'beslutad';
+  closeModal('modal-beslut');
+  renderTable();
+  await saveData();
+  // Auto-print after beslut
+  printRapport(id);
+}
+
+function printRapport(id) {
+  const r = _data.rapporter.find(x=>x.id===id);
+  if (!r) return;
+  const riskColor = {1:'#27500A',2:'#854F0B',3:'#c2410c',4:'#A32D2D'}[r.riskNivå]||'#5a5a57';
+  const w = window.open('','_blank','width=800,height=900');
+  w.document.write(`<!DOCTYPE html><html lang="sv"><head><meta charset="UTF-8">
+<title>Störningsrapport ${r.id}</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:Arial,sans-serif;font-size:13px;color:#1a1a18;padding:40px;}
+  .doc-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:28px;padding-bottom:16px;border-bottom:2px solid #3B6D11;}
+  .doc-logo{font-size:22px;font-weight:700;color:#3B6D11;}
+  .doc-logo-sub{font-size:11px;color:#5a5a57;margin-top:2px;}
+  .doc-nr{text-align:right;font-size:12px;color:#5a5a57;}
+  .doc-nr strong{font-size:16px;color:#1a1a18;display:block;}
+  h1{font-size:20px;font-weight:700;margin-bottom:14px;}
+  .risk-badge{display:inline-block;background:${riskColor}20;color:${riskColor};border:1px solid ${riskColor}40;padding:3px 12px;border-radius:20px;font-size:12px;font-weight:700;margin-bottom:20px;}
+  table{width:100%;border-collapse:collapse;margin-bottom:20px;}
+  td{padding:9px 12px;border-bottom:1px solid #eeede8;vertical-align:top;}
+  td:first-child{font-weight:600;color:#5a5a57;width:200px;}
+  .sec{font-size:12px;font-weight:700;margin:18px 0 8px;padding-bottom:5px;border-bottom:1px solid #eeede8;color:#3B6D11;text-transform:uppercase;letter-spacing:.05em;}
+  .desc-box{background:#f5f5f3;border-radius:6px;padding:14px;line-height:1.8;min-height:80px;border:1px solid #e5e4de;white-space:pre-wrap;}
+  .beslut-box{background:#FAEEDA;border:1px solid rgba(133,79,11,.3);border-radius:6px;padding:14px;margin-top:16px;}
+  .beslut-title{font-weight:700;color:#854F0B;margin-bottom:8px;}
+  .sign-row{display:flex;justify-content:space-between;margin-top:60px;}
+  .sign-col{text-align:center;flex:1;}
+  .sign-line{border-top:1px solid #1a1a18;margin:0 20px 6px;padding-top:6px;font-size:11px;color:#5a5a57;}
+  .footer{margin-top:32px;padding-top:12px;border-top:1px solid #eeede8;display:flex;justify-content:space-between;font-size:11px;color:#909088;}
+  .no-print{display:flex;gap:10px;justify-content:center;margin-top:30px;}
+  @media print{.no-print{display:none!important}}
+</style></head><body>
+<div class="doc-header">
+  <div><div class="doc-logo">🏕️ Caravan Club of Sweden</div><div class="doc-logo-sub">Stockholmssektionen</div></div>
+  <div class="doc-nr"><span>Störningsrapport</span><strong>${r.id}</strong><span style="display:block;margin-top:4px">${new Date(r.ts||Date.now()).toLocaleDateString('sv-SE')}</span></div>
+</div>
+<h1>Störningsrapport</h1>
+<div class="risk-badge">Risknivå: ${RISK_LABELS[r.riskNivå]||'–'}</div>
+<div class="sec">Grundinformation</div>
+<table>
+  <tr><td>Anläggning</td><td>${r.anläggning||'–'}</td></tr>
+  <tr><td>Platsnummer</td><td>${r.platsNr||'–'}</td></tr>
+  <tr><td>CC-nummer</td><td>${r.ccNr||'–'}</td></tr>
+  <tr><td>Gästtyp</td><td>${r.gästTyp||'–'}</td></tr>
+  <tr><td>Plats på området</td><td>${r.platsOmråde||'–'}</td></tr>
+  <tr><td>Datum / tid</td><td>${r.datum||'–'} ${r.tid||''}</td></tr>
+  <tr><td>Rapporterat av</td><td>${r.rapportör||'–'}</td></tr>
+  <tr><td>Status</td><td>${STATUS_LABEL[r.status||'ny']||r.status}</td></tr>
+</table>
+<div class="sec">Beskrivning / Redogörelse</div>
+<div class="desc-box">${r.beskrivning||'–'}</div>
+${r.beslut?`
+<div class="beslut-box">
+  <div class="beslut-title">Beslut: ${r.beslut.typ}</div>
+  <p style="font-size:12px;line-height:1.7;white-space:pre-wrap">${r.beslut.beskrivning||''}</p>
+  <p style="font-size:11px;color:#5a5a57;margin-top:8px">Beslutsdag: ${r.beslut.datum||'–'}</p>
+  ${r.beslut.uteslutning?'<p style="font-size:11px;font-weight:700;color:#A32D2D;margin-top:4px">⚑ Vidare för uteslutning från Caravan Club of Sweden</p>':''}
+</div>`:''}
+<div class="sign-row">
+  <div class="sign-col"><div class="sign-line">Rapportörens underskrift</div></div>
+  <div class="sign-col"><div class="sign-line">Caravan Club Stockholm – Styrelsen</div></div>
+</div>
+<div class="footer"><span>Dokumentnummer: ${r.id}</span><span>Utskrivet: ${new Date().toLocaleString('sv-SE')}</span></div>
+<div class="no-print">
+  <button onclick="window.print()" style="padding:10px 24px;background:#3B6D11;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit">🖨 Skriv ut</button>
+  <button onclick="window.close()" style="padding:10px 24px;background:#f5f5f3;color:#1a1a18;border:1px solid #ccc;border-radius:8px;font-size:14px;cursor:pointer;font-family:inherit">Stäng</button>
+</div>
+</body></html>`);
+  w.document.close();
+}
+
+function exportExcel() {
+  try {
+    const list = getFiltered();
+    const wb = XLSX.utils.book_new();
+    const rows = [
+      ['STÖRNINGSRAPPORTER – CCSthlm'],
+      ['Exporterad:', new Date().toLocaleString('sv-SE')],
+      [],
+      ['Rapport-nr','Anläggning','Plats nr','CC-nr','Gästtyp','Plats på området','Datum','Tid','Rapportör','Risk','Status','Beslutstyp','Beslutsdag','Beslutsbeskrivning','Uteslutning'],
+      ...list.map(r=>[r.id,r.anläggning||'',r.platsNr||'',r.ccNr||'',r.gästTyp||'',r.platsOmråde||'',r.datum||'',r.tid||'',r.rapportör||'',RISK_LABELS[r.riskNivå]||'',STATUS_LABEL[r.status||'ny']||'',r.beslut?.typ||'',r.beslut?.datum||'',r.beslut?.beskrivning||'',r.beslut?.uteslutning?'Ja':''])
+    ];
+    const ws = XLSX.utils.aoa_to_sheet(rows);
+    ws['!cols']=[{wch:14},{wch:24},{wch:10},{wch:10},{wch:14},{wch:16},{wch:10},{wch:8},{wch:20},{wch:8},{wch:20},{wch:18},{wch:10},{wch:40},{wch:10}];
+    XLSX.utils.book_append_sheet(wb, ws, 'Störningsrapporter');
+    XLSX.writeFile(wb,'Storningsrapporter_CCSthlm_'+new Date().toISOString().slice(0,10)+'.xlsx');
+    toast('Excel exporterad','ok');
+  } catch(e){ toast('Fel: '+e.message,'err'); }
+}
+
+function showView(v) {
+  _currentView = v;
+  ['lista','öppna','uteslutning'].forEach(x=>{
+    document.getElementById('nav-'+x)?.classList.toggle('active',x===v);
+  });
+  const titles = {lista:'Alla störningsrapporter',öppna:'Öppna / Ej beslutade',uteslutning:'Vidare för uteslutning'};
+  document.getElementById('view-title').textContent = titles[v]||v;
+  renderTable();
+}
+function clearFilters(){ ['f-anl','f-status','f-from','f-to'].forEach(id=>document.getElementById(id).value=''); renderTable(); }
+function openModal(id){ document.getElementById(id).classList.add('show'); }
+function closeModal(id){ document.getElementById(id).classList.remove('show'); }
+document.addEventListener('click',e=>{ if(e.target.classList.contains('modal-overlay'))e.target.classList.remove('show'); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape')document.querySelectorAll('.modal-overlay.show').forEach(m=>m.classList.remove('show')); });
+function fmtDate(iso){ try{ return new Date(iso).toLocaleString('sv-SE',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}); }catch(e){ return iso||'–'; } }
+function toast(msg,type='ok'){
+  const t=document.getElementById('toast');
+  t.style.background=type==='err'?'var(--red-bg)':type==='warn'?'var(--amber-bg)':'var(--green-bg)';
+  t.style.color=type==='err'?'var(--red-text)':type==='warn'?'var(--amber-text)':'var(--green-text)';
+  t.innerHTML=(type==='ok'?'<i class="ti ti-check"></i>':type==='warn'?'<i class="ti ti-alert-triangle"></i>':'<i class="ti ti-x"></i>')+' '+msg;
+  t.style.opacity='1';t.style.transform='translateY(0)';
+  setTimeout(()=>{t.style.opacity='0';t.style.transform='translateY(6px)';},2800);
+}
+function portalLogout(){ sessionStorage.setItem('ccs_logged_out','1'); sessionStorage.removeItem('ccs_session'); sessionStorage.removeItem('ccs_portal_user'); window.location.replace('index.html'); }
+</script>
+</body>
+</html>
