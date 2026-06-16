@@ -23,6 +23,26 @@
         "av": "Massimo Johansson",
         "ts": "2026-06-16T20:25:39.413Z"
       }
+    },
+    {
+      "id": "SR-2606-O8U0",
+      "ts": "2026-06-16T20:32:21.152Z",
+      "anläggning": "Gräddös Pärla Kök & Bar",
+      "platsOmråde": "Restaurang / kök",
+      "datum": "2026-06-16",
+      "tid": "23:30",
+      "rapportör": "Massimo Johansson <massimo.johansson@cc-camping.se>",
+      "risk": "Medel",
+      "riskNivå": 2,
+      "ccNr": "92136",
+      "platsNr": "38",
+      "gästTyp": "Säsongsgäst",
+      "gästNamn": "Massimo Johansson",
+      "personal": "Malin L, Jörgen L",
+      "överlämnas": "Massimo Johansson",
+      "beskrivning": "Uppträdde hotfullt när han nekades alkoholservering",
+      "status": "ny",
+      "beslut": null
     }
   ]
 }
