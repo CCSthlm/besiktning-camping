@@ -14,14 +14,14 @@
       "platsNr": "13",
       "gästTyp": "Säsongsgäst",
       "beskrivning": "CV förberedde inför familjedagen 6/6 med att sätta upp en hoppborg, på en större gräsyta där barnen har sitt lekområde. Lekytan är ca 10-15 meter från plats 13. Robert Silvek upplevde sig störd av detta och ropade på en av campingvärdarna som ej var i tjänst och ville att han skulle komma till Robert och prata. 2 campingvärdar gick då till Robert som upplevdes både hotfull och aggressiv mot CV i både kroppspråk med knutna nävar och tonläget i samtalet.  Detta skrämde även de barn som var med vid uppsättningen av hoppborgen. Robert var i det samtalet tydlig med att han inte ville att en hoppborg som låter ska stå på gräsytan bredvid hans plats. Han ville att han skulle ha blivit tillfrågad först om han hade velat ha den där. CV sa då att detta är en camping med barn på och att gräsytan där är barn vanligtvis leker och har kul så då frågar inte campingen honom om lov.  Förra året så var Robert inte heller nöjd när en hoppborg ställdes på samma ställe som i år. Robert är informerad att han har möjlighet att byta plats inom campingen om han så önskar. Familjedagen har även varit utannonserad i mail, på Storsveds facebooksida samt på flyers uppsatta på campingen.  Att bli hotfull mot campingvärdar är inte ok och det resulterar därför i en störningsanmälan. ",
-      "status": "beslutad",
+      "status": "uteslutning",
       "beslut": {
         "typ": "Varning",
         "datum": "2026-06-16",
         "beskrivning": "Då detta handlar om säsongsgästens uppträdande samt att campingvärdarna kände sig hotade är detta en allvarlig händelse kopplat till arbetsmiljön. Därav att vi beslutar om att ge säsongsgästen en Varning för detta uppträdande.",
-        "uteslutning": false,
+        "uteslutning": true,
         "av": "Massimo Johansson",
-        "ts": "2026-06-16T20:14:24.191Z"
+        "ts": "2026-06-16T20:25:39.413Z"
       }
     }
   ]
