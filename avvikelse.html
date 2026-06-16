@@ -261,6 +261,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
             <textarea id="f-beskrivning" placeholder="Vad hände? Hur upptäcktes det? Vilka var inblandade? Skriv sakligt och detaljerat." style="min-height:110px;"></textarea>
           </div>
         </div>
+        <div class="form-row full" id="overlamning-wrap" style="display:none">
+          <div class="form-field">
+            <label>Överlämnas till</label>
+            <input type="text" id="f-overlamning" placeholder="Namn på person som rapporten överlämnas till">
+          </div>
+        </div>
       </div>
     </div>
 
@@ -495,6 +501,10 @@ function buildDynamicFields() {
   else if (_selectedCat === 4) buildFieldsLivs(container);
   else if (_selectedCat === 5) buildFieldsAlk(container);
   else if (_selectedCat === 8) buildFieldsStörning(container);
+
+  // Show handover field only for störningsrapport
+  const overlamningWrap = document.getElementById('overlamning-wrap');
+  if (overlamningWrap) overlamningWrap.style.display = _selectedCat === 8 ? '' : 'none';
 }
 
 function field(id, label, type='text', placeholder='', required=false, opts=null) {
@@ -611,11 +621,15 @@ function buildFieldsStörning(c) {
   c.innerHTML = `<div class="dyn-section" style="border-left-color:#7c3aed">
     <div class="dyn-section-title"><i class="ti ti-file-alert" style="color:#7c3aed"></i>Störningsrapport – Uppgifter</div>
     <div class="form-row">
-      ${field('d-cc-nr','CC-nummer','text','Ex. 123456',true,'','number')}
+      ${field('d-cc-nr','CC-nummer','text','Ex. 123456',true)}
       ${field('d-plats-nr','Platsnummer','text','Ex. 42A',true)}
     </div>
     <div class="form-row">
       ${field('d-gasttyp','Gästtyp','select','',true,['Säsongsgäst','Tillfällig gäst'])}
+      ${field('d-gastnamn','Säsongsgästens namn','text','För- och efternamn',false)}
+    </div>
+    <div class="form-row full">
+      ${field('d-personal','Tjänstegörande personal','text','Namn på all tjänstgörande personal vid tillfället',true)}
     </div>
   </div>`;
 }
@@ -731,6 +745,9 @@ async function saveStörning() {
     ccNr:        (document.getElementById('d-cc-nr')||{}).value || '',
     platsNr:     (document.getElementById('d-plats-nr')||{}).value || '',
     gästTyp:     (document.getElementById('d-gasttyp')||{}).value || '',
+    gästNamn:    (document.getElementById('d-gastnamn')||{}).value || '',
+    personal:    (document.getElementById('d-personal')||{}).value || '',
+    överlämnas:  (document.getElementById('f-overlamning')||{}).value || '',
     beskrivning: document.getElementById('f-beskrivning').value,
     status:      'ny',
     beslut:      null,
@@ -813,11 +830,14 @@ function showPrintView(r) {
   <tr><td>Platsnummer</td><td>${r.platsNr||'–'}</td></tr>
   <tr><td>CC-nummer</td><td>${r.ccNr||'–'}</td></tr>
   <tr><td>Gästtyp</td><td>${r.gästTyp||'–'}</td></tr>
+  ${r.gästNamn?`<tr><td>Säsongsgästens namn</td><td>${r.gästNamn}</td></tr>`:''}
+  <tr><td>Tjänstegörande personal</td><td>${r.personal||'–'}</td></tr>
   <tr><td>Plats på området</td><td>${r.platsOmråde||'–'}</td></tr>
   <tr><td>Datum</td><td>${r.datum||'–'}</td></tr>
   <tr><td>Tid</td><td>${r.tid||'–'}</td></tr>
   <tr><td>Rapporterat av</td><td>${r.rapportör||'–'}</td></tr>
   <tr><td>Status</td><td>Ny</td></tr>
+  ${r.överlämnas?`<tr><td>Överlämnas till</td><td>${r.överlämnas}</td></tr>`:''}
 </table>
 
 <div class="section-title">Beskrivning / Redogörelse</div>
@@ -832,8 +852,11 @@ ${r.beslut ? `
 </div>` : ''}
 
 <div class="sign-row" style="margin-top:60px">
-  <div class="sign-col"><div class="sign-line">Rapportörens underskrift</div></div>
-  <div class="sign-col"><div class="sign-line">Caravan Club Stockholm – Styrelsen</div></div>
+  <div class="sign-col" style="flex:1;text-align:center">
+    <div style="border-top:1px solid #1a1a18;margin:0 30px 6px;padding-top:6px;font-size:11px;color:#5a5a57">
+      Caravan Club of Sweden – Stockholmssektionen<br>Rapportörens underskrift
+    </div>
+  </div>
 </div>
 
 <div class="footer">
