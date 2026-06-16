@@ -287,7 +287,7 @@
           "pnr": "",
           "date": "2026-06-16",
           "timeIn": "11:46",
-          "timeOut": "",
+          "timeOut": "11:46",
           "registeredBy": "Joachim Säfqvist",
           "registeredAt": "2026-06-16T09:46:16.427Z",
           "manual": false,
@@ -304,6 +304,15 @@
           "user": "Joachim Säfqvist",
           "action": "in",
           "detail": "Joachim Säfqvist stämplade in 11:46 (2026-06-16)",
+          "oldVal": "",
+          "newVal": "11:46"
+        },
+        {
+          "id": "mqggj5ovx0xcu",
+          "ts": "2026-06-16T09:46:17.359Z",
+          "user": "Joachim Säfqvist",
+          "action": "out",
+          "detail": "Joachim Säfqvist stämplade ut 11:46",
           "oldVal": "",
           "newVal": "11:46"
         }
