@@ -278,6 +278,36 @@
           "newVal": "23:16"
         }
       ]
+    },
+    "c8": {
+      "entries": [
+        {
+          "id": "mqggj4yzuwbcl",
+          "name": "Joachim Säfqvist",
+          "pnr": "",
+          "date": "2026-06-16",
+          "timeIn": "11:46",
+          "timeOut": "",
+          "registeredBy": "Joachim Säfqvist",
+          "registeredAt": "2026-06-16T09:46:16.427Z",
+          "manual": false,
+          "manualReason": "",
+          "edited": false,
+          "campingId": "c8"
+        }
+      ],
+      "personal": [],
+      "auditlog": [
+        {
+          "id": "mqggj4yz9s302",
+          "ts": "2026-06-16T09:46:16.427Z",
+          "user": "Joachim Säfqvist",
+          "action": "in",
+          "detail": "Joachim Säfqvist stämplade in 11:46 (2026-06-16)",
+          "oldVal": "",
+          "newVal": "11:46"
+        }
+      ]
     }
   },
   "portalLinks": [
