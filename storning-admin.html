@@ -106,6 +106,7 @@ tr:hover td{background:rgba(59,109,17,.025);}
     <div class="nav-item active" id="nav-lista" onclick="showView('lista')"><i class="ti ti-list"></i> Alla rapporter</div>
     <div class="nav-item" id="nav-öppna" onclick="showView('öppna')"><i class="ti ti-clock"></i> Öppna / Ej beslutade</div>
     <div class="nav-item" id="nav-uteslutning" onclick="showView('uteslutning')"><i class="ti ti-user-x"></i> Vidare för uteslutning</div>
+    <div class="nav-item" id="nav-beslutade" onclick="showView('beslutade')"><i class="ti ti-gavel"></i> Beslutade rapporter</div>
   </div>
   <div class="sidebar-footer">
     <div class="sb-user">
@@ -142,7 +143,7 @@ tr:hover td{background:rgba(59,109,17,.025);}
       </div>
       <div style="overflow-x:auto">
         <table>
-          <thead><tr><th>Rapport-nr</th><th>Anläggning</th><th>Plats nr</th><th>CC-nr</th><th>Gästtyp</th><th>Datum</th><th>Risk</th><th>Status</th><th style="text-align:right">Åtgärd</th></tr></thead>
+          <thead><tr><th>Rapport-nr</th><th>Anläggning</th><th>Plats nr</th><th>CC-nr</th><th>Gästtyp</th><th>Datum</th><th>Risk</th><th>Status</th><th>Beslutstyp</th><th style="text-align:right">Åtgärd</th></tr></thead>
           <tbody id="tbody"></tbody>
         </table>
       </div>
@@ -281,6 +282,7 @@ function getFiltered() {
   let list = [..._data.rapporter];
   if (_currentView==='öppna')      list = list.filter(r=>r.status==='ny'||!r.status);
   if (_currentView==='uteslutning') list = list.filter(r=>r.status==='uteslutning');
+  if (_currentView==='beslutade')   list = list.filter(r=>['beslutad','nerlagd','uteslutning'].includes(r.status));
   const anl = document.getElementById('f-anl').value;
   const st  = document.getElementById('f-status').value;
   const fr  = document.getElementById('f-from').value;
@@ -312,6 +314,7 @@ function renderTable() {
       <td>${r.datum||'–'}</td>
       <td><span class="risk-b ${riskCls}">${RISK_LABELS[r.riskNivå]||'–'}</span></td>
       <td><span class="badge ${STATUS_BADGE[status]||'b-ny'}">${STATUS_LABEL[status]||status}</span></td>
+      <td style="font-size:12px;color:var(--text2)">${r.beslut?.typ||'–'}</td>
       <td style="text-align:right;white-space:nowrap">
         <span onclick="openDetail('${r.id}')" style="cursor:pointer;color:var(--accent);font-size:12px;font-weight:500" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">Visa</span>
         <span style="color:var(--border2);margin:0 5px">·</span>
@@ -341,9 +344,12 @@ function openDetail(id) {
     <div class="dr"><span class="dl">Platsnummer</span><span>${r.platsNr||'–'}</span></div>
     <div class="dr"><span class="dl">CC-nummer</span><span>${r.ccNr||'–'}</span></div>
     <div class="dr"><span class="dl">Gästtyp</span><span>${r.gästTyp||'–'}</span></div>
+    ${r.gästNamn?`<div class="dr"><span class="dl">Säsongsgästens namn</span><span>${r.gästNamn}</span></div>`:''}
+    <div class="dr"><span class="dl">Tjänstegörande personal</span><span>${r.personal||'–'}</span></div>
     <div class="dr"><span class="dl">Plats på området</span><span>${r.platsOmråde||'–'}</span></div>
     <div class="dr"><span class="dl">Datum / tid</span><span>${r.datum||'–'} ${r.tid||''}</span></div>
     <div class="dr"><span class="dl">Rapporterat av</span><span>${r.rapportör||'–'}</span></div>
+    ${r.överlämnas?`<div class="dr"><span class="dl">Överlämnas till</span><span>${r.överlämnas}</span></div>`:''}
     <div class="dsec">Beskrivning / Redogörelse</div>
     <div style="font-size:13px;line-height:1.7;background:var(--bg3);padding:12px;border-radius:var(--radius);white-space:pre-wrap">${r.beskrivning||'–'}</div>
     ${r.beslut ? `
@@ -438,10 +444,13 @@ function printRapport(id) {
   <tr><td>Platsnummer</td><td>${r.platsNr||'–'}</td></tr>
   <tr><td>CC-nummer</td><td>${r.ccNr||'–'}</td></tr>
   <tr><td>Gästtyp</td><td>${r.gästTyp||'–'}</td></tr>
+  ${r.gästNamn?`<tr><td>Säsongsgästens namn</td><td>${r.gästNamn}</td></tr>`:''}
+  <tr><td>Tjänstegörande personal</td><td>${r.personal||'–'}</td></tr>
   <tr><td>Plats på området</td><td>${r.platsOmråde||'–'}</td></tr>
   <tr><td>Datum / tid</td><td>${r.datum||'–'} ${r.tid||''}</td></tr>
   <tr><td>Rapporterat av</td><td>${r.rapportör||'–'}</td></tr>
   <tr><td>Status</td><td>${STATUS_LABEL[r.status||'ny']||r.status}</td></tr>
+  ${r.överlämnas?`<tr><td>Överlämnas till</td><td>${r.överlämnas}</td></tr>`:''}
 </table>
 <div class="sec">Beskrivning / Redogörelse</div>
 <div class="desc-box">${r.beskrivning||'–'}</div>
@@ -452,9 +461,8 @@ ${r.beslut?`
   <p style="font-size:11px;color:#5a5a57;margin-top:8px">Beslutsdag: ${r.beslut.datum||'–'}</p>
   ${r.beslut.uteslutning?'<p style="font-size:11px;font-weight:700;color:#A32D2D;margin-top:4px">⚑ Vidare för uteslutning från Caravan Club of Sweden</p>':''}
 </div>`:''}
-<div class="sign-row">
-  <div class="sign-col"><div class="sign-line">Rapportörens underskrift</div></div>
-  <div class="sign-col"><div class="sign-line">Caravan Club Stockholm – Styrelsen</div></div>
+<div style="text-align:center;margin-top:60px">
+  <div style="border-top:1px solid #1a1a18;margin:0 auto;width:60%;padding-top:6px;font-size:11px;color:#5a5a57">Caravan Club of Sweden – Stockholmssektionen<br>Rapportörens underskrift</div>
 </div>
 <div class="footer"><span>Dokumentnummer: ${r.id}</span><span>Utskrivet: ${new Date().toLocaleString('sv-SE')}</span></div>
 <div class="no-print">
@@ -473,8 +481,8 @@ function exportExcel() {
       ['STÖRNINGSRAPPORTER – CCSthlm'],
       ['Exporterad:', new Date().toLocaleString('sv-SE')],
       [],
-      ['Rapport-nr','Anläggning','Plats nr','CC-nr','Gästtyp','Plats på området','Datum','Tid','Rapportör','Risk','Status','Beslutstyp','Beslutsdag','Beslutsbeskrivning','Uteslutning'],
-      ...list.map(r=>[r.id,r.anläggning||'',r.platsNr||'',r.ccNr||'',r.gästTyp||'',r.platsOmråde||'',r.datum||'',r.tid||'',r.rapportör||'',RISK_LABELS[r.riskNivå]||'',STATUS_LABEL[r.status||'ny']||'',r.beslut?.typ||'',r.beslut?.datum||'',r.beslut?.beskrivning||'',r.beslut?.uteslutning?'Ja':''])
+      ['Rapport-nr','Anläggning','Plats nr','CC-nr','Gästtyp','Gästens namn','Tjänstegörande personal','Plats på området','Datum','Tid','Rapportör','Överlämnas till','Risk','Status','Beslutstyp','Beslutsdag','Beslutsbeskrivning','Uteslutning'],
+      ...list.map(r=>[r.id,r.anläggning||'',r.platsNr||'',r.ccNr||'',r.gästTyp||'',r.gästNamn||'',r.personal||'',r.platsOmråde||'',r.datum||'',r.tid||'',r.rapportör||'',r.överlämnas||'',RISK_LABELS[r.riskNivå]||'',STATUS_LABEL[r.status||'ny']||'',r.beslut?.typ||'',r.beslut?.datum||'',r.beslut?.beskrivning||'',r.beslut?.uteslutning?'Ja':''])
     ];
     const ws = XLSX.utils.aoa_to_sheet(rows);
     ws['!cols']=[{wch:14},{wch:24},{wch:10},{wch:10},{wch:14},{wch:16},{wch:10},{wch:8},{wch:20},{wch:8},{wch:20},{wch:18},{wch:10},{wch:40},{wch:10}];
@@ -486,10 +494,10 @@ function exportExcel() {
 
 function showView(v) {
   _currentView = v;
-  ['lista','öppna','uteslutning'].forEach(x=>{
+  ['lista','öppna','uteslutning','beslutade'].forEach(x=>{
     document.getElementById('nav-'+x)?.classList.toggle('active',x===v);
   });
-  const titles = {lista:'Alla störningsrapporter',öppna:'Öppna / Ej beslutade',uteslutning:'Vidare för uteslutning'};
+  const titles = {lista:'Alla störningsrapporter',öppna:'Öppna / Ej beslutade',uteslutning:'Vidare för uteslutning',beslutade:'Beslutade rapporter'};
   document.getElementById('view-title').textContent = titles[v]||v;
   renderTable();
 }
