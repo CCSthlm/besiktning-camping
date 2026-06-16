@@ -197,6 +197,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
           <button class="cat-btn" onclick="selectCat(5)" id="cat-5"><i class="ti ti-glass-full"></i><strong>Alkohol / servering</strong><span>Servering, ordning</span></button>
           <button class="cat-btn" onclick="selectCat(6)" id="cat-6"><i class="ti ti-lock-exclamation"></i><strong>Säkerhet / ordning</strong><span>Stöld, hot, skadegörelse</span></button>
           <button class="cat-btn" onclick="selectCat(7)" id="cat-7"><i class="ti ti-leaf"></i><strong>Miljö / kemikalier</strong><span>Spill, avfall, gasol</span></button>
+          <button class="cat-btn" onclick="selectCat(8)" id="cat-8"><i class="ti ti-file-alert" style="color:#7c3aed"></i><strong>Störningsrapport</strong><span>Gäststörning, ordning</span></button>
         </div>
       </div>
     </div>
@@ -373,17 +374,18 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
 <script>
 // ── CONFIG ────────────────────────────────────────────────────────────────
 const GH_REPO = 'CCSthlm/besiktning-camping';
+const STORNING_PATH = 'avvikelse/storningsrapporter.json';
 const DATA_PATH = 'avvikelse/data.json';
 
 // EmailJS — fill in from avvikelse-settings or shared config
 // ── EMAILJS CONFIG — fyll i dina uppgifter här ────────────────────────────
-const EJS_PUBLIC_KEY  = 'Y7UNzb3nmTE9XPdHr';      // Account → General → Public Key
-const EJS_SERVICE_ID  = 'service_emsyoet';      // Email Services → Service ID
-const EJS_TEMPLATE_ID = 'template_lnc7tz6';     // Email Templates → Template ID
+const EJS_PUBLIC_KEY  = 'DIN_PUBLIC_KEY';      // Account → General → Public Key
+const EJS_SERVICE_ID  = 'DIN_SERVICE_ID';      // Email Services → Service ID
+const EJS_TEMPLATE_ID = 'DIN_TEMPLATE_ID';     // Email Templates → Template ID
 const NOTIFY_EMAIL    = 'massimo.johansson@cc-camping.se';
 
 // ── STATIC DATA ───────────────────────────────────────────────────────────
-const CAT_NAMES = ['Driftavvikelse','Sjukdom / gästincident','Brandtillbud / SBA','Arbetsmiljö / tillbud','Livsmedel / restaurang','Alkohol / servering','Säkerhet / ordning','Miljö / kemikalier'];
+const CAT_NAMES = ['Driftavvikelse','Sjukdom / gästincident','Brandtillbud / SBA','Arbetsmiljö / tillbud','Livsmedel / restaurang','Alkohol / servering','Säkerhet / ordning','Miljö / kemikalier','Störningsrapport'];
 const CAT_ICONS = ['ti-tool','ti-user-exclamation','ti-flame','ti-shield-exclamation','ti-soup','ti-glass-full','ti-lock-exclamation','ti-leaf'];
 const RISK_LABELS = ['','Låg','Medel','Hög','Akut'];
 const RISK_COLORS = ['','#27500A','#854F0B','#c2410c','#A32D2D'];
@@ -402,6 +404,8 @@ let _selectedCat = -1;
 let _selectedRisk = 0;
 let _photos = []; // [{name, b64}]
 let _ghSha = null;
+let _storningData = {rapporter:[]};
+let _storningGhSha = null;
 
 // ── INIT ──────────────────────────────────────────────────────────────────
 (async function init() {
@@ -490,6 +494,7 @@ function buildDynamicFields() {
   else if (_selectedCat === 3) buildFieldsArb(container);
   else if (_selectedCat === 4) buildFieldsLivs(container);
   else if (_selectedCat === 5) buildFieldsAlk(container);
+  else if (_selectedCat === 8) buildFieldsStörning(container);
 }
 
 function field(id, label, type='text', placeholder='', required=false, opts=null) {
@@ -602,6 +607,19 @@ function buildFieldsLivs(c) {
     </div>`);
 }
 
+function buildFieldsStörning(c) {
+  c.innerHTML = `<div class="dyn-section" style="border-left-color:#7c3aed">
+    <div class="dyn-section-title"><i class="ti ti-file-alert" style="color:#7c3aed"></i>Störningsrapport – Uppgifter</div>
+    <div class="form-row">
+      ${field('d-cc-nr','CC-nummer','text','Ex. 123456',true,'','number')}
+      ${field('d-plats-nr','Platsnummer','text','Ex. 42A',true)}
+    </div>
+    <div class="form-row">
+      ${field('d-gasttyp','Gästtyp','select','',true,['Säsongsgäst','Tillfällig gäst'])}
+    </div>
+  </div>`;
+}
+
 function buildFieldsAlk(c) {
   c.innerHTML = section('','ti-glass-full','Alkohol / servering',`
     <div class="form-row">
@@ -658,6 +676,8 @@ function goStep2() {
 function goStep3() {
   if (!document.getElementById('f-anlaggning').value) { toast('Välj anläggning','warn'); return; }
   if (!document.getElementById('f-beskrivning').value.trim()) { toast('Fyll i beskrivning','warn'); return; }
+  // Störningsrapport: save and show print view directly
+  if (_selectedCat === 8) { saveStörning(); return; }
   setStep(3); show('view-s3'); hide('view-s2');
 }
 function goStep4() {
@@ -694,6 +714,150 @@ function buildSummary() {
 }
 
 // ── SUBMIT ────────────────────────────────────────────────────────────────
+// ── STÖRNINGSRAPPORT ─────────────────────────────────────────────────────
+async function saveStörning() {
+  const token = localStorage.getItem('gh_token') || '';
+  const rapportNr = 'SR-' + new Date().getFullYear().toString().slice(2) + (new Date().getMonth()+1).toString().padStart(2,'0') + '-' + Math.random().toString(36).slice(2,6).toUpperCase();
+  const rapport = {
+    id: rapportNr,
+    ts: new Date().toISOString(),
+    anläggning:  document.getElementById('f-anlaggning').value,
+    platsOmråde: document.getElementById('f-plats').value,
+    datum:       document.getElementById('f-datum').value,
+    tid:         document.getElementById('f-tid').value,
+    rapportör:   document.getElementById('f-rapportor').value,
+    risk:        _selectedRisk > 0 ? RISK_LABELS[_selectedRisk] : '–',
+    riskNivå:    _selectedRisk,
+    ccNr:        (document.getElementById('d-cc-nr')||{}).value || '',
+    platsNr:     (document.getElementById('d-plats-nr')||{}).value || '',
+    gästTyp:     (document.getElementById('d-gasttyp')||{}).value || '',
+    beskrivning: document.getElementById('f-beskrivning').value,
+    status:      'ny',
+    beslut:      null,
+  };
+
+  // Save to GitHub
+  if (token) {
+    try {
+      let sha = null;
+      const check = await fetch('https://api.github.com/repos/'+GH_REPO+'/contents/'+STORNING_PATH, {headers:{'Authorization':'token '+token}});
+      if (check.ok) {
+        const d = await check.json();
+        sha = d.sha;
+        const bytes = Uint8Array.from(atob(d.content.replace(/\n/g,'')), c=>c.charCodeAt(0));
+        _storningData = JSON.parse(new TextDecoder('utf-8').decode(bytes));
+      }
+      if (!_storningData.rapporter) _storningData.rapporter = [];
+      _storningData.rapporter.push(rapport);
+      const content = btoa(unescape(encodeURIComponent(JSON.stringify(_storningData,null,2))));
+      const payload = {message:'Störningsrapport '+rapportNr, content, branch:'main'};
+      if (sha) payload.sha = sha;
+      await fetch('https://api.github.com/repos/'+GH_REPO+'/contents/'+STORNING_PATH, {
+        method:'PUT', headers:{'Authorization':'token '+token,'Content-Type':'application/json'}, body:JSON.stringify(payload)
+      });
+    } catch(e) { console.warn('saveStörning:', e); }
+  }
+
+  showPrintView(rapport);
+}
+
+function showPrintView(r) {
+  const riskColor = {1:'#27500A',2:'#854F0B',3:'#c2410c',4:'#A32D2D'}[r.riskNivå] || '#5a5a57';
+  const printWin = window.open('','_blank','width=800,height:900');
+  printWin.document.write(`<!DOCTYPE html>
+<html lang="sv"><head><meta charset="UTF-8">
+<title>Störningsrapport ${r.id}</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:Arial,sans-serif;font-size:13px;color:#1a1a18;background:#fff;padding:40px;}
+  .doc-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:28px;padding-bottom:16px;border-bottom:2px solid #3B6D11;}
+  .doc-logo{font-size:22px;font-weight:700;color:#3B6D11;}
+  .doc-logo-sub{font-size:11px;color:#5a5a57;margin-top:2px;}
+  .doc-nr{text-align:right;font-size:12px;color:#5a5a57;}
+  .doc-nr strong{font-size:16px;color:#1a1a18;display:block;}
+  h1{font-size:20px;font-weight:700;margin-bottom:18px;color:#1a1a18;}
+  .risk-badge{display:inline-block;background:${riskColor}20;color:${riskColor};border:1px solid ${riskColor}40;padding:3px 12px;border-radius:20px;font-size:12px;font-weight:700;margin-bottom:20px;}
+  table{width:100%;border-collapse:collapse;margin-bottom:20px;}
+  th{text-align:left;padding:8px 12px;font-size:11px;font-weight:600;color:#5a5a57;text-transform:uppercase;letter-spacing:.05em;background:#f5f5f3;border-bottom:2px solid #e5e4de;}
+  td{padding:9px 12px;border-bottom:1px solid #eeede8;vertical-align:top;}
+  td:first-child{font-weight:600;color:#5a5a57;width:200px;}
+  .section-title{font-size:13px;font-weight:700;margin:20px 0 8px;padding-bottom:5px;border-bottom:1px solid #eeede8;color:#3B6D11;}
+  .desc-box{background:#f5f5f3;border-radius:6px;padding:14px;line-height:1.8;min-height:80px;border:1px solid #e5e4de;}
+  .decision-box{background:#FAEEDA;border:1px solid rgba(133,79,11,.3);border-radius:6px;padding:14px;margin-top:20px;}
+  .decision-title{font-weight:700;color:#854F0B;margin-bottom:8px;}
+  .footer{margin-top:40px;padding-top:16px;border-top:1px solid #eeede8;display:flex;justify-content:space-between;font-size:11px;color:#909088;}
+  .sign-row{display:flex;justify-content:space-between;margin-top:50px;}
+  .sign-col{text-align:center;flex:1;}
+  .sign-line{border-top:1px solid #1a1a18;margin:0 20px 6px;padding-top:6px;font-size:11px;color:#5a5a57;}
+  @media print{body{padding:20px;}.no-print{display:none}}
+</style></head><body>
+
+<div class="doc-header">
+  <div>
+    <div class="doc-logo">🏕️ Caravan Club of Sweden</div>
+    <div class="doc-logo-sub">Stockholmssektionen</div>
+  </div>
+  <div class="doc-nr">
+    <span>Störningsrapport</span>
+    <strong>${r.id}</strong>
+    <span style="display:block;margin-top:4px">${new Date(r.ts).toLocaleDateString('sv-SE')}</span>
+  </div>
+</div>
+
+<h1>Störningsrapport</h1>
+<div class="risk-badge">Risknivå: ${r.risk}</div>
+
+<div class="section-title">Grundinformation</div>
+<table>
+  <tr><td>Anläggning</td><td>${r.anläggning}</td></tr>
+  <tr><td>Platsnummer</td><td>${r.platsNr||'–'}</td></tr>
+  <tr><td>CC-nummer</td><td>${r.ccNr||'–'}</td></tr>
+  <tr><td>Gästtyp</td><td>${r.gästTyp||'–'}</td></tr>
+  <tr><td>Plats på området</td><td>${r.platsOmråde||'–'}</td></tr>
+  <tr><td>Datum</td><td>${r.datum||'–'}</td></tr>
+  <tr><td>Tid</td><td>${r.tid||'–'}</td></tr>
+  <tr><td>Rapporterat av</td><td>${r.rapportör||'–'}</td></tr>
+  <tr><td>Status</td><td>Ny</td></tr>
+</table>
+
+<div class="section-title">Beskrivning / Redogörelse</div>
+<div class="desc-box">${(r.beskrivning||'').replace(/\n/g,'<br>')}</div>
+
+${r.beslut ? `
+<div class="decision-box">
+  <div class="decision-title">Beslut – ${r.beslut.typ}</div>
+  <p style="font-size:12px;line-height:1.7">${(r.beslut.beskrivning||'').replace(/\n/g,'<br>')}</p>
+  <p style="font-size:11px;color:#5a5a57;margin-top:8px">Beslutsdag: ${r.beslut.datum||'–'}</p>
+  ${r.beslut.uteslutning?'<p style="font-size:11px;font-weight:700;color:#A32D2D;margin-top:4px">⚑ Skickat vidare för uteslutning från CC</p>':''}
+</div>` : ''}
+
+<div class="sign-row" style="margin-top:60px">
+  <div class="sign-col"><div class="sign-line">Rapportörens underskrift</div></div>
+  <div class="sign-col"><div class="sign-line">Caravan Club Stockholm – Styrelsen</div></div>
+</div>
+
+<div class="footer">
+  <span>Dokumentnummer: ${r.id}</span>
+  <span>Utskrivet: ${new Date().toLocaleString('sv-SE')}</span>
+</div>
+
+<div class="no-print" style="margin-top:30px;display:flex;gap:10px;justify-content:center">
+  <button onclick="window.print()" style="padding:10px 24px;background:#3B6D11;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit">🖨 Skriv ut</button>
+  <button onclick="window.close()" style="padding:10px 24px;background:#f5f5f3;color:#1a1a18;border:1px solid #ccc;border-radius:8px;font-size:14px;cursor:pointer;font-family:inherit">Stäng</button>
+</div>
+
+</body></html>`);
+  printWin.document.close();
+  // Reset form and show success
+  hide('view-s2');
+  setStep(4);
+  document.getElementById('success-text').textContent = 'Störningsrapporten '+r.id+' har sparats.';
+  document.getElementById('success-id').textContent = 'Dokumentnummer: '+r.id;
+  show('view-success');
+  document.getElementById('view-success').style.display='';
+  hide('view-s3');
+}
+
 async function submitForm() {
   document.getElementById('send-error').classList.remove('show');
   document.getElementById('overlay').classList.add('show');
