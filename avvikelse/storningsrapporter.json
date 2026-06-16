@@ -41,8 +41,15 @@
       "personal": "Malin L, Jörgen L",
       "överlämnas": "Massimo Johansson",
       "beskrivning": "Uppträdde hotfullt när han nekades alkoholservering",
-      "status": "ny",
-      "beslut": null
+      "status": "beslutad",
+      "beslut": {
+        "typ": "Avvisning",
+        "datum": "2026-06-16",
+        "beskrivning": "DU är avvisad",
+        "uteslutning": false,
+        "av": "Massimo Johansson",
+        "ts": "2026-06-16T20:35:57.075Z"
+      }
     }
   ]
 }
