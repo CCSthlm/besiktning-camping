@@ -50,6 +50,26 @@
         "av": "Massimo Johansson",
         "ts": "2026-06-16T20:35:57.075Z"
       }
+    },
+    {
+      "id": "SR-2606-A579",
+      "ts": "2026-06-16T20:48:54.673Z",
+      "anläggning": "CC Björkö Örns Camping",
+      "platsOmråde": "Reception",
+      "datum": "2026-06-16",
+      "tid": "",
+      "rapportör": "Massimo Johansson <massimo.johansson@cc-camping.se>",
+      "risk": "Akut",
+      "riskNivå": 4,
+      "ccNr": "3333333333333",
+      "platsNr": "333",
+      "gästTyp": "Tillfällig gäst",
+      "gästNamn": "Sven Svensson",
+      "personal": "",
+      "överlämnas": "Sven",
+      "beskrivning": "dfgdgfgdfgdfg",
+      "status": "ny",
+      "beslut": null
     }
   ]
 }
