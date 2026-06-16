@@ -88,8 +88,15 @@
       "personal": "Malin L, Jörgen L",
       "överlämnas": "Massimo Johansson",
       "beskrivning": "asdsdfsdafa dsads dskjsdbf kjsda klsdfnh kljsdn,.ncv,.x nv,m.cxzn z.,n,xcnv, xnzv .,xcnv .,xcn ,.xzcn .,zxcn .,xzmvöcxlzvnölsfjlö ns .,xnv .,mx väsadvfc .wa nlkxslkdf  oisdf sdk.sn z.x, z<jöä<df czm",
-      "status": "ny",
-      "beslut": null
+      "status": "beslutad",
+      "beslut": {
+        "typ": "Muntlig tillsägelse",
+        "datum": "2026-06-16",
+        "beskrivning": "dfh saklj hsladkkjl kadsfhksajl fgkjkjkfj dslöj dl jsdöl jdölsjglöbmvclkömb.,vcmmbödjbgöld b.,bm vc., .cvb .,m .m b.-,cx.-xmvbxjölb dflgdsm bmmbm.bö.cxmb .öl-cx bm ögm böb.m.mbölfdm m.bm ölbö mdmb cbg ämöm",
+        "uteslutning": false,
+        "av": "Massimo Johansson",
+        "ts": "2026-06-16T20:59:58.009Z"
+      }
     }
   ]
 }
