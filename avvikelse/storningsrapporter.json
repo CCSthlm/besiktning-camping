@@ -70,6 +70,26 @@
       "beskrivning": "dfgdgfgdfgdfg",
       "status": "ny",
       "beslut": null
+    },
+    {
+      "id": "SR-2606-LI0L",
+      "ts": "2026-06-16T20:57:38.039Z",
+      "anläggning": "CC Storsveds Camping",
+      "platsOmråde": "Restaurang / kök",
+      "datum": "2026-06-16",
+      "tid": "",
+      "rapportör": "Massimo Johansson <massimo.johansson@cc-camping.se>",
+      "risk": "Hög",
+      "riskNivå": 3,
+      "ccNr": "232323",
+      "platsNr": "23",
+      "gästTyp": "Säsongsgäst",
+      "gästNamn": "Massimo Johansson",
+      "personal": "Malin L, Jörgen L",
+      "överlämnas": "Massimo Johansson",
+      "beskrivning": "asdsdfsdafa dsads dskjsdbf kjsda klsdfnh kljsdn,.ncv,.x nv,m.cxzn z.,n,xcnv, xnzv .,xcnv .,xcn ,.xzcn .,zxcn .,xzmvöcxlzvnölsfjlö ns .,xnv .,mx väsadvfc .wa nlkxslkdf  oisdf sdk.sn z.x, z<jöä<df czm",
+      "status": "ny",
+      "beslut": null
     }
   ]
 }
