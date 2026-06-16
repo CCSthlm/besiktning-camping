@@ -286,13 +286,13 @@
           "name": "Joachim Säfqvist",
           "pnr": "",
           "date": "2026-06-16",
-          "timeIn": "11:46",
-          "timeOut": "11:46",
+          "timeIn": "10:40",
+          "timeOut": "11:45",
           "registeredBy": "Joachim Säfqvist",
           "registeredAt": "2026-06-16T09:46:16.427Z",
           "manual": false,
-          "manualReason": "",
-          "edited": false,
+          "manualReason": "Test",
+          "edited": true,
           "campingId": "c8"
         }
       ],
@@ -315,6 +315,15 @@
           "detail": "Joachim Säfqvist stämplade ut 11:46",
           "oldVal": "",
           "newVal": "11:46"
+        },
+        {
+          "id": "mqggknslo6l9n",
+          "ts": "2026-06-16T09:47:27.477Z",
+          "user": "Joachim Säfqvist",
+          "action": "edit",
+          "detail": "Redigerade post för Joachim Säfqvist (2026-06-16)",
+          "oldVal": "{\"timeIn\":\"11:46\",\"timeOut\":\"11:46\"}",
+          "newVal": "{\"timeIn\":\"10:40\",\"timeOut\":\"11:45\"}"
         }
       ]
     }
