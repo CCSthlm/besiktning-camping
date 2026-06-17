@@ -183,6 +183,94 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
 .token-row button{padding:8px 13px;background:var(--amber);color:#000;border:none;border-radius:var(--radius);font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;font-family:inherit;}
 .token-row button:hover{opacity:.88;}
 .token-ok{font-size:11px;color:var(--green);margin-top:5px;display:none;}
+
+/* ── MOBILE LAYOUT ───────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+
+  /* Portal wrap */
+  .portal-wrap { max-width: 100%; padding: 0; }
+
+  /* Two-column → single column */
+  .portal-main { flex-direction: column; gap: 12px; }
+  .portal-links { width: 100%; }
+
+  /* Links as horizontal scroll pills */
+  .links-list { display: flex; flex-direction: row; overflow-x: auto; padding: 8px 12px; gap: 8px; }
+  .links-list::-webkit-scrollbar { display: none; }
+  .link-item { white-space: nowrap; flex-shrink: 0; border-radius: 20px; border: 0.5px solid var(--border2); background: var(--bg3); padding: 7px 14px; font-size: 13px; }
+  .links-card-header { display: none; }
+  .links-card { border-radius: 0; border-left: none; border-right: none; }
+
+  /* App groups → icon grid */
+  .app-group-title { font-size: 11px; padding: 14px 16px 6px; }
+
+  .app-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    text-align: center;
+    padding: 12px 6px 10px;
+    border-radius: 14px;
+    min-height: 90px;
+  }
+  .app-card .app-icon { width: 44px; height: 44px; border-radius: 12px; margin: 0 auto 7px; font-size: 20px; flex-shrink: 0; }
+  .app-card .app-title { font-size: 11px; line-height: 1.3; font-weight: 500; }
+  .app-card .app-desc { display: none; }
+  .app-card .app-badge { position: absolute; top: 6px; right: 6px; font-size: 9px; padding: 1px 5px; }
+  .app-card { position: relative; }
+  .app-card .app-arrow { display: none; }
+
+  /* Grid for app cards */
+  .app-group-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    padding: 0 12px 12px;
+  }
+
+  /* Topbar on mobile */
+  .portal-header { padding: 12px 16px; }
+
+  /* Banner zone */
+  .banner-zone { margin-bottom: 10px; }
+  .banner { padding: 10px 13px; border-radius: 10px; }
+  .banner-title { font-size: 12px; }
+  .banner-text { font-size: 11px; }
+
+  /* Bottom nav */
+  .mobile-bottom-nav {
+    display: flex;
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: var(--bg2);
+    border-top: 1px solid var(--border2);
+    z-index: 50;
+    padding: 6px 0 10px;
+  }
+  .mobile-nav-tab {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    font-size: 10px;
+    color: var(--text3);
+    cursor: pointer;
+    padding: 4px 0;
+  }
+  .mobile-nav-tab i { font-size: 20px; }
+  .mobile-nav-tab.active { color: var(--accent); }
+  .mobile-nav-tab.danger { color: var(--red); }
+
+  /* Add padding so content clears bottom nav */
+  #screen-portal .portal-wrap { padding-bottom: 70px; }
+}
+
+@media (min-width: 769px) {
+  .mobile-bottom-nav { display: none !important; }
+  .app-group-grid { display: contents; }
+}
 </style>
 </head>
 <body>
@@ -599,6 +687,8 @@ async function showPortal() {
   renderApps();
   renderLinks();
   renderBanners();
+  initMobileLayout();
+  initMobileLayout();
 }
 
 function renderLinks() {
@@ -738,13 +828,21 @@ function renderApps() {
   ];
 
   let html = '';
+  const mob = window.innerWidth <= 768;
   groups.forEach(g => {
     const apps = accessible.filter(a => a.group === g.key);
     if (!apps.length) return;
-    html += `<div class="section-label">${g.label}<span style="font-size:10px;font-weight:400;color:var(--text3);margin-left:6px">${g.sub}</span></div>`;
-    html += '<div class="app-grid">';
-    apps.forEach(app => { html += appCardHTML(app); });
-    html += '</div>';
+    if (!mob) {
+      html += `<div class="section-label">${g.label}<span style="font-size:10px;font-weight:400;color:var(--text3);margin-left:6px">${g.sub}</span></div>`;
+      html += '<div class="app-grid">';
+      apps.forEach(app => { html += appCardHTML(app); });
+      html += '</div>';
+    } else {
+      html += `<div class="section-label" style="padding:12px 16px 4px;font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--text3)">${g.label}</div>`;
+      html += '<div class="app-group-grid">';
+      apps.forEach(app => { html += appCardHTML(app); });
+      html += '</div>';
+    }
   });
 
   el.innerHTML = html;
@@ -808,6 +906,43 @@ function hideError() {
   document.getElementById('login-error').classList.remove('show');
 }
 
+// ── MOBILE NAV ────────────────────────────────────────────────────────────
+function mobileNav(tab) {
+  ['apps','news','links'].forEach(t => {
+    document.getElementById('mnt-'+t)?.classList.remove('active');
+  });
+  document.getElementById('mnt-'+tab)?.classList.add('active');
+  if (window.innerWidth > 768) return;
+  const appsEl    = document.getElementById('app-launcher-content');
+  const bannerEl  = document.getElementById('banner-zone');
+  const archiveEl = document.getElementById('news-archive-wrap');
+  const linksEl   = document.querySelector('.portal-links');
+  if (tab === 'apps') {
+    if (appsEl)    appsEl.style.display    = '';
+    if (bannerEl)  bannerEl.style.display  = 'none';
+    if (archiveEl) archiveEl.style.display = 'none';
+    if (linksEl)   linksEl.style.display   = 'none';
+  } else if (tab === 'news') {
+    if (appsEl)    appsEl.style.display    = 'none';
+    if (bannerEl)  bannerEl.style.display  = '';
+    if (archiveEl) archiveEl.style.display = '';
+    if (linksEl)   linksEl.style.display   = 'none';
+  } else if (tab === 'links') {
+    if (appsEl)    appsEl.style.display    = 'none';
+    if (bannerEl)  bannerEl.style.display  = 'none';
+    if (archiveEl) archiveEl.style.display = 'none';
+    if (linksEl)   linksEl.style.display   = '';
+  }
+}
+
+function initMobileLayout() {
+  if (window.innerWidth <= 768) {
+    mobileNav('apps');
+  }
+}
+
+function mobileLogout() { logout(); }
+
 // Shake keyframes
 const style = document.createElement('style');
 style.textContent = '@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}';
@@ -815,5 +950,22 @@ document.head.appendChild(style);
 
 init();
 </script>
+
+<!-- MOBILE BOTTOM NAV -->
+<div class="mobile-bottom-nav" id="mobile-bottom-nav">
+  <div class="mobile-nav-tab active" id="mnt-apps" onclick="mobileNav('apps')">
+    <i class="ti ti-layout-grid"></i><span>Appar</span>
+  </div>
+  <div class="mobile-nav-tab" id="mnt-news" onclick="mobileNav('news')">
+    <i class="ti ti-speakerphone"></i><span>Nyheter</span>
+  </div>
+  <div class="mobile-nav-tab" id="mnt-links" onclick="mobileNav('links')">
+    <i class="ti ti-link"></i><span>Länkar</span>
+  </div>
+  <div class="mobile-nav-tab danger" onclick="mobileLogout()">
+    <i class="ti ti-logout"></i><span>Logga ut</span>
+  </div>
+</div>
+
 </body>
 </html>
