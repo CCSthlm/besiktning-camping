@@ -50,6 +50,24 @@
         "kommentar": "M365-konto skapat: tolvan.tolvansson@cc-camping.se",
         "ts": "2026-06-18T12:27:11.940Z"
       }
+    },
+    {
+      "id": "M365-2606-UEYA",
+      "ts": "2026-06-18T13:13:53.308Z",
+      "status": "ny",
+      "fname": "Elvan",
+      "lname": "Elvansson",
+      "pnr": "19111111-1111",
+      "mobil": "076-6111111",
+      "email": "massimo.johansson@cgm.com",
+      "adress": "Svärdsliljevägen 155",
+      "anläggning": "CC Storsveds Camping",
+      "roll": "Campingvärd",
+      "ansForm": "Ideell",
+      "startDatum": "2026-06-22",
+      "chef": "Massimo",
+      "övrigt": "",
+      "gdpr": true
     }
   ]
 }
