@@ -263,6 +263,20 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
   .mobile-nav-tab i { font-size: 22px; }
   .mobile-nav-tab.active { color: var(--accent); }
   .mobile-nav-tab.danger { color: var(--red); }
+  .mobile-nav-tab.has-disruption {
+    color: #fff !important;
+    background: #c2410c;
+    border-radius: 12px;
+    margin: 2px 4px;
+    padding: 2px 0 4px;
+    animation: pulse-bg 2s ease-in-out infinite;
+  }
+  .mobile-nav-tab.has-disruption i { color: #fff; }
+  .mobile-nav-tab.has-disruption span { color: #fff; font-weight: 600; }
+  @keyframes pulse-bg {
+    0%,100% { background: #c2410c; }
+    50%      { background: #ef4444; }
+  }
   .mob-disruption-dot {
     position: absolute;
     top: 2px; right: calc(50% - 16px);
@@ -773,9 +787,23 @@ function renderBanners() {
 
   archiveWrap.style.display = _portalNews.length ? '' : 'none';
 
-  // Mobile disruption dot on news tab
-  const dot = document.getElementById('mob-disruption-dot');
-  if (dot) dot.style.display = disruptions.length > 0 ? 'block' : 'none';
+  // Mobile nav indicators
+  const newsTab = document.getElementById('mnt-news');
+  const dot     = document.getElementById('mob-disruption-dot');
+  if (newsTab && dot) {
+    const hasDisruption = disruptions.length > 0;
+    const hasNews       = active.filter(n => n.type !== 'disruption').length > 0;
+    if (hasDisruption) {
+      newsTab.classList.add('has-disruption');
+      dot.style.display = 'none';
+    } else if (hasNews) {
+      newsTab.classList.remove('has-disruption');
+      dot.style.display = 'block';
+    } else {
+      newsTab.classList.remove('has-disruption');
+      dot.style.display = 'none';
+    }
+  }
 }
 
 function fmtBannerDate(iso) {
