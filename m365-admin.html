@@ -368,6 +368,10 @@ async function skapaM365Konto() {
     const userId = data.id;
     const results = { licens: false, grupper: [] };
 
+    // Wait for user to be fully provisioned in Azure AD
+    btn.innerHTML = '<i class="ti ti-loader" style="animation:spin 1s linear infinite"></i> Väntar på Azure…';
+    await new Promise(r => setTimeout(r, 3000));
+
     // Assign M365 Business Basic license
     try {
       btn.innerHTML = '<i class="ti ti-loader" style="animation:spin 1s linear infinite"></i> Tilldelar licens…';
@@ -389,9 +393,14 @@ async function skapaM365Konto() {
           headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
           body:    JSON.stringify({ '@odata.id': `https://graph.microsoft.com/v1.0/directoryObjects/${userId}` }),
         });
-        if (grpRes.ok || grpRes.status === 204) results.grupper.push(grp.name);
-        else { const e = await grpRes.json(); console.warn('Grupp '+grp.name+':', e.error?.message); }
-      } catch(e) { console.warn('Grupp '+grp.name+' misslyckades:', e); }
+        if (grpRes.ok || grpRes.status === 204) {
+          results.grupper.push(grp.name);
+          console.log('✓ Grupp:', grp.name);
+        } else {
+          const errData = await grpRes.json();
+          console.error('✗ Grupp '+grp.name+':', grpRes.status, errData.error?.code, errData.error?.message);
+        }
+      } catch(e) { console.error('✗ Grupp '+grp.name+' exception:', e.message); }
     }
 
     // Update ansökan status to behandlad
