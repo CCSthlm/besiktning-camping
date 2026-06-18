@@ -26,7 +26,7 @@
     {
       "id": "M365-2606-RD5F",
       "ts": "2026-06-18T12:10:47.631Z",
-      "status": "ny",
+      "status": "behandlad",
       "fname": "TOlvan",
       "lname": "Tolvansson",
       "pnr": "19121212-1212",
@@ -39,7 +39,17 @@
       "startDatum": "2026-06-18",
       "chef": "Malin",
       "övrigt": "",
-      "gdpr": true
+      "gdpr": true,
+      "m365": {
+        "upn": "tolvan.tolvansson@cc-camping.se",
+        "skapadTs": "2026-06-18T12:27:11.940Z",
+        "skapadAv": "Massimo Johansson"
+      },
+      "handläggning": {
+        "av": "Massimo Johansson",
+        "kommentar": "M365-konto skapat: tolvan.tolvansson@cc-camping.se",
+        "ts": "2026-06-18T12:27:11.940Z"
+      }
     }
   ]
 }
