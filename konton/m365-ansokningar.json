@@ -110,7 +110,7 @@
     {
       "id": "M365-2606-WYPD",
       "ts": "2026-06-18T13:26:14.284Z",
-      "status": "ny",
+      "status": "behandlad",
       "fname": "nian",
       "lname": "niansson",
       "pnr": "19999999-9999",
@@ -123,7 +123,17 @@
       "startDatum": "",
       "chef": "",
       "övrigt": "",
-      "gdpr": true
+      "gdpr": true,
+      "m365": {
+        "upn": "nian.niansson@cc-camping.se",
+        "skapadTs": "2026-06-18T13:28:12.938Z",
+        "skapadAv": "Massimo Johansson"
+      },
+      "handläggning": {
+        "av": "Massimo Johansson",
+        "kommentar": "M365-konto skapat: nian.niansson@cc-camping.se · Licens tilldelad · Grupper: Caravan Club of Sweden - Stockholmssektionen",
+        "ts": "2026-06-18T13:28:12.938Z"
+      }
     }
   ]
 }
