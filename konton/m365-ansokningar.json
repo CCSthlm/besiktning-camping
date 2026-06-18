@@ -106,6 +106,24 @@
         "kommentar": "M365-konto skapat: tian.tiansson@cc-camping.se · Licens tilldelad · Grupper: Caravan Club of Sweden - Stockholmssektionen",
         "ts": "2026-06-18T13:24:14.780Z"
       }
+    },
+    {
+      "id": "M365-2606-WYPD",
+      "ts": "2026-06-18T13:26:14.284Z",
+      "status": "ny",
+      "fname": "nian",
+      "lname": "niansson",
+      "pnr": "19999999-9999",
+      "mobil": "0766111111",
+      "email": "nian@gmail.com",
+      "adress": "Hemma",
+      "anläggning": "CC Örstigs Camping",
+      "roll": "Campingvärd",
+      "ansForm": "Ideell",
+      "startDatum": "",
+      "chef": "",
+      "övrigt": "",
+      "gdpr": true
     }
   ]
 }
