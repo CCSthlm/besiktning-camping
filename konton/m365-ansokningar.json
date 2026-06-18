@@ -22,6 +22,24 @@
         "kommentar": "",
         "ts": "2026-06-18T09:03:36.958Z"
       }
+    },
+    {
+      "id": "M365-2606-RD5F",
+      "ts": "2026-06-18T12:10:47.631Z",
+      "status": "ny",
+      "fname": "TOlvan",
+      "lname": "Tolvansson",
+      "pnr": "19121212-1212",
+      "mobil": "0766319996",
+      "email": "massimo.johansson@cgm.com",
+      "adress": "Svärdsliljevägen 155",
+      "anläggning": "CC Björkö Örns Camping",
+      "roll": "Campingvärd",
+      "ansForm": "Ideell",
+      "startDatum": "2026-06-18",
+      "chef": "Malin",
+      "övrigt": "",
+      "gdpr": true
     }
   ]
 }
