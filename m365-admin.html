@@ -7,6 +7,7 @@
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏕️</text></svg>">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/tabler-icons.min.css">
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://alcdn.msauth.net/browser/2.38.3/js/msal-browser.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -84,6 +85,9 @@ tr:hover td{background:rgba(59,109,17,.025);}
 .btn-primary:hover{background:var(--accent2);}
 .btn-secondary{padding:8px 14px;background:var(--bg3);color:var(--text2);border:1px solid var(--border2);border-radius:var(--radius);font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:5px;}
 .btn-secondary:hover{background:var(--bg4);}
+.btn-m365{padding:9px 18px;background:#0078d4;color:#fff;border:none;border-radius:var(--radius);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px;transition:background .15s;}
+.btn-m365:hover{background:#106ebe;}
+.btn-m365:disabled{background:#ccc;cursor:not-allowed;}
 .btn-portal{width:100%;padding:8px;background:var(--bg3);color:var(--text2);border:1px solid var(--border2);border-radius:var(--radius);font-size:12px;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:7px;}
 .btn-portal:hover{background:var(--bg4);}
 .btn-logout{width:100%;padding:8px;background:var(--red-bg);color:var(--red);border:1px solid rgba(163,45,45,.2);border-radius:var(--radius);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:7px;}
@@ -193,10 +197,201 @@ tr:hover td{background:rgba(59,109,17,.025);}
   </div>
 </div>
 
+<!-- SKAPA M365-KONTO MODAL -->
+<div class="modal-overlay" id="modal-m365">
+  <div class="modal" style="max-width:480px">
+    <div class="modal-header">
+      <div><div class="modal-title">Skapa Microsoft 365-konto</div><div style="font-size:11px;color:var(--text3);margin-top:2px" id="m365-modal-meta">–</div></div>
+      <button class="modal-close" onclick="closeModal('modal-m365')"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="m365-ansokan-id">
+      <div style="background:var(--blue-bg);border:1px solid rgba(26,79,122,.2);border-radius:var(--radius);padding:11px 14px;font-size:12px;color:var(--blue);margin-bottom:14px;display:flex;gap:8px;">
+        <i class="ti ti-info-circle" style="font-size:15px;flex-shrink:0;margin-top:1px"></i>
+        <span>Kontot skapas med ditt inloggade Microsoft 365-konto. Du måste ha behörighet att skapa användare i Azure AD.</span>
+      </div>
+      <div class="fg" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+        <div class="ff"><label>Förnamn</label><input type="text" id="m365-fname" readonly style="background:var(--bg4)"></div>
+        <div class="ff"><label>Efternamn</label><input type="text" id="m365-lname" readonly style="background:var(--bg4)"></div>
+      </div>
+      <div class="ff" style="margin-bottom:12px">
+        <label>Användarnamn (UPN)</label>
+        <input type="text" id="m365-upn" placeholder="fornamn.efternamn@cc-camping.se">
+        <div style="font-size:11px;color:var(--text3);margin-top:3px">Kan justeras om namnet redan är taget</div>
+      </div>
+      <div class="ff" style="margin-bottom:12px">
+        <label>Visningsnamn</label>
+        <input type="text" id="m365-displayname">
+      </div>
+      <div class="ff" style="margin-bottom:12px">
+        <label>Tillfälligt lösenord <span style="color:var(--red)">*</span></label>
+        <div style="display:flex;gap:8px">
+          <input type="text" id="m365-password" style="flex:1" placeholder="Minst 8 tecken, stor+liten bokstav+siffra">
+          <button onclick="genPassword()" class="btn-secondary" style="flex-shrink:0"><i class="ti ti-refresh"></i> Generera</button>
+        </div>
+        <div style="font-size:11px;color:var(--text3);margin-top:3px">Användaren tvingas byta lösenord vid första inloggning</div>
+      </div>
+      <div class="ff">
+        <label>Jobbtitel (valfri)</label>
+        <input type="text" id="m365-jobtitle" placeholder="T.ex. Campingvärd">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeModal('modal-m365')">Avbryt</button>
+      <button class="btn-m365" id="btn-skapa-m365" onclick="skapaM365Konto()"><i class="ti ti-brand-windows"></i> Skapa konto</button>
+    </div>
+  </div>
+</div>
+
 <div id="toast"></div>
 
 <script>
 const GH_REPO      = 'CCSthlm/besiktning-camping';
+
+// ── MICROSOFT GRAPH CONFIG ────────────────────────────────────────────────
+const GRAPH_CLIENT_ID = '213663c5-d2fa-4d27-80be-0a9bf462c78a';
+const GRAPH_TENANT_ID = 'b20a53a1-3abf-4ca0-926e-fcf286856a56';
+const GRAPH_DOMAIN    = 'cc-camping.se';
+
+const _msalConfig = {
+  auth: {
+    clientId:    GRAPH_CLIENT_ID,
+    authority:   'https://login.microsoftonline.com/' + GRAPH_TENANT_ID,
+    redirectUri: window.location.href.split('?')[0],
+  },
+  cache: { cacheLocation: 'sessionStorage', storeAuthStateInCookie: false }
+};
+const _graphScopes = ['https://graph.microsoft.com/User.ReadWrite.All',
+                      'https://graph.microsoft.com/Directory.ReadWrite.All'];
+let _msalApp = null;
+
+function getMsalApp() {
+  if (!_msalApp) _msalApp = new msal.PublicClientApplication(_msalConfig);
+  return _msalApp;
+}
+
+async function getGraphToken() {
+  const app = getMsalApp();
+  const accounts = app.getAllAccounts();
+  const request = { scopes: _graphScopes };
+  try {
+    if (accounts.length > 0) {
+      request.account = accounts[0];
+      const result = await app.acquireTokenSilent(request);
+      return result.accessToken;
+    }
+  } catch(e) {}
+  // Silent failed — popup
+  const result = await app.acquireTokenPopup(request);
+  return result.accessToken;
+}
+
+function toUpn(fname, lname) {
+  const clean = s => s.toLowerCase()
+    .replace(/å/g,'a').replace(/ä/g,'a').replace(/ö/g,'o')
+    .replace(/[^a-z0-9]/g,'');
+  return clean(fname) + '.' + clean(lname) + '@' + GRAPH_DOMAIN;
+}
+
+function genPassword() {
+  document.getElementById('m365-password').value = 'Camping2026';
+}
+
+function openM365Modal(id) {
+  const a = _data.ansokningar.find(x=>x.id===id);
+  if (!a) return;
+  document.getElementById('m365-ansokan-id').value = id;
+  document.getElementById('m365-modal-meta').textContent = a.id + ' · ' + a.anläggning;
+  document.getElementById('m365-fname').value       = a.fname;
+  document.getElementById('m365-lname').value       = a.lname;
+  document.getElementById('m365-upn').value         = toUpn(a.fname, a.lname);
+  document.getElementById('m365-displayname').value = a.fname + ' ' + a.lname;
+  document.getElementById('m365-jobtitle').value    = a.roll || '';
+  document.getElementById('m365-password').value    = '';
+  genPassword();
+  openModal('modal-m365');
+}
+
+async function skapaM365Konto() {
+  const id          = document.getElementById('m365-ansokan-id').value;
+  const upn         = document.getElementById('m365-upn').value.trim();
+  const displayName = document.getElementById('m365-displayname').value.trim();
+  const password    = document.getElementById('m365-password').value.trim();
+  const jobTitle    = document.getElementById('m365-jobtitle').value.trim();
+  const fname       = document.getElementById('m365-fname').value.trim();
+  const lname       = document.getElementById('m365-lname').value.trim();
+
+  if (!upn || !upn.includes('@'))  { toast('Ange ett giltigt UPN','warn'); return; }
+  if (!password || password.length < 8) { toast('Lösenordet måste vara minst 8 tecken','warn'); return; }
+
+  const btn = document.getElementById('btn-skapa-m365');
+  btn.disabled = true;
+  btn.innerHTML = '<i class="ti ti-loader" style="animation:spin 1s linear infinite"></i> Skapar…';
+
+  try {
+    const token = await getGraphToken();
+
+    const userPayload = {
+      accountEnabled:    true,
+      displayName:       displayName,
+      givenName:         fname,
+      surname:           lname,
+      userPrincipalName: upn,
+      mailNickname:      upn.split('@')[0],
+      jobTitle:          jobTitle || undefined,
+      passwordProfile: {
+        forceChangePasswordNextSignIn: true,
+        password: password,
+      },
+      usageLocation: 'SE',
+    };
+
+    const res = await fetch('https://graph.microsoft.com/v1.0/users', {
+      method:  'POST',
+      headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+      body:    JSON.stringify(userPayload),
+    });
+
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error?.message || res.status);
+
+    // Update ansökan status to behandlad
+    const i = _data.ansokningar.findIndex(a=>a.id===id);
+    if (i>=0) {
+      _data.ansokningar[i].status = 'behandlad';
+      _data.ansokningar[i].m365 = { upn, skapadTs: new Date().toISOString(), skapadAv: _user.name };
+      _data.ansokningar[i].handläggning = {
+        av: _user.name,
+        kommentar: 'M365-konto skapat: ' + upn,
+        ts: new Date().toISOString()
+      };
+      await saveData();
+    }
+
+    closeModal('modal-m365');
+    renderStats();
+    renderTable();
+    toast('✓ Konto skapat: ' + upn, 'ok');
+
+    // Show summary
+    setTimeout(() => {
+      alert('Konto skapat!\n\nAnvändarnamn: ' + upn + '\nLösenord: ' + password + '\n\nAnvändaren måste byta lösenord vid första inloggning.\n\nSpara eller kommunicera dessa uppgifter till användaren säkert.');
+    }, 300);
+
+  } catch(e) {
+    toast('Fel: ' + e.message, 'err');
+    console.error('Graph API error:', e);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<i class="ti ti-brand-windows"></i> Skapa konto';
+  }
+}
+
+// CSS for spinner
+const _spinStyle = document.createElement('style');
+_spinStyle.textContent = '@keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}';
+document.head.appendChild(_spinStyle);
+
 const ANSOKAN_PATH = 'konton/m365-ansokningar.json';
 const STATUS_LABEL = {ny:'Ny',pågående:'Pågående',behandlad:'Behandlad',nekad:'Nekad'};
 const STATUS_BADGE = {ny:'b-ny',pågående:'b-pågående',behandlad:'b-behandlad',nekad:'b-nekad'};
@@ -338,6 +533,12 @@ function openDetail(id) {
     <div class="dr"><span class="dl">Startdatum</span><span>${a.startDatum||'–'}</span></div>
     <div class="dr"><span class="dl">Närmaste ansvarig</span><span>${a.chef||'–'}</span></div>
     ${a.övrigt?`<div class="dsec">Övrig information</div><div style="font-size:13px;line-height:1.7;color:var(--text);background:var(--bg3);padding:10px;border-radius:var(--radius);white-space:pre-wrap">${a.övrigt}</div>`:''}
+    ${a.m365?`
+    <div class="dsec">Microsoft 365-konto</div>
+    <div class="dr"><span class="dl">Användarnamn (UPN)</span><span style="font-family:monospace">${a.m365.upn}</span></div>
+    <div class="dr"><span class="dl">Skapat</span><span>${fmtDate(a.m365.skapadTs)}</span></div>
+    <div class="dr"><span class="dl">Skapat av</span><span>${a.m365.skapadAv}</span></div>
+    `:''}
     ${a.handläggning?`
     <div class="dsec">Handläggning</div>
     <div class="dr"><span class="dl">Status</span><span><span class="badge ${STATUS_BADGE[a.status]||'b-ny'}">${STATUS_LABEL[a.status]||a.status}</span></span></div>
@@ -346,9 +547,13 @@ function openDetail(id) {
     ${a.handläggning.kommentar?`<div class="dr"><span class="dl">Kommentar</span><span>${a.handläggning.kommentar}</span></div>`:''}
     `:''}
   `;
+  const m365Done = a.m365?.upn;
   document.getElementById('det-footer').innerHTML = `
     <button class="btn-secondary" onclick="closeModal('modal-detail')">Stäng</button>
     <button class="btn-primary" onclick="closeModal('modal-detail');openStatus('${a.id}')"><i class="ti ti-edit"></i> Uppdatera status</button>
+    ${m365Done
+      ? `<button class="btn-secondary" style="color:var(--accent);border-color:rgba(59,109,17,.3)"><i class="ti ti-check"></i> Konto skapat (${a.m365.upn})</button>`
+      : `<button class="btn-m365" onclick="closeModal('modal-detail');openM365Modal('${a.id}')"><i class="ti ti-brand-windows"></i> Skapa M365-konto</button>`}
   `;
   openModal('modal-detail');
 }
