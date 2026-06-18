@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>M365-ansökningar – CCSthlm</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏕️</text></svg>">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/tabler-icons.min.css">
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f5f5f3;--bg2:#fff;--bg3:#eeede8;--bg4:#e5e4de;
+  --text:#1a1a18;--text2:#5a5a57;--text3:#909088;
+  --accent:#3B6D11;--accent2:#27500A;--accent-glow:rgba(59,109,17,.1);
+  --red:#A32D2D;--red-bg:#FCEBEB;--red-text:#501313;
+  --amber:#854F0B;--amber-bg:#FAEEDA;--amber-text:#412402;
+  --green-bg:#EAF3DE;--green-text:#27500A;
+  --blue:#1a4f7a;--blue-bg:#e0f0ff;--blue-text:#1a4f7a;
+  --border:rgba(0,0,0,.10);--border2:rgba(0,0,0,.18);
+  --radius:8px;--radius-lg:14px;--shadow:0 2px 16px rgba(0,0,0,.08);
+  --sidebar:240px;
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:var(--bg3);color:var(--text);min-height:100vh;display:flex;}
+.sidebar{width:var(--sidebar);flex-shrink:0;background:var(--bg2);border-right:1px solid var(--border2);display:flex;flex-direction:column;position:fixed;inset:0 auto 0 0;z-index:10;}
+.sidebar-logo{padding:16px 18px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:9px;}
+.sidebar-logo i{font-size:22px;color:var(--blue);}
+.sidebar-logo-text{font-size:14px;font-weight:700;}
+.sidebar-logo-sub{font-size:10px;color:var(--text3);}
+.sidebar-nav{flex:1;padding:8px 0;}
+.nav-item{display:flex;align-items:center;gap:9px;padding:9px 18px;cursor:pointer;font-size:13px;color:var(--text2);border-left:2px solid transparent;transition:all .15s;}
+.nav-item:hover{background:var(--bg3);color:var(--text);}
+.nav-item.active{background:var(--bg3);color:var(--accent2);border-left-color:var(--accent);font-weight:600;}
+.nav-item i{font-size:15px;}
+.nav-badge{background:var(--red);color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:20px;margin-left:auto;}
+.sidebar-footer{padding:12px 18px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:7px;}
+.sb-user{display:flex;align-items:center;gap:8px;padding-bottom:8px;border-bottom:1px solid var(--border);margin-bottom:2px;}
+.sb-avatar{width:28px;height:28px;border-radius:50%;background:var(--accent);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+.main{margin-left:var(--sidebar);flex:1;display:flex;flex-direction:column;min-height:100vh;}
+.topbar{padding:14px 24px;border-bottom:1px solid var(--border2);display:flex;justify-content:space-between;align-items:center;background:var(--bg2);position:sticky;top:0;z-index:5;flex-wrap:wrap;gap:10px;}
+.topbar h1{font-size:17px;font-weight:700;}
+.topbar-sub{font-size:12px;color:var(--text2);}
+.content{padding:20px 24px;flex:1;}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px;}
+.stat{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px 16px;display:flex;align-items:center;gap:12px;}
+.stat-icon{width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.si-blue{background:var(--blue-bg);color:var(--blue);}
+.si-amber{background:var(--amber-bg);color:var(--amber);}
+.si-green{background:var(--green-bg);color:var(--accent);}
+.si-red{background:var(--red-bg);color:var(--red);}
+.stat-val{font-size:22px;font-weight:700;line-height:1;}
+.stat-lbl{font-size:11px;color:var(--text3);}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:16px;box-shadow:var(--shadow);}
+.card-header{padding:12px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+.card-title{font-size:14px;font-weight:600;}
+.filter-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
+.filter-bar select,.filter-bar input{padding:7px 10px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);font-size:12px;font-family:inherit;}
+table{width:100%;border-collapse:collapse;}
+th{text-align:left;padding:9px 13px;font-size:11px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--border);background:var(--bg3);}
+td{padding:10px 13px;font-size:13px;border-bottom:1px solid var(--border);vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:rgba(59,109,17,.025);}
+.badge{display:inline-flex;font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;}
+.b-ny{background:var(--blue-bg);color:var(--blue);}
+.b-pågående{background:var(--amber-bg);color:var(--amber);}
+.b-behandlad{background:var(--green-bg);color:var(--green-text);}
+.b-nekad{background:var(--red-bg);color:var(--red);}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto;}
+.modal-overlay.show{display:flex;}
+.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius-lg);width:100%;max-width:600px;margin:auto;box-shadow:0 8px 40px rgba(0,0,0,.2);}
+.modal-header{padding:16px 20px 12px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--bg2);}
+.modal-title{font-size:15px;font-weight:700;}
+.modal-close{background:none;border:none;cursor:pointer;color:var(--text3);font-size:20px;}
+.modal-body{padding:18px 20px;}
+.modal-footer{padding:12px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px;position:sticky;bottom:0;background:var(--bg2);}
+.dr{display:flex;margin-bottom:8px;font-size:13px;gap:10px;}
+.dl{min-width:170px;color:var(--text2);font-weight:500;flex-shrink:0;font-size:12px;}
+.dsec{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);padding:8px 0 5px;border-bottom:1px solid var(--border);margin:12px 0 8px;}
+.ff{display:flex;flex-direction:column;gap:4px;margin-bottom:12px;}
+.ff label{font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.04em;}
+.ff select,.ff textarea,.ff input{padding:9px 11px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius);font-size:13px;font-family:inherit;}
+.ff textarea{resize:vertical;min-height:70px;line-height:1.6;}
+.btn-primary{padding:9px 18px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px;}
+.btn-primary:hover{background:var(--accent2);}
+.btn-secondary{padding:8px 14px;background:var(--bg3);color:var(--text2);border:1px solid var(--border2);border-radius:var(--radius);font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:5px;}
+.btn-secondary:hover{background:var(--bg4);}
+.btn-portal{width:100%;padding:8px;background:var(--bg3);color:var(--text2);border:1px solid var(--border2);border-radius:var(--radius);font-size:12px;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:7px;}
+.btn-portal:hover{background:var(--bg4);}
+.btn-logout{width:100%;padding:8px;background:var(--red-bg);color:var(--red);border:1px solid rgba(163,45,45,.2);border-radius:var(--radius);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:7px;}
+.btn-logout:hover{background:var(--red);color:#fff;}
+.no-data{text-align:center;padding:40px;color:var(--text3);}
+.no-data i{font-size:36px;display:block;margin-bottom:10px;}
+#toast{position:fixed;bottom:22px;right:22px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);padding:10px 14px;font-size:13px;z-index:999;box-shadow:var(--shadow);opacity:0;transform:translateY(6px);transition:all .25s;pointer-events:none;display:flex;align-items:center;gap:6px;}
+@media(max-width:700px){.sidebar{display:none;}.main{margin-left:0;}.stats-row{grid-template-columns:1fr 1fr;}}
+</style>
+</head>
+<body>
+
+<nav class="sidebar">
+  <div class="sidebar-logo">
+    <i class="ti ti-brand-windows"></i>
+    <div><div class="sidebar-logo-text">M365-ansökningar</div><div class="sidebar-logo-sub">CCSthlm</div></div>
+  </div>
+  <div class="sidebar-nav">
+    <div class="nav-item active" id="nav-alla" onclick="showView('alla')"><i class="ti ti-list"></i> Alla ansökningar</div>
+    <div class="nav-item" id="nav-nya" onclick="showView('nya')"><i class="ti ti-clock"></i> Nya <span class="nav-badge" id="nav-nya-count" style="display:none">0</span></div>
+    <div class="nav-item" id="nav-pågående" onclick="showView('pågående')"><i class="ti ti-loader"></i> Pågående</div>
+    <div class="nav-item" id="nav-behandlade" onclick="showView('behandlade')"><i class="ti ti-check"></i> Behandlade</div>
+    <div class="nav-item" id="nav-nekade" onclick="showView('nekade')"><i class="ti ti-x"></i> Nekade</div>
+  </div>
+  <div class="sidebar-footer">
+    <div class="sb-user">
+      <div class="sb-avatar" id="sb-avatar">?</div>
+      <div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" id="sb-name">–</div><div style="font-size:10px;color:var(--text3)">Kontoadmin</div></div>
+    </div>
+    <button class="btn-portal" onclick="window.location.href='index.html'"><i class="ti ti-arrow-left"></i> Portal</button>
+    <button class="btn-logout" onclick="doLogout()"><i class="ti ti-logout"></i> Logga ut</button>
+  </div>
+</nav>
+
+<div class="main">
+  <div class="topbar">
+    <div><h1 id="view-title">Alla ansökningar</h1><div class="topbar-sub">Microsoft 365-kontobehörighet</div></div>
+    <div style="display:flex;gap:8px">
+      <button class="btn-secondary" onclick="exportExcel()"><i class="ti ti-table-export"></i> Excel</button>
+    </div>
+  </div>
+  <div class="content">
+    <div class="stats-row">
+      <div class="stat"><div class="stat-icon si-blue"><i class="ti ti-inbox"></i></div><div><div class="stat-val" id="st-nya">–</div><div class="stat-lbl">Nya</div></div></div>
+      <div class="stat"><div class="stat-icon si-amber"><i class="ti ti-loader"></i></div><div><div class="stat-val" id="st-pagående">–</div><div class="stat-lbl">Pågående</div></div></div>
+      <div class="stat"><div class="stat-icon si-green"><i class="ti ti-check"></i></div><div><div class="stat-val" id="st-behandlade">–</div><div class="stat-lbl">Behandlade</div></div></div>
+      <div class="stat"><div class="stat-icon si-red"><i class="ti ti-x"></i></div><div><div class="stat-val" id="st-nekade">–</div><div class="stat-lbl">Nekade</div></div></div>
+    </div>
+    <div class="filter-bar">
+      <select id="f-anl" onchange="renderTable()"><option value="">Alla anläggningar</option></select>
+      <select id="f-roll" onchange="renderTable()"><option value="">Alla roller</option><option>Campingvärd</option><option>Campingansvarig</option><option>Campingråd</option><option>Restauranggrupp</option><option>Styrelse</option></select>
+      <input type="text" id="f-sok" placeholder="🔍 Sök namn, ID…" oninput="renderTable()" style="min-width:180px">
+      <button class="btn-secondary" onclick="clearFilters()"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Ansökningar</span>
+        <span id="count" style="font-size:11px;color:var(--text3)">0 st</span>
+      </div>
+      <div style="overflow-x:auto">
+        <table>
+          <thead><tr><th>ID</th><th>Namn</th><th>Anläggning</th><th>Roll</th><th>Form</th><th>Inkom</th><th>Status</th><th style="text-align:right">Åtgärd</th></tr></thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DETAIL MODAL -->
+<div class="modal-overlay" id="modal-detail">
+  <div class="modal" style="max-width:620px">
+    <div class="modal-header">
+      <div><div class="modal-title" id="det-title">–</div><div style="font-size:11px;color:var(--text3);margin-top:2px" id="det-meta">–</div></div>
+      <button class="modal-close" onclick="closeModal('modal-detail')"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="modal-body" id="det-body"></div>
+    <div class="modal-footer" id="det-footer"></div>
+  </div>
+</div>
+
+<!-- STATUS MODAL -->
+<div class="modal-overlay" id="modal-status">
+  <div class="modal" style="max-width:440px">
+    <div class="modal-header"><span class="modal-title">Uppdatera status</span><button class="modal-close" onclick="closeModal('modal-status')"><i class="ti ti-x"></i></button></div>
+    <div class="modal-body">
+      <input type="hidden" id="status-id">
+      <div class="ff"><label>Ny status <span style="color:var(--red)">*</span></label>
+        <select id="status-val">
+          <option value="ny">Ny</option>
+          <option value="pågående">Pågående – under behandling</option>
+          <option value="behandlad">Behandlad – konto skapat</option>
+          <option value="nekad">Nekad</option>
+        </select>
+      </div>
+      <div class="ff"><label>Kommentar / orsak</label>
+        <textarea id="status-kommentar" placeholder="Valfri notering, exempelvis orsak till nekad ansökan eller när kontot skapades…"></textarea>
+      </div>
+      <div class="ff"><label>Hanterad av</label>
+        <input type="text" id="status-av" placeholder="Ditt namn">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeModal('modal-status')">Avbryt</button>
+      <button class="btn-primary" onclick="saveStatus()"><i class="ti ti-check"></i> Spara</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+const GH_REPO      = 'CCSthlm/besiktning-camping';
+const ANSOKAN_PATH = 'konton/m365-ansokningar.json';
+const STATUS_LABEL = {ny:'Ny',pågående:'Pågående',behandlad:'Behandlad',nekad:'Nekad'};
+const STATUS_BADGE = {ny:'b-ny',pågående:'b-pågående',behandlad:'b-behandlad',nekad:'b-nekad'};
+
+let _user = null;
+let _data = {ansokningar:[]};
+let _ghSha = null;
+let _currentView = 'alla';
+
+(async function init() {
+  const sess = sessionStorage.getItem('ccs_session') || sessionStorage.getItem('ccs_portal_user');
+  if (!sess) { window.location.replace('index.html'); return; }
+  try { _user = JSON.parse(sess); } catch(e) { window.location.replace('index.html'); return; }
+
+  const roles = _user.adminRoles || [];
+  const ok = roles.some(r=>['global','sektions','kontoadmin'].includes(r)) || _user.role==='Admin';
+  if (!ok) { alert('Du har inte behörighet.'); window.location.replace('index.html'); return; }
+
+  document.getElementById('sb-avatar').textContent = _user.name.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase();
+  document.getElementById('sb-name').textContent = _user.name;
+  document.getElementById('status-av').value = _user.name;
+
+  await loadData();
+  populateFilters();
+  renderStats();
+  renderTable();
+})();
+
+async function loadData() {
+  const token = localStorage.getItem('gh_token') || '';
+  if (!token) return;
+  try {
+    const res = await fetch('https://api.github.com/repos/'+GH_REPO+'/contents/'+ANSOKAN_PATH,
+      {headers:{'Authorization':'token '+token}});
+    if (!res.ok) return;
+    const gh = await res.json();
+    _ghSha = gh.sha;
+    const bytes = Uint8Array.from(atob(gh.content.replace(/\n/g,'')), c=>c.charCodeAt(0));
+    _data = JSON.parse(new TextDecoder('utf-8').decode(bytes));
+    if (!_data.ansokningar) _data.ansokningar = [];
+  } catch(e) { console.warn('loadData:', e); }
+}
+
+async function saveData() {
+  const token = localStorage.getItem('gh_token') || '';
+  if (!token) { toast('Token saknas','warn'); return; }
+  const url = 'https://api.github.com/repos/'+GH_REPO+'/contents/'+ANSOKAN_PATH;
+  try {
+    if (!_ghSha) {
+      const chk = await fetch(url,{headers:{'Authorization':'token '+token}});
+      if (chk.ok) _ghSha = (await chk.json()).sha;
+    }
+    const content = btoa(unescape(encodeURIComponent(JSON.stringify(_data,null,2))));
+    const payload = {message:'M365-ansökan uppdaterad '+new Date().toISOString().slice(0,10), content, branch:'main'};
+    if (_ghSha) payload.sha = _ghSha;
+    const res = await fetch(url,{method:'PUT',headers:{'Authorization':'token '+token,'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    const d = await res.json();
+    if (!res.ok) throw new Error(d.message||res.status);
+    _ghSha = d.content?.sha || _ghSha;
+    toast('Sparat','ok');
+  } catch(e) { toast('Fel: '+e.message,'err'); }
+}
+
+function populateFilters() {
+  const anls = [...new Set(_data.ansokningar.map(a=>a.anläggning).filter(Boolean))].sort();
+  const sel = document.getElementById('f-anl');
+  anls.forEach(a => sel.insertAdjacentHTML('beforeend',`<option>${a}</option>`));
+}
+
+function renderStats() {
+  const a = _data.ansokningar;
+  document.getElementById('st-nya').textContent      = a.filter(x=>x.status==='ny').length;
+  document.getElementById('st-pagående').textContent = a.filter(x=>x.status==='pågående').length;
+  document.getElementById('st-behandlade').textContent = a.filter(x=>x.status==='behandlad').length;
+  document.getElementById('st-nekade').textContent   = a.filter(x=>x.status==='nekad').length;
+  const nyaCount = a.filter(x=>x.status==='ny').length;
+  const badge = document.getElementById('nav-nya-count');
+  badge.textContent = nyaCount;
+  badge.style.display = nyaCount ? '' : 'none';
+}
+
+function getFiltered() {
+  let list = [..._data.ansokningar];
+  if (_currentView !== 'alla') list = list.filter(a=>(a.status||'ny')===_currentView.replace('behandlade','behandlad').replace('nekade','nekad').replace('pågående','pågående').replace('nya','ny'));
+  const anl = document.getElementById('f-anl').value;
+  const roll = document.getElementById('f-roll').value;
+  const sok  = (document.getElementById('f-sok').value||'').toLowerCase();
+  if (anl)  list = list.filter(a=>a.anläggning===anl);
+  if (roll) list = list.filter(a=>a.roll===roll);
+  if (sok)  list = list.filter(a=>(a.fname+' '+a.lname+' '+a.id).toLowerCase().includes(sok));
+  return list.sort((a,b)=>b.ts?.localeCompare(a.ts||''));
+}
+
+function renderTable() {
+  const list = getFiltered();
+  document.getElementById('count').textContent = list.length + ' st';
+  const tbody = document.getElementById('tbody');
+  if (!list.length) {
+    tbody.innerHTML = '<tr><td colspan="8"><div class="no-data"><i class="ti ti-inbox"></i>Inga ansökningar</div></td></tr>';
+    return;
+  }
+  tbody.innerHTML = list.map(a => {
+    const status = a.status || 'ny';
+    return `<tr>
+      <td style="font-family:monospace;font-size:11px;color:var(--text3)">${a.id}</td>
+      <td style="font-weight:500">${a.fname} ${a.lname}</td>
+      <td style="font-size:12px;color:var(--text2)">${a.anläggning||'–'}</td>
+      <td style="font-size:12px">${a.roll||'–'}</td>
+      <td style="font-size:12px;color:var(--text2)">${a.ansForm||'–'}</td>
+      <td style="font-size:12px;color:var(--text2)">${fmtDate(a.ts)}</td>
+      <td><span class="badge ${STATUS_BADGE[status]||'b-ny'}">${STATUS_LABEL[status]||status}</span></td>
+      <td style="text-align:right;white-space:nowrap">
+        <span onclick="openDetail('${a.id}')" style="cursor:pointer;color:var(--blue-text);font-size:12px;font-weight:500" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">Visa</span>
+        <span style="color:var(--border2);margin:0 5px">·</span>
+        <span onclick="openStatus('${a.id}')" style="cursor:pointer;color:var(--accent);font-size:12px;font-weight:500" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">Status</span>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function openDetail(id) {
+  const a = _data.ansokningar.find(x=>x.id===id);
+  if (!a) return;
+  const status = a.status||'ny';
+  document.getElementById('det-title').textContent = a.fname+' '+a.lname;
+  document.getElementById('det-meta').textContent  = a.id+' · Inkom '+fmtDate(a.ts);
+  document.getElementById('det-body').innerHTML = `
+    <div style="margin-bottom:12px"><span class="badge ${STATUS_BADGE[status]||'b-ny'}">${STATUS_LABEL[status]||status}</span></div>
+    <div class="dsec">Personuppgifter</div>
+    <div class="dr"><span class="dl">Namn</span><span>${a.fname} ${a.lname}</span></div>
+    <div class="dr"><span class="dl">Personnummer</span><span>${a.pnr||'–'}</span></div>
+    <div class="dr"><span class="dl">Mobilnummer</span><span>${a.mobil||'–'}</span></div>
+    <div class="dr"><span class="dl">E-postadress</span><span><a href="mailto:${a.email}" style="color:var(--accent)">${a.email||'–'}</a></span></div>
+    <div class="dr"><span class="dl">Hemadress</span><span>${a.adress||'–'}</span></div>
+    <div class="dsec">Roll och anläggning</div>
+    <div class="dr"><span class="dl">Anläggning</span><span>${a.anläggning||'–'}</span></div>
+    <div class="dr"><span class="dl">Roll / Grupp</span><span>${a.roll||'–'}</span></div>
+    <div class="dr"><span class="dl">Anställningsform</span><span>${a.ansForm||'–'}</span></div>
+    <div class="dr"><span class="dl">Startdatum</span><span>${a.startDatum||'–'}</span></div>
+    <div class="dr"><span class="dl">Närmaste ansvarig</span><span>${a.chef||'–'}</span></div>
+    ${a.övrigt?`<div class="dsec">Övrig information</div><div style="font-size:13px;line-height:1.7;color:var(--text);background:var(--bg3);padding:10px;border-radius:var(--radius);white-space:pre-wrap">${a.övrigt}</div>`:''}
+    ${a.handläggning?`
+    <div class="dsec">Handläggning</div>
+    <div class="dr"><span class="dl">Status</span><span><span class="badge ${STATUS_BADGE[a.status]||'b-ny'}">${STATUS_LABEL[a.status]||a.status}</span></span></div>
+    <div class="dr"><span class="dl">Hanterad av</span><span>${a.handläggning.av||'–'}</span></div>
+    <div class="dr"><span class="dl">Datum</span><span>${fmtDate(a.handläggning.ts)}</span></div>
+    ${a.handläggning.kommentar?`<div class="dr"><span class="dl">Kommentar</span><span>${a.handläggning.kommentar}</span></div>`:''}
+    `:''}
+  `;
+  document.getElementById('det-footer').innerHTML = `
+    <button class="btn-secondary" onclick="closeModal('modal-detail')">Stäng</button>
+    <button class="btn-primary" onclick="closeModal('modal-detail');openStatus('${a.id}')"><i class="ti ti-edit"></i> Uppdatera status</button>
+  `;
+  openModal('modal-detail');
+}
+
+function openStatus(id) {
+  const a = _data.ansokningar.find(x=>x.id===id);
+  if (!a) return;
+  document.getElementById('status-id').value = id;
+  document.getElementById('status-val').value = a.status||'ny';
+  document.getElementById('status-kommentar').value = a.handläggning?.kommentar||'';
+  document.getElementById('status-av').value = _user.name;
+  openModal('modal-status');
+}
+
+async function saveStatus() {
+  const id  = document.getElementById('status-id').value;
+  const status = document.getElementById('status-val').value;
+  const kommentar = document.getElementById('status-kommentar').value.trim();
+  const av = document.getElementById('status-av').value.trim();
+  const i = _data.ansokningar.findIndex(a=>a.id===id);
+  if (i<0) return;
+  _data.ansokningar[i].status = status;
+  _data.ansokningar[i].handläggning = {av, kommentar, ts: new Date().toISOString()};
+  closeModal('modal-status');
+  renderStats();
+  renderTable();
+  await saveData();
+}
+
+function exportExcel() {
+  try {
+    const list = getFiltered();
+    const wb = XLSX.utils.book_new();
+    const rows = [
+      ['M365-ANSÖKNINGAR – CCSthlm'],['Exporterad:', new Date().toLocaleString('sv-SE')],[],
+      ['ID','Förnamn','Efternamn','Personnummer','Mobil','E-post','Adress','Anläggning','Roll','Anst.form','Startdatum','Ansvarig','Övrigt','Status','Hanterad av','Kommentar','Inkom'],
+      ...list.map(a=>[a.id,a.fname,a.lname,a.pnr||'',a.mobil||'',a.email||'',a.adress||'',a.anläggning||'',a.roll||'',a.ansForm||'',a.startDatum||'',a.chef||'',a.övrigt||'',STATUS_LABEL[a.status||'ny'],a.handläggning?.av||'',a.handläggning?.kommentar||'',fmtDate(a.ts)])
+    ];
+    const ws = XLSX.utils.aoa_to_sheet(rows);
+    ws['!cols']=[{wch:16},{wch:14},{wch:14},{wch:14},{wch:14},{wch:24},{wch:24},{wch:22},{wch:16},{wch:14},{wch:12},{wch:18},{wch:30},{wch:14},{wch:18},{wch:30},{wch:16}];
+    XLSX.utils.book_append_sheet(wb, ws, 'Ansökningar');
+    XLSX.writeFile(wb, 'M365_Ansokningar_CCSthlm_'+new Date().toISOString().slice(0,10)+'.xlsx');
+    toast('Excel exporterad','ok');
+  } catch(e){ toast('Fel: '+e.message,'err'); }
+}
+
+const VIEW_MAP = {alla:'alla',nya:'ny',pågående:'pågående',behandlade:'behandlad',nekade:'nekad'};
+const VIEW_TITLE = {alla:'Alla ansökningar',nya:'Nya ansökningar',pågående:'Pågående',behandlade:'Behandlade',nekade:'Nekade'};
+function showView(v) {
+  _currentView = v;
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('nav-'+v)?.classList.add('active');
+  document.getElementById('view-title').textContent = VIEW_TITLE[v]||v;
+  renderTable();
+}
+function clearFilters(){ document.getElementById('f-anl').value=''; document.getElementById('f-roll').value=''; document.getElementById('f-sok').value=''; renderTable(); }
+function openModal(id){ document.getElementById(id).classList.add('show'); }
+function closeModal(id){ document.getElementById(id).classList.remove('show'); }
+document.addEventListener('click',e=>{if(e.target.classList.contains('modal-overlay'))e.target.classList.remove('show');});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.modal-overlay.show').forEach(m=>m.classList.remove('show'));});
+function fmtDate(iso){ try{ return new Date(iso).toLocaleString('sv-SE',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}); }catch(e){ return iso||'–'; } }
+function toast(msg,type='ok'){
+  const t=document.getElementById('toast');
+  t.style.background=type==='err'?'var(--red-bg)':type==='warn'?'var(--amber-bg)':'var(--green-bg)';
+  t.style.color=type==='err'?'var(--red-text)':type==='warn'?'var(--amber-text)':'var(--green-text)';
+  t.innerHTML=(type==='ok'?'<i class="ti ti-check"></i>':type==='warn'?'<i class="ti ti-alert-triangle"></i>':'<i class="ti ti-x"></i>')+' '+msg;
+  t.style.opacity='1';t.style.transform='translateY(0)';
+  setTimeout(()=>{t.style.opacity='0';t.style.transform='translateY(6px)';},2800);
+}
+function doLogout(){ sessionStorage.setItem('ccs_logged_out','1'); sessionStorage.removeItem('ccs_session'); sessionStorage.removeItem('ccs_portal_user'); window.location.replace('index.html'); }
+</script>
+</body>
+</html>

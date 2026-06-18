@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ansökan Microsoft 365 – CCSthlm</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏕️</text></svg>">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/tabler-icons.min.css">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f5f5f3;--bg2:#fff;--bg3:#eeede8;--bg4:#e5e4de;
+  --text:#1a1a18;--text2:#5a5a57;--text3:#909088;
+  --accent:#3B6D11;--accent2:#27500A;--accent-glow:rgba(59,109,17,.1);
+  --red:#A32D2D;--red-bg:#FCEBEB;--red-text:#501313;
+  --amber:#854F0B;--amber-bg:#FAEEDA;--amber-text:#412402;
+  --green-bg:#EAF3DE;--green-text:#27500A;
+  --blue:#1a4f7a;--blue-bg:#e0f0ff;
+  --border:rgba(0,0,0,.10);--border2:rgba(0,0,0,.18);
+  --radius:8px;--radius-lg:14px;--shadow:0 2px 16px rgba(0,0,0,.08);
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:var(--bg3);color:var(--text);min-height:100vh;}
+.page-header{background:var(--bg2);border-bottom:1px solid var(--border2);padding:16px 24px;display:flex;align-items:center;gap:12px;}
+.page-header-icon{width:40px;height:40px;background:var(--blue-bg);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;color:var(--blue);}
+.page-header-title{font-size:17px;font-weight:700;}
+.page-header-sub{font-size:12px;color:var(--text2);}
+.content{max-width:660px;margin:28px auto;padding:0 16px 60px;}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:16px;box-shadow:var(--shadow);}
+.card-header{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:9px;}
+.card-header i{font-size:16px;color:var(--accent);}
+.card-header-title{font-size:14px;font-weight:600;}
+.card-body{padding:18px 20px;}
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
+.fg.full{grid-template-columns:1fr;}
+.ff{display:flex;flex-direction:column;gap:4px;}
+.ff label{font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.04em;}
+.ff input,.ff select,.ff textarea{padding:9px 11px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius);font-size:13px;color:var(--text);font-family:inherit;transition:border-color .2s;}
+.ff input:focus,.ff select:focus,.ff textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow);}
+.ff textarea{resize:vertical;min-height:70px;line-height:1.6;}
+.ff input::placeholder,.ff textarea::placeholder{color:var(--text3);}
+.req{color:var(--red);}
+.fhelp{font-size:11px;color:var(--text3);margin-top:2px;}
+.info-box{background:var(--blue-bg);border:1px solid rgba(26,79,122,.2);border-radius:var(--radius);padding:12px 14px;margin-bottom:16px;display:flex;gap:10px;font-size:12px;color:var(--blue);line-height:1.6;}
+.info-box i{font-size:16px;flex-shrink:0;margin-top:1px;}
+.btn-primary{width:100%;padding:12px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:7px;transition:background .15s;}
+.btn-primary:hover{background:var(--accent2);}
+.btn-secondary{padding:9px 16px;background:var(--bg3);color:var(--text2);border:1px solid var(--border2);border-radius:var(--radius);font-size:13px;font-weight:500;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px;}
+.btn-secondary:hover{background:var(--bg4);}
+.success-card{background:var(--green-bg);border:1px solid rgba(59,109,17,.2);border-radius:var(--radius-lg);padding:32px 24px;text-align:center;display:none;}
+.success-card i{font-size:44px;color:var(--accent);display:block;margin-bottom:12px;}
+.success-title{font-size:18px;font-weight:700;margin-bottom:8px;}
+.success-text{font-size:13px;color:var(--text2);line-height:1.7;}
+.success-nr{font-size:12px;font-family:monospace;background:rgba(59,109,17,.1);padding:4px 12px;border-radius:20px;display:inline-block;margin-top:10px;}
+#toast{position:fixed;bottom:22px;right:22px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);padding:10px 14px;font-size:13px;z-index:999;box-shadow:var(--shadow);opacity:0;transform:translateY(6px);transition:all .25s;pointer-events:none;display:flex;align-items:center;gap:6px;}
+@media(max-width:600px){.fg{grid-template-columns:1fr;}.content{padding:0 12px 60px;margin-top:16px;}}
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <div class="page-header-icon"><i class="ti ti-brand-windows"></i></div>
+  <div>
+    <div class="page-header-title">Ansökan om Microsoft 365-konto</div>
+    <div class="page-header-sub">Caravan Club of Sweden – Stockholmssektionen</div>
+  </div>
+</div>
+
+<div class="content">
+
+  <div class="info-box">
+    <i class="ti ti-info-circle"></i>
+    <div>Fyll i formuläret nedan för att ansöka om ett Microsoft 365-konto hos CCSthlm. Din ansökan granskas av administratören och du kontaktas via den e-postadress du anger.</div>
+  </div>
+
+  <div id="form-wrap">
+
+    <!-- PERSONUPPGIFTER -->
+    <div class="card">
+      <div class="card-header"><i class="ti ti-user"></i><span class="card-header-title">Personuppgifter</span></div>
+      <div class="card-body">
+        <div class="fg">
+          <div class="ff"><label>Förnamn <span class="req">*</span></label><input type="text" id="f-fname" placeholder="Förnamn" autocomplete="given-name"></div>
+          <div class="ff"><label>Efternamn <span class="req">*</span></label><input type="text" id="f-lname" placeholder="Efternamn" autocomplete="family-name"></div>
+        </div>
+        <div class="fg">
+          <div class="ff"><label>Personnummer <span class="req">*</span></label><input type="text" id="f-pnr" placeholder="ÅÅÅÅMMDD-XXXX" maxlength="13"><div class="fhelp">Format: ÅÅÅÅMMDD-XXXX</div></div>
+          <div class="ff"><label>Mobilnummer <span class="req">*</span></label><input type="tel" id="f-mobil" placeholder="07X-XXX XX XX" autocomplete="tel"></div>
+        </div>
+        <div class="fg full">
+          <div class="ff"><label>Privat e-postadress <span class="req">*</span></label><input type="email" id="f-email" placeholder="din@email.se" autocomplete="email"><div class="fhelp">Hit skickas information om ditt nya konto</div></div>
+        </div>
+        <div class="fg full">
+          <div class="ff"><label>Hemadress</label><input type="text" id="f-adress" placeholder="Gatuadress, postnummer och ort" autocomplete="street-address"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ROLL OCH ANLÄGGNING -->
+    <div class="card">
+      <div class="card-header"><i class="ti ti-tent"></i><span class="card-header-title">Roll och anläggning</span></div>
+      <div class="card-body">
+        <div class="fg">
+          <div class="ff"><label>Anläggning <span class="req">*</span></label>
+            <select id="f-anlaggning">
+              <option value="">– Välj anläggning –</option>
+              <option>CC Björkö Örns Camping</option>
+              <option>CC Östnora Camping</option>
+              <option>CC Kapellskärs Camping</option>
+              <option>CC Mista Camping</option>
+              <option>CC Storsveds Camping</option>
+              <option>CC Örstigs Camping</option>
+              <option>Gräddös Pärla Kök & Bar</option>
+              <option>Östnora Kök & Bar</option>
+              <option>Sektionen (ej campingspecifik)</option>
+            </select>
+          </div>
+          <div class="ff"><label>Roll / Grupp <span class="req">*</span></label>
+            <select id="f-roll">
+              <option value="">– Välj roll –</option>
+              <option>Campingvärd</option>
+              <option>Campingansvarig</option>
+              <option>Campingråd</option>
+              <option>Restauranggrupp</option>
+              <option>Styrelse</option>
+            </select>
+          </div>
+        </div>
+        <div class="fg">
+          <div class="ff"><label>Anställningsform <span class="req">*</span></label>
+            <select id="f-ansform">
+              <option value="">– Välj –</option>
+              <option>Ideell</option>
+              <option>Säsongsanställd</option>
+            </select>
+          </div>
+          <div class="ff"><label>Startdatum</label><input type="date" id="f-startdatum"></div>
+        </div>
+        <div class="fg full">
+          <div class="ff"><label>Närmaste ansvarig</label><input type="text" id="f-chef" placeholder="Namn på din närmaste ansvarig"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ÖVRIGT -->
+    <div class="card">
+      <div class="card-header"><i class="ti ti-notes"></i><span class="card-header-title">Övrig information</span></div>
+      <div class="card-body">
+        <div class="fg full">
+          <div class="ff"><label>Övrigt</label><textarea id="f-ovrigt" placeholder="Eventuell ytterligare information, behov av specifika applikationer eller annat som är relevant för din ansökan…"></textarea></div>
+        </div>
+        <div class="fg full" style="margin-top:4px">
+          <div class="ff">
+            <label style="display:flex;align-items:flex-start;gap:8px;cursor:pointer;text-transform:none;letter-spacing:0;font-weight:400;font-size:12px">
+              <input type="checkbox" id="f-gdpr" style="width:16px;height:16px;margin-top:1px;flex-shrink:0;accent-color:var(--accent)">
+              <span>Jag godkänner att mina personuppgifter lagras och behandlas av Caravan Club of Sweden – Stockholmssektionen i syfte att hantera min ansökan och administrera mitt konto. <span class="req">*</span></span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn-primary" onclick="skickaAnsokan()"><i class="ti ti-send"></i> Skicka ansökan</button>
+
+  </div><!-- form-wrap -->
+
+  <!-- SUCCESS -->
+  <div class="success-card" id="success-card">
+    <i class="ti ti-circle-check"></i>
+    <div class="success-title">Ansökan skickad!</div>
+    <div class="success-text">Din ansökan om Microsoft 365-konto har registrerats och granskas av administratören. Du kontaktas via den e-postadress du angav.</div>
+    <div class="success-nr" id="success-nr">–</div>
+    <div style="margin-top:20px">
+      <a href="index.html" class="btn-secondary"><i class="ti ti-arrow-left"></i> Tillbaka till portalen</a>
+    </div>
+  </div>
+
+</div><!-- content -->
+
+<div id="toast"></div>
+
+<script>
+const GH_REPO      = 'CCSthlm/besiktning-camping';
+const ANSOKAN_PATH = 'konton/m365-ansokningar.json';
+
+async function skickaAnsokan() {
+  const fname    = document.getElementById('f-fname').value.trim();
+  const lname    = document.getElementById('f-lname').value.trim();
+  const pnr      = document.getElementById('f-pnr').value.trim();
+  const mobil    = document.getElementById('f-mobil').value.trim();
+  const email    = document.getElementById('f-email').value.trim();
+  const anl      = document.getElementById('f-anlaggning').value;
+  const roll     = document.getElementById('f-roll').value;
+  const ansform  = document.getElementById('f-ansform').value;
+  const gdpr     = document.getElementById('f-gdpr').checked;
+
+  if (!fname)   { toast('Ange förnamn','warn'); return; }
+  if (!lname)   { toast('Ange efternamn','warn'); return; }
+  if (!pnr)     { toast('Ange personnummer','warn'); return; }
+  if (!mobil)   { toast('Ange mobilnummer','warn'); return; }
+  if (!email || !email.includes('@')) { toast('Ange giltig e-postadress','warn'); return; }
+  if (!anl)     { toast('Välj anläggning','warn'); return; }
+  if (!roll)    { toast('Välj roll','warn'); return; }
+  if (!ansform) { toast('Välj anställningsform','warn'); return; }
+  if (!gdpr)    { toast('Godkänn behandling av personuppgifter','warn'); return; }
+
+  const id = 'M365-' + new Date().getFullYear().toString().slice(2) +
+    (new Date().getMonth()+1).toString().padStart(2,'0') + '-' +
+    Math.random().toString(36).slice(2,6).toUpperCase();
+
+  const ansokan = {
+    id,
+    ts:          new Date().toISOString(),
+    status:      'ny',
+    fname,
+    lname,
+    pnr,
+    mobil,
+    email,
+    adress:      document.getElementById('f-adress').value.trim(),
+    anläggning:  anl,
+    roll,
+    ansForm:     ansform,
+    startDatum:  document.getElementById('f-startdatum').value,
+    chef:        document.getElementById('f-chef').value.trim(),
+    övrigt:      document.getElementById('f-ovrigt').value.trim(),
+    gdpr:        true,
+  };
+
+  const token = localStorage.getItem('gh_token') || '';
+  if (token) {
+    try {
+      let sha = null;
+      let existing = { ansokningar: [] };
+      const check = await fetch('https://api.github.com/repos/'+GH_REPO+'/contents/'+ANSOKAN_PATH,
+        {headers:{'Authorization':'token '+token}});
+      if (check.ok) {
+        const d = await check.json();
+        sha = d.sha;
+        const bytes = Uint8Array.from(atob(d.content.replace(/\n/g,'')), c=>c.charCodeAt(0));
+        existing = JSON.parse(new TextDecoder('utf-8').decode(bytes));
+      }
+      if (!existing.ansokningar) existing.ansokningar = [];
+      existing.ansokningar.push(ansokan);
+      const content = btoa(unescape(encodeURIComponent(JSON.stringify(existing,null,2))));
+      const payload = {message:'M365-ansökan '+id, content, branch:'main'};
+      if (sha) payload.sha = sha;
+      const res = await fetch('https://api.github.com/repos/'+GH_REPO+'/contents/'+ANSOKAN_PATH,
+        {method:'PUT',headers:{'Authorization':'token '+token,'Content-Type':'application/json'},body:JSON.stringify(payload)});
+      if (!res.ok) throw new Error((await res.json()).message);
+    } catch(e) {
+      toast('Fel vid sparande: '+e.message,'err');
+      return;
+    }
+  }
+
+  document.getElementById('form-wrap').style.display = 'none';
+  document.getElementById('success-nr').textContent  = 'Ansökningsnummer: ' + id;
+  document.getElementById('success-card').style.display = 'block';
+}
+
+function toast(msg,type='ok'){
+  const t=document.getElementById('toast');
+  t.style.background=type==='err'?'var(--red-bg)':type==='warn'?'var(--amber-bg)':'var(--green-bg)';
+  t.style.color=type==='err'?'var(--red-text)':type==='warn'?'var(--amber-text)':'var(--green-text)';
+  t.innerHTML=(type==='ok'?'<i class="ti ti-check"></i>':type==='warn'?'<i class="ti ti-alert-triangle"></i>':'<i class="ti ti-x"></i>')+' '+msg;
+  t.style.opacity='1';t.style.transform='translateY(0)';
+  setTimeout(()=>{t.style.opacity='0';t.style.transform='translateY(6px)';},3000);
+}
+</script>
+</body>
+</html>
