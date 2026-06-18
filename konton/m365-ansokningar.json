@@ -82,7 +82,7 @@
     {
       "id": "M365-2606-C96K",
       "ts": "2026-06-18T13:23:49.114Z",
-      "status": "ny",
+      "status": "behandlad",
       "fname": "Tian",
       "lname": "Tiansson",
       "pnr": "19101010-1010",
@@ -95,7 +95,17 @@
       "startDatum": "2026-06-15",
       "chef": "",
       "övrigt": "",
-      "gdpr": true
+      "gdpr": true,
+      "m365": {
+        "upn": "tian.tiansson@cc-camping.se",
+        "skapadTs": "2026-06-18T13:24:14.780Z",
+        "skapadAv": "Massimo Johansson"
+      },
+      "handläggning": {
+        "av": "Massimo Johansson",
+        "kommentar": "M365-konto skapat: tian.tiansson@cc-camping.se · Licens tilldelad · Grupper: Caravan Club of Sweden - Stockholmssektionen",
+        "ts": "2026-06-18T13:24:14.780Z"
+      }
     }
   ]
 }
