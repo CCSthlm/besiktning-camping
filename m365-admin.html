@@ -7,7 +7,7 @@
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏕️</text></svg>">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/tabler-icons.min.css">
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-<script src="https://alcdn.msauth.net/browser/2.38.3/js/msal-browser.min.js"></script>
+<script src="https://alcdn.msauth.net/browser/2.38.3/js/msal-browser.min.js" crossorigin="anonymous"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -265,8 +265,12 @@ const _graphScopes = ['https://graph.microsoft.com/User.ReadWrite.All',
                       'https://graph.microsoft.com/Directory.ReadWrite.All'];
 let _msalApp = null;
 
-function getMsalApp() {
-  if (!_msalApp) _msalApp = new msal.PublicClientApplication(_msalConfig);
+async function getMsalApp() {
+  if (!_msalApp) {
+    if (typeof msal === 'undefined') throw new Error('MSAL-biblioteket kunde inte laddas. Kontrollera internetanslutningen och ladda om sidan.');
+    _msalApp = new msal.PublicClientApplication(_msalConfig);
+    await _msalApp.initialize();
+  }
   return _msalApp;
 }
 
