@@ -3,7 +3,7 @@
     {
       "id": "M365-2606-TQTD",
       "ts": "2026-06-18T09:02:21.612Z",
-      "status": "ny",
+      "status": "pågående",
       "fname": "TOlvan",
       "lname": "Tolvansson",
       "pnr": "19121212-1212",
@@ -16,7 +16,12 @@
       "startDatum": "2026-06-18",
       "chef": "Massimo",
       "övrigt": "ddfdfdfd",
-      "gdpr": true
+      "gdpr": true,
+      "handläggning": {
+        "av": "Massimo Johansson",
+        "kommentar": "",
+        "ts": "2026-06-18T09:03:36.958Z"
+      }
     }
   ]
 }
