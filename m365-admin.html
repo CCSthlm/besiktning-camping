@@ -252,6 +252,12 @@ const GH_REPO      = 'CCSthlm/besiktning-camping';
 const GRAPH_CLIENT_ID = '213663c5-d2fa-4d27-80be-0a9bf462c78a';
 const GRAPH_TENANT_ID = 'b20a53a1-3abf-4ca0-926e-fcf286856a56';
 const GRAPH_DOMAIN    = 'cc-camping.se';
+const GRAPH_SKU_ID    = '3b555118-da6a-4418-894f-7df1e2096870'; // M365 Business Basic
+const GRAPH_GROUPS    = [
+  { id: 'd9212559-b0af-4ffc-81f9-3fe5bd00af88', name: 'DL All Users' },
+  { id: 'f743d899-d760-4e27-a94e-7e0a162b6f32', name: 'Alla användare' },
+  { id: '8c25f352-2851-4511-a426-4ccbef878ab5', name: 'Caravan Club of Sweden - Stockholmssektionen' },
+];
 
 const _msalConfig = {
   auth: {
@@ -359,6 +365,35 @@ async function skapaM365Konto() {
     const data = await res.json();
     if (!res.ok) throw new Error(data.error?.message || res.status);
 
+    const userId = data.id;
+    const results = { licens: false, grupper: [] };
+
+    // Assign M365 Business Basic license
+    try {
+      btn.innerHTML = '<i class="ti ti-loader" style="animation:spin 1s linear infinite"></i> Tilldelar licens…';
+      const licRes = await fetch(`https://graph.microsoft.com/v1.0/users/${userId}/assignLicense`, {
+        method:  'POST',
+        headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ addLicenses: [{ skuId: GRAPH_SKU_ID }], removeLicenses: [] }),
+      });
+      if (licRes.ok) results.licens = true;
+      else { const e = await licRes.json(); console.warn('Licens:', e.error?.message); }
+    } catch(e) { console.warn('Licenstilldelning misslyckades:', e); }
+
+    // Add to groups
+    btn.innerHTML = '<i class="ti ti-loader" style="animation:spin 1s linear infinite"></i> Lägger till i grupper…';
+    for (const grp of GRAPH_GROUPS) {
+      try {
+        const grpRes = await fetch(`https://graph.microsoft.com/v1.0/groups/${grp.id}/members/$ref`, {
+          method:  'POST',
+          headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+          body:    JSON.stringify({ '@odata.id': `https://graph.microsoft.com/v1.0/directoryObjects/${userId}` }),
+        });
+        if (grpRes.ok || grpRes.status === 204) results.grupper.push(grp.name);
+        else { const e = await grpRes.json(); console.warn('Grupp '+grp.name+':', e.error?.message); }
+      } catch(e) { console.warn('Grupp '+grp.name+' misslyckades:', e); }
+    }
+
     // Update ansökan status to behandlad
     const i = _data.ansokningar.findIndex(a=>a.id===id);
     if (i>=0) {
@@ -366,7 +401,7 @@ async function skapaM365Konto() {
       _data.ansokningar[i].m365 = { upn, skapadTs: new Date().toISOString(), skapadAv: _user.name };
       _data.ansokningar[i].handläggning = {
         av: _user.name,
-        kommentar: 'M365-konto skapat: ' + upn,
+        kommentar: 'M365-konto skapat: ' + upn + (results.licens ? ' · Licens tilldelad' : '') + (results.grupper.length ? ' · Grupper: '+results.grupper.join(', ') : ''),
         ts: new Date().toISOString()
       };
       await saveData();
@@ -378,8 +413,10 @@ async function skapaM365Konto() {
     toast('✓ Konto skapat: ' + upn, 'ok');
 
     // Show summary
+    const licensStr  = results.licens ? '✓ Microsoft 365 Business Basic' : '⚠ Licenstilldelning misslyckades (tilldela manuellt)';
+    const grupperStr = results.grupper.length > 0 ? results.grupper.map(g=>'✓ '+g).join('\n') : '⚠ Ingen grupp tilldelad (kontrollera behörigheter)';
     setTimeout(() => {
-      alert('Konto skapat!\n\nAnvändarnamn: ' + upn + '\nLösenord: ' + password + '\n\nAnvändaren måste byta lösenord vid första inloggning.\n\nSpara eller kommunicera dessa uppgifter till användaren säkert.');
+      alert('Konto skapat!\n\nAnvändarnamn: ' + upn + '\nLösenord: ' + password + '\n\nLicens:\n' + licensStr + '\n\nGrupper:\n' + grupperStr + '\n\nAnvändaren måste byta lösenord vid första inloggning.\nSpara och kommunicera uppgifterna säkert till användaren.');
     }, 300);
 
   } catch(e) {
