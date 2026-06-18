@@ -446,6 +446,7 @@ const MSAL_CFG = {
 // ─── APP DEFINITIONS ──────────────────────────────────────────────────────
 const ALL_APPS = [
   // ── Generella applikationer (alla domänanvändare) ──
+  {id:'m365-ansokan', name:'Ansök om M365-konto', desc:'Ansökan om Microsoft 365-kontobehörighet hos CCSthlm.', icon:'ti-brand-windows', color:'app-icon-blue', url:'m365-ansokan.html', roles:[], badge:'', newTab:false, group:'generell'},
   {id:'it-support',     name:'IT-felanmälan',         desc:'Rapportera IT-problem för CompuSuit, hårdvara eller ställ en allmän fråga.',          icon:'ti-tool',           color:'app-icon-amber', url:'it-support.html',        roles:[], badge:'', newTab:false, group:'generell'},
   {id:'avvikelse',      name:'Avvikelseregistrering',  desc:'Registrera avvikelse, tillbud eller incident. Alla domänanvändare kan rapportera.',    icon:'ti-alert-triangle', color:'app-icon-amber', url:'avvikelse.html',         roles:[], badge:'', newTab:false, group:'generell'},
   // ── Specifika applikationer (kräver tilldelning) ──
@@ -453,6 +454,7 @@ const ALL_APPS = [
   {id:'besiktning',     name:'Besiktningsprotokoll',   desc:'Genomför och dokumentera campingbesiktningar. Generera intyg och spara historik.',     icon:'ti-certificate',    color:'app-icon-blue',  url:'besiktning.html',        roles:['Admin','Besiktningsman','Granskare'], badge:'', newTab:false, group:'specifik'},
   {id:'personalliggare',name:'Personalliggare',        desc:'Digital personalliggare enligt Skatteverkets krav. Stämpla in/ut, ändringslogg.',      icon:'ti-id-badge-2',     color:'app-icon-green', url:'personalliggare.html',   roles:['Admin','Besiktningsman','Granskare'], badge:'', newTab:false, group:'specifik'},
   // ── Handläggning (kräver adminroll) ──
+  {id:'m365-admin', name:'M365-ansökningar', desc:'Hantera och handlägga ansökningar om Microsoft 365-konto.', icon:'ti-brand-windows', color:'app-icon-blue', url:'m365-admin.html', roles:[], badge:'', newTab:false, group:'admin', adminRolesRequired:['global','sektions','kontoadmin']},
   {id:'storning-admin', name:'Störningsrapporter', desc:'Hantera störningsrapporter, skriv beslut och se historik.', icon:'ti-file-alert', color:'app-icon-amber', url:'storning-admin.html', roles:[], badge:'', newTab:false, group:'admin', adminRolesRequired:['global','störningsadmin']},
   {id:'avvikelse-admin',name:'Avvikelsehantering',     desc:'Dashboard, ärendelista, handläggning och statistik för avvikelser.',                   icon:'ti-dashboard',      color:'app-icon-amber', url:'avvikelse-admin.html',   roles:[], badge:'', newTab:false, group:'admin', adminRolesRequired:['global','avvikelse-admin','avvikelse-ledning','avvikelse-anlaggning','avvikelse-brand']},
   {id:'admin',          name:'Administration',         desc:'Hantera användare, campingar och systeminställningar.',                                  icon:'ti-settings-2',     color:'app-icon-amber', url:'admin.html',             roles:['Admin'], badge:'ADMIN', newTab:false, group:'admin'},
