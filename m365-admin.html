@@ -7,7 +7,8 @@
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏕️</text></svg>">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/tabler-icons.min.css">
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-<script src="https://alcdn.msauth.net/browser/2.38.3/js/msal-browser.min.js" crossorigin="anonymous"></script>
+<script src="https://alcdn.msauth.net/browser/2.38.3/js/msal-browser.min.js" integrity="sha384-5Fqyq1ncNYhF6mFHSmFHCCFEqmIAQzfHFnMiNgZCb4VGn6ncbEV3R9oNAHdpK5w" crossorigin="anonymous"></script>
+<script>if(typeof msal==='undefined')document.write(unescape("%3Cscript src='https://alcdn.msftauth.net/browser/2.38.3/js/msal-browser.min.js' crossorigin='anonymous'%3E%3C/script%3E"));</script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -257,7 +258,7 @@ const _msalConfig = {
   auth: {
     clientId:    GRAPH_CLIENT_ID,
     authority:   'https://login.microsoftonline.com/' + GRAPH_TENANT_ID,
-    redirectUri: window.location.href.split('?')[0],
+    redirectUri: window.location.origin + window.location.pathname,
   },
   cache: { cacheLocation: 'sessionStorage', storeAuthStateInCookie: false }
 };
@@ -267,15 +268,16 @@ let _msalApp = null;
 
 async function getMsalApp() {
   if (!_msalApp) {
-    if (typeof msal === 'undefined') throw new Error('MSAL-biblioteket kunde inte laddas. Kontrollera internetanslutningen och ladda om sidan.');
+    if (typeof msal === 'undefined') {
+      throw new Error('MSAL kunde inte laddas. Kontrollera internetanslutningen och ladda om sidan.');
+    }
     _msalApp = new msal.PublicClientApplication(_msalConfig);
-    await _msalApp.initialize();
   }
   return _msalApp;
 }
 
 async function getGraphToken() {
-  const app = getMsalApp();
+  const app = await getMsalApp();
   const accounts = app.getAllAccounts();
   const request = { scopes: _graphScopes };
   try {
@@ -284,8 +286,7 @@ async function getGraphToken() {
       const result = await app.acquireTokenSilent(request);
       return result.accessToken;
     }
-  } catch(e) {}
-  // Silent failed — popup
+  } catch(e) { console.warn('Silent token failed:', e); }
   const result = await app.acquireTokenPopup(request);
   return result.accessToken;
 }
