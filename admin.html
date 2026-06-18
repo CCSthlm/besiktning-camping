@@ -492,6 +492,11 @@ tr:hover td{background:var(--bg3);}
             <label class="checkbox-item"><input type="checkbox" id="role-avvikelse-brand"> <i class="ti ti-flame" style="font-size:14px;color:#c2410c"></i> <span><strong>Brandskyddsansvarig</strong> – brand/SBA-ärenden</span></label>
           </div>
           <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin:10px 0 6px;padding-top:8px;border-top:1px solid var(--border)">Nyheter & driftstörningar</div>
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin:10px 0 6px;padding-top:8px;border-top:1px solid var(--border)">Kontohantering</div>
+          <div class="role-section" style="padding:9px 12px;border-left:3px solid #1a4f7a;">
+            <label class="checkbox-item"><input type="checkbox" id="role-kontoadmin"> <i class="ti ti-brand-windows" style="font-size:14px;color:#1a4f7a"></i> <span><strong>Kontoadmin (M365)</strong> – hantera Microsoft 365-ansökningar</span></label>
+          </div>
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin:10px 0 6px;padding-top:8px;border-top:1px solid var(--border)">Publicering</div>
           <div class="role-section" style="padding:9px 12px;border-left:3px solid #7c3aed;">
             <label class="checkbox-item"><input type="checkbox" id="role-nyhetsadmin"> <i class="ti ti-speakerphone" style="font-size:14px;color:#7c3aed"></i> <span><strong>Nyhetsadmin</strong> – publicera nyheter och driftstörningar</span></label>
           </div>
@@ -617,6 +622,7 @@ const ADMIN_ROLES = {
   'avvikelse-anlaggning':{ key:'avvikelse-anlaggning', label:'Anläggningsansvarig', icon:'ti-tent',           color:'#3B6D11', badge:'badge-besiktnings' },
   'avvikelse-brand':    { key:'avvikelse-brand',    label:'Brandskyddsansvarig',   icon:'ti-flame',          color:'#c2410c', badge:'badge-personal' },
   'nyhetsadmin':        { key:'nyhetsadmin',        label:'Nyhetsadmin',           icon:'ti-speakerphone',   color:'#7c3aed', badge:'badge-global' },
+  'kontoadmin':         { key:'kontoadmin',         label:'Kontoadmin (M365)',      icon:'ti-brand-windows', color:'#1a4f7a', badge:'badge-global' },
   'störningsadmin':     { key:'störningsadmin',     label:'Störningsrapportadmin', icon:'ti-file-alert',     color:'#7c3aed', badge:'badge-global' },
 };
 
@@ -639,6 +645,7 @@ const PAGE_ACCESS = {
   news:         ['global','nyhetsadmin'],
   settings:     ['global'],
   'av-settings':['global','avvikelse-admin'],
+  'm365-admin':    ['global','sektions','kontoadmin'],
   'störning-admin':['global','störningsadmin'],
   'av-roles':   ['global','avvikelse-admin'],
 };
@@ -922,6 +929,12 @@ function buildSidebar() {
     html += `<div class="nav-item" onclick="window.location.href='storning-admin.html'"><i class="ti ti-external-link"></i> Öppna störningsadmin</div>`;
   }
 
+  const isKonto = _myAdminRoles.some(r=>['global','sektions','kontoadmin'].includes(r));
+  if (isKonto) {
+    html += `<div class="nav-group-label"><i class="ti ti-brand-windows"></i> Kontohantering</div>`;
+    html += `<div class="nav-item" onclick="window.location.href='m365-admin.html'"><i class="ti ti-external-link"></i> M365-ansökningar</div>`;
+  }
+
   if (isGlobal) {
     html += `<div class="nav-group-label"><i class="ti ti-adjustments"></i> System</div>`;
     html += `<div class="nav-item" onclick="showPage('links')"><i class="ti ti-link"></i> Portalens länkar</div>`;
@@ -1148,7 +1161,7 @@ function openAddUser() {
   document.getElementById('user-pin').value = '';
   document.getElementById('user-pnr').value = '';
   document.getElementById('user-active').value = 'true';
-  ['global','sektions','besiktnings','personal','avvikelse-admin','avvikelse-ledning','avvikelse-anlaggning','avvikelse-brand','nyhetsadmin','störningsadmin'].forEach(r => { const el=document.getElementById('role-'+r); if(el) el.checked=false; });
+  ['global','sektions','besiktnings','personal','avvikelse-admin','avvikelse-ledning','avvikelse-anlaggning','avvikelse-brand','nyhetsadmin','störningsadmin','kontoadmin'].forEach(r => { const el=document.getElementById('role-'+r); if(el) el.checked=false; });
   buildAppCheckboxes([]);
   populatePLCampingSelect('');
   openModal('modal-user');
@@ -1166,7 +1179,7 @@ function openEditUser(id) {
   document.getElementById('user-active').value = u.active===false?'false':'true';
   // Set admin role checkboxes
   const roles = u.adminRoles || (u.role==='Admin'?['global']:[]);
-  ['global','sektions','besiktnings','personal','avvikelse-admin','avvikelse-ledning','avvikelse-anlaggning','avvikelse-brand','nyhetsadmin','störningsadmin'].forEach(r => {
+  ['global','sektions','besiktnings','personal','avvikelse-admin','avvikelse-ledning','avvikelse-anlaggning','avvikelse-brand','nyhetsadmin','störningsadmin','kontoadmin'].forEach(r => {
     const el=document.getElementById('role-'+r);
     if(el) el.checked = roles.includes(r);
   });
@@ -1194,7 +1207,7 @@ function saveUser() {
   const pin = document.getElementById('user-pin').value.trim();
   if (!name) { alert('Namn krävs.'); return; }
   if (!pin || !/^\d{4}$/.test(pin)) { alert('PIN-kod måste vara 4 siffror.'); return; }
-  const adminRoles = ['global','sektions','besiktnings','personal','avvikelse-admin','avvikelse-ledning','avvikelse-anlaggning','avvikelse-brand','nyhetsadmin','störningsadmin'].filter(r => document.getElementById('role-'+r)?.checked);
+  const adminRoles = ['global','sektions','besiktnings','personal','avvikelse-admin','avvikelse-ledning','avvikelse-anlaggning','avvikelse-brand','nyhetsadmin','störningsadmin','kontoadmin'].filter(r => document.getElementById('role-'+r)?.checked);
   const apps = Array.from(document.querySelectorAll('#user-apps-check input:checked')).map(e=>e.value);
   const editId = document.getElementById('user-edit-id').value;
   const obj = {
