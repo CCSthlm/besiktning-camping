@@ -78,6 +78,24 @@
         "kommentar": "M365-konto skapat: elvan.elvansson@cc-camping.se · Licens tilldelad · Grupper: Caravan Club of Sweden - Stockholmssektionen",
         "ts": "2026-06-18T13:14:21.636Z"
       }
+    },
+    {
+      "id": "M365-2606-C96K",
+      "ts": "2026-06-18T13:23:49.114Z",
+      "status": "ny",
+      "fname": "Tian",
+      "lname": "Tiansson",
+      "pnr": "19101010-1010",
+      "mobil": "076610101010",
+      "email": "tian@gmail.com",
+      "adress": "Hemma",
+      "anläggning": "CC Björkö Örns Camping",
+      "roll": "Campingvärd",
+      "ansForm": "Ideell",
+      "startDatum": "2026-06-15",
+      "chef": "",
+      "övrigt": "",
+      "gdpr": true
     }
   ]
 }
