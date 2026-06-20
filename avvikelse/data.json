@@ -110,6 +110,46 @@
           "status": "stängd"
         }
       ]
+    },
+    {
+      "id": "AV-2606-G77J",
+      "ts": "2026-06-20T07:40:00.997Z",
+      "kategori": "Sjukdom / gästincident",
+      "kategoriIndex": 1,
+      "risk": "Låg",
+      "riskNivå": 1,
+      "anläggning": "CC Björkö Örns Camping",
+      "plats": "Campingtomt",
+      "datum": "2026-06-19",
+      "tid": "15:37",
+      "rapportör": "Receptionen Björkö Örn",
+      "rapportörEmail": "info.bjorko@cc-camping.se",
+      "beskrivning": "En kvinna har fått något i ögat och behöver skölja med ögonducsh",
+      "omedelbar": "Hjälpte kvinnan att använda ögondusch samt la om ett förband över ögat. ",
+      "ansvarig": "Malin Liljedahl",
+      "deadline": "2026-06-19",
+      "kommentar": "",
+      "status": "ny",
+      "eskalerad": false,
+      "bilder": [],
+      "dynamicFields": {
+        "d-typ": "Skada",
+        "d-person": "Gäst",
+        "d-foerstahjälp": false,
+        "d-ambulans": false,
+        "d-polis": false,
+        "d-anhörig": false,
+        "d-vittnen": "",
+        "d-ansvar": ""
+      },
+      "historik": [
+        {
+          "ts": "2026-06-20T07:40:00.997Z",
+          "av": "Receptionen Björkö Örn",
+          "händelse": "Skapades",
+          "status": "ny"
+        }
+      ]
     }
   ],
   "inställningar": {
