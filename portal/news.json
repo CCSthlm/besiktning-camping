@@ -11,18 +11,6 @@
       "active": true,
       "created": "2026-06-15T17:57:34.960Z",
       "createdBy": "Massimo Johansson"
-    },
-    {
-      "id": "mqfiqyvk3rpc",
-      "type": "news",
-      "system": "Övrigt",
-      "title": "Mer nyheter",
-      "text": "mer information mer information mer information mer information mer information mer information mer information mer information",
-      "startDate": "2026-06-15T16:00:00.000Z",
-      "endDate": "",
-      "active": true,
-      "created": "2026-06-15T18:00:34.832Z",
-      "createdBy": "Massimo Johansson"
     }
   ]
 }
