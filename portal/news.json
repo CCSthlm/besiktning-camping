@@ -1,16 +1,3 @@
 {
-  "items": [
-    {
-      "id": "mqfin434otu4",
-      "type": "disruption",
-      "system": "CompuSuit",
-      "title": "Betalningar i Cwallet",
-      "text": "Här kommer massa infrormation om detta fel.",
-      "startDate": "2026-06-15T15:57:00.000Z",
-      "endDate": "",
-      "active": true,
-      "created": "2026-06-15T17:57:34.960Z",
-      "createdBy": "Massimo Johansson"
-    }
-  ]
+  "items": []
 }
