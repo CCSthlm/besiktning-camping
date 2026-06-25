@@ -1,0 +1,1101 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Inventarieregister – CCSthlm</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏕️</text></svg>">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/tabler-icons.min.css">
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f5f5f3;--bg2:#fff;--bg3:#eeede8;--bg4:#e5e4de;
+  --text:#1a1a18;--text2:#5a5a57;--text3:#909088;
+  --accent:#3B6D11;--accent2:#27500A;--accent-glow:rgba(59,109,17,.1);
+  --red:#A32D2D;--red-bg:#FCEBEB;--red-text:#501313;
+  --amber:#854F0B;--amber-bg:#FAEEDA;--amber-text:#412402;
+  --green-bg:#EAF3DE;--green-text:#27500A;
+  --blue:#1a4f7a;--blue-bg:#e0f0ff;--blue-text:#1a4f7a;
+  --purple:#7c3aed;--purple-bg:#ede9f7;
+  --border:rgba(0,0,0,.10);--border2:rgba(0,0,0,.18);
+  --radius:8px;--radius-lg:14px;--shadow:0 2px 16px rgba(0,0,0,.08);
+  --sidebar:240px;
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:var(--bg3);color:var(--text);min-height:100vh;display:flex;}
+
+/* SIDEBAR */
+.sidebar{width:var(--sidebar);flex-shrink:0;background:var(--bg2);border-right:1px solid var(--border2);display:flex;flex-direction:column;position:fixed;inset:0 auto 0 0;z-index:10;transition:transform .25s;}
+.sidebar-logo{padding:16px 18px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:9px;}
+.sidebar-logo i{font-size:22px;color:var(--accent);}
+.sidebar-logo-text{font-size:14px;font-weight:700;}
+.sidebar-logo-sub{font-size:10px;color:var(--text3);}
+.sidebar-nav{flex:1;padding:8px 0;overflow-y:auto;}
+.nav-group{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);padding:12px 18px 4px;}
+.nav-item{display:flex;align-items:center;gap:9px;padding:9px 18px;cursor:pointer;font-size:13px;color:var(--text2);border-left:2px solid transparent;transition:all .15s;}
+.nav-item:hover{background:var(--bg3);color:var(--text);}
+.nav-item.active{background:var(--bg3);color:var(--accent2);border-left-color:var(--accent);font-weight:600;}
+.nav-item i{font-size:15px;flex-shrink:0;}
+.nav-badge{background:var(--amber);color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:20px;margin-left:auto;}
+.sidebar-footer{padding:12px 18px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:6px;}
+.sb-user{display:flex;align-items:center;gap:8px;padding-bottom:8px;border-bottom:1px solid var(--border);margin-bottom:2px;}
+.sb-avatar{width:28px;height:28px;border-radius:50%;background:var(--accent);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+
+/* MAIN */
+.main{margin-left:var(--sidebar);flex:1;display:flex;flex-direction:column;min-height:100vh;}
+.topbar{padding:12px 20px;border-bottom:1px solid var(--border2);display:flex;justify-content:space-between;align-items:center;background:var(--bg2);position:sticky;top:0;z-index:5;gap:10px;flex-wrap:wrap;}
+.topbar h1{font-size:16px;font-weight:700;}
+.topbar-sub{font-size:11px;color:var(--text2);}
+.content{padding:16px 20px;flex:1;}
+
+/* STATS */
+.stats-row{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:16px;}
+.stat{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:12px 14px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:border-color .15s;}
+.stat:hover{border-color:var(--accent);}
+.stat-icon{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.stat-val{font-size:20px;font-weight:700;line-height:1;}
+.stat-lbl{font-size:10px;color:var(--text3);}
+.si-blue{background:var(--blue-bg);color:var(--blue);}
+.si-green{background:var(--green-bg);color:var(--accent);}
+.si-amber{background:var(--amber-bg);color:var(--amber);}
+.si-red{background:var(--red-bg);color:var(--red);}
+.si-purple{background:var(--purple-bg);color:var(--purple);}
+
+/* FILTER BAR */
+.filter-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;align-items:center;}
+.filter-bar select,.filter-bar input{padding:7px 10px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);font-size:12px;font-family:inherit;color:var(--text);}
+.filter-bar input[type=text]{min-width:180px;}
+
+/* CARD GRID */
+.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;}
+.inv-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px 16px;cursor:pointer;transition:all .15s;position:relative;}
+.inv-card:hover{border-color:var(--accent);box-shadow:0 4px 16px rgba(59,109,17,.1);}
+.inv-card-top{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;}
+.inv-card-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.inv-card-id{font-size:10px;color:var(--text3);font-family:monospace;}
+.inv-card-name{font-size:14px;font-weight:600;line-height:1.3;margin-bottom:2px;}
+.inv-card-model{font-size:11px;color:var(--text2);}
+.inv-card-body{display:flex;flex-direction:column;gap:5px;}
+.inv-card-row{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2);}
+.inv-card-row i{font-size:13px;color:var(--text3);flex-shrink:0;}
+.inv-card-footer{margin-top:10px;padding-top:8px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+
+/* STATUS BADGES */
+.badge{display:inline-flex;font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;white-space:nowrap;}
+.b-aktiv{background:var(--green-bg);color:var(--green-text);}
+.b-lager{background:var(--blue-bg);color:var(--blue-text);}
+.b-defekt{background:var(--red-bg);color:var(--red-text);}
+.b-utrangerad{background:var(--bg3);color:var(--text3);}
+.b-stulen{background:#1a1a18;color:#fff;}
+.b-service{background:var(--amber-bg);color:var(--amber-text);}
+
+/* TABLE VIEW */
+table{width:100%;border-collapse:collapse;}
+th{text-align:left;padding:8px 12px;font-size:11px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--border);background:var(--bg3);white-space:nowrap;cursor:pointer;}
+th:hover{color:var(--text);}
+td{padding:9px 12px;font-size:13px;border-bottom:1px solid var(--border);vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:rgba(59,109,17,.02);}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;align-items:flex-start;justify-content:center;padding:16px;overflow-y:auto;}
+.modal-overlay.show{display:flex;}
+.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius-lg);width:100%;max-width:680px;margin:auto;box-shadow:0 8px 40px rgba(0,0,0,.2);}
+.modal-header{padding:14px 18px 12px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:flex-start;position:sticky;top:0;background:var(--bg2);z-index:1;}
+.modal-title{font-size:15px;font-weight:700;}
+.modal-close{background:none;border:none;cursor:pointer;color:var(--text3);font-size:20px;flex-shrink:0;}
+.modal-body{padding:16px 18px;max-height:75vh;overflow-y:auto;}
+.modal-footer{padding:10px 18px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px;position:sticky;bottom:0;background:var(--bg2);}
+.modal-tabs{display:flex;border-bottom:1px solid var(--border);padding:0 18px;margin-bottom:14px;}
+.modal-tab{padding:8px 12px;font-size:12px;font-weight:500;color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;background:none;border-top:none;border-left:none;border-right:none;font-family:inherit;transition:all .15s;}
+.modal-tab.active{color:var(--accent);border-bottom-color:var(--accent);}
+
+/* FORM */
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
+.fg.full{grid-template-columns:1fr;}
+.fg.trio{grid-template-columns:1fr 1fr 1fr;}
+.ff{display:flex;flex-direction:column;gap:3px;}
+.ff label{font-size:10px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.04em;}
+.ff input,.ff select,.ff textarea{padding:8px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius);font-size:12px;color:var(--text);font-family:inherit;transition:border-color .2s;}
+.ff input:focus,.ff select:focus,.ff textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow);}
+.ff textarea{resize:vertical;min-height:65px;line-height:1.6;}
+.req{color:var(--red);}
+.form-section{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);padding:10px 0 6px;border-bottom:1px solid var(--border);margin:12px 0 8px;}
+
+/* DETAIL */
+.dr{display:flex;margin-bottom:7px;font-size:13px;gap:8px;}
+.dl{min-width:160px;color:var(--text2);font-weight:500;flex-shrink:0;font-size:12px;}
+.dsec{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);padding:8px 0 5px;border-bottom:1px solid var(--border);margin:12px 0 8px;}
+
+/* HÄNDELSELOGG */
+.log-entry{padding:9px 12px;background:var(--bg3);border-radius:var(--radius);margin-bottom:6px;}
+.log-meta{font-size:11px;color:var(--text3);margin-top:3px;}
+.log-type{font-size:10px;font-weight:600;padding:1px 7px;border-radius:20px;display:inline-block;margin-right:5px;}
+.lt-service{background:var(--blue-bg);color:var(--blue);}
+.lt-reparation{background:var(--red-bg);color:var(--red);}
+.lt-flytt{background:var(--amber-bg);color:var(--amber);}
+.lt-byte{background:var(--purple-bg);color:var(--purple);}
+.lt-inventering{background:var(--green-bg);color:var(--green-text);}
+
+/* BUTTONS */
+.btn-primary{padding:8px 16px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px;transition:background .15s;}
+.btn-primary:hover{background:var(--accent2);}
+.btn-secondary{padding:7px 13px;background:var(--bg3);color:var(--text2);border:1px solid var(--border2);border-radius:var(--radius);font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:5px;}
+.btn-secondary:hover{background:var(--bg4);}
+.btn-danger{padding:7px 13px;background:var(--red-bg);color:var(--red);border:1px solid rgba(163,45,45,.2);border-radius:var(--radius);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:5px;}
+.btn-portal{width:100%;padding:7px;background:var(--bg3);color:var(--text2);border:1px solid var(--border2);border-radius:var(--radius);font-size:12px;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:7px;}
+.btn-portal:hover{background:var(--bg4);}
+.btn-logout{width:100%;padding:7px;background:var(--red-bg);color:var(--red);border:1px solid rgba(163,45,45,.2);border-radius:var(--radius);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:7px;}
+.btn-logout:hover{background:var(--red);color:#fff;}
+.view-toggle{display:flex;border:1px solid var(--border2);border-radius:var(--radius);overflow:hidden;}
+.view-btn{padding:6px 10px;background:var(--bg3);border:none;cursor:pointer;font-family:inherit;font-size:13px;color:var(--text2);transition:all .15s;}
+.view-btn.active{background:var(--accent);color:#fff;}
+
+/* NO DATA */
+.no-data{text-align:center;padding:48px 20px;color:var(--text3);}
+.no-data i{font-size:40px;display:block;margin-bottom:10px;}
+
+/* MOBILE BURGER */
+.burger{display:none;background:none;border:none;cursor:pointer;font-size:22px;color:var(--text2);padding:4px;}
+
+/* TOAST */
+#toast{position:fixed;bottom:20px;right:20px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);padding:10px 14px;font-size:13px;z-index:999;box-shadow:var(--shadow);opacity:0;transform:translateY(6px);transition:all .25s;pointer-events:none;display:flex;align-items:center;gap:6px;}
+
+/* AVTAL CHIP */
+.avtal-chip{display:inline-flex;align-items:center;gap:4px;font-size:10px;background:var(--purple-bg);color:var(--purple);padding:2px 7px;border-radius:20px;font-weight:600;}
+.avtal-chip.expire-soon{background:var(--amber-bg);color:var(--amber-text);}
+.avtal-chip.expired{background:var(--red-bg);color:var(--red-text);}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  .sidebar{transform:translateX(-100%);z-index:50;}
+  .sidebar.open{transform:translateX(0);}
+  .main{margin-left:0;}
+  .topbar{padding:10px 14px;}
+  .content{padding:12px 14px;}
+  .stats-row{grid-template-columns:repeat(3,1fr);}
+  .card-grid{grid-template-columns:1fr;}
+  .burger{display:flex;}
+  .fg{grid-template-columns:1fr;}
+  .fg.trio{grid-template-columns:1fr 1fr;}
+  .sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:40;}
+  .sidebar-overlay.show{display:block;}
+}
+@media(max-width:480px){
+  .stats-row{grid-template-columns:repeat(2,1fr);}
+}
+</style>
+</head>
+<body>
+
+<div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <i class="ti ti-devices"></i>
+    <div><div class="sidebar-logo-text">Inventarieregister</div><div class="sidebar-logo-sub">CCSthlm</div></div>
+  </div>
+  <div class="sidebar-nav">
+    <div class="nav-group">Vyer</div>
+    <div class="nav-item active" id="nav-alla" onclick="showView('alla')"><i class="ti ti-list"></i> Alla enheter</div>
+    <div class="nav-item" id="nav-betalterminaler" onclick="showView('betalterminaler')"><i class="ti ti-credit-card"></i> Betalterminaler</div>
+    <div class="nav-item" id="nav-tradlost" onclick="showView('tradlost')"><i class="ti ti-wifi"></i> Trådlösa nät</div>
+    <div class="nav-item" id="nav-avtal" onclick="showView('avtal')"><i class="ti ti-file-text"></i> Avtal</div>
+    <div class="nav-group">Uppföljning</div>
+    <div class="nav-item" id="nav-avtal-utgår" onclick="showView('avtal-utgår')"><i class="ti ti-alarm" style="color:var(--amber)"></i> Avtal utgår snart <span class="nav-badge" id="nav-expire-badge" style="display:none">0</span></div>
+    <div class="nav-item" id="nav-defekta" onclick="showView('defekta')"><i class="ti ti-alert-triangle" style="color:var(--red)"></i> Defekta enheter</div>
+  </div>
+  <div class="sidebar-footer">
+    <div class="sb-user">
+      <div class="sb-avatar" id="sb-avatar">?</div>
+      <div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" id="sb-name">–</div><div style="font-size:10px;color:var(--text3)" id="sb-role">Läsare</div></div>
+    </div>
+    <button class="btn-portal" onclick="window.location.href='index.html'"><i class="ti ti-arrow-left"></i> Portal</button>
+    <button class="btn-logout" onclick="doLogout()"><i class="ti ti-logout"></i> Logga ut</button>
+  </div>
+</nav>
+
+<div class="main">
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:10px">
+      <button class="burger" onclick="toggleSidebar()"><i class="ti ti-menu-2"></i></button>
+      <div><h1 id="view-title">Alla enheter</h1><div class="topbar-sub" id="view-sub">Samtliga inventarieposter</div></div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <div class="view-toggle">
+        <button class="view-btn active" id="vt-kort" onclick="setViewMode('kort')" title="Kortvvy"><i class="ti ti-layout-grid"></i></button>
+        <button class="view-btn" id="vt-lista" onclick="setViewMode('lista')" title="Listvy"><i class="ti ti-list"></i></button>
+      </div>
+      <button class="btn-secondary" onclick="exportExcel()"><i class="ti ti-table-export"></i> Excel</button>
+      <button class="btn-primary" id="btn-ny-enhet" onclick="openNewEnhet()" style="display:none"><i class="ti ti-plus"></i> Ny enhet</button>
+    </div>
+  </div>
+  <div class="content">
+    <div class="stats-row" id="stats-row"></div>
+    <div class="filter-bar" id="filter-bar">
+      <select id="f-kategori" onchange="renderList()"><option value="">Alla kategorier</option></select>
+      <select id="f-anlaggning" onchange="renderList()"><option value="">Alla anläggningar</option></select>
+      <select id="f-status" onchange="renderList()"><option value="">Alla statusar</option><option>Aktiv</option><option>I lager</option><option>Defekt</option><option>Utrangerad</option><option>Stulen</option></select>
+      <input type="text" id="f-sok" placeholder="🔍 Sök namn, ID, serienr…" oninput="renderList()">
+      <button class="btn-secondary" onclick="clearFilters()"><i class="ti ti-x"></i></button>
+    </div>
+    <div id="list-container"></div>
+  </div>
+</div>
+
+<!-- ENHET MODAL (Visa / Redigera) -->
+<div class="modal-overlay" id="modal-enhet">
+  <div class="modal" style="max-width:700px">
+    <div class="modal-header">
+      <div><div class="modal-title" id="enhet-modal-title">Ny enhet</div><div style="font-size:11px;color:var(--text3);margin-top:1px" id="enhet-modal-meta"></div></div>
+      <button class="modal-close" onclick="closeModal('modal-enhet')"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="modal-tabs" id="enhet-tabs">
+      <button class="modal-tab active" onclick="showEnhetTab('info')">Information</button>
+      <button class="modal-tab" onclick="showEnhetTab('avtal')">Avtal</button>
+      <button class="modal-tab" onclick="showEnhetTab('logg')">Händelselogg <span id="logg-count" style="font-size:10px;background:var(--bg3);padding:1px 5px;border-radius:10px;margin-left:3px">0</span></button>
+    </div>
+    <div class="modal-body" id="enhet-modal-body"></div>
+    <div class="modal-footer" id="enhet-modal-footer"></div>
+  </div>
+</div>
+
+<!-- LÄGG TILL / REDIGERA FORMMODAL -->
+<div class="modal-overlay" id="modal-form">
+  <div class="modal" style="max-width:700px">
+    <div class="modal-header">
+      <div><div class="modal-title" id="form-modal-title">Ny enhet</div><div style="font-size:11px;color:var(--text3);margin-top:1px" id="form-modal-id"></div></div>
+      <button class="modal-close" onclick="closeModal('modal-form')"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="modal-body" id="form-modal-body"></div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeModal('modal-form')">Avbryt</button>
+      <button class="btn-primary" onclick="saveEnhet()"><i class="ti ti-check"></i> Spara</button>
+    </div>
+  </div>
+</div>
+
+<!-- HÄNDELSE MODAL -->
+<div class="modal-overlay" id="modal-handelse">
+  <div class="modal" style="max-width:440px">
+    <div class="modal-header"><span class="modal-title">Lägg till händelse</span><button class="modal-close" onclick="closeModal('modal-handelse')"><i class="ti ti-x"></i></button></div>
+    <div class="modal-body">
+      <input type="hidden" id="h-enhet-id">
+      <div class="fg">
+        <div class="ff"><label>Typ <span class="req">*</span></label>
+          <select id="h-typ"><option>Service</option><option>Reparation</option><option>Flytt</option><option>Byte</option><option>Inventering</option></select>
+        </div>
+        <div class="ff"><label>Datum <span class="req">*</span></label><input type="date" id="h-datum"></div>
+      </div>
+      <div class="fg">
+        <div class="ff"><label>Utförare</label><input type="text" id="h-utforare" placeholder="Namn"></div>
+        <div class="ff"><label>Kostnad (kr)</label><input type="number" id="h-kostnad" placeholder="0"></div>
+      </div>
+      <div class="fg full">
+        <div class="ff"><label>Beskrivning <span class="req">*</span></label><textarea id="h-beskrivning" placeholder="Vad gjordes?"></textarea></div>
+      </div>
+      <div class="fg">
+        <div class="ff"><label>Nästa service</label><input type="date" id="h-nasta"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeModal('modal-handelse')">Avbryt</button>
+      <button class="btn-primary" onclick="saveHandelse()"><i class="ti ti-check"></i> Spara</button>
+    </div>
+  </div>
+</div>
+
+<!-- AVTAL MODAL -->
+<div class="modal-overlay" id="modal-avtal">
+  <div class="modal" style="max-width:520px">
+    <div class="modal-header"><span class="modal-title" id="avtal-modal-title">Lägg till avtal</span><button class="modal-close" onclick="closeModal('modal-avtal')"><i class="ti ti-x"></i></button></div>
+    <div class="modal-body">
+      <input type="hidden" id="a-id">
+      <input type="hidden" id="a-enhet-id">
+      <div class="fg">
+        <div class="ff"><label>Avtalstyp <span class="req">*</span></label>
+          <select id="a-typ"><option>Leasing</option><option>Inlösen</option><option>Support</option><option>Licens</option><option>Hyra</option><option>Abonnemang</option></select>
+        </div>
+        <div class="ff"><label>Leverantör / Partner <span class="req">*</span></label><input type="text" id="a-leverantor" placeholder="Företagsnamn"></div>
+      </div>
+      <div class="fg">
+        <div class="ff"><label>Avtalsnummer</label><input type="text" id="a-nr" placeholder=""></div>
+        <div class="ff"><label>Kontaktperson</label><input type="text" id="a-kontakt" placeholder="Namn"></div>
+      </div>
+      <div class="fg trio">
+        <div class="ff"><label>Startdatum</label><input type="date" id="a-start"></div>
+        <div class="ff"><label>Slutdatum</label><input type="date" id="a-slut"></div>
+        <div class="ff"><label>Uppsägningstid</label><input type="text" id="a-uppsagning" placeholder="T.ex. 3 mån"></div>
+      </div>
+      <div class="fg">
+        <div class="ff"><label>Månadskostnad (kr)</label><input type="number" id="a-kostnad" placeholder="0"></div>
+        <div class="ff"><label>Påminnelsedatum</label><input type="date" id="a-paminnelse"></div>
+      </div>
+      <div class="fg">
+        <div class="ff"><label>Automatisk förlängning</label>
+          <select id="a-forlangning"><option value="nej">Nej</option><option value="ja">Ja</option></select>
+        </div>
+        <div class="ff"><label>Länk (SharePoint/webb)</label><input type="text" id="a-lank" placeholder="https://…"></div>
+      </div>
+      <div class="fg full">
+        <div class="ff"><label>Anteckningar</label><textarea id="a-anteckningar" placeholder="Övrigt om avtalet…"></textarea></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeModal('modal-avtal')">Avbryt</button>
+      <button class="btn-primary" onclick="saveAvtal()"><i class="ti ti-check"></i> Spara avtal</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ── CONFIG ────────────────────────────────────────────────────────────────
+const GH_REPO         = 'CCSthlm/besiktning-camping';
+const PATH_ENHETER    = 'inventarie/enheter.json';
+const PATH_AVTAL      = 'inventarie/avtal.json';
+const PATH_HANDELSER  = 'inventarie/handelser.json';
+
+const KATEGORIER = [
+  'Datorer & surfplattor','Skrivare','Kvittoskrivare','Etikettskrivare',
+  'Betalterminaler','Nätverk – kabelburet','Nätverk – trådlöst',
+  'Kassasystem / POS','Telefoni','Skärmar & tillbehör','Övrigt IT'
+];
+const FUNKTIONER = ['POS / Kassa','Reception','Bokning','Administration','Lager','Restaurang','Gemensam','Server','Accesspunkt','Övrigt'];
+const CAMPINGAR  = ['CC Björkö Örns Camping','CC Östnora Camping','CC Kapellskärs Camping','CC Mista Camping','CC Storsveds Camping','CC Örstigs Camping','Gräddös Pärla Kök & Bar','Östnora Kök & Bar','Sektionen'];
+
+const KAT_ICON = {
+  'Datorer & surfplattor':'ti-device-laptop','Skrivare':'ti-printer','Kvittoskrivare':'ti-receipt',
+  'Etikettskrivare':'ti-tag','Betalterminaler':'ti-credit-card','Nätverk – kabelburet':'ti-network',
+  'Nätverk – trådlöst':'ti-wifi','Kassasystem / POS':'ti-cash-register','Telefoni':'ti-phone',
+  'Skärmar & tillbehör':'ti-device-desktop','Övrigt IT':'ti-device-unknown'
+};
+const KAT_COLOR = {
+  'Datorer & surfplattor':'si-blue','Skrivare':'si-green','Kvittoskrivare':'si-green',
+  'Etikettskrivare':'si-green','Betalterminaler':'si-purple','Nätverk – kabelburet':'si-amber',
+  'Nätverk – trådlöst':'si-amber','Kassasystem / POS':'si-blue','Telefoni':'si-blue',
+  'Skärmar & tillbehör':'si-blue','Övrigt IT':'si-blue'
+};
+const STATUS_BADGE = {'Aktiv':'b-aktiv','I lager':'b-lager','Defekt':'b-defekt','Utrangerad':'b-utrangerad','Stulen':'b-stulen'};
+const LOGG_COLOR   = {'Service':'lt-service','Reparation':'lt-reparation','Flytt':'lt-flytt','Byte':'lt-byte','Inventering':'lt-inventering'};
+
+// ── STATE ──────────────────────────────────────────────────────────────────
+let _user = null, _isAdmin = false;
+let _enheter   = {enheter:[]},   _enhetSha   = null;
+let _avtal     = {avtal:[]},     _avtalSha   = null;
+let _handelser = {handelser:[]}, _handelSha  = null;
+let _currentView = 'alla', _viewMode = 'kort';
+let _currentEnhet = null, _currentEnhetTab = 'info';
+let _sortCol = 'namn', _sortAsc = true;
+
+// ── INIT ───────────────────────────────────────────────────────────────────
+(async function init() {
+  const sess = sessionStorage.getItem('ccs_session') || sessionStorage.getItem('ccs_portal_user');
+  if (!sess) { window.location.replace('index.html'); return; }
+  try { _user = JSON.parse(sess); } catch(e) { window.location.replace('index.html'); return; }
+
+  const roles = _user.adminRoles || [];
+  _isAdmin = roles.some(r=>['global','inventarieadmin'].includes(r)) || _user.role==='Admin';
+
+  document.getElementById('sb-avatar').textContent = _user.name.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase();
+  document.getElementById('sb-name').textContent   = _user.name;
+  document.getElementById('sb-role').textContent   = _isAdmin ? 'Inventarieadmin' : 'Läsare';
+  if (_isAdmin) document.getElementById('btn-ny-enhet').style.display = '';
+
+  populateFilters();
+  await Promise.all([loadData(PATH_ENHETER,'_enheter','_enhetSha'), loadData(PATH_AVTAL,'_avtal','_avtalSha'), loadData(PATH_HANDELSER,'_handelser','_handelSha')]);
+  renderStats();
+  renderList();
+})();
+
+// ── DATA ────────────────────────────────────────────────────────────────────
+async function loadData(path, stateKey, shaKey) {
+  const token = localStorage.getItem('gh_token')||'';
+  if (!token) return;
+  try {
+    const res = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/${path}`, {headers:{'Authorization':'token '+token}});
+    if (!res.ok) return;
+    const gh = await res.json();
+    window[shaKey] = gh.sha;
+    const bytes = Uint8Array.from(atob(gh.content.replace(/\n/g,'')), c=>c.charCodeAt(0));
+    window[stateKey] = JSON.parse(new TextDecoder('utf-8').decode(bytes));
+  } catch(e) { console.warn('loadData', path, e.message); }
+}
+
+async function saveData(path, stateKey, shaKey, msg) {
+  const token = localStorage.getItem('gh_token')||'';
+  if (!token) { toast('GitHub-token saknas','warn'); return; }
+  const url = `https://api.github.com/repos/${GH_REPO}/contents/${path}`;
+  try {
+    if (!window[shaKey]) {
+      const chk = await fetch(url,{headers:{'Authorization':'token '+token}});
+      if (chk.ok) window[shaKey] = (await chk.json()).sha;
+    }
+    const content = btoa(unescape(encodeURIComponent(JSON.stringify(window[stateKey],null,2))));
+    const payload = {message: msg+' '+today(), content, branch:'main'};
+    if (window[shaKey]) payload.sha = window[shaKey];
+    const res = await fetch(url,{method:'PUT',headers:{'Authorization':'token '+token,'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    const d = await res.json();
+    if (!res.ok) throw new Error(d.message||res.status);
+    window[shaKey] = d.content?.sha || window[shaKey];
+  } catch(e) { toast('Fel vid sparande: '+e.message,'err'); throw e; }
+}
+
+// ── POPULATE FILTERS ────────────────────────────────────────────────────────
+function populateFilters() {
+  const katSel = document.getElementById('f-kategori');
+  KATEGORIER.forEach(k => katSel.insertAdjacentHTML('beforeend',`<option>${k}</option>`));
+  const anlSel = document.getElementById('f-anlaggning');
+  CAMPINGAR.forEach(c => anlSel.insertAdjacentHTML('beforeend',`<option>${c}</option>`));
+}
+
+// ── STATS ────────────────────────────────────────────────────────────────────
+function renderStats() {
+  const e = _enheter.enheter || [];
+  const aktiva  = e.filter(x=>x.status==='Aktiv').length;
+  const terminaler = e.filter(x=>x.kategori==='Betalterminaler').length;
+  const tradlost = e.filter(x=>x.kategori==='Nätverk – trådlöst').length;
+  const defekta  = e.filter(x=>x.status==='Defekt').length;
+  const avtalN   = (_avtal.avtal||[]).length;
+
+  // Avtal som utgår inom 60 dagar
+  const now = new Date();
+  const d60 = new Date(now.getTime()+60*24*60*60*1000);
+  const utgår = (_avtal.avtal||[]).filter(a=>a.slut&&new Date(a.slut)<=d60&&new Date(a.slut)>=now).length;
+  const expBadge = document.getElementById('nav-expire-badge');
+  expBadge.textContent = utgår;
+  expBadge.style.display = utgår ? '' : 'none';
+
+  document.getElementById('stats-row').innerHTML = `
+    <div class="stat" onclick="showView('alla')"><div class="stat-icon si-blue"><i class="ti ti-devices"></i></div><div><div class="stat-val">${e.length}</div><div class="stat-lbl">Totalt</div></div></div>
+    <div class="stat" onclick="showView('alla')"><div class="stat-icon si-green"><i class="ti ti-check"></i></div><div><div class="stat-val">${aktiva}</div><div class="stat-lbl">Aktiva</div></div></div>
+    <div class="stat" onclick="showView('betalterminaler')"><div class="stat-icon si-purple"><i class="ti ti-credit-card"></i></div><div><div class="stat-val">${terminaler}</div><div class="stat-lbl">Terminaler</div></div></div>
+    <div class="stat" onclick="showView('tradlost')"><div class="stat-icon si-amber"><i class="ti ti-wifi"></i></div><div><div class="stat-val">${tradlost}</div><div class="stat-lbl">Trådlösa nät</div></div></div>
+    <div class="stat" onclick="showView('defekta')"><div class="stat-icon si-red"><i class="ti ti-alert-triangle"></i></div><div><div class="stat-val">${defekta}</div><div class="stat-lbl">Defekta</div></div></div>
+  `;
+}
+
+// ── FILTER + RENDER ─────────────────────────────────────────────────────────
+function getFiltered() {
+  let list = [...(_enheter.enheter||[])];
+  if (_currentView==='betalterminaler') list = list.filter(e=>e.kategori==='Betalterminaler');
+  else if (_currentView==='tradlost')  list = list.filter(e=>e.kategori==='Nätverk – trådlöst');
+  else if (_currentView==='defekta')   list = list.filter(e=>e.status==='Defekt');
+  else if (_currentView==='avtal')     return null; // handled separately
+  else if (_currentView==='avtal-utgår') return null;
+
+  const kat = document.getElementById('f-kategori').value;
+  const anl = document.getElementById('f-anlaggning').value;
+  const st  = document.getElementById('f-status').value;
+  const sok = (document.getElementById('f-sok').value||'').toLowerCase();
+  if (kat) list = list.filter(e=>e.kategori===kat);
+  if (anl) list = list.filter(e=>e.anlaggning===anl);
+  if (st)  list = list.filter(e=>e.status===st);
+  if (sok) list = list.filter(e=>(e.id+e.namn+e.marke+e.modell+e.serienr+e.funktion).toLowerCase().includes(sok));
+
+  list.sort((a,b)=>{
+    const av = (a[_sortCol]||'').toString().toLowerCase();
+    const bv = (b[_sortCol]||'').toString().toLowerCase();
+    return _sortAsc ? av.localeCompare(bv) : bv.localeCompare(av);
+  });
+  return list;
+}
+
+function renderList() {
+  const container = document.getElementById('list-container');
+  if (_currentView==='avtal') { renderAvtalView(container); return; }
+  if (_currentView==='avtal-utgår') { renderAvtalUtgårView(container); return; }
+  const list = getFiltered();
+  if (!list) return;
+  const count = `<div style="font-size:11px;color:var(--text3);margin-bottom:10px">${list.length} enheter</div>`;
+  if (!list.length) {
+    container.innerHTML = count + `<div class="no-data"><i class="ti ti-devices-off"></i>Inga enheter matchar filtret${_isAdmin?' — <span style="cursor:pointer;color:var(--accent)" onclick="openNewEnhet()">lägg till en</span>':''}</div>`;
+    return;
+  }
+  if (_viewMode==='kort') {
+    container.innerHTML = count + `<div class="card-grid">${list.map(enhetCard).join('')}</div>`;
+  } else {
+    container.innerHTML = count + renderTable(list);
+  }
+}
+
+function enhetCard(e) {
+  const icon  = KAT_ICON[e.kategori] || 'ti-device-unknown';
+  const color = KAT_COLOR[e.kategori] || 'si-blue';
+  const avtal = (_avtal.avtal||[]).filter(a=>a.enhetId===e.id);
+  const avtalChip = avtal.length ? `<span class="avtal-chip"><i class="ti ti-file-text" style="font-size:10px"></i>${avtal.length} avtal</span>` : '';
+  const editBtn = _isAdmin ? `<span onclick="event.stopPropagation();openEditEnhet('${e.id}')" style="cursor:pointer;color:var(--accent);font-size:11px;font-weight:500" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">Redigera</span>` : '';
+  return `<div class="inv-card" onclick="openDetailEnhet('${e.id}')">
+    <div class="inv-card-top">
+      <div class="inv-card-icon ${color}"><i class="ti ${icon}"></i></div>
+      <div style="flex:1;min-width:0">
+        <div class="inv-card-id">${e.id}</div>
+        <div class="inv-card-name">${e.namn}</div>
+        <div class="inv-card-model">${[e.marke,e.modell].filter(Boolean).join(' ')}</div>
+      </div>
+      <span class="badge ${STATUS_BADGE[e.status]||'b-aktiv'}">${e.status||'Aktiv'}</span>
+    </div>
+    <div class="inv-card-body">
+      ${e.funktion?`<div class="inv-card-row"><i class="ti ti-tag"></i>${e.funktion}</div>`:''}
+      ${e.anlaggning?`<div class="inv-card-row"><i class="ti ti-tent"></i>${e.anlaggning}</div>`:''}
+      ${e.placering?`<div class="inv-card-row"><i class="ti ti-map-pin"></i>${e.placering}</div>`:''}
+    </div>
+    <div class="inv-card-footer">
+      <div style="display:flex;gap:5px;flex-wrap:wrap">${avtalChip}</div>
+      ${editBtn}
+    </div>
+  </div>`;
+}
+
+function renderTable(list) {
+  const headers = [['id','ID'],['namn','Benämning'],['kategori','Kategori'],['funktion','Funktion'],['anlaggning','Anläggning'],['status','Status'],['serienr','Serienr']];
+  const ths = headers.map(([col,lbl])=>`<th onclick="sortBy('${col}')" style="cursor:pointer">${lbl} ${_sortCol===col?(_sortAsc?'↑':'↓'):''}</th>`).join('');
+  const tds = list.map(e=>`<tr onclick="openDetailEnhet('${e.id}')" style="cursor:pointer">
+    <td style="font-family:monospace;font-size:11px;color:var(--text3)">${e.id}</td>
+    <td style="font-weight:500">${e.namn}</td>
+    <td style="font-size:12px">${e.kategori}</td>
+    <td style="font-size:12px;color:var(--text2)">${e.funktion||'–'}</td>
+    <td style="font-size:12px;color:var(--text2)">${e.anlaggning||'–'}</td>
+    <td><span class="badge ${STATUS_BADGE[e.status]||'b-aktiv'}">${e.status||'Aktiv'}</span></td>
+    <td style="font-size:11px;color:var(--text3)">${e.serienr||'–'}</td>
+  </tr>`).join('');
+  return `<div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden"><div style="overflow-x:auto"><table><thead><tr>${ths}</tr></thead><tbody>${tds}</tbody></table></div></div>`;
+}
+
+function sortBy(col) { _sortCol===col ? _sortAsc=!_sortAsc : (_sortCol=col,_sortAsc=true); renderList(); }
+
+// ── AVTAL VIEWS ──────────────────────────────────────────────────────────────
+function renderAvtalView(container) {
+  const avtal = _avtal.avtal || [];
+  if (!avtal.length) { container.innerHTML = '<div class="no-data"><i class="ti ti-file-off"></i>Inga avtal registrerade</div>'; return; }
+  const now = new Date(); const d60 = new Date(now.getTime()+60*24*60*60*1000);
+  const rows = avtal.map(a => {
+    const enhet = (_enheter.enheter||[]).find(e=>e.id===a.enhetId);
+    const daysLeft = a.slut ? Math.ceil((new Date(a.slut)-now)/(1000*60*60*24)) : null;
+    const chipCls  = daysLeft!==null && daysLeft<0 ? 'avtal-chip expired' : daysLeft!==null && daysLeft<=60 ? 'avtal-chip expire-soon' : 'avtal-chip';
+    const dateStr  = daysLeft!==null ? (daysLeft<0?`Utgick för ${Math.abs(daysLeft)} dagar sedan`:`${daysLeft} dagar kvar`) : '–';
+    return `<tr>
+      <td style="font-family:monospace;font-size:11px;color:var(--text3)">${a.id}</td>
+      <td style="font-weight:500">${a.leverantor}</td>
+      <td style="font-size:12px">${a.typ}</td>
+      <td style="font-size:12px;color:var(--text2)">${enhet?enhet.namn:'–'}</td>
+      <td style="font-size:12px">${a.nr||'–'}</td>
+      <td style="font-size:12px">${a.kostnad?a.kostnad+' kr/mån':'–'}</td>
+      <td><span class="${chipCls}">${dateStr}</span></td>
+      <td style="text-align:right">
+        ${_isAdmin?`<span onclick="openEditAvtal('${a.id}')" style="cursor:pointer;color:var(--accent);font-size:12px;font-weight:500" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">Redigera</span>`:''}
+      </td>
+    </tr>`;
+  }).join('');
+  container.innerHTML = `<div style="font-size:11px;color:var(--text3);margin-bottom:10px">${avtal.length} avtal</div>
+  <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden">
+    <div style="overflow-x:auto"><table><thead><tr><th>ID</th><th>Leverantör</th><th>Typ</th><th>Enhet</th><th>Avtalsnr</th><th>Kostnad</th><th>Löptid</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>
+  </div>`;
+}
+
+function renderAvtalUtgårView(container) {
+  const now = new Date(); const d90 = new Date(now.getTime()+90*24*60*60*1000);
+  const avtal = (_avtal.avtal||[]).filter(a=>a.slut&&new Date(a.slut)<=d90).sort((a,b)=>new Date(a.slut)-new Date(b.slut));
+  if (!avtal.length) { container.innerHTML = '<div class="no-data"><i class="ti ti-check"></i>Inga avtal utgår inom 90 dagar</div>'; return; }
+  const rows = avtal.map(a => {
+    const enhet = (_enheter.enheter||[]).find(e=>e.id===a.enhetId);
+    const daysLeft = Math.ceil((new Date(a.slut)-now)/(1000*60*60*24));
+    const cls = daysLeft<0?'b-defekt':daysLeft<=30?'b-defekt':daysLeft<=60?'b-service':'b-lager';
+    return `<tr>
+      <td style="font-weight:500">${a.leverantor}</td>
+      <td style="font-size:12px">${a.typ}</td>
+      <td style="font-size:12px;color:var(--text2)">${enhet?enhet.namn:'–'}</td>
+      <td>${a.slut}</td>
+      <td><span class="badge ${cls}">${daysLeft<0?'Utgången':daysLeft+' dagar'}</span></td>
+      <td style="font-size:12px">${a.uppsagning||'–'}</td>
+    </tr>`;
+  }).join('');
+  container.innerHTML = `<div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden">
+    <div style="overflow-x:auto"><table><thead><tr><th>Leverantör</th><th>Typ</th><th>Enhet</th><th>Slutdatum</th><th>Tid kvar</th><th>Uppsägn.</th></tr></thead><tbody>${rows}</tbody></table></div>
+  </div>`;
+}
+
+// ── DETAIL ───────────────────────────────────────────────────────────────────
+function openDetailEnhet(id) {
+  _currentEnhet = (_enheter.enheter||[]).find(e=>e.id===id);
+  if (!_currentEnhet) return;
+  _currentEnhetTab = 'info';
+  renderDetailModal();
+  openModal('modal-enhet');
+}
+
+function renderDetailModal() {
+  const e = _currentEnhet;
+  document.getElementById('enhet-modal-title').textContent = e.namn;
+  document.getElementById('enhet-modal-meta').textContent  = e.id + ' · ' + e.kategori;
+  const handelsCount = (_handelser.handelser||[]).filter(h=>h.enhetId===e.id).length;
+  document.getElementById('logg-count').textContent = handelsCount;
+  document.querySelectorAll('.modal-tab').forEach((t,i)=>t.classList.toggle('active',['info','avtal','logg'][i]===_currentEnhetTab));
+  renderEnhetTabContent();
+  const editBtn = _isAdmin ? `<button class="btn-secondary" onclick="closeModal('modal-enhet');openEditEnhet('${e.id}')"><i class="ti ti-pencil"></i> Redigera</button>` : '';
+  const logBtn  = _isAdmin ? `<button class="btn-secondary" onclick="openHandelseModal('${e.id}')"><i class="ti ti-plus"></i> Händelse</button>` : '';
+  const avtBtn  = _isAdmin ? `<button class="btn-primary" onclick="openNewAvtal('${e.id}')"><i class="ti ti-file-plus"></i> Avtal</button>` : '';
+  document.getElementById('enhet-modal-footer').innerHTML = `<button class="btn-secondary" onclick="closeModal('modal-enhet')">Stäng</button>${editBtn}${logBtn}${avtBtn}`;
+}
+
+function showEnhetTab(tab) {
+  _currentEnhetTab = tab;
+  document.querySelectorAll('.modal-tab').forEach((t,i)=>t.classList.toggle('active',['info','avtal','logg'][i]===tab));
+  renderEnhetTabContent();
+}
+
+function renderEnhetTabContent() {
+  const e = _currentEnhet;
+  const body = document.getElementById('enhet-modal-body');
+  if (_currentEnhetTab==='info') {
+    const isWifi = e.kategori==='Nätverk – trådlöst';
+    const isTerminal = e.kategori==='Betalterminaler';
+    body.innerHTML = `
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
+        <span class="badge ${STATUS_BADGE[e.status]||'b-aktiv'}">${e.status||'Aktiv'}</span>
+        ${e.funktion?`<span style="font-size:11px;background:var(--bg3);padding:2px 8px;border-radius:20px">${e.funktion}</span>`:''}
+      </div>
+      <div class="dsec">Grundinformation</div>
+      <div class="dr"><span class="dl">Benämning</span><span>${e.namn}</span></div>
+      <div class="dr"><span class="dl">Kategori</span><span>${e.kategori}</span></div>
+      <div class="dr"><span class="dl">Märke / Modell</span><span>${[e.marke,e.modell].filter(Boolean).join(' ')||'–'}</span></div>
+      <div class="dr"><span class="dl">Serienummer</span><span style="font-family:monospace">${e.serienr||'–'}</span></div>
+      <div class="dr"><span class="dl">Anläggning</span><span>${e.anlaggning||'–'}</span></div>
+      <div class="dr"><span class="dl">Placering</span><span>${e.placering||'–'}</span></div>
+      <div class="dr"><span class="dl">Ansvarig</span><span>${e.ansvarig||'–'}</span></div>
+      <div class="dsec">Inköp & garanti</div>
+      <div class="dr"><span class="dl">Inköpsdatum</span><span>${e.inkopDatum||'–'}</span></div>
+      <div class="dr"><span class="dl">Inköpspris</span><span>${e.inkopPris?e.inkopPris+' kr':'–'}</span></div>
+      <div class="dr"><span class="dl">Leverantör</span><span>${e.leverantor||'–'}</span></div>
+      <div class="dr"><span class="dl">Garanti till</span><span>${e.garantiTill||'–'}</span></div>
+      ${isTerminal?`
+      <div class="dsec">Betalterminal</div>
+      <div class="dr"><span class="dl">Terminal-ID</span><span style="font-family:monospace">${e.terminalId||'–'}</span></div>
+      <div class="dr"><span class="dl">Inlösare</span><span>${e.inlosare||'–'}</span></div>
+      <div class="dr"><span class="dl">Avtalsnummer</span><span>${e.inlosenAvtal||'–'}</span></div>
+      <div class="dr"><span class="dl">Månadsavgift</span><span>${e.terminalMaAv?e.terminalMaAv+' kr':'–'}</span></div>
+      <div class="dr"><span class="dl">Transaktionsavgift</span><span>${e.transAv?e.transAv+' %':'–'}</span></div>
+      <div class="dr"><span class="dl">Kontaktperson</span><span>${e.terminalKontakt||'–'}</span></div>`:''}
+      ${isWifi?`
+      <div class="dsec">Trådlöst nät</div>
+      <div class="dr"><span class="dl">SSID</span><span style="font-weight:600">${e.ssid||'–'}</span></div>
+      <div class="dr"><span class="dl">Lösenord</span><span style="font-family:monospace">${e.wifiLosen||'–'}</span></div>
+      <div class="dr"><span class="dl">Frekvensband</span><span>${e.frekvens||'–'}</span></div>
+      <div class="dr"><span class="dl">Säkerhetsprotokoll</span><span>${e.sakerhet||'–'}</span></div>
+      <div class="dr"><span class="dl">VLAN</span><span>${e.vlan||'–'}</span></div>
+      <div class="dr"><span class="dl">Hastighet</span><span>${e.hastighet||'–'}</span></div>
+      <div class="dr"><span class="dl">Täckningsområde</span><span>${e.tackning||'–'}</span></div>
+      <div class="dr"><span class="dl">Internetleverantör</span><span>${e.isp||'–'}</span></div>`:''}
+      ${e.anteckningar?`<div class="dsec">Anteckningar</div><div style="font-size:13px;line-height:1.7;white-space:pre-wrap">${e.anteckningar}</div>`:''}
+      <div class="dsec">Metadata</div>
+      <div class="dr"><span class="dl">Registrerad av</span><span>${e.skapadAv||'–'}</span></div>
+      <div class="dr"><span class="dl">Registrerad</span><span>${fmtDate(e.skapad)}</span></div>
+      <div class="dr"><span class="dl">Senast ändrad av</span><span>${e.andradAv||'–'}</span></div>
+      <div class="dr"><span class="dl">Senast ändrad</span><span>${fmtDate(e.andrad)}</span></div>
+    `;
+  } else if (_currentEnhetTab==='avtal') {
+    const avtal = (_avtal.avtal||[]).filter(a=>a.enhetId===e.id);
+    if (!avtal.length) { body.innerHTML = '<div class="no-data" style="padding:24px"><i class="ti ti-file-off"></i>Inga avtal kopplade</div>'; return; }
+    body.innerHTML = avtal.map(a => {
+      const now = new Date();
+      const daysLeft = a.slut ? Math.ceil((new Date(a.slut)-now)/(1000*60*60*24)) : null;
+      return `<div style="background:var(--bg3);border-radius:var(--radius);padding:12px 14px;margin-bottom:8px">
+        <div style="font-weight:600;margin-bottom:6px;display:flex;justify-content:space-between">
+          <span>${a.leverantor} – ${a.typ}</span>
+          ${daysLeft!==null?`<span class="badge ${daysLeft<0?'b-defekt':daysLeft<=60?'b-service':'b-aktiv'}">${daysLeft<0?'Utgången':daysLeft+' dagar kvar'}</span>`:''}
+        </div>
+        <div class="dr"><span class="dl">Avtalsnummer</span><span>${a.nr||'–'}</span></div>
+        <div class="dr"><span class="dl">Löptid</span><span>${a.start||'?'} – ${a.slut||'?'}</span></div>
+        <div class="dr"><span class="dl">Kostnad</span><span>${a.kostnad?a.kostnad+' kr/mån':'–'}</span></div>
+        <div class="dr"><span class="dl">Auto-förlängning</span><span>${a.forlangning==='ja'?'Ja':'Nej'}</span></div>
+        ${a.lank?`<div class="dr"><span class="dl">Länk</span><span><a href="${a.lank}" target="_blank" style="color:var(--accent)">Öppna dokument</a></span></div>`:''}
+        ${_isAdmin?`<div style="margin-top:8px"><span onclick="openEditAvtal('${a.id}')" style="cursor:pointer;color:var(--accent);font-size:12px;font-weight:500" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">Redigera avtal</span></div>`:''}
+      </div>`;
+    }).join('');
+  } else {
+    const handelser = (_handelser.handelser||[]).filter(h=>h.enhetId===e.id).sort((a,b)=>b.datum?.localeCompare(a.datum||''));
+    if (!handelser.length) { body.innerHTML = '<div class="no-data" style="padding:24px"><i class="ti ti-history"></i>Ingen händelselogg</div>'; return; }
+    body.innerHTML = handelser.map(h => `<div class="log-entry">
+      <span class="log-type ${LOGG_COLOR[h.typ]||'lt-inventering'}">${h.typ}</span>
+      <span style="font-size:13px">${h.beskrivning}</span>
+      <div class="log-meta">${h.datum} · ${h.utforare||'–'}${h.kostnad?' · '+h.kostnad+' kr':''}${h.nasta?' · Nästa service: '+h.nasta:''}</div>
+    </div>`).join('');
+  }
+}
+
+// ── NEW / EDIT ENHET FORM ─────────────────────────────────────────────────
+function openNewEnhet() {
+  document.getElementById('form-modal-title').textContent = 'Ny enhet';
+  document.getElementById('form-modal-id').textContent = '';
+  renderEnhetForm(null);
+  openModal('modal-form');
+}
+
+function openEditEnhet(id) {
+  const e = (_enheter.enheter||[]).find(x=>x.id===id);
+  if (!e) return;
+  document.getElementById('form-modal-title').textContent = 'Redigera enhet';
+  document.getElementById('form-modal-id').textContent = e.id;
+  renderEnhetForm(e);
+  openModal('modal-form');
+}
+
+function renderEnhetForm(e) {
+  const v = e || {};
+  const katOpts = KATEGORIER.map(k=>`<option ${v.kategori===k?'selected':''}>${k}</option>`).join('');
+  const funOpts = FUNKTIONER.map(f=>`<option ${v.funktion===f?'selected':''}>${f}</option>`).join('');
+  const anlOpts = ['', ...CAMPINGAR].map(c=>`<option ${v.anlaggning===c?'selected':''}>${c}</option>`).join('');
+  const statOpts = ['Aktiv','I lager','Defekt','Utrangerad','Stulen'].map(s=>`<option ${(v.status||'Aktiv')===s?'selected':''}>${s}</option>`).join('');
+
+  document.getElementById('form-modal-body').innerHTML = `
+    <input type="hidden" id="ef-id" value="${v.id||''}">
+    <div class="form-section">Grundinformation</div>
+    <div class="fg">
+      <div class="ff"><label>Benämning <span class="req">*</span></label><input type="text" id="ef-namn" value="${v.namn||''}" placeholder="T.ex. Epson TM-T88 kvittoskrivare"></div>
+      <div class="ff"><label>Kategori <span class="req">*</span></label><select id="ef-kategori" onchange="toggleExtraFields()">${katOpts}</select></div>
+    </div>
+    <div class="fg">
+      <div class="ff"><label>Funktion / Roll</label><select id="ef-funktion">${funOpts}</select></div>
+      <div class="ff"><label>Status</label><select id="ef-status">${statOpts}</select></div>
+    </div>
+    <div class="fg trio">
+      <div class="ff"><label>Märke</label><input type="text" id="ef-marke" value="${v.marke||''}" placeholder="T.ex. Epson"></div>
+      <div class="ff"><label>Modell</label><input type="text" id="ef-modell" value="${v.modell||''}" placeholder="T.ex. TM-T88VI"></div>
+      <div class="ff"><label>Serienummer</label><input type="text" id="ef-serienr" value="${v.serienr||''}"></div>
+    </div>
+    <div class="fg">
+      <div class="ff"><label>Anläggning</label><select id="ef-anlaggning">${anlOpts}</select></div>
+      <div class="ff"><label>Placering</label><input type="text" id="ef-placering" value="${v.placering||''}" placeholder="T.ex. Reception, skåp 2"></div>
+    </div>
+    <div class="fg">
+      <div class="ff"><label>Ansvarig</label><input type="text" id="ef-ansvarig" value="${v.ansvarig||''}" placeholder="Namn"></div>
+      <div class="ff"></div>
+    </div>
+    <div class="form-section">Inköp & garanti</div>
+    <div class="fg trio">
+      <div class="ff"><label>Inköpsdatum</label><input type="date" id="ef-inkopDatum" value="${v.inkopDatum||''}"></div>
+      <div class="ff"><label>Inköpspris (kr)</label><input type="number" id="ef-inkopPris" value="${v.inkopPris||''}"></div>
+      <div class="ff"><label>Garanti till</label><input type="date" id="ef-garantiTill" value="${v.garantiTill||''}"></div>
+    </div>
+    <div class="fg">
+      <div class="ff"><label>Leverantör</label><input type="text" id="ef-leverantor" value="${v.leverantor||''}" placeholder="Vem ni köpte av"></div>
+    </div>
+    <div id="extra-fields"></div>
+    <div class="form-section">Anteckningar</div>
+    <div class="fg full">
+      <div class="ff"><textarea id="ef-anteckningar" placeholder="Övrigt…">${v.anteckningar||''}</textarea></div>
+    </div>
+  `;
+  toggleExtraFields(v);
+}
+
+function toggleExtraFields(preload) {
+  const kat = document.getElementById('ef-kategori')?.value;
+  const v = preload || {};
+  const el = document.getElementById('extra-fields');
+  if (!el) return;
+  if (kat==='Betalterminaler') {
+    el.innerHTML = `
+      <div class="form-section">Betalterminal</div>
+      <div class="fg">
+        <div class="ff"><label>Terminal-ID</label><input type="text" id="ef-terminalId" value="${v.terminalId||''}"></div>
+        <div class="ff"><label>Inlösare</label><input type="text" id="ef-inlosare" value="${v.inlosare||''}" placeholder="Nets, Bambora, Stripe…"></div>
+      </div>
+      <div class="fg">
+        <div class="ff"><label>Avtalsnummer (inlösen)</label><input type="text" id="ef-inlosenAvtal" value="${v.inlosenAvtal||''}"></div>
+        <div class="ff"><label>Kontaktperson</label><input type="text" id="ef-terminalKontakt" value="${v.terminalKontakt||''}"></div>
+      </div>
+      <div class="fg trio">
+        <div class="ff"><label>Avtalsstart</label><input type="date" id="ef-termStart" value="${v.termStart||''}"></div>
+        <div class="ff"><label>Avtalsslut</label><input type="date" id="ef-termSlut" value="${v.termSlut||''}"></div>
+        <div class="ff"><label>Månadsavgift (kr)</label><input type="number" id="ef-terminalMaAv" value="${v.terminalMaAv||''}"></div>
+      </div>
+      <div class="fg">
+        <div class="ff"><label>Transaktionsavgift (%)</label><input type="number" step="0.01" id="ef-transAv" value="${v.transAv||''}"></div>
+      </div>`;
+  } else if (kat==='Nätverk – trådlöst') {
+    el.innerHTML = `
+      <div class="form-section">Trådlöst nät</div>
+      <div class="fg">
+        <div class="ff"><label>SSID (nätverksnamn)</label><input type="text" id="ef-ssid" value="${v.ssid||''}"></div>
+        <div class="ff"><label>Lösenord</label><input type="text" id="ef-wifiLosen" value="${v.wifiLosen||''}"></div>
+      </div>
+      <div class="fg trio">
+        <div class="ff"><label>Frekvensband</label><select id="ef-frekvens">
+          ${['2.4 GHz','5 GHz','6 GHz','Dual-band','Tri-band'].map(f=>`<option ${v.frekvens===f?'selected':''}>${f}</option>`).join('')}
+        </select></div>
+        <div class="ff"><label>Säkerhetsprotokoll</label><select id="ef-sakerhet">
+          ${['WPA2','WPA3','WPA2/WPA3','Öppet'].map(s=>`<option ${v.sakerhet===s?'selected':''}>${s}</option>`).join('')}
+        </select></div>
+        <div class="ff"><label>VLAN-ID</label><input type="text" id="ef-vlan" value="${v.vlan||''}"></div>
+      </div>
+      <div class="fg">
+        <div class="ff"><label>Hastighet (Mbit/s)</label><input type="text" id="ef-hastighet" value="${v.hastighet||''}" placeholder="T.ex. 100/100"></div>
+        <div class="ff"><label>Internetleverantör</label><input type="text" id="ef-isp" value="${v.isp||''}"></div>
+      </div>
+      <div class="fg full">
+        <div class="ff"><label>Täckningsområde</label><input type="text" id="ef-tackning" value="${v.tackning||''}" placeholder="T.ex. Reception + restaurang plan 1"></div>
+      </div>`;
+  } else {
+    el.innerHTML = '';
+  }
+}
+
+function getExtraFields() {
+  const kat = document.getElementById('ef-kategori')?.value;
+  const gv = id => document.getElementById(id)?.value || '';
+  const gn = id => parseFloat(document.getElementById(id)?.value) || undefined;
+  if (kat==='Betalterminaler') return {
+    terminalId:gv('ef-terminalId'), inlosare:gv('ef-inlosare'), inlosenAvtal:gv('ef-inlosenAvtal'),
+    terminalKontakt:gv('ef-terminalKontakt'), termStart:gv('ef-termStart'), termSlut:gv('ef-termSlut'),
+    terminalMaAv:gn('ef-terminalMaAv'), transAv:gn('ef-transAv')
+  };
+  if (kat==='Nätverk – trådlöst') return {
+    ssid:gv('ef-ssid'), wifiLosen:gv('ef-wifiLosen'), frekvens:gv('ef-frekvens'),
+    sakerhet:gv('ef-sakerhet'), vlan:gv('ef-vlan'), hastighet:gv('ef-hastighet'),
+    isp:gv('ef-isp'), tackning:gv('ef-tackning')
+  };
+  return {};
+}
+
+async function saveEnhet() {
+  const namn = document.getElementById('ef-namn').value.trim();
+  const kat  = document.getElementById('ef-kategori').value;
+  if (!namn) { toast('Benämning krävs','warn'); return; }
+  if (!kat)  { toast('Välj kategori','warn'); return; }
+
+  const editId = document.getElementById('ef-id').value;
+  const gv = id => document.getElementById(id)?.value || '';
+  const gn = id => parseFloat(document.getElementById(id)?.value) || undefined;
+
+  const obj = {
+    namn, kategori:kat,
+    funktion:  gv('ef-funktion'),
+    status:    gv('ef-status')||'Aktiv',
+    marke:     gv('ef-marke'),
+    modell:    gv('ef-modell'),
+    serienr:   gv('ef-serienr'),
+    anlaggning:gv('ef-anlaggning'),
+    placering: gv('ef-placering'),
+    ansvarig:  gv('ef-ansvarig'),
+    inkopDatum:gv('ef-inkopDatum'),
+    inkopPris: gn('ef-inkopPris'),
+    garantiTill:gv('ef-garantiTill'),
+    leverantor:gv('ef-leverantor'),
+    anteckningar:gv('ef-anteckningar'),
+    ...getExtraFields(),
+  };
+
+  if (!_enheter.enheter) _enheter.enheter = [];
+  if (editId) {
+    const i = _enheter.enheter.findIndex(e=>e.id===editId);
+    if (i>=0) { _enheter.enheter[i] = {..._enheter.enheter[i], ...obj, andrad:nowISO(), andradAv:_user.name}; }
+  } else {
+    const id = genId();
+    _enheter.enheter.push({id, ...obj, skapad:nowISO(), skapadAv:_user.name, andrad:nowISO(), andradAv:_user.name});
+  }
+
+  try {
+    await saveData(PATH_ENHETER,'_enheter','_enhetSha','Enhet uppdaterad');
+    toast('Enhet sparad','ok');
+    closeModal('modal-form');
+    renderStats(); renderList();
+  } catch(e) {}
+}
+
+// ── HÄNDELSE ─────────────────────────────────────────────────────────────────
+function openHandelseModal(enhetId) {
+  document.getElementById('h-enhet-id').value = enhetId;
+  document.getElementById('h-typ').value = 'Service';
+  document.getElementById('h-datum').value = today();
+  document.getElementById('h-utforare').value = _user.name;
+  document.getElementById('h-kostnad').value = '';
+  document.getElementById('h-beskrivning').value = '';
+  document.getElementById('h-nasta').value = '';
+  openModal('modal-handelse');
+}
+
+async function saveHandelse() {
+  const enhetId = document.getElementById('h-enhet-id').value;
+  const datum   = document.getElementById('h-datum').value;
+  const beskr   = document.getElementById('h-beskrivning').value.trim();
+  if (!datum)  { toast('Ange datum','warn'); return; }
+  if (!beskr)  { toast('Ange beskrivning','warn'); return; }
+  if (!_handelser.handelser) _handelser.handelser = [];
+  _handelser.handelser.push({
+    id: 'HND-'+Math.random().toString(36).slice(2,8).toUpperCase(),
+    enhetId, datum,
+    typ:      document.getElementById('h-typ').value,
+    utforare: document.getElementById('h-utforare').value,
+    kostnad:  parseFloat(document.getElementById('h-kostnad').value)||undefined,
+    beskrivning: beskr,
+    nasta:    document.getElementById('h-nasta').value,
+    registradAv: _user.name,
+    ts: nowISO(),
+  });
+  try {
+    await saveData(PATH_HANDELSER,'_handelser','_handelSha','Händelse tillagd');
+    toast('Händelse sparad','ok');
+    closeModal('modal-handelse');
+    if (_currentEnhet?.id===enhetId) {
+      _currentEnhetTab='logg';
+      document.getElementById('logg-count').textContent = _handelser.handelser.filter(h=>h.enhetId===enhetId).length;
+      renderEnhetTabContent();
+    }
+  } catch(e) {}
+}
+
+// ── AVTAL ─────────────────────────────────────────────────────────────────────
+function openNewAvtal(enhetId) {
+  document.getElementById('avtal-modal-title').textContent = 'Lägg till avtal';
+  document.getElementById('a-id').value = '';
+  document.getElementById('a-enhet-id').value = enhetId;
+  ['a-typ','a-leverantor','a-nr','a-kontakt','a-start','a-slut','a-uppsagning','a-kostnad','a-paminnelse','a-lank','a-anteckningar'].forEach(id=>{
+    const el = document.getElementById(id);
+    if (el) el.value = id==='a-forlangning'?'nej':'';
+  });
+  openModal('modal-avtal');
+}
+
+function openEditAvtal(id) {
+  const a = (_avtal.avtal||[]).find(x=>x.id===id);
+  if (!a) return;
+  document.getElementById('avtal-modal-title').textContent = 'Redigera avtal';
+  document.getElementById('a-id').value = id;
+  document.getElementById('a-enhet-id').value = a.enhetId;
+  document.getElementById('a-typ').value        = a.typ||'Leasing';
+  document.getElementById('a-leverantor').value = a.leverantor||'';
+  document.getElementById('a-nr').value         = a.nr||'';
+  document.getElementById('a-kontakt').value    = a.kontakt||'';
+  document.getElementById('a-start').value      = a.start||'';
+  document.getElementById('a-slut').value       = a.slut||'';
+  document.getElementById('a-uppsagning').value = a.uppsagning||'';
+  document.getElementById('a-kostnad').value    = a.kostnad||'';
+  document.getElementById('a-paminnelse').value = a.paminnelse||'';
+  document.getElementById('a-forlangning').value= a.forlangning||'nej';
+  document.getElementById('a-lank').value       = a.lank||'';
+  document.getElementById('a-anteckningar').value= a.anteckningar||'';
+  openModal('modal-avtal');
+}
+
+async function saveAvtal() {
+  const leverantor = document.getElementById('a-leverantor').value.trim();
+  if (!leverantor) { toast('Leverantör krävs','warn'); return; }
+  if (!_avtal.avtal) _avtal.avtal = [];
+  const editId  = document.getElementById('a-id').value;
+  const enhetId = document.getElementById('a-enhet-id').value;
+  const gv = id => document.getElementById(id)?.value||'';
+  const obj = {
+    enhetId, typ:gv('a-typ'), leverantor, nr:gv('a-nr'), kontakt:gv('a-kontakt'),
+    start:gv('a-start'), slut:gv('a-slut'), uppsagning:gv('a-uppsagning'),
+    kostnad:parseFloat(gv('a-kostnad'))||undefined, paminnelse:gv('a-paminnelse'),
+    forlangning:gv('a-forlangning'), lank:gv('a-lank'), anteckningar:gv('a-anteckningar'),
+    andrad:nowISO(), andradAv:_user.name,
+  };
+  if (editId) {
+    const i = _avtal.avtal.findIndex(a=>a.id===editId);
+    if (i>=0) _avtal.avtal[i] = {..._avtal.avtal[i], ...obj};
+  } else {
+    _avtal.avtal.push({id:'AVT-'+Math.random().toString(36).slice(2,8).toUpperCase(), ...obj, skapad:nowISO(), skapadAv:_user.name});
+  }
+  try {
+    await saveData(PATH_AVTAL,'_avtal','_avtalSha','Avtal uppdaterat');
+    toast('Avtal sparat','ok');
+    closeModal('modal-avtal');
+    renderStats(); renderList();
+    if (_currentEnhet?.id===enhetId) { _currentEnhetTab='avtal'; renderEnhetTabContent(); }
+  } catch(e) {}
+}
+
+// ── EXPORT ────────────────────────────────────────────────────────────────────
+function exportExcel() {
+  try {
+    const wb = XLSX.utils.book_new();
+    const e = _enheter.enheter||[];
+    const rows = [
+      ['INVENTARIEREGISTER – CCSthlm'],['Exporterad:', new Date().toLocaleString('sv-SE')],[],
+      ['ID','Benämning','Kategori','Funktion','Märke','Modell','Serienr','Status','Anläggning','Placering','Ansvarig','Inköpsdatum','Inköpspris','Garanti till','Registrerad av','Registrerad'],
+      ...e.map(x=>[x.id,x.namn,x.kategori,x.funktion||'',x.marke||'',x.modell||'',x.serienr||'',x.status||'Aktiv',x.anlaggning||'',x.placering||'',x.ansvarig||'',x.inkopDatum||'',x.inkopPris||'',x.garantiTill||'',x.skapadAv||'',fmtDate(x.skapad)])
+    ];
+    const ws = XLSX.utils.aoa_to_sheet(rows);
+    ws['!cols']=[{wch:16},{wch:30},{wch:22},{wch:18},{wch:14},{wch:14},{wch:16},{wch:12},{wch:24},{wch:20},{wch:18},{wch:12},{wch:12},{wch:12},{wch:18},{wch:16}];
+    XLSX.utils.book_append_sheet(wb, ws, 'Enheter');
+
+    // Avtal sheet
+    const av = _avtal.avtal||[];
+    if (av.length) {
+      const avRows = [['ID','Enhet-ID','Typ','Leverantör','Avtalsnr','Startdatum','Slutdatum','Kostnad/mån','Auto-förlängning'],
+        ...av.map(a=>[a.id,a.enhetId,a.typ,a.leverantor,a.nr||'',a.start||'',a.slut||'',a.kostnad||'',a.forlangning==='ja'?'Ja':'Nej'])];
+      const ws2 = XLSX.utils.aoa_to_sheet(avRows);
+      XLSX.utils.book_append_sheet(wb, ws2, 'Avtal');
+    }
+    XLSX.writeFile(wb, 'Inventarie_CCSthlm_'+today()+'.xlsx');
+    toast('Excel exporterad','ok');
+  } catch(e) { toast('Fel: '+e.message,'err'); }
+}
+
+// ── NAVIGATION ─────────────────────────────────────────────────────────────
+const VIEW_META = {
+  alla:         {title:'Alla enheter',       sub:'Samtliga inventarieposter'},
+  betalterminaler:{title:'Betalterminaler',  sub:'Terminaler med inlösenavtal'},
+  tradlost:     {title:'Trådlösa nät',       sub:'Accesspunkter och trådlösa nätverk'},
+  avtal:        {title:'Avtal',              sub:'Alla registrerade avtal'},
+  'avtal-utgår':{title:'Avtal utgår snart',  sub:'Avtal som löper ut inom 90 dagar'},
+  defekta:      {title:'Defekta enheter',    sub:'Enheter med status Defekt'},
+};
+
+function showView(v) {
+  _currentView = v;
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('nav-'+v)?.classList.add('active');
+  const m = VIEW_META[v]||{title:v,sub:''};
+  document.getElementById('view-title').textContent = m.title;
+  document.getElementById('view-sub').textContent   = m.sub;
+  const showFilters = !['avtal','avtal-utgår'].includes(v);
+  document.getElementById('filter-bar').style.display = showFilters ? '' : 'none';
+  const showNewBtn = _isAdmin && !['avtal','avtal-utgår'].includes(v);
+  document.getElementById('btn-ny-enhet').style.display = showNewBtn ? '' : 'none';
+  clearFilters(false);
+  renderList();
+  if (window.innerWidth<=768) closeSidebar();
+}
+
+function setViewMode(mode) {
+  _viewMode = mode;
+  document.getElementById('vt-kort').classList.toggle('active', mode==='kort');
+  document.getElementById('vt-lista').classList.toggle('active', mode==='lista');
+  renderList();
+}
+
+function clearFilters(rerender=true) {
+  ['f-kategori','f-anlaggning','f-status','f-sok'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
+  if (rerender) renderList();
+}
+
+function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); document.getElementById('sidebar-overlay').classList.toggle('show'); }
+function closeSidebar()  { document.getElementById('sidebar').classList.remove('open'); document.getElementById('sidebar-overlay').classList.remove('show'); }
+
+function genId() {
+  const d=new Date();
+  return 'INV-'+d.getFullYear().toString().slice(2)+(d.getMonth()+1).toString().padStart(2,'0')+'-'+Math.random().toString(36).slice(2,6).toUpperCase();
+}
+function today() { return new Date().toISOString().slice(0,10); }
+function nowISO(){ return new Date().toISOString(); }
+function fmtDate(iso){ try{ return new Date(iso).toLocaleString('sv-SE',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}); }catch(e){ return iso||'–'; } }
+function openModal(id){ document.getElementById(id).classList.add('show'); }
+function closeModal(id){ document.getElementById(id).classList.remove('show'); }
+document.addEventListener('click',e=>{ if(e.target.classList.contains('modal-overlay'))e.target.classList.remove('show'); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape')document.querySelectorAll('.modal-overlay.show').forEach(m=>m.classList.remove('show')); });
+function toast(msg,type='ok'){
+  const t=document.getElementById('toast');
+  t.style.background=type==='err'?'var(--red-bg)':type==='warn'?'var(--amber-bg)':'var(--green-bg)';
+  t.style.color=type==='err'?'var(--red-text)':type==='warn'?'var(--amber-text)':'var(--green-text)';
+  t.innerHTML=(type==='ok'?'<i class="ti ti-check"></i>':type==='warn'?'<i class="ti ti-alert-triangle"></i>':'<i class="ti ti-x"></i>')+' '+msg;
+  t.style.opacity='1'; t.style.transform='translateY(0)';
+  setTimeout(()=>{t.style.opacity='0';t.style.transform='translateY(6px)';},2800);
+}
+function doLogout(){ sessionStorage.setItem('ccs_logged_out','1'); sessionStorage.removeItem('ccs_session'); sessionStorage.removeItem('ccs_portal_user'); window.location.replace('index.html'); }
+</script>
+</body>
+</html>
