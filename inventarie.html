@@ -198,9 +198,7 @@ tr:hover td{background:rgba(59,109,17,.02);}
   <div class="sidebar-nav">
     <div class="nav-group">Vyer</div>
     <div class="nav-item active" id="nav-alla" onclick="showView('alla')"><i class="ti ti-list"></i> Alla enheter</div>
-    <div class="nav-item" id="nav-betalterminaler" onclick="showView('betalterminaler')"><i class="ti ti-credit-card"></i> Betalterminaler</div>
-    <div class="nav-item" id="nav-tradlost" onclick="showView('tradlost')"><i class="ti ti-wifi"></i> Trådlösa nät</div>
-    <div class="nav-item" id="nav-avtal" onclick="showView('avtal')"><i class="ti ti-file-text"></i> Avtal</div>
+    <div class="nav-item" id="nav-tradlost-nat" onclick="showView('tradlost-nat')"><i class="ti ti-wifi"></i> Trådlösa nät</div>
     <div class="nav-group">Uppföljning</div>
     <div class="nav-item" id="nav-avtal-utgår" onclick="showView('avtal-utgår')"><i class="ti ti-alarm" style="color:var(--amber)"></i> Avtal utgår snart <span class="nav-badge" id="nav-expire-badge" style="display:none">0</span></div>
     <div class="nav-item" id="nav-defekta" onclick="showView('defekta')"><i class="ti ti-alert-triangle" style="color:var(--red)"></i> Defekta enheter</div>
@@ -270,7 +268,7 @@ tr:hover td{background:rgba(59,109,17,.02);}
     <div class="modal-body" id="form-modal-body"></div>
     <div class="modal-footer">
       <button class="btn-secondary" onclick="closeModal('modal-form')">Avbryt</button>
-      <button class="btn-primary" onclick="saveEnhet()"><i class="ti ti-check"></i> Spara</button>
+      <button class="btn-primary" onclick="_currentView==='tradlost-nat'?saveNat():saveEnhet()"><i class="ti ti-check"></i> Spara</button>
     </div>
   </div>
 </div>
@@ -356,6 +354,7 @@ const GH_REPO         = 'CCSthlm/besiktning-camping';
 const PATH_ENHETER    = 'inventarie/enheter.json';
 const PATH_AVTAL      = 'inventarie/avtal.json';
 const PATH_HANDELSER  = 'inventarie/handelser.json';
+const PATH_NAT        = 'inventarie/tradlosa-nat.json';
 
 const KATEGORIER = [
   'Datorer & surfplattor','Skrivare','Kvittoskrivare','Etikettskrivare',
@@ -385,6 +384,7 @@ let _user = null, _isAdmin = false;
 let _enheter   = {enheter:[]},   _enhetSha   = null;
 let _avtal     = {avtal:[]},     _avtalSha   = null;
 let _handelser = {handelser:[]}, _handelSha  = null;
+let _nat = {enheter:[]}, _natSha = null;
 let _currentView = 'alla', _viewMode = 'kort';
 let _currentEnhet = null, _currentEnhetTab = 'info';
 let _sortCol = 'namn', _sortAsc = true;
@@ -404,14 +404,14 @@ let _sortCol = 'namn', _sortAsc = true;
   if (_isAdmin) document.getElementById('btn-ny-enhet').style.display = '';
 
   populateFilters();
-  await Promise.all([loadData(PATH_ENHETER,'_enheter','_enhetSha'), loadData(PATH_AVTAL,'_avtal','_avtalSha'), loadData(PATH_HANDELSER,'_handelser','_handelSha')]);
+  await Promise.all([loadData(PATH_ENHETER,'_enheter','_enhetSha'), loadData(PATH_AVTAL,'_avtal','_avtalSha'), loadData(PATH_HANDELSER,'_handelser','_handelSha'), loadData(PATH_NAT,'_nat','_natSha')]);
   renderStats();
   renderList();
 })();
 
 // ── DATA ────────────────────────────────────────────────────────────────────
 // ── SHA STORE (since let vars are not on window) ──────────────────────────
-const _sha = { '_enhetSha': null, '_avtalSha': null, '_handelSha': null };
+const _sha = { '_enhetSha': null, '_avtalSha': null, '_handelSha': null, '_natSha': null };
 
 const DEFAULT_DATA = {
   '_enheter':   { enheter:   [] },
@@ -437,6 +437,7 @@ async function loadData(path, stateKey, shaKey) {
     if (stateKey === '_enheter')   { _enheter   = parsed; if (!_enheter.enheter)     _enheter.enheter     = []; }
     if (stateKey === '_avtal')     { _avtal     = parsed; if (!_avtal.avtal)         _avtal.avtal         = []; }
     if (stateKey === '_handelser') { _handelser = parsed; if (!_handelser.handelser) _handelser.handelser = []; }
+    if (stateKey === '_nat')       { _nat       = parsed; if (!_nat.enheter)         _nat.enheter         = []; }
   } catch(e) { console.warn('loadData', path, e.message); }
 }
 
@@ -455,6 +456,7 @@ async function saveData(path, stateKey, shaKey, msg) {
     if (stateKey === '_enheter')   data = _enheter;
     else if (stateKey === '_avtal')     data = _avtal;
     else if (stateKey === '_handelser') data = _handelser;
+    else if (stateKey === '_nat')       data = _nat;
     else { toast('Okänd datatyp: '+stateKey,'err'); return; }
     if (!data) { toast('Data är tom – inget sparades','err'); return; }
     console.log('Sparar:', path, JSON.stringify(data).slice(0,80)+'…');
@@ -499,7 +501,7 @@ function renderStats() {
   const e = _enheter.enheter || [];
   const aktiva  = e.filter(x=>x.status==='Aktiv').length;
   const terminaler = e.filter(x=>x.kategori==='Betalterminaler').length;
-  const tradlost = e.filter(x=>x.kategori==='Nätverk – trådlöst').length;
+  const natCount   = (_nat.enheter||[]).length;
   const defekta  = e.filter(x=>x.status==='Defekt').length;
   const avtalN   = (_avtal.avtal||[]).length;
 
@@ -514,8 +516,8 @@ function renderStats() {
   document.getElementById('stats-row').innerHTML = `
     <div class="stat" onclick="showView('alla')"><div class="stat-icon si-blue"><i class="ti ti-devices"></i></div><div><div class="stat-val">${e.length}</div><div class="stat-lbl">Totalt</div></div></div>
     <div class="stat" onclick="showView('alla')"><div class="stat-icon si-green"><i class="ti ti-check"></i></div><div><div class="stat-val">${aktiva}</div><div class="stat-lbl">Aktiva</div></div></div>
-    <div class="stat" onclick="showView('betalterminaler')"><div class="stat-icon si-purple"><i class="ti ti-credit-card"></i></div><div><div class="stat-val">${terminaler}</div><div class="stat-lbl">Terminaler</div></div></div>
-    <div class="stat" onclick="showView('tradlost')"><div class="stat-icon si-amber"><i class="ti ti-wifi"></i></div><div><div class="stat-val">${tradlost}</div><div class="stat-lbl">Trådlösa nät</div></div></div>
+    <div class="stat" onclick="showView('alla')"><div class="stat-icon si-purple"><i class="ti ti-credit-card"></i></div><div><div class="stat-val">${terminaler}</div><div class="stat-lbl">Terminaler</div></div></div>
+    <div class="stat" onclick="showView('tradlost-nat')"><div class="stat-icon si-amber"><i class="ti ti-wifi"></i></div><div><div class="stat-val">${natCount}</div><div class="stat-lbl">Trådlösa nät</div></div></div>
     <div class="stat" onclick="showView('defekta')"><div class="stat-icon si-red"><i class="ti ti-alert-triangle"></i></div><div><div class="stat-val">${defekta}</div><div class="stat-lbl">Defekta</div></div></div>
   `;
 }
@@ -523,11 +525,9 @@ function renderStats() {
 // ── FILTER + RENDER ─────────────────────────────────────────────────────────
 function getFiltered() {
   let list = [...(_enheter.enheter||[])];
-  if (_currentView==='betalterminaler') list = list.filter(e=>e.kategori==='Betalterminaler');
-  else if (_currentView==='tradlost')  list = list.filter(e=>e.kategori==='Nätverk – trådlöst');
-  else if (_currentView==='defekta')   list = list.filter(e=>e.status==='Defekt');
-  else if (_currentView==='avtal')     return null; // handled separately
+  if (_currentView==='defekta')          list = list.filter(e=>e.status==='Defekt');
   else if (_currentView==='avtal-utgår') return null;
+  else if (_currentView==='tradlost-nat') return null;
 
   const kat = document.getElementById('f-kategori').value;
   const anl = document.getElementById('f-anlaggning').value;
@@ -548,8 +548,8 @@ function getFiltered() {
 
 function renderList() {
   const container = document.getElementById('list-container');
-  if (_currentView==='avtal') { renderAvtalView(container); return; }
   if (_currentView==='avtal-utgår') { renderAvtalUtgårView(container); return; }
+  if (_currentView==='tradlost-nat') { renderNatView(container); return; }
   const list = getFiltered();
   if (!list) return;
   const count = `<div style="font-size:11px;color:var(--text3);margin-bottom:10px">${list.length} enheter</div>`;
@@ -608,6 +608,214 @@ function renderTable(list) {
 }
 
 function sortBy(col) { _sortCol===col ? _sortAsc=!_sortAsc : (_sortCol=col,_sortAsc=true); renderList(); }
+
+// ── TRÅDLÖSA NÄT ────────────────────────────────────────────────────────────
+function renderNatView(container) {
+  const list = _nat.enheter || [];
+  const addBtn = _isAdmin ? `<button class="btn-primary" onclick="openNewNat()" style="margin-bottom:12px"><i class="ti ti-plus"></i> Ny nätverksenhet</button>` : '';
+  if (!list.length) {
+    container.innerHTML = addBtn + '<div class="no-data"><i class="ti ti-wifi-off"></i>Inga nätverksenheter registrerade</div>';
+    return;
+  }
+  const cards = list.map(n => {
+    const ssids = (n.ssids||[]).map(s=>`
+      <div style="background:var(--bg3);border-radius:var(--radius);padding:9px 12px;margin-bottom:6px">
+        <div style="font-weight:600;font-size:13px;margin-bottom:4px"><i class="ti ti-wifi" style="font-size:12px;color:var(--accent)"></i> ${s.ssid}</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;font-size:11px;color:var(--text2)">
+          <span>Lösenord: <strong style="font-family:monospace">${s.losen||'–'}</strong></span>
+          <span>Kryptering: ${s.kryptering||'–'}</span>
+          <span>Band: ${s.band||'–'}</span>
+          <span>VLAN: ${s.vlan||'–'}</span>
+          <span>IP-range: ${s.ipFran||'–'} – ${s.ipTill||'–'}</span>
+          <span>Användning: ${s.anvandning||'–'}</span>
+        </div>
+      </div>`).join('');
+    const editBtn = _isAdmin ? `<span onclick="openEditNat('${n.id}')" style="cursor:pointer;color:var(--accent);font-size:11px;font-weight:500" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">Redigera</span>` : '';
+    return `<div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px 16px;margin-bottom:12px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
+        <div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
+            <div style="width:32px;height:32px;background:var(--amber-bg);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--amber)"><i class="ti ti-router"></i></div>
+            <div>
+              <div style="font-size:14px;font-weight:700">${n.namn}</div>
+              <div style="font-size:11px;color:var(--text2)">${n.typ||''} · ${[n.marke,n.modell].filter(Boolean).join(' ')||'–'}</div>
+            </div>
+          </div>
+          <div style="font-size:11px;color:var(--text2);margin-top:4px;display:flex;gap:12px;flex-wrap:wrap">
+            ${n.anlaggning?`<span><i class="ti ti-tent" style="font-size:11px"></i> ${n.anlaggning}</span>`:''}
+            ${n.ip?`<span><i class="ti ti-network" style="font-size:11px"></i> ${n.ip}</span>`:''}
+            ${n.isp?`<span><i class="ti ti-building" style="font-size:11px"></i> ${n.isp}</span>`:''}
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <span class="badge ${STATUS_BADGE[n.status]||'b-aktiv'}">${n.status||'Aktiv'}</span>
+          ${editBtn}
+        </div>
+      </div>
+      ${ssids ? `<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin-bottom:6px">${(n.ssids||[]).length} SSID</div>${ssids}` : ''}
+    </div>`;
+  }).join('');
+  container.innerHTML = addBtn + `<div style="font-size:11px;color:var(--text3);margin-bottom:10px">${list.length} nätverksenheter</div>` + cards;
+}
+
+let _currentNat = null;
+
+function openNewNat() {
+  _currentNat = null;
+  document.getElementById('form-modal-title').textContent = 'Ny nätverksenhet';
+  document.getElementById('form-modal-id').textContent = '';
+  renderNatForm(null);
+  openModal('modal-form');
+}
+
+function openEditNat(id) {
+  _currentNat = (_nat.enheter||[]).find(n=>n.id===id);
+  if (!_currentNat) return;
+  document.getElementById('form-modal-title').textContent = 'Redigera nätverksenhet';
+  document.getElementById('form-modal-id').textContent = _currentNat.id;
+  renderNatForm(_currentNat);
+  openModal('modal-form');
+}
+
+function renderNatForm(n) {
+  const v = n || {};
+  const typOpts = ['Router','4G-router','5G-router','Accesspunkt (AP)','Mesh-nod'].map(t=>`<option ${v.typ===t?'selected':''}>${t}</option>`).join('');
+  const anlOpts = ['', ...CAMPINGAR].map(c=>`<option ${v.anlaggning===c?'selected':''}>${c}</option>`).join('');
+  const statOpts = ['Aktiv','I lager','Defekt','Utrangerad'].map(s=>`<option ${(v.status||'Aktiv')===s?'selected':''}>${s}</option>`).join('');
+  const ssids = v.ssids||[{}];
+  const ssidHtml = ssids.map((s,i)=>renderSsidRow(s,i)).join('');
+
+  document.getElementById('form-modal-body').innerHTML = `
+    <input type="hidden" id="nf-id" value="${v.id||''}">
+    <div class="form-section">Enhet</div>
+    <div class="fg">
+      <div class="ff"><label>Benämning <span class="req">*</span></label><input type="text" id="nf-namn" value="${v.namn||''}" placeholder="T.ex. Router reception Björkö"></div>
+      <div class="ff"><label>Typ <span class="req">*</span></label><select id="nf-typ">${typOpts}</select></div>
+    </div>
+    <div class="fg trio">
+      <div class="ff"><label>Märke</label><input type="text" id="nf-marke" value="${v.marke||''}" placeholder="T.ex. Asus"></div>
+      <div class="ff"><label>Modell</label><input type="text" id="nf-modell" value="${v.modell||''}"></div>
+      <div class="ff"><label>Serienummer</label><input type="text" id="nf-serienr" value="${v.serienr||''}"></div>
+    </div>
+    <div class="fg">
+      <div class="ff"><label>Anläggning</label><select id="nf-anlaggning">${anlOpts}</select></div>
+      <div class="ff"><label>Placering</label><input type="text" id="nf-placering" value="${v.placering||''}" placeholder="T.ex. Serverrum, hylla 2"></div>
+    </div>
+    <div class="fg">
+      <div class="ff"><label>Status</label><select id="nf-status">${statOpts}</select></div>
+      <div class="ff"><label>Ansvarig</label><input type="text" id="nf-ansvarig" value="${v.ansvarig||''}"></div>
+    </div>
+    <div class="form-section">Nätverksinformation</div>
+    <div class="fg">
+      <div class="ff"><label>LAN IP-adress</label><input type="text" id="nf-ip" value="${v.ip||''}" placeholder="192.168.1.1"></div>
+      <div class="ff"><label>Subnät</label><input type="text" id="nf-subnet" value="${v.subnet||''}" placeholder="255.255.255.0"></div>
+    </div>
+    <div class="fg">
+      <div class="ff"><label>Gateway</label><input type="text" id="nf-gateway" value="${v.gateway||''}" placeholder="192.168.1.254"></div>
+      <div class="ff"><label>DNS</label><input type="text" id="nf-dns" value="${v.dns||''}" placeholder="8.8.8.8"></div>
+    </div>
+    <div class="fg">
+      <div class="ff"><label>WAN / Publik IP</label><input type="text" id="nf-wan" value="${v.wan||''}"></div>
+      <div class="ff"><label>Internetleverantör</label><input type="text" id="nf-isp" value="${v.isp||''}" placeholder="Telia, Bahnhof…"></div>
+    </div>
+    <div class="fg">
+      <div class="ff"><label>Abonnemangstyp</label><select id="nf-abtyp">
+        ${['Fast bredband','4G','5G','Fiber','ADSL','Övrigt'].map(t=>`<option ${v.abtyp===t?'selected':''}>${t}</option>`).join('')}
+      </select></div>
+      <div class="ff"><label>Hastighet (Mbit/s)</label><input type="text" id="nf-hastighet" value="${v.hastighet||''}" placeholder="100/100"></div>
+    </div>
+    <div class="form-section">SSID-konfigurationer <button type="button" onclick="addSsidRow()" class="btn-secondary" style="padding:3px 10px;font-size:11px;float:right"><i class="ti ti-plus"></i> Lägg till SSID</button></div>
+    <div id="ssid-list">${ssidHtml}</div>
+    <div class="form-section">Anteckningar</div>
+    <div class="fg full"><div class="ff"><textarea id="nf-anteckningar" placeholder="Övrigt…">${v.anteckningar||''}</textarea></div></div>
+  `;
+}
+
+function renderSsidRow(s, i) {
+  const bandOpts = ['2.4 GHz','5 GHz','6 GHz','Dual-band','Tri-band'].map(b=>`<option ${s.band===b?'selected':''}>${b}</option>`).join('');
+  const kryptOpts = ['WPA2','WPA3','WPA2/WPA3','Öppet'].map(k=>`<option ${s.kryptering===k?'selected':''}>${k}</option>`).join('');
+  const anvOpts = ['Personal','Gäst','Restaurang','Drift','Kamera','Övrigt'].map(a=>`<option ${s.anvandning===a?'selected':''}>${a}</option>`).join('');
+  return `<div class="ssid-row" id="ssid-${i}" style="background:var(--bg3);border-radius:var(--radius);padding:12px;margin-bottom:8px;position:relative">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+      <span style="font-size:11px;font-weight:700;color:var(--text2)">SSID ${i+1}</span>
+      <button type="button" onclick="removeSsidRow(${i})" class="btn-secondary" style="padding:2px 8px;font-size:11px"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="fg">
+      <div class="ff"><label>SSID-namn <span class="req">*</span></label><input type="text" class="ssid-ssid" value="${s.ssid||''}" placeholder="T.ex. CC-Personal"></div>
+      <div class="ff"><label>Lösenord</label><input type="text" class="ssid-losen" value="${s.losen||''}"></div>
+    </div>
+    <div class="fg trio">
+      <div class="ff"><label>Kryptering</label><select class="ssid-kryptering">${kryptOpts}</select></div>
+      <div class="ff"><label>Frekvensband</label><select class="ssid-band">${bandOpts}</select></div>
+      <div class="ff"><label>VLAN-ID</label><input type="text" class="ssid-vlan" value="${s.vlan||''}"></div>
+    </div>
+    <div class="fg">
+      <div class="ff"><label>IP-range från</label><input type="text" class="ssid-ipfran" value="${s.ipFran||''}" placeholder="192.168.10.100"></div>
+      <div class="ff"><label>IP-range till</label><input type="text" class="ssid-iptill" value="${s.ipTill||''}" placeholder="192.168.10.200"></div>
+    </div>
+    <div class="fg">
+      <div class="ff"><label>Användningsområde</label><select class="ssid-anvandning">${anvOpts}</select></div>
+    </div>
+  </div>`;
+}
+
+function addSsidRow() {
+  const list = document.getElementById('ssid-list');
+  const i = list.querySelectorAll('.ssid-row').length;
+  list.insertAdjacentHTML('beforeend', renderSsidRow({}, i));
+}
+
+function removeSsidRow(i) {
+  const row = document.getElementById('ssid-'+i);
+  if (row) row.remove();
+  // Re-index remaining rows
+  document.querySelectorAll('.ssid-row').forEach((r,idx)=>{
+    r.id = 'ssid-'+idx;
+    r.querySelector('span').textContent = 'SSID '+(idx+1);
+    r.querySelector('button').setAttribute('onclick','removeSsidRow('+idx+')');
+  });
+}
+
+function getSsidsFromForm() {
+  return Array.from(document.querySelectorAll('.ssid-row')).map(row=>({
+    ssid:        row.querySelector('.ssid-ssid')?.value.trim()    || '',
+    losen:       row.querySelector('.ssid-losen')?.value.trim()   || '',
+    kryptering:  row.querySelector('.ssid-kryptering')?.value     || 'WPA2',
+    band:        row.querySelector('.ssid-band')?.value           || '2.4 GHz',
+    vlan:        row.querySelector('.ssid-vlan')?.value.trim()    || '',
+    ipFran:      row.querySelector('.ssid-ipfran')?.value.trim()  || '',
+    ipTill:      row.querySelector('.ssid-iptill')?.value.trim()  || '',
+    anvandning:  row.querySelector('.ssid-anvandning')?.value     || 'Personal',
+  })).filter(s=>s.ssid);
+}
+
+async function saveNat() {
+  const namn = document.getElementById('nf-namn')?.value.trim();
+  if (!namn) { toast('Benämning krävs','warn'); return; }
+  const editId = document.getElementById('nf-id').value;
+  const gv = id => document.getElementById(id)?.value||'';
+  const obj = {
+    namn, typ:gv('nf-typ'), marke:gv('nf-marke'), modell:gv('nf-modell'), serienr:gv('nf-serienr'),
+    anlaggning:gv('nf-anlaggning'), placering:gv('nf-placering'), status:gv('nf-status')||'Aktiv', ansvarig:gv('nf-ansvarig'),
+    ip:gv('nf-ip'), subnet:gv('nf-subnet'), gateway:gv('nf-gateway'), dns:gv('nf-dns'),
+    wan:gv('nf-wan'), isp:gv('nf-isp'), abtyp:gv('nf-abtyp'), hastighet:gv('nf-hastighet'),
+    anteckningar:gv('nf-anteckningar'),
+    ssids: getSsidsFromForm(),
+  };
+  if (!_nat.enheter) _nat.enheter = [];
+  if (editId) {
+    const i = _nat.enheter.findIndex(n=>n.id===editId);
+    if (i>=0) _nat.enheter[i] = {..._nat.enheter[i], ...obj, andrad:nowISO(), andradAv:_user.name};
+  } else {
+    _nat.enheter.push({id:'NAT-'+Math.random().toString(36).slice(2,6).toUpperCase(), ...obj, skapad:nowISO(), skapadAv:_user.name});
+  }
+  try {
+    await saveData(PATH_NAT,'_nat','_natSha','Trådlöst nät uppdaterat');
+    closeModal('modal-form');
+    renderStats();
+    renderList();
+  } catch(e) {}
+}
 
 // ── AVTAL VIEWS ──────────────────────────────────────────────────────────────
 function renderAvtalView(container) {
@@ -1082,9 +1290,7 @@ function exportExcel() {
 // ── NAVIGATION ─────────────────────────────────────────────────────────────
 const VIEW_META = {
   alla:         {title:'Alla enheter',       sub:'Samtliga inventarieposter'},
-  betalterminaler:{title:'Betalterminaler',  sub:'Terminaler med inlösenavtal'},
-  tradlost:     {title:'Trådlösa nät',       sub:'Accesspunkter och trådlösa nätverk'},
-  avtal:        {title:'Avtal',              sub:'Alla registrerade avtal'},
+  'tradlost-nat':{title:'Trådlösa nät',       sub:'Routrar, accesspunkter och SSID-konfigurationer'},
   'avtal-utgår':{title:'Avtal utgår snart',  sub:'Avtal som löper ut inom 90 dagar'},
   defekta:      {title:'Defekta enheter',    sub:'Enheter med status Defekt'},
 };
@@ -1096,10 +1302,17 @@ function showView(v) {
   const m = VIEW_META[v]||{title:v,sub:''};
   document.getElementById('view-title').textContent = m.title;
   document.getElementById('view-sub').textContent   = m.sub;
-  const showFilters = !['avtal','avtal-utgår'].includes(v);
+  const showFilters = !['avtal-utgår','tradlost-nat'].includes(v);
   document.getElementById('filter-bar').style.display = showFilters ? '' : 'none';
-  const showNewBtn = _isAdmin && !['avtal','avtal-utgår'].includes(v);
-  document.getElementById('btn-ny-enhet').style.display = showNewBtn ? '' : 'none';
+  const newBtn = document.getElementById('btn-ny-enhet');
+  if (_isAdmin) {
+    newBtn.style.display = '';
+    newBtn.innerHTML = v==='tradlost-nat' ? '<i class="ti ti-plus"></i> Ny nätverksenhet' : '<i class="ti ti-plus"></i> Ny enhet';
+    newBtn.onclick = v==='tradlost-nat' ? openNewNat : openNewEnhet;
+    if (v==='avtal-utgår') newBtn.style.display = 'none';
+  } else {
+    newBtn.style.display = 'none';
+  }
   clearFilters(false);
   renderList();
   if (window.innerWidth<=768) closeSidebar();
