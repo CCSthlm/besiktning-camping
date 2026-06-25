@@ -134,6 +134,24 @@
         "kommentar": "M365-konto skapat: nian.niansson@cc-camping.se · Licens tilldelad · Grupper: Caravan Club of Sweden - Stockholmssektionen",
         "ts": "2026-06-18T13:28:12.938Z"
       }
+    },
+    {
+      "id": "M365-2606-F9O4",
+      "ts": "2026-06-25T21:07:46.527Z",
+      "status": "ny",
+      "fname": "Dorry",
+      "lname": "Johansson",
+      "pnr": "19121212-1212",
+      "mobil": "0766319996",
+      "email": "massimo.johansson@cgm.com",
+      "adress": "Svärdsliljevägen 155",
+      "anläggning": "CC Björkö Örns Camping",
+      "roll": "Campingansvarig",
+      "ansForm": "Ideell",
+      "startDatum": "2026-06-22",
+      "chef": "Massimo",
+      "övrigt": "",
+      "gdpr": true
     }
   ]
 }
