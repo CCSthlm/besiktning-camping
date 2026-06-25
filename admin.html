@@ -1115,6 +1115,9 @@ function renderDashboard() {
   if (hasRole('global')||hasRole('besiktnings')) {
     btns += `<button class="btn-add" style="background:var(--bg3);color:var(--text);border:1px solid var(--border2);" onclick="showPage('inspectors');openAddInspector()"><i class="ti ti-user-check"></i> Lägg till besiktningsman</button>`;
   }
+  if (hasRole('global')||hasRole('nyhetsadmin')) {
+    btns += `<button class="btn-add" style="background:#7c3aed;color:#fff;" onclick="showPage('news');openAddNews()"><i class="ti ti-speakerphone"></i> Publicera nyhet</button>`;
+  }
   qa.innerHTML = btns || '<span style="color:var(--text3);font-size:13px">Inga snabbåtgärder tillgängliga.</span>';
 
   // My roles description
