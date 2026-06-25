@@ -20,6 +20,30 @@
       "skapadAv": "Massimo Johansson",
       "andrad": "2026-06-25T20:44:14.060Z",
       "andradAv": "Massimo Johansson"
+    },
+    {
+      "id": "INV-2606-NRZQ",
+      "namn": "Kvittoskrivare",
+      "kategori": "Kvittoskrivare",
+      "funktion": "POS / Kassa",
+      "status": "Aktiv",
+      "marke": "Epson",
+      "modell": "TM-88",
+      "serienr": "",
+      "anlaggning": "CC Björkö Örns Camping",
+      "placering": "Receptionen",
+      "ansvarig": "",
+      "inkopDatum": "",
+      "garantiTill": "",
+      "leverantor": "",
+      "anteckningar": "",
+      "iptyp": "Fast",
+      "ip": "192.168.1.56",
+      "mac": "",
+      "skapad": "2026-06-25T21:01:00.968Z",
+      "skapadAv": "Massimo Johansson",
+      "andrad": "2026-06-25T21:01:00.968Z",
+      "andradAv": "Massimo Johansson"
     }
   ]
 }
