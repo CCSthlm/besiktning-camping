@@ -1,27 +1,6 @@
 {
   "enheter": [
     {
-      "id": "INV-2606-4CNZ",
-      "namn": "asdasd",
-      "kategori": "Datorer & surfplattor",
-      "funktion": "POS / Kassa",
-      "status": "Aktiv",
-      "marke": "",
-      "modell": "",
-      "serienr": "",
-      "anlaggning": "Sektionen",
-      "placering": "",
-      "ansvarig": "",
-      "inkopDatum": "",
-      "garantiTill": "",
-      "leverantor": "",
-      "anteckningar": "",
-      "skapad": "2026-06-25T20:43:07.341Z",
-      "skapadAv": "Massimo Johansson",
-      "andrad": "2026-06-25T20:44:14.060Z",
-      "andradAv": "Massimo Johansson"
-    },
-    {
       "id": "INV-2606-NRZQ",
       "namn": "Kvittoskrivare",
       "kategori": "Kvittoskrivare",
