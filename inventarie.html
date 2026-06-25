@@ -623,7 +623,9 @@ function renderNatView(container) {
           <span>Användning: ${s.anvandning||'–'}</span>
         </div>
       </div>`).join('');
-    const editBtn = _isAdmin ? `<span onclick="openEditNat('${n.id}')" style="cursor:pointer;color:var(--accent);font-size:11px;font-weight:500" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">Redigera</span>` : '';
+    const editBtn  = _isAdmin ? `<span onclick="openEditNat('${n.id}')" style="cursor:pointer;color:var(--accent);font-size:11px;font-weight:500" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">Redigera</span>` : '';
+    const isGlobal = (_user.adminRoles||[]).includes('global') || _user.role==='Admin';
+    const delBtn   = isGlobal ? `<span onclick="deleteNat('${n.id}')" style="cursor:pointer;color:var(--red);font-size:11px;font-weight:500" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">Radera</span>` : '';
     return `<div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px 16px;margin-bottom:12px">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
         <div>
@@ -642,7 +644,7 @@ function renderNatView(container) {
         </div>
         <div style="display:flex;gap:8px;align-items:center">
           <span class="badge ${STATUS_BADGE[n.status]||'b-aktiv'}">${n.status||'Aktiv'}</span>
-          ${editBtn}
+          ${editBtn}${delBtn}
         </div>
       </div>
       ${ssids ? `<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin-bottom:6px">${(n.ssids||[]).length} SSID</div>${ssids}` : ''}
@@ -827,10 +829,11 @@ function renderDetailModal() {
   document.getElementById('logg-count').textContent = handelsCount;
   document.querySelectorAll('.modal-tab').forEach((t,i)=>t.classList.toggle('active',['info','avtal','logg'][i]===_currentEnhetTab));
   renderEnhetTabContent();
-  const editBtn = _isAdmin ? `<button class="btn-secondary" onclick="closeModal('modal-enhet');openEditEnhet('${e.id}')"><i class="ti ti-pencil"></i> Redigera</button>` : '';
-  const logBtn  = _isAdmin ? `<button class="btn-secondary" onclick="openHandelseModal('${e.id}')"><i class="ti ti-plus"></i> Händelse</button>` : '';
-  const avtBtn  = _isAdmin ? `<button class="btn-primary" onclick="openNewAvtal('${e.id}')"><i class="ti ti-file-plus"></i> Avtal</button>` : '';
-  document.getElementById('enhet-modal-footer').innerHTML = `<button class="btn-secondary" onclick="closeModal('modal-enhet')">Stäng</button>${editBtn}${logBtn}${avtBtn}`;
+  const isGlobal  = (_user.adminRoles||[]).includes('global') || _user.role==='Admin';
+  const editBtn   = _isAdmin ? `<button class="btn-secondary" onclick="closeModal('modal-enhet');openEditEnhet('${e.id}')"><i class="ti ti-pencil"></i> Redigera</button>` : '';
+  const logBtn    = _isAdmin ? `<button class="btn-secondary" onclick="openHandelseModal('${e.id}')"><i class="ti ti-plus"></i> Händelse</button>` : '';
+  const deleteBtn = isGlobal ? `<button class="btn-danger" onclick="deleteEnhet('${e.id}')"><i class="ti ti-trash"></i> Radera</button>` : '';
+  document.getElementById('enhet-modal-footer').innerHTML = `<button class="btn-secondary" onclick="closeModal('modal-enhet')">Stäng</button>${deleteBtn}${editBtn}${logBtn}`;
 }
 
 function showEnhetTab(tab) {
@@ -1159,19 +1162,106 @@ async function saveHandelse() {
 function exportExcel() {
   try {
     const wb = XLSX.utils.book_new();
+
+    // ── Flik 1: Alla enheter ──
     const e = _enheter.enheter||[];
-    const rows = [
-      ['INVENTARIEREGISTER – CCSthlm'],['Exporterad:', new Date().toLocaleString('sv-SE')],[],
-      ['ID','Benämning','Kategori','Funktion','Märke','Modell','Serienr','Status','Anläggning','Placering','Ansvarig','Inköpsdatum','Inköpspris','Garanti till','Registrerad av','Registrerad'],
-      ...e.map(x=>[x.id,x.namn,x.kategori,x.funktion||'',x.marke||'',x.modell||'',x.serienr||'',x.status||'Aktiv',x.anlaggning||'',x.placering||'',x.ansvarig||'',x.inkopDatum||'',x.inkopPris||'',x.garantiTill||'',x.skapadAv||'',fmtDate(x.skapad)])
+    const ws1rows = [
+      ['INVENTARIEREGISTER – CCSthlm – Alla enheter'],
+      ['Exporterad:', new Date().toLocaleString('sv-SE')],[],
+      ['ID','Benämning','Kategori','Funktion','Märke','Modell','Serienr','IP-typ','IP-adress','MAC-adress','Status','Anläggning','Placering','Ansvarig','Inköpsdatum','Inköpspris','Garanti till','Registrerad av','Registrerad'],
+      ...e.map(x=>[x.id,x.namn,x.kategori,x.funktion||'',x.marke||'',x.modell||'',x.serienr||'',x.iptyp||'',x.ip||'',x.mac||'',x.status||'Aktiv',x.anlaggning||'',x.placering||'',x.ansvarig||'',x.inkopDatum||'',x.inkopPris||'',x.garantiTill||'',x.skapadAv||'',fmtDate(x.skapad)])
     ];
-    const ws = XLSX.utils.aoa_to_sheet(rows);
-    ws['!cols']=[{wch:16},{wch:30},{wch:22},{wch:18},{wch:14},{wch:14},{wch:16},{wch:12},{wch:24},{wch:20},{wch:18},{wch:12},{wch:12},{wch:12},{wch:18},{wch:16}];
-    XLSX.utils.book_append_sheet(wb, ws, 'Enheter');
+    const ws1 = XLSX.utils.aoa_to_sheet(ws1rows);
+    ws1['!cols']=[{wch:16},{wch:30},{wch:20},{wch:16},{wch:14},{wch:14},{wch:14},{wch:12},{wch:14},{wch:18},{wch:10},{wch:22},{wch:18},{wch:16},{wch:12},{wch:12},{wch:12},{wch:18},{wch:16}];
+    XLSX.utils.book_append_sheet(wb, ws1, 'Alla enheter');
+
+    // ── Flik 2: Betalterminaler ──
+    const term = e.filter(x=>x.kategori==='Betalterminaler');
+    if (term.length) {
+      const ws2rows = [
+        ['BETALTERMINALER'],[],
+        ['ID','Benämning','Märke','Modell','Serienr','IP-adress','Terminal-ID','Inlösare','Avtalsnr','Månadsavgift','Trans.avgift %','Kontakt','Anläggning','Placering','Status'],
+        ...term.map(x=>[x.id,x.namn,x.marke||'',x.modell||'',x.serienr||'',x.ip||'',x.terminalId||'',x.inlosare||'',x.inlosenAvtal||'',x.terminalMaAv||'',x.transAv||'',x.terminalKontakt||'',x.anlaggning||'',x.placering||'',x.status||'Aktiv'])
+      ];
+      const ws2 = XLSX.utils.aoa_to_sheet(ws2rows);
+      ws2['!cols']=[{wch:16},{wch:28},{wch:14},{wch:14},{wch:14},{wch:14},{wch:14},{wch:14},{wch:14},{wch:12},{wch:12},{wch:18},{wch:22},{wch:18},{wch:10}];
+      XLSX.utils.book_append_sheet(wb, ws2, 'Betalterminaler');
+    }
+
+    // ── Flik 3: Trådlösa nät ──
+    const nat = _nat.enheter||[];
+    if (nat.length) {
+      const natRows = [['TRÅDLÖSA NÄT'],[],['ID','Benämning','Typ','Märke','Modell','LAN IP','Subnät','Gateway','DNS','WAN IP','ISP','Hastighet','Anläggning','Placering','Status']];
+      nat.forEach(n => {
+        natRows.push([n.id,n.namn,n.typ||'',n.marke||'',n.modell||'',n.ip||'',n.subnet||'',n.gateway||'',n.dns||'',n.wan||'',n.isp||'',n.hastighet||'',n.anlaggning||'',n.placering||'',n.status||'Aktiv']);
+        (n.ssids||[]).forEach(s => {
+          natRows.push(['','↳ SSID: '+s.ssid,'',s.kryptering||'',s.band||'','IP: '+s.ipFran+' – '+s.ipTill,'VLAN: '+s.vlan,'','','','','','Användning: '+s.anvandning,'Lösenord: '+s.losen,'']);
+        });
+      });
+      const ws3 = XLSX.utils.aoa_to_sheet(natRows);
+      ws3['!cols']=[{wch:14},{wch:28},{wch:14},{wch:14},{wch:14},{wch:16},{wch:14},{wch:14},{wch:12},{wch:14},{wch:14},{wch:12},{wch:22},{wch:16},{wch:10}];
+      XLSX.utils.book_append_sheet(wb, ws3, 'Trådlösa nät');
+    }
+
+    // ── Flik 4: IP-adresslista ──
+    const ipEnheter = e.filter(x=>x.iptyp==='Fast'&&x.ip).map(x=>({ip:x.ip,mac:x.mac||'',namn:x.namn,kat:x.kategori,anl:x.anlaggning||'',plac:x.placering||'',status:x.status||'Aktiv'}));
+    const ipNat = nat.filter(n=>n.ip).map(n=>({ip:n.ip,mac:'',namn:n.namn,kat:n.typ||'Router',anl:n.anlaggning||'',plac:n.placering||'',status:n.status||'Aktiv'}));
+    const allIp = [...ipEnheter,...ipNat].sort((a,b)=>{
+      const toNum = ip=>ip.split('.').reduce((acc,v,i)=>acc+(parseInt(v)||0)*Math.pow(256,3-i),0);
+      return toNum(a.ip)-toNum(b.ip);
+    });
+    if (allIp.length) {
+      const ws4rows = [['IP-ADRESSLISTA'],[],['IP-adress','MAC-adress','Benämning','Kategori','Anläggning','Placering','Status'],
+        ...allIp.map(x=>[x.ip,x.mac,x.namn,x.kat,x.anl,x.plac,x.status])];
+      const ws4 = XLSX.utils.aoa_to_sheet(ws4rows);
+      ws4['!cols']=[{wch:16},{wch:18},{wch:28},{wch:20},{wch:22},{wch:18},{wch:10}];
+      XLSX.utils.book_append_sheet(wb, ws4, 'IP-adresser');
+    }
+
+    // ── Flik 5: Händelselogg ──
+    const h = _handelser.handelser||[];
+    if (h.length) {
+      const ws5rows = [['HÄNDELSELOGG'],[],['Händelse-ID','Enhet-ID','Enhetsnamn','Typ','Datum','Utförare','Kostnad','Beskrivning','Nästa service','Registrerad av'],
+        ...h.map(x=>{
+          const enhet = (_enheter.enheter||[]).find(en=>en.id===x.enhetId);
+          return [x.id,x.enhetId,enhet?.namn||'–',x.typ||'',x.datum||'',x.utforare||'',x.kostnad||'',x.beskrivning||'',x.nasta||'',x.registradAv||''];
+        })
+      ];
+      const ws5 = XLSX.utils.aoa_to_sheet(ws5rows);
+      ws5['!cols']=[{wch:14},{wch:14},{wch:28},{wch:14},{wch:12},{wch:18},{wch:10},{wch:40},{wch:12},{wch:18}];
+      XLSX.utils.book_append_sheet(wb, ws5, 'Händelselogg');
+    }
 
     XLSX.writeFile(wb, 'Inventarie_CCSthlm_'+today()+'.xlsx');
-    toast('Excel exporterad','ok');
-  } catch(e) { toast('Fel: '+e.message,'err'); }
+    toast('Excel exporterad – '+wb.SheetNames.length+' flikar','ok');
+  } catch(err) { toast('Fel: '+err.message,'err'); console.error(err); }
+}
+
+// ── DELETE ─────────────────────────────────────────────────────────────────
+function deleteEnhet(id) {
+  const e = (_enheter.enheter||[]).find(x=>x.id===id);
+  if (!e) return;
+  if (!confirm(`Radera "${e.namn}" (${e.id})?\n\nDetta kan inte ångras.`)) return;
+  _enheter.enheter = _enheter.enheter.filter(x=>x.id!==id);
+  saveData(PATH_ENHETER,'_enheter','_enhetSha','Enhet raderad').then(()=>{
+    closeModal('modal-enhet');
+    renderStats();
+    renderList();
+    toast('Enhet raderad','ok');
+  });
+}
+
+function deleteNat(id) {
+  const n = (_nat.enheter||[]).find(x=>x.id===id);
+  if (!n) return;
+  if (!confirm(`Radera "${n.namn}" (${n.id})?\n\nDetta kan inte ångras.`)) return;
+  _nat.enheter = _nat.enheter.filter(x=>x.id!==id);
+  saveData(PATH_NAT,'_nat','_natSha','Nätverksenhet raderad').then(()=>{
+    closeModal('modal-enhet');
+    renderStats();
+    renderList();
+    toast('Nätverksenhet raderad','ok');
+  });
 }
 
 // ── NAVIGATION ─────────────────────────────────────────────────────────────
