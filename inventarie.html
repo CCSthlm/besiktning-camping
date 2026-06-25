@@ -161,10 +161,6 @@ tr:hover td{background:rgba(59,109,17,.02);}
 /* TOAST */
 #toast{position:fixed;bottom:20px;right:20px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);padding:10px 14px;font-size:13px;z-index:999;box-shadow:var(--shadow);opacity:0;transform:translateY(6px);transition:all .25s;pointer-events:none;display:flex;align-items:center;gap:6px;}
 
-/* AVTAL CHIP */
-.avtal-chip{display:inline-flex;align-items:center;gap:4px;font-size:10px;background:var(--purple-bg);color:var(--purple);padding:2px 7px;border-radius:20px;font-weight:600;}
-.avtal-chip.expire-soon{background:var(--amber-bg);color:var(--amber-text);}
-.avtal-chip.expired{background:var(--red-bg);color:var(--red-text);}
 
 /* RESPONSIVE */
 @media(max-width:768px){
@@ -199,8 +195,7 @@ tr:hover td{background:rgba(59,109,17,.02);}
     <div class="nav-group">Vyer</div>
     <div class="nav-item active" id="nav-alla" onclick="showView('alla')"><i class="ti ti-list"></i> Alla enheter</div>
     <div class="nav-item" id="nav-tradlost-nat" onclick="showView('tradlost-nat')"><i class="ti ti-wifi"></i> Trådlösa nät</div>
-    <div class="nav-group">Uppföljning</div>
-    <div class="nav-item" id="nav-avtal-utgår" onclick="showView('avtal-utgår')"><i class="ti ti-alarm" style="color:var(--amber)"></i> Avtal utgår snart <span class="nav-badge" id="nav-expire-badge" style="display:none">0</span></div>
+    <div class="nav-item" id="nav-ip-lista" onclick="showView('ip-lista')"><i class="ti ti-network"></i> IP-adresslista</div>
     <div class="nav-item" id="nav-defekta" onclick="showView('defekta')"><i class="ti ti-alert-triangle" style="color:var(--red)"></i> Defekta enheter</div>
   </div>
   <div class="sidebar-footer">
@@ -250,7 +245,6 @@ tr:hover td{background:rgba(59,109,17,.02);}
     </div>
     <div class="modal-tabs" id="enhet-tabs">
       <button class="modal-tab active" onclick="showEnhetTab('info')">Information</button>
-      <button class="modal-tab" onclick="showEnhetTab('avtal')">Avtal</button>
       <button class="modal-tab" onclick="showEnhetTab('logg')">Händelselogg <span id="logg-count" style="font-size:10px;background:var(--bg3);padding:1px 5px;border-radius:10px;margin-left:3px">0</span></button>
     </div>
     <div class="modal-body" id="enhet-modal-body"></div>
@@ -303,56 +297,12 @@ tr:hover td{background:rgba(59,109,17,.02);}
   </div>
 </div>
 
-<!-- AVTAL MODAL -->
-<div class="modal-overlay" id="modal-avtal">
-  <div class="modal" style="max-width:520px">
-    <div class="modal-header"><span class="modal-title" id="avtal-modal-title">Lägg till avtal</span><button class="modal-close" onclick="closeModal('modal-avtal')"><i class="ti ti-x"></i></button></div>
-    <div class="modal-body">
-      <input type="hidden" id="a-id">
-      <input type="hidden" id="a-enhet-id">
-      <div class="fg">
-        <div class="ff"><label>Avtalstyp <span class="req">*</span></label>
-          <select id="a-typ"><option>Leasing</option><option>Inlösen</option><option>Support</option><option>Licens</option><option>Hyra</option><option>Abonnemang</option></select>
-        </div>
-        <div class="ff"><label>Leverantör / Partner <span class="req">*</span></label><input type="text" id="a-leverantor" placeholder="Företagsnamn"></div>
-      </div>
-      <div class="fg">
-        <div class="ff"><label>Avtalsnummer</label><input type="text" id="a-nr" placeholder=""></div>
-        <div class="ff"><label>Kontaktperson</label><input type="text" id="a-kontakt" placeholder="Namn"></div>
-      </div>
-      <div class="fg trio">
-        <div class="ff"><label>Startdatum</label><input type="date" id="a-start"></div>
-        <div class="ff"><label>Slutdatum</label><input type="date" id="a-slut"></div>
-        <div class="ff"><label>Uppsägningstid</label><input type="text" id="a-uppsagning" placeholder="T.ex. 3 mån"></div>
-      </div>
-      <div class="fg">
-        <div class="ff"><label>Månadskostnad (kr)</label><input type="number" id="a-kostnad" placeholder="0"></div>
-        <div class="ff"><label>Påminnelsedatum</label><input type="date" id="a-paminnelse"></div>
-      </div>
-      <div class="fg">
-        <div class="ff"><label>Automatisk förlängning</label>
-          <select id="a-forlangning"><option value="nej">Nej</option><option value="ja">Ja</option></select>
-        </div>
-        <div class="ff"><label>Länk (SharePoint/webb)</label><input type="text" id="a-lank" placeholder="https://…"></div>
-      </div>
-      <div class="fg full">
-        <div class="ff"><label>Anteckningar</label><textarea id="a-anteckningar" placeholder="Övrigt om avtalet…"></textarea></div>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn-secondary" onclick="closeModal('modal-avtal')">Avbryt</button>
-      <button class="btn-primary" onclick="saveAvtal()"><i class="ti ti-check"></i> Spara avtal</button>
-    </div>
-  </div>
-</div>
-
 <div id="toast"></div>
 
 <script>
 // ── CONFIG ────────────────────────────────────────────────────────────────
 const GH_REPO         = 'CCSthlm/besiktning-camping';
 const PATH_ENHETER    = 'inventarie/enheter.json';
-const PATH_AVTAL      = 'inventarie/avtal.json';
 const PATH_HANDELSER  = 'inventarie/handelser.json';
 const PATH_NAT        = 'inventarie/tradlosa-nat.json';
 
@@ -382,7 +332,6 @@ const LOGG_COLOR   = {'Service':'lt-service','Reparation':'lt-reparation','Flytt
 // ── STATE ──────────────────────────────────────────────────────────────────
 let _user = null, _isAdmin = false;
 let _enheter   = {enheter:[]},   _enhetSha   = null;
-let _avtal     = {avtal:[]},     _avtalSha   = null;
 let _handelser = {handelser:[]}, _handelSha  = null;
 let _nat = {enheter:[]}, _natSha = null;
 let _currentView = 'alla', _viewMode = 'kort';
@@ -404,18 +353,17 @@ let _sortCol = 'namn', _sortAsc = true;
   if (_isAdmin) document.getElementById('btn-ny-enhet').style.display = '';
 
   populateFilters();
-  await Promise.all([loadData(PATH_ENHETER,'_enheter','_enhetSha'), loadData(PATH_AVTAL,'_avtal','_avtalSha'), loadData(PATH_HANDELSER,'_handelser','_handelSha'), loadData(PATH_NAT,'_nat','_natSha')]);
+  await Promise.all([loadData(PATH_ENHETER,'_enheter','_enhetSha'), loadData(PATH_HANDELSER,'_handelser','_handelSha'), loadData(PATH_NAT,'_nat','_natSha')]);
   renderStats();
   renderList();
 })();
 
 // ── DATA ────────────────────────────────────────────────────────────────────
 // ── SHA STORE (since let vars are not on window) ──────────────────────────
-const _sha = { '_enhetSha': null, '_avtalSha': null, '_handelSha': null, '_natSha': null };
+const _sha = { '_enhetSha': null, '_handelSha': null, '_natSha': null };
 
 const DEFAULT_DATA = {
   '_enheter':   { enheter:   [] },
-  '_avtal':     { avtal:     [] },
   '_handelser': { handelser: [] },
 };
 
@@ -435,7 +383,6 @@ async function loadData(path, stateKey, shaKey) {
     const bytes = Uint8Array.from(atob(gh.content.replace(/\n/g,'')), c=>c.charCodeAt(0));
     const parsed = JSON.parse(new TextDecoder('utf-8').decode(bytes));
     if (stateKey === '_enheter')   { _enheter   = parsed; if (!_enheter.enheter)     _enheter.enheter     = []; }
-    if (stateKey === '_avtal')     { _avtal     = parsed; if (!_avtal.avtal)         _avtal.avtal         = []; }
     if (stateKey === '_handelser') { _handelser = parsed; if (!_handelser.handelser) _handelser.handelser = []; }
     if (stateKey === '_nat')       { _nat       = parsed; if (!_nat.enheter)         _nat.enheter         = []; }
   } catch(e) { console.warn('loadData', path, e.message); }
@@ -454,7 +401,6 @@ async function saveData(path, stateKey, shaKey, msg) {
     }
     let data;
     if (stateKey === '_enheter')   data = _enheter;
-    else if (stateKey === '_avtal')     data = _avtal;
     else if (stateKey === '_handelser') data = _handelser;
     else if (stateKey === '_nat')       data = _nat;
     else { toast('Okänd datatyp: '+stateKey,'err'); return; }
@@ -503,15 +449,6 @@ function renderStats() {
   const terminaler = e.filter(x=>x.kategori==='Betalterminaler').length;
   const natCount   = (_nat.enheter||[]).length;
   const defekta  = e.filter(x=>x.status==='Defekt').length;
-  const avtalN   = (_avtal.avtal||[]).length;
-
-  // Avtal som utgår inom 60 dagar
-  const now = new Date();
-  const d60 = new Date(now.getTime()+60*24*60*60*1000);
-  const utgår = (_avtal.avtal||[]).filter(a=>a.slut&&new Date(a.slut)<=d60&&new Date(a.slut)>=now).length;
-  const expBadge = document.getElementById('nav-expire-badge');
-  expBadge.textContent = utgår;
-  expBadge.style.display = utgår ? '' : 'none';
 
   document.getElementById('stats-row').innerHTML = `
     <div class="stat" onclick="showView('alla')"><div class="stat-icon si-blue"><i class="ti ti-devices"></i></div><div><div class="stat-val">${e.length}</div><div class="stat-lbl">Totalt</div></div></div>
@@ -526,7 +463,6 @@ function renderStats() {
 function getFiltered() {
   let list = [...(_enheter.enheter||[])];
   if (_currentView==='defekta')          list = list.filter(e=>e.status==='Defekt');
-  else if (_currentView==='avtal-utgår') return null;
   else if (_currentView==='tradlost-nat') return null;
 
   const kat = document.getElementById('f-kategori').value;
@@ -548,8 +484,8 @@ function getFiltered() {
 
 function renderList() {
   const container = document.getElementById('list-container');
-  if (_currentView==='avtal-utgår') { renderAvtalUtgårView(container); return; }
   if (_currentView==='tradlost-nat') { renderNatView(container); return; }
+  if (_currentView==='ip-lista')     { renderIpListaView(container); return; }
   const list = getFiltered();
   if (!list) return;
   const count = `<div style="font-size:11px;color:var(--text3);margin-bottom:10px">${list.length} enheter</div>`;
@@ -567,8 +503,7 @@ function renderList() {
 function enhetCard(e) {
   const icon  = KAT_ICON[e.kategori] || 'ti-device-unknown';
   const color = KAT_COLOR[e.kategori] || 'si-blue';
-  const avtal = (_avtal.avtal||[]).filter(a=>a.enhetId===e.id);
-  const avtalChip = avtal.length ? `<span class="avtal-chip"><i class="ti ti-file-text" style="font-size:10px"></i>${avtal.length} avtal</span>` : '';
+  const avtalChip = '';
   const editBtn = _isAdmin ? `<span onclick="event.stopPropagation();openEditEnhet('${e.id}')" style="cursor:pointer;color:var(--accent);font-size:11px;font-weight:500" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">Redigera</span>` : '';
   return `<div class="inv-card" onclick="openDetailEnhet('${e.id}')">
     <div class="inv-card-top">
@@ -608,6 +543,64 @@ function renderTable(list) {
 }
 
 function sortBy(col) { _sortCol===col ? _sortAsc=!_sortAsc : (_sortCol=col,_sortAsc=true); renderList(); }
+
+// ── IP-ADRESSLISTA ──────────────────────────────────────────────────────────
+function renderIpListaView(container) {
+  // Collect all devices with fixed IPs — enheter + trådlösa nät
+  const enheterMedIp = (_enheter.enheter||[])
+    .filter(e => e.iptyp==='Fast' && e.ip)
+    .map(e => ({
+      ip: e.ip, mac: e.mac||'–',
+      enhet: e.namn, kategori: e.kategori,
+      anlaggning: e.anlaggning||'–', placering: e.placering||'–',
+      status: e.status||'Aktiv', id: e.id, typ: 'enhet'
+    }));
+
+  // Also include nat enheter LAN IPs
+  const natMedIp = (_nat.enheter||[])
+    .filter(n => n.ip)
+    .map(n => ({
+      ip: n.ip, mac: '–',
+      enhet: n.namn, kategori: n.typ||'Router',
+      anlaggning: n.anlaggning||'–', placering: n.placering||'–',
+      status: n.status||'Aktiv', id: n.id, typ: 'nat'
+    }));
+
+  // Sort by IP numerically
+  const all = [...enheterMedIp, ...natMedIp].sort((a,b) => {
+    const toNum = ip => ip.split('.').reduce((acc,v,i)=>acc+(parseInt(v)||0)*Math.pow(256,3-i),0);
+    return toNum(a.ip) - toNum(b.ip);
+  });
+
+  if (!all.length) {
+    container.innerHTML = '<div class="no-data"><i class="ti ti-network"></i>Inga enheter med fast IP-adress registrerade</div>';
+    return;
+  }
+
+  const rows = all.map(d => `<tr onclick="${d.typ==='enhet'?`openDetailEnhet('${d.id}')`:`showView('tradlost-nat')`}" style="cursor:pointer">
+    <td style="font-family:monospace;font-weight:600;color:var(--blue)">${d.ip}</td>
+    <td style="font-family:monospace;font-size:11px;color:var(--text3)">${d.mac}</td>
+    <td style="font-weight:500">${d.enhet}</td>
+    <td style="font-size:12px;color:var(--text2)">${d.kategori}</td>
+    <td style="font-size:12px;color:var(--text2)">${d.anlaggning}</td>
+    <td style="font-size:12px;color:var(--text2)">${d.placering}</td>
+    <td><span class="badge ${STATUS_BADGE[d.status]||'b-aktiv'}">${d.status}</span></td>
+  </tr>`).join('');
+
+  container.innerHTML = `
+    <div style="font-size:11px;color:var(--text3);margin-bottom:10px">${all.length} enheter med fast IP</div>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden">
+      <div style="overflow-x:auto">
+        <table>
+          <thead><tr>
+            <th>IP-adress</th><th>MAC-adress</th><th>Benämning</th>
+            <th>Kategori</th><th>Anläggning</th><th>Placering</th><th>Status</th>
+          </tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
+    </div>`;
+}
 
 // ── TRÅDLÖSA NÄT ────────────────────────────────────────────────────────────
 function renderNatView(container) {
@@ -817,57 +810,6 @@ async function saveNat() {
   } catch(e) {}
 }
 
-// ── AVTAL VIEWS ──────────────────────────────────────────────────────────────
-function renderAvtalView(container) {
-  const avtal = _avtal.avtal || [];
-  if (!avtal.length) { container.innerHTML = '<div class="no-data"><i class="ti ti-file-off"></i>Inga avtal registrerade</div>'; return; }
-  const now = new Date(); const d60 = new Date(now.getTime()+60*24*60*60*1000);
-  const rows = avtal.map(a => {
-    const enhet = (_enheter.enheter||[]).find(e=>e.id===a.enhetId);
-    const daysLeft = a.slut ? Math.ceil((new Date(a.slut)-now)/(1000*60*60*24)) : null;
-    const chipCls  = daysLeft!==null && daysLeft<0 ? 'avtal-chip expired' : daysLeft!==null && daysLeft<=60 ? 'avtal-chip expire-soon' : 'avtal-chip';
-    const dateStr  = daysLeft!==null ? (daysLeft<0?`Utgick för ${Math.abs(daysLeft)} dagar sedan`:`${daysLeft} dagar kvar`) : '–';
-    return `<tr>
-      <td style="font-family:monospace;font-size:11px;color:var(--text3)">${a.id}</td>
-      <td style="font-weight:500">${a.leverantor}</td>
-      <td style="font-size:12px">${a.typ}</td>
-      <td style="font-size:12px;color:var(--text2)">${enhet?enhet.namn:'–'}</td>
-      <td style="font-size:12px">${a.nr||'–'}</td>
-      <td style="font-size:12px">${a.kostnad?a.kostnad+' kr/mån':'–'}</td>
-      <td><span class="${chipCls}">${dateStr}</span></td>
-      <td style="text-align:right">
-        ${_isAdmin?`<span onclick="openEditAvtal('${a.id}')" style="cursor:pointer;color:var(--accent);font-size:12px;font-weight:500" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">Redigera</span>`:''}
-      </td>
-    </tr>`;
-  }).join('');
-  container.innerHTML = `<div style="font-size:11px;color:var(--text3);margin-bottom:10px">${avtal.length} avtal</div>
-  <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden">
-    <div style="overflow-x:auto"><table><thead><tr><th>ID</th><th>Leverantör</th><th>Typ</th><th>Enhet</th><th>Avtalsnr</th><th>Kostnad</th><th>Löptid</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>
-  </div>`;
-}
-
-function renderAvtalUtgårView(container) {
-  const now = new Date(); const d90 = new Date(now.getTime()+90*24*60*60*1000);
-  const avtal = (_avtal.avtal||[]).filter(a=>a.slut&&new Date(a.slut)<=d90).sort((a,b)=>new Date(a.slut)-new Date(b.slut));
-  if (!avtal.length) { container.innerHTML = '<div class="no-data"><i class="ti ti-check"></i>Inga avtal utgår inom 90 dagar</div>'; return; }
-  const rows = avtal.map(a => {
-    const enhet = (_enheter.enheter||[]).find(e=>e.id===a.enhetId);
-    const daysLeft = Math.ceil((new Date(a.slut)-now)/(1000*60*60*24));
-    const cls = daysLeft<0?'b-defekt':daysLeft<=30?'b-defekt':daysLeft<=60?'b-service':'b-lager';
-    return `<tr>
-      <td style="font-weight:500">${a.leverantor}</td>
-      <td style="font-size:12px">${a.typ}</td>
-      <td style="font-size:12px;color:var(--text2)">${enhet?enhet.namn:'–'}</td>
-      <td>${a.slut}</td>
-      <td><span class="badge ${cls}">${daysLeft<0?'Utgången':daysLeft+' dagar'}</span></td>
-      <td style="font-size:12px">${a.uppsagning||'–'}</td>
-    </tr>`;
-  }).join('');
-  container.innerHTML = `<div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden">
-    <div style="overflow-x:auto"><table><thead><tr><th>Leverantör</th><th>Typ</th><th>Enhet</th><th>Slutdatum</th><th>Tid kvar</th><th>Uppsägn.</th></tr></thead><tbody>${rows}</tbody></table></div>
-  </div>`;
-}
-
 // ── DETAIL ───────────────────────────────────────────────────────────────────
 function openDetailEnhet(id) {
   _currentEnhet = (_enheter.enheter||[]).find(e=>e.id===id);
@@ -893,7 +835,7 @@ function renderDetailModal() {
 
 function showEnhetTab(tab) {
   _currentEnhetTab = tab;
-  document.querySelectorAll('.modal-tab').forEach((t,i)=>t.classList.toggle('active',['info','avtal','logg'][i]===tab));
+  document.querySelectorAll('.modal-tab').forEach((t,i)=>t.classList.toggle('active',['info','logg'][i]===tab));
   renderEnhetTabContent();
 }
 
@@ -913,6 +855,9 @@ function renderEnhetTabContent() {
       <div class="dr"><span class="dl">Kategori</span><span>${e.kategori}</span></div>
       <div class="dr"><span class="dl">Märke / Modell</span><span>${[e.marke,e.modell].filter(Boolean).join(' ')||'–'}</span></div>
       <div class="dr"><span class="dl">Serienummer</span><span style="font-family:monospace">${e.serienr||'–'}</span></div>
+      ${e.iptyp?`<div class="dr"><span class="dl">IP-typ</span><span>${e.iptyp==='Fast'?'Fast (statisk)':'Dynamisk (DHCP)'}</span></div>`:''}
+      ${e.ip&&e.iptyp==='Fast'?`<div class="dr"><span class="dl">IP-adress</span><span style="font-family:monospace">${e.ip}</span></div>`:''}
+      ${e.mac?`<div class="dr"><span class="dl">MAC-adress</span><span style="font-family:monospace">${e.mac}</span></div>`:''}
       <div class="dr"><span class="dl">Anläggning</span><span>${e.anlaggning||'–'}</span></div>
       <div class="dr"><span class="dl">Placering</span><span>${e.placering||'–'}</span></div>
       <div class="dr"><span class="dl">Ansvarig</span><span>${e.ansvarig||'–'}</span></div>
@@ -946,25 +891,6 @@ function renderEnhetTabContent() {
       <div class="dr"><span class="dl">Senast ändrad av</span><span>${e.andradAv||'–'}</span></div>
       <div class="dr"><span class="dl">Senast ändrad</span><span>${fmtDate(e.andrad)}</span></div>
     `;
-  } else if (_currentEnhetTab==='avtal') {
-    const avtal = (_avtal.avtal||[]).filter(a=>a.enhetId===e.id);
-    if (!avtal.length) { body.innerHTML = '<div class="no-data" style="padding:24px"><i class="ti ti-file-off"></i>Inga avtal kopplade</div>'; return; }
-    body.innerHTML = avtal.map(a => {
-      const now = new Date();
-      const daysLeft = a.slut ? Math.ceil((new Date(a.slut)-now)/(1000*60*60*24)) : null;
-      return `<div style="background:var(--bg3);border-radius:var(--radius);padding:12px 14px;margin-bottom:8px">
-        <div style="font-weight:600;margin-bottom:6px;display:flex;justify-content:space-between">
-          <span>${a.leverantor} – ${a.typ}</span>
-          ${daysLeft!==null?`<span class="badge ${daysLeft<0?'b-defekt':daysLeft<=60?'b-service':'b-aktiv'}">${daysLeft<0?'Utgången':daysLeft+' dagar kvar'}</span>`:''}
-        </div>
-        <div class="dr"><span class="dl">Avtalsnummer</span><span>${a.nr||'–'}</span></div>
-        <div class="dr"><span class="dl">Löptid</span><span>${a.start||'?'} – ${a.slut||'?'}</span></div>
-        <div class="dr"><span class="dl">Kostnad</span><span>${a.kostnad?a.kostnad+' kr/mån':'–'}</span></div>
-        <div class="dr"><span class="dl">Auto-förlängning</span><span>${a.forlangning==='ja'?'Ja':'Nej'}</span></div>
-        ${a.lank?`<div class="dr"><span class="dl">Länk</span><span><a href="${a.lank}" target="_blank" style="color:var(--accent)">Öppna dokument</a></span></div>`:''}
-        ${_isAdmin?`<div style="margin-top:8px"><span onclick="openEditAvtal('${a.id}')" style="cursor:pointer;color:var(--accent);font-size:12px;font-weight:500" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">Redigera avtal</span></div>`:''}
-      </div>`;
-    }).join('');
   } else {
     const handelser = (_handelser.handelser||[]).filter(h=>h.enhetId===e.id).sort((a,b)=>b.datum?.localeCompare(a.datum||''));
     if (!handelser.length) { body.innerHTML = '<div class="no-data" style="padding:24px"><i class="ti ti-history"></i>Ingen händelselogg</div>'; return; }
@@ -1047,7 +973,25 @@ function toggleExtraFields(preload) {
   const v = preload || {};
   const el = document.getElementById('extra-fields');
   if (!el) return;
-  if (kat==='Betalterminaler') {
+  const isIPKategori = ['Datorer & surfplattor','Skrivare','Etikettskrivare','Kvittoskrivare','Betalterminaler'].includes(kat);
+  if (isIPKategori) {
+    el.innerHTML = `
+      <div class="form-section">Nätverksinformation</div>
+      <div class="fg">
+        <div class="ff"><label>IP-typ</label>
+          <select id="ef-iptyp" onchange="toggleIpField()">
+            <option ${(v.iptyp||'Dynamisk')==='Dynamisk'?'selected':''}>Dynamisk (DHCP)</option>
+            <option ${v.iptyp==='Fast'?'selected':''}>Fast (statisk)</option>
+          </select>
+        </div>
+        <div class="ff"><label>MAC-adress</label><input type="text" id="ef-mac" value="${v.mac||''}" placeholder="AA:BB:CC:DD:EE:FF"></div>
+      </div>
+      <div id="ef-ip-wrap" style="display:${v.iptyp==='Fast'?'':'none'}">
+        <div class="fg">
+          <div class="ff"><label>IP-adress</label><input type="text" id="ef-ip" value="${v.ip||''}" placeholder="192.168.1.x"></div>
+        </div>
+      </div>`;
+  } else if (kat==='Betalterminaler') {
     el.innerHTML = `
       <div class="form-section">Betalterminal</div>
       <div class="fg">
@@ -1098,7 +1042,9 @@ function getExtraFields() {
   const kat = document.getElementById('ef-kategori')?.value;
   const gv = id => document.getElementById(id)?.value || '';
   const gn = id => parseFloat(document.getElementById(id)?.value) || undefined;
-  if (kat==='Betalterminaler') return {
+  const ipFields = ['Datorer & surfplattor','Skrivare','Etikettskrivare','Kvittoskrivare','Betalterminaler'].includes(kat)
+    ? { iptyp: gv('ef-iptyp')==='Fast (statisk)'?'Fast':'Dynamisk', ip: gv('ef-iptyp')==='Fast (statisk)'?gv('ef-ip'):'', mac: gv('ef-mac') } : {};
+  if (kat==='Betalterminaler') return { ...ipFields,
     terminalId:gv('ef-terminalId'), inlosare:gv('ef-inlosare'), inlosenAvtal:gv('ef-inlosenAvtal'),
     terminalKontakt:gv('ef-terminalKontakt'), termStart:gv('ef-termStart'), termSlut:gv('ef-termSlut'),
     terminalMaAv:gn('ef-terminalMaAv'), transAv:gn('ef-transAv')
@@ -1108,7 +1054,18 @@ function getExtraFields() {
     sakerhet:gv('ef-sakerhet'), vlan:gv('ef-vlan'), hastighet:gv('ef-hastighet'),
     isp:gv('ef-isp'), tackning:gv('ef-tackning')
   };
-  return {};
+  return ipFields;
+}
+
+function toggleIpField() {
+  const sel = document.getElementById('ef-iptyp');
+  const wrap = document.getElementById('ef-ip-wrap');
+  if (!sel || !wrap) return;
+  wrap.style.display = sel.value === 'Fast (statisk)' ? '' : 'none';
+  if (sel.value !== 'Fast (statisk)') {
+    const ipEl = document.getElementById('ef-ip');
+    if (ipEl) ipEl.value = '';
+  }
 }
 
 async function saveEnhet() {
@@ -1198,68 +1155,6 @@ async function saveHandelse() {
   } catch(e) {}
 }
 
-// ── AVTAL ─────────────────────────────────────────────────────────────────────
-function openNewAvtal(enhetId) {
-  document.getElementById('avtal-modal-title').textContent = 'Lägg till avtal';
-  document.getElementById('a-id').value = '';
-  document.getElementById('a-enhet-id').value = enhetId;
-  ['a-typ','a-leverantor','a-nr','a-kontakt','a-start','a-slut','a-uppsagning','a-kostnad','a-paminnelse','a-lank','a-anteckningar'].forEach(id=>{
-    const el = document.getElementById(id);
-    if (el) el.value = id==='a-forlangning'?'nej':'';
-  });
-  openModal('modal-avtal');
-}
-
-function openEditAvtal(id) {
-  const a = (_avtal.avtal||[]).find(x=>x.id===id);
-  if (!a) return;
-  document.getElementById('avtal-modal-title').textContent = 'Redigera avtal';
-  document.getElementById('a-id').value = id;
-  document.getElementById('a-enhet-id').value = a.enhetId;
-  document.getElementById('a-typ').value        = a.typ||'Leasing';
-  document.getElementById('a-leverantor').value = a.leverantor||'';
-  document.getElementById('a-nr').value         = a.nr||'';
-  document.getElementById('a-kontakt').value    = a.kontakt||'';
-  document.getElementById('a-start').value      = a.start||'';
-  document.getElementById('a-slut').value       = a.slut||'';
-  document.getElementById('a-uppsagning').value = a.uppsagning||'';
-  document.getElementById('a-kostnad').value    = a.kostnad||'';
-  document.getElementById('a-paminnelse').value = a.paminnelse||'';
-  document.getElementById('a-forlangning').value= a.forlangning||'nej';
-  document.getElementById('a-lank').value       = a.lank||'';
-  document.getElementById('a-anteckningar').value= a.anteckningar||'';
-  openModal('modal-avtal');
-}
-
-async function saveAvtal() {
-  const leverantor = document.getElementById('a-leverantor').value.trim();
-  if (!leverantor) { toast('Leverantör krävs','warn'); return; }
-  if (!_avtal.avtal) _avtal.avtal = [];
-  const editId  = document.getElementById('a-id').value;
-  const enhetId = document.getElementById('a-enhet-id').value;
-  const gv = id => document.getElementById(id)?.value||'';
-  const obj = {
-    enhetId, typ:gv('a-typ'), leverantor, nr:gv('a-nr'), kontakt:gv('a-kontakt'),
-    start:gv('a-start'), slut:gv('a-slut'), uppsagning:gv('a-uppsagning'),
-    kostnad:parseFloat(gv('a-kostnad'))||undefined, paminnelse:gv('a-paminnelse'),
-    forlangning:gv('a-forlangning'), lank:gv('a-lank'), anteckningar:gv('a-anteckningar'),
-    andrad:nowISO(), andradAv:_user.name,
-  };
-  if (editId) {
-    const i = _avtal.avtal.findIndex(a=>a.id===editId);
-    if (i>=0) _avtal.avtal[i] = {..._avtal.avtal[i], ...obj};
-  } else {
-    _avtal.avtal.push({id:'AVT-'+Math.random().toString(36).slice(2,8).toUpperCase(), ...obj, skapad:nowISO(), skapadAv:_user.name});
-  }
-  try {
-    await saveData(PATH_AVTAL,'_avtal','_avtalSha','Avtal uppdaterat');
-    toast('Avtal sparat','ok');
-    closeModal('modal-avtal');
-    renderStats(); renderList();
-    if (_currentEnhet?.id===enhetId) { _currentEnhetTab='avtal'; renderEnhetTabContent(); }
-  } catch(e) {}
-}
-
 // ── EXPORT ────────────────────────────────────────────────────────────────────
 function exportExcel() {
   try {
@@ -1274,14 +1169,6 @@ function exportExcel() {
     ws['!cols']=[{wch:16},{wch:30},{wch:22},{wch:18},{wch:14},{wch:14},{wch:16},{wch:12},{wch:24},{wch:20},{wch:18},{wch:12},{wch:12},{wch:12},{wch:18},{wch:16}];
     XLSX.utils.book_append_sheet(wb, ws, 'Enheter');
 
-    // Avtal sheet
-    const av = _avtal.avtal||[];
-    if (av.length) {
-      const avRows = [['ID','Enhet-ID','Typ','Leverantör','Avtalsnr','Startdatum','Slutdatum','Kostnad/mån','Auto-förlängning'],
-        ...av.map(a=>[a.id,a.enhetId,a.typ,a.leverantor,a.nr||'',a.start||'',a.slut||'',a.kostnad||'',a.forlangning==='ja'?'Ja':'Nej'])];
-      const ws2 = XLSX.utils.aoa_to_sheet(avRows);
-      XLSX.utils.book_append_sheet(wb, ws2, 'Avtal');
-    }
     XLSX.writeFile(wb, 'Inventarie_CCSthlm_'+today()+'.xlsx');
     toast('Excel exporterad','ok');
   } catch(e) { toast('Fel: '+e.message,'err'); }
@@ -1291,8 +1178,8 @@ function exportExcel() {
 const VIEW_META = {
   alla:         {title:'Alla enheter',       sub:'Samtliga inventarieposter'},
   'tradlost-nat':{title:'Trådlösa nät',       sub:'Routrar, accesspunkter och SSID-konfigurationer'},
-  'avtal-utgår':{title:'Avtal utgår snart',  sub:'Avtal som löper ut inom 90 dagar'},
   defekta:      {title:'Defekta enheter',    sub:'Enheter med status Defekt'},
+  'ip-lista':   {title:'IP-adresslista',       sub:'Alla enheter med fast IP-adress'},
 };
 
 function showView(v) {
@@ -1302,14 +1189,14 @@ function showView(v) {
   const m = VIEW_META[v]||{title:v,sub:''};
   document.getElementById('view-title').textContent = m.title;
   document.getElementById('view-sub').textContent   = m.sub;
-  const showFilters = !['avtal-utgår','tradlost-nat'].includes(v);
+  const showFilters = !['tradlost-nat','ip-lista'].includes(v);
   document.getElementById('filter-bar').style.display = showFilters ? '' : 'none';
   const newBtn = document.getElementById('btn-ny-enhet');
   if (_isAdmin) {
     newBtn.style.display = '';
     newBtn.innerHTML = v==='tradlost-nat' ? '<i class="ti ti-plus"></i> Ny nätverksenhet' : '<i class="ti ti-plus"></i> Ny enhet';
     newBtn.onclick = v==='tradlost-nat' ? openNewNat : openNewEnhet;
-    if (v==='avtal-utgår') newBtn.style.display = 'none';
+
   } else {
     newBtn.style.display = 'none';
   }
