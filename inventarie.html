@@ -453,10 +453,20 @@ async function saveData(path, stateKey, shaKey, msg) {
     }
     let data;
     if (stateKey === '_enheter')   data = _enheter;
-    if (stateKey === '_avtal')     data = _avtal;
-    if (stateKey === '_handelser') data = _handelser;
+    else if (stateKey === '_avtal')     data = _avtal;
+    else if (stateKey === '_handelser') data = _handelser;
+    else { toast('Okänd datatyp: '+stateKey,'err'); return; }
+    if (!data) { toast('Data är tom – inget sparades','err'); return; }
+    console.log('Sparar:', path, JSON.stringify(data).slice(0,80)+'…');
 
-    const content = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
+    const json    = JSON.stringify(data, null, 2);
+    const encoded = new TextEncoder().encode(json);
+    const b64arr  = Array.from(encoded);
+    let b64str = '';
+    for (let i = 0; i < b64arr.length; i += 8192) {
+      b64str += String.fromCharCode(...b64arr.slice(i, i + 8192));
+    }
+    const content = btoa(b64str);
     const payload = { message: msg + ' ' + today(), content, branch: 'main' };
     if (_sha[shaKey]) payload.sha = _sha[shaKey];
 
