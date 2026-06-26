@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reseräkning – CCSthlm</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏕️</text></svg>">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/tabler-icons.min.css">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f5f5f3;--bg2:#fff;--bg3:#eeede8;--bg4:#e5e4de;
+  --text:#1a1a18;--text2:#5a5a57;--text3:#909088;
+  --accent:#3B6D11;--accent2:#27500A;--accent-glow:rgba(59,109,17,.1);
+  --red:#A32D2D;--red-bg:#FCEBEB;--red-text:#501313;
+  --amber:#854F0B;--amber-bg:#FAEEDA;--amber-text:#412402;
+  --green-bg:#EAF3DE;--green-text:#27500A;
+  --blue:#1a4f7a;--blue-bg:#e0f0ff;
+  --border:rgba(0,0,0,.10);--border2:rgba(0,0,0,.18);
+  --radius:8px;--radius-lg:14px;--shadow:0 2px 16px rgba(0,0,0,.08);
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:var(--bg3);color:var(--text);min-height:100vh;}
+
+/* TOPBAR */
+.topbar{background:var(--bg2);border-bottom:1px solid var(--border2);padding:12px 20px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;position:sticky;top:0;z-index:10;}
+.topbar-logo{display:flex;align-items:center;gap:10px;}
+.topbar-logo-text{font-size:15px;font-weight:700;}
+.topbar-logo-sub{font-size:10px;color:var(--text3);}
+.topbar-user{display:flex;align-items:center;gap:8px;}
+.topbar-avatar{width:30px;height:30px;border-radius:50%;background:var(--accent);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.topbar-name{font-size:12px;font-weight:500;color:var(--text2);}
+
+/* NAV TABS */
+.nav-tabs{background:var(--bg2);border-bottom:1px solid var(--border2);padding:0 20px;display:flex;overflow-x:auto;}
+.nav-tabs::-webkit-scrollbar{display:none;}
+.nav-tab{padding:10px 16px;font-size:13px;font-weight:500;color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;font-family:inherit;background:none;border-top:none;border-left:none;border-right:none;border-bottom:2px solid transparent;transition:all .15s;display:flex;align-items:center;gap:6px;}
+.nav-tab:hover{color:var(--text);}
+.nav-tab.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:600;}
+
+/* CONTENT */
+.content{max-width:720px;margin:0 auto;padding:20px 16px 90px;}
+
+/* CARDS */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:16px;box-shadow:var(--shadow);}
+.card-header{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+.card-title{font-size:14px;font-weight:600;display:flex;align-items:center;gap:7px;}
+.card-body{padding:16px 18px;}
+
+/* STATUS */
+.status-badge{display:inline-flex;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;}
+.s-utkast{background:var(--bg3);color:var(--text3);}
+.s-inskickad{background:var(--blue-bg);color:var(--blue);}
+.s-godkand{background:var(--green-bg);color:var(--green-text);}
+.s-utbetald{background:var(--amber-bg);color:var(--amber-text);}
+.s-nekad{background:var(--red-bg);color:var(--red-text);}
+
+/* FORM */
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
+.fg.full{grid-template-columns:1fr;}
+.ff{display:flex;flex-direction:column;gap:4px;}
+.ff label{font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.04em;}
+.ff input,.ff select,.ff textarea{padding:9px 11px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius);font-size:13px;color:var(--text);font-family:inherit;transition:border-color .2s;}
+.ff input:focus,.ff select:focus,.ff textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow);}
+.ff input[readonly]{background:var(--bg4);color:var(--text2);}
+.req{color:var(--red);}
+.fhelp{font-size:11px;color:var(--text3);margin-top:2px;}
+.form-section{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);padding:10px 0 6px;border-bottom:1px solid var(--border);margin:14px 0 10px;}
+
+/* RESA ROW */
+.resa-row{background:var(--bg3);border-radius:var(--radius);padding:12px 14px;margin-bottom:8px;display:flex;align-items:flex-start;gap:10px;}
+.resa-body{flex:1;min-width:0;}
+.resa-datum{font-size:11px;color:var(--text3);margin-bottom:3px;}
+.resa-strack{font-size:13px;font-weight:500;margin-bottom:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.resa-details{font-size:11px;color:var(--text2);display:flex;gap:10px;flex-wrap:wrap;}
+.resa-ersattning{font-size:14px;font-weight:700;color:var(--accent);flex-shrink:0;align-self:center;}
+.resa-actions{display:flex;flex-direction:column;gap:4px;align-self:center;}
+
+/* SUMMARY BOX */
+.summary-box{background:var(--green-bg);border:1px solid rgba(59,109,17,.2);border-radius:var(--radius-lg);padding:16px 18px;}
+.summary-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;font-size:13px;}
+.summary-row:last-child{margin-bottom:0;font-size:16px;font-weight:700;color:var(--accent);border-top:1px solid rgba(59,109,17,.2);padding-top:10px;margin-top:6px;}
+.summary-label{color:var(--text2);}
+
+/* BUTTONS */
+.btn-primary{padding:10px 18px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px;transition:background .15s;}
+.btn-primary:hover{background:var(--accent2);}
+.btn-secondary{padding:8px 14px;background:var(--bg3);color:var(--text2);border:1px solid var(--border2);border-radius:var(--radius);font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:5px;}
+.btn-secondary:hover{background:var(--bg4);}
+.btn-danger{padding:6px 10px;background:none;color:var(--red);border:none;border-radius:var(--radius);font-size:12px;cursor:pointer;font-family:inherit;}
+.btn-sign{width:100%;padding:14px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius);font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:8px;}
+.btn-sign:hover{background:var(--accent2);}
+.btn-sign:disabled{background:var(--bg4);color:var(--text3);cursor:not-allowed;}
+
+/* EMPTY */
+.empty{text-align:center;padding:40px 20px;color:var(--text3);}
+.empty i{font-size:40px;display:block;margin-bottom:10px;}
+
+/* MOBILE BOTTOM NAV */
+.bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--bg2);border-top:1px solid var(--border2);z-index:50;padding:6px 0 10px;}
+.bottom-nav-tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:13px;color:var(--text3);cursor:pointer;padding:4px 0;font-family:inherit;background:none;border:none;}
+.bottom-nav-tab i{font-size:22px;}
+.bottom-nav-tab.active{color:var(--accent);font-weight:600;}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;align-items:flex-start;justify-content:center;padding:16px;overflow-y:auto;}
+.modal-overlay.show{display:flex;}
+.modal{background:var(--bg2);border-radius:var(--radius-lg);width:100%;max-width:560px;margin:auto;box-shadow:0 8px 40px rgba(0,0,0,.2);}
+.modal-header{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--bg2);}
+.modal-title{font-size:15px;font-weight:700;}
+.modal-close{background:none;border:none;cursor:pointer;color:var(--text3);font-size:20px;}
+.modal-body{padding:16px 18px;max-height:70vh;overflow-y:auto;}
+.modal-footer{padding:12px 18px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px;position:sticky;bottom:0;background:var(--bg2);}
+
+/* TOAST */
+#toast{position:fixed;bottom:76px;right:16px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);padding:10px 14px;font-size:13px;z-index:999;box-shadow:var(--shadow);opacity:0;transform:translateY(6px);transition:all .25s;pointer-events:none;display:flex;align-items:center;gap:6px;}
+
+@media(max-width:600px){
+  .content{padding:12px 12px 90px;}
+  .fg{grid-template-columns:1fr;}
+  .topbar-name{display:none;}
+  .nav-tabs{display:none;}
+  .bottom-nav{display:flex;}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-logo">
+    <span style="font-size:22px">🏕️</span>
+    <div><div class="topbar-logo-text">Reseräkning</div><div class="topbar-logo-sub">CCSthlm</div></div>
+  </div>
+  <div class="topbar-user">
+    <div class="topbar-avatar" id="tb-avatar">?</div>
+    <span class="topbar-name" id="tb-name">–</span>
+    <button class="btn-secondary" onclick="window.location.href='index.html'"><i class="ti ti-arrow-left"></i> Portal</button>
+    <button onclick="doLogout()" style="padding:8px 12px;background:var(--red-bg);color:var(--red);border:1px solid rgba(163,45,45,.2);border-radius:var(--radius);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:5px"><i class="ti ti-logout"></i></button>
+  </div>
+</div>
+
+<div class="nav-tabs">
+  <button class="nav-tab active" id="tab-aktiv" onclick="showTab('aktiv')"><i class="ti ti-file-text"></i> Aktiv räkning</button>
+  <button class="nav-tab" id="tab-historik" onclick="showTab('historik')"><i class="ti ti-history"></i> Historik</button>
+</div>
+
+<div class="content" id="main-content"></div>
+
+<!-- RESA MODAL -->
+<div class="modal-overlay" id="modal-resa">
+  <div class="modal">
+    <div class="modal-header"><span class="modal-title" id="resa-modal-title">Lägg till resa</span><button class="modal-close" onclick="closeModal('modal-resa')"><i class="ti ti-x"></i></button></div>
+    <div class="modal-body">
+      <input type="hidden" id="r-edit-idx">
+      <div class="fg">
+        <div class="ff"><label>Datum <span class="req">*</span></label><input type="date" id="r-datum"></div>
+        <div class="ff"><label>Fordonstyp <span class="req">*</span></label>
+          <select id="r-fordonstyp">
+            <option value="bil">Bil</option>
+            <option value="husbil">Husbil / Bil+Husvagn</option>
+          </select>
+        </div>
+      </div>
+      <div class="fg full">
+        <div class="ff"><label>Körsträcka <span class="req">*</span></label><input type="text" id="r-stracka" placeholder="T.ex. Åkersberga centrum – Björkö Örns Camping via Norrtälje"></div>
+      </div>
+      <div class="fg">
+        <div class="ff"><label>Antal km <span class="req">*</span></label><input type="number" id="r-km" placeholder="0" min="0" oninput="calcErsattning()"></div>
+        <div class="ff"><label>Ersättning (beräknad)</label><input type="text" id="r-ersattning" readonly placeholder="0 kr"></div>
+      </div>
+      <div class="fg full">
+        <div class="ff"><label>Syfte för resan</label><input type="text" id="r-syfte" placeholder="T.ex. Arbetsdag på campingen, styrelsemöte…"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeModal('modal-resa')">Avbryt</button>
+      <button class="btn-primary" onclick="saveResa()"><i class="ti ti-check"></i> Spara resa</button>
+    </div>
+  </div>
+</div>
+
+<!-- NY RÄKNING MODAL -->
+<div class="modal-overlay" id="modal-ny">
+  <div class="modal">
+    <div class="modal-header"><span class="modal-title">Ny reseräkning</span><button class="modal-close" onclick="closeModal('modal-ny')"><i class="ti ti-x"></i></button></div>
+    <div class="modal-body">
+      <div class="fg">
+        <div class="ff"><label>Namn <span class="req">*</span></label><input type="text" id="ny-namn" placeholder="För- och efternamn"></div>
+        <div class="ff"><label>Kontonummer <span class="req">*</span></label><input type="text" id="ny-konto" placeholder="XXXX XX XXXXX X"></div>
+      </div>
+      <div class="fg">
+        <div class="ff"><label>Camping / Anläggning <span class="req">*</span></label><select id="ny-camping"></select></div>
+        <div class="ff"><label>Period <span class="req">*</span></label><input type="text" id="ny-period" placeholder="T.ex. Juni 2026"></div>
+      </div>
+      <div class="fg full">
+        <div class="ff"><label>Syfte / Projekt</label><input type="text" id="ny-syfte" placeholder="Vad gäller räkningen?"></div>
+      </div>
+      <div style="background:var(--blue-bg);border-radius:var(--radius);padding:10px 13px;font-size:12px;color:var(--blue);margin-top:4px">
+        <i class="ti ti-info-circle"></i> Du kan bara ha en aktiv (osignerad) räkning åt gången.
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeModal('modal-ny')">Avbryt</button>
+      <button class="btn-primary" onclick="saveNyRakning()"><i class="ti ti-plus"></i> Skapa räkning</button>
+    </div>
+  </div>
+</div>
+
+<div class="bottom-nav" id="bottom-nav">
+  <button class="bottom-nav-tab active" id="bnav-aktiv" onclick="showTab('aktiv')"><i class="ti ti-file-text"></i><span>Aktiv</span></button>
+  <button class="bottom-nav-tab" id="bnav-historik" onclick="showTab('historik')"><i class="ti ti-history"></i><span>Historik</span></button>
+</div>
+
+<div id="toast"></div>
+
+<script>
+const GH_REPO        = 'CCSthlm/besiktning-camping';
+const PATH_RAKNINGAR = 'reserakning/rakningar.json';
+const PATH_INST      = 'reserakning/installningar.json';
+
+const STATUS_LABEL = {utkast:'Utkast',inskickad:'Inskickad',godkand:'Godkänd',utbetald:'Utbetald',nekad:'Nekad'};
+const STATUS_CLASS = {utkast:'s-utkast',inskickad:'s-inskickad',godkand:'s-godkand',utbetald:'s-utbetald',nekad:'s-nekad'};
+const CAMPINGAR = ['CC Björkö Örns Camping','CC Östnora Camping','CC Kapellskärs Camping','CC Mista Camping','CC Storsveds Camping','CC Örstigs Camping','Gräddös Pärla Kök & Bar','Östnora Kök & Bar','Sektionen'];
+
+let _user = null;
+let _rakningar = {rakningar:[]}, _rakningSha = null;
+let _inst = {kmBil:0.25, kmHusbil:0.40}, _instSha = null;
+let _currentTab = 'aktiv';
+
+(async function init() {
+  const sess = sessionStorage.getItem('ccs_session') || sessionStorage.getItem('ccs_portal_user');
+  if (!sess) { window.location.replace('index.html'); return; }
+  try { _user = JSON.parse(sess); } catch(e) { window.location.replace('index.html'); return; }
+
+  const initials = _user.name.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase();
+  document.getElementById('tb-avatar').textContent = initials;
+  document.getElementById('tb-name').textContent = _user.name;
+
+  // Populate camping dropdown
+  const sel = document.getElementById('ny-camping');
+  CAMPINGAR.forEach(c => sel.insertAdjacentHTML('beforeend', `<option>${c}</option>`));
+
+  // Prefill name
+  document.getElementById('ny-namn').value = _user.name || '';
+
+  await loadAll();
+  applyMobileLayout();
+  renderTab();
+})();
+
+async function loadAll() {
+  await Promise.all([
+    loadJSON(PATH_RAKNINGAR, '_rakningar', '_rakningSha'),
+    loadJSON(PATH_INST, '_inst', '_instSha'),
+  ]);
+}
+
+async function loadJSON(path, stateKey, shaKey) {
+  const token = localStorage.getItem('gh_token')||'';
+  if (!token) return;
+  try {
+    const res = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/${path}`, {headers:{'Authorization':'token '+token}});
+    if (!res.ok) return;
+    const gh = await res.json();
+    window[shaKey] = gh.sha;
+    const bytes = Uint8Array.from(atob(gh.content.replace(/\n/g,'')), c=>c.charCodeAt(0));
+    window[stateKey] = JSON.parse(new TextDecoder('utf-8').decode(bytes));
+    if (!window[stateKey].rakningar && stateKey==='_rakningar') window[stateKey].rakningar = [];
+  } catch(e) { console.warn(path, e.message); }
+}
+
+async function saveJSON(path, stateKey, shaKey, msg) {
+  const token = localStorage.getItem('gh_token')||'';
+  if (!token) { toast('GitHub-token saknas','warn'); return; }
+  const url = `https://api.github.com/repos/${GH_REPO}/contents/${path}`;
+  try {
+    if (!window[shaKey]) {
+      const chk = await fetch(url, {headers:{'Authorization':'token '+token}});
+      if (chk.ok) window[shaKey] = (await chk.json()).sha;
+    }
+    const json = JSON.stringify(window[stateKey], null, 2);
+    const enc = new TextEncoder().encode(json);
+    let b64 = '';
+    for (let i=0; i<enc.length; i+=8192) b64 += String.fromCharCode(...enc.slice(i,i+8192));
+    const content = btoa(b64);
+    const payload = {message: msg+' '+today(), content, branch:'main'};
+    if (window[shaKey]) payload.sha = window[shaKey];
+    const res = await fetch(url, {method:'PUT', headers:{'Authorization':'token '+token,'Content-Type':'application/json'}, body:JSON.stringify(payload)});
+    const d = await res.json();
+    if (!res.ok) throw new Error(d.message||res.status);
+    window[shaKey] = d.content?.sha || window[shaKey];
+  } catch(e) { toast('Fel: '+e.message,'err'); throw e; }
+}
+
+// ── TABS ───────────────────────────────────────────────────────────────────
+function showTab(tab) {
+  _currentTab = tab;
+  ['aktiv','historik'].forEach(t => {
+    document.getElementById('tab-'+t)?.classList.toggle('active', t===tab);
+    document.getElementById('bnav-'+t)?.classList.toggle('active', t===tab);
+  });
+  renderTab();
+}
+
+function renderTab() {
+  if (_currentTab === 'aktiv') renderAktiv();
+  else renderHistorik();
+}
+
+// ── AKTIV RÄKNING ──────────────────────────────────────────────────────────
+function getAktiv() {
+  return (_rakningar.rakningar||[]).find(r => r.userId === _user.id && r.status === 'utkast');
+}
+
+function renderAktiv() {
+  const aktiv = getAktiv();
+  const c = document.getElementById('main-content');
+  if (!aktiv) {
+    c.innerHTML = `
+      <div class="empty"><i class="ti ti-file-plus" style="color:var(--accent)"></i>
+        <div style="font-size:16px;font-weight:600;margin-bottom:8px">Ingen aktiv reseräkning</div>
+        <div style="font-size:13px;color:var(--text2);margin-bottom:20px">Skapa en ny räkning och lägg till dina resor löpande.</div>
+        <button class="btn-primary" onclick="openModal('modal-ny')"><i class="ti ti-plus"></i> Skapa ny räkning</button>
+      </div>`;
+    return;
+  }
+  const resor = aktiv.resor || [];
+  const totKm = resor.reduce((s,r)=>s+Number(r.km||0), 0);
+  const totEr = resor.reduce((s,r)=>s+Number(r.ersattning||0), 0);
+  const canSign = resor.length > 0 && aktiv.namn && aktiv.konto;
+
+  c.innerHTML = `
+    <!-- Räkningshuvud -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title"><i class="ti ti-file-text"></i> ${aktiv.period||'Reseräkning'}</span>
+        <span class="status-badge ${STATUS_CLASS[aktiv.status]}">${STATUS_LABEL[aktiv.status]}</span>
+      </div>
+      <div class="card-body">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:13px">
+          <div><span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.04em">Namn</span><div style="margin-top:3px;font-weight:500">${aktiv.namn||'–'}</div></div>
+          <div><span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.04em">Kontonummer</span><div style="margin-top:3px;font-family:monospace">${aktiv.konto||'–'}</div></div>
+          <div><span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.04em">Camping</span><div style="margin-top:3px">${aktiv.camping||'–'}</div></div>
+          <div><span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.04em">Syfte</span><div style="margin-top:3px">${aktiv.syfte||'–'}</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Resor -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title"><i class="ti ti-route"></i> Resor (${resor.length})</span>
+        <button class="btn-primary" onclick="openNyResa()"><i class="ti ti-plus"></i> Lägg till resa</button>
+      </div>
+      <div class="card-body" style="padding:12px 14px">
+        ${resor.length ? resor.map((r,i) => `
+          <div class="resa-row">
+            <div class="resa-body">
+              <div class="resa-datum">${r.datum||'–'} · ${r.fordonstyp==='husbil'?'Husbil/Bil+Husvagn':'Bil'}</div>
+              <div class="resa-strack">${r.stracka||'–'}</div>
+              <div class="resa-details">
+                <span><i class="ti ti-road" style="font-size:11px"></i> ${r.km} km</span>
+                ${r.syfte?`<span>${r.syfte}</span>`:''}
+              </div>
+            </div>
+            <div class="resa-ersattning">${fmtKr(r.ersattning)}</div>
+            <div class="resa-actions">
+              <span onclick="editResa(${i})" style="cursor:pointer;color:var(--accent);font-size:11px" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">Redigera</span>
+              <span onclick="deleteResa(${i})" style="cursor:pointer;color:var(--red);font-size:11px" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">Ta bort</span>
+            </div>
+          </div>`).join('')
+        : `<div style="text-align:center;padding:20px;color:var(--text3);font-size:13px">Inga resor tillagda ännu</div>`}
+      </div>
+    </div>
+
+    <!-- Summering + Signering -->
+    <div class="card">
+      <div class="card-header"><span class="card-title"><i class="ti ti-calculator"></i> Summering</span></div>
+      <div class="card-body">
+        <div class="summary-box">
+          <div class="summary-row"><span class="summary-label">Antal resor</span><span>${resor.length}</span></div>
+          <div class="summary-row"><span class="summary-label">Totalt antal km</span><span>${totKm} km</span></div>
+          <div class="summary-row"><span class="summary-label">Total ersättning</span><span>${fmtKr(totEr)}</span></div>
+        </div>
+        <button class="btn-sign" onclick="signeraRakning()" ${canSign?'':'disabled'}>
+          <i class="ti ti-pen"></i> Signera och skicka in
+        </button>
+        ${!canSign?`<div style="text-align:center;font-size:11px;color:var(--text3);margin-top:8px">Lägg till minst en resa för att kunna signera</div>`:''}
+      </div>
+    </div>`;
+}
+
+// ── HISTORIK ───────────────────────────────────────────────────────────────
+function renderHistorik() {
+  const hist = (_rakningar.rakningar||[]).filter(r => r.userId === _user.id && r.status !== 'utkast')
+    .sort((a,b) => b.skapad?.localeCompare(a.skapad||''));
+  const c = document.getElementById('main-content');
+  if (!hist.length) {
+    c.innerHTML = '<div class="empty"><i class="ti ti-history"></i>Inga inskickade räkningar</div>';
+    return;
+  }
+  c.innerHTML = hist.map(r => {
+    const totEr = (r.resor||[]).reduce((s,x)=>s+Number(x.ersattning||0),0);
+    return `<div class="card" style="cursor:pointer" onclick="openDetalj('${r.id}')">
+      <div class="card-body" style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+        <div>
+          <div style="font-weight:600;margin-bottom:4px">${r.period||'–'}</div>
+          <div style="font-size:12px;color:var(--text2)">${r.camping||'–'} · ${(r.resor||[]).length} resor · ${(r.resor||[]).reduce((s,x)=>s+Number(x.km||0),0)} km</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:18px;font-weight:700;color:var(--accent)">${fmtKr(totEr)}</div>
+          <span class="status-badge ${STATUS_CLASS[r.status]}">${STATUS_LABEL[r.status]}</span>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── NY RÄKNING ─────────────────────────────────────────────────────────────
+function saveNyRakning() {
+  const namn   = document.getElementById('ny-namn').value.trim();
+  const konto  = document.getElementById('ny-konto').value.trim();
+  const camping= document.getElementById('ny-camping').value;
+  const period = document.getElementById('ny-period').value.trim();
+  if (!namn)   { toast('Ange namn','warn'); return; }
+  if (!konto)  { toast('Ange kontonummer','warn'); return; }
+  if (!period) { toast('Ange period','warn'); return; }
+
+  if (!_rakningar.rakningar) _rakningar.rakningar = [];
+  _rakningar.rakningar.push({
+    id: 'RR-' + Date.now(),
+    userId: _user.id || _user.email || _user.name,
+    namn, konto, camping, period,
+    syfte: document.getElementById('ny-syfte').value.trim(),
+    resor: [],
+    status: 'utkast',
+    skapad: nowISO(),
+    skapadAv: _user.name,
+  });
+  saveJSON(PATH_RAKNINGAR,'_rakningar','_rakningSha','Ny reseräkning').then(()=>{
+    toast('Räkning skapad','ok');
+    closeModal('modal-ny');
+    renderTab();
+  });
+}
+
+// ── RESA ───────────────────────────────────────────────────────────────────
+function openNyResa() {
+  document.getElementById('resa-modal-title').textContent = 'Lägg till resa';
+  document.getElementById('r-edit-idx').value = '';
+  document.getElementById('r-datum').value = today();
+  document.getElementById('r-fordonstyp').value = 'bil';
+  document.getElementById('r-stracka').value = '';
+  document.getElementById('r-km').value = '';
+  document.getElementById('r-ersattning').value = '';
+  document.getElementById('r-syfte').value = '';
+  openModal('modal-resa');
+}
+
+function editResa(i) {
+  const aktiv = getAktiv();
+  if (!aktiv) return;
+  const r = aktiv.resor[i];
+  document.getElementById('resa-modal-title').textContent = 'Redigera resa';
+  document.getElementById('r-edit-idx').value = i;
+  document.getElementById('r-datum').value = r.datum||'';
+  document.getElementById('r-fordonstyp').value = r.fordonstyp||'bil';
+  document.getElementById('r-stracka').value = r.stracka||'';
+  document.getElementById('r-km').value = r.km||'';
+  document.getElementById('r-ersattning').value = fmtKr(r.ersattning);
+  document.getElementById('r-syfte').value = r.syfte||'';
+  openModal('modal-resa');
+}
+
+function calcErsattning() {
+  const km  = parseFloat(document.getElementById('r-km').value)||0;
+  const typ = document.getElementById('r-fordonstyp').value;
+  const rate = typ==='husbil' ? (_inst.kmHusbil||0.40) : (_inst.kmBil||0.25);
+  document.getElementById('r-ersattning').value = km ? fmtKr(km * rate) : '';
+}
+
+document.getElementById('r-fordonstyp').addEventListener('change', calcErsattning);
+
+function saveResa() {
+  const datum   = document.getElementById('r-datum').value;
+  const stracka = document.getElementById('r-stracka').value.trim();
+  const km      = parseFloat(document.getElementById('r-km').value)||0;
+  if (!datum)   { toast('Ange datum','warn'); return; }
+  if (!stracka) { toast('Ange körsträcka','warn'); return; }
+  if (!km)      { toast('Ange antal km','warn'); return; }
+
+  const typ  = document.getElementById('r-fordonstyp').value;
+  const rate = typ==='husbil' ? (_inst.kmHusbil||0.40) : (_inst.kmBil||0.25);
+  const resa = {
+    datum, fordonstyp:typ, stracka, km,
+    ersattning: Math.round(km * rate * 100)/100,
+    syfte: document.getElementById('r-syfte').value.trim(),
+    ts: nowISO(),
+  };
+
+  const aktiv = getAktiv();
+  if (!aktiv) return;
+  const editIdx = document.getElementById('r-edit-idx').value;
+  if (editIdx !== '') aktiv.resor[parseInt(editIdx)] = resa;
+  else aktiv.resor.push(resa);
+  aktiv.resor.sort((a,b)=>a.datum.localeCompare(b.datum));
+
+  saveJSON(PATH_RAKNINGAR,'_rakningar','_rakningSha','Resa uppdaterad').then(()=>{
+    toast('Resa sparad','ok');
+    closeModal('modal-resa');
+    renderTab();
+  });
+}
+
+function deleteResa(i) {
+  if (!confirm('Ta bort denna resa?')) return;
+  const aktiv = getAktiv();
+  if (!aktiv) return;
+  aktiv.resor.splice(i, 1);
+  saveJSON(PATH_RAKNINGAR,'_rakningar','_rakningSha','Resa borttagen').then(()=>{
+    toast('Resa borttagen','ok');
+    renderTab();
+  });
+}
+
+// ── SIGNERA ────────────────────────────────────────────────────────────────
+async function signeraRakning() {
+  const aktiv = getAktiv();
+  if (!aktiv) return;
+  if (!confirm(`Signera och skicka in reseräkning för ${aktiv.period}?\n\nTotalt: ${fmtKr(aktiv.resor.reduce((s,r)=>s+Number(r.ersattning||0),0))}\n\nEfter signering kan räkningen inte redigeras.`)) return;
+  aktiv.status = 'inskickad';
+  aktiv.signeradAv = _user.name;
+  aktiv.signeradTs = nowISO();
+  try {
+    await saveJSON(PATH_RAKNINGAR,'_rakningar','_rakningSha','Reseräkning signerad');
+    toast('Räkning inskickad ✓','ok');
+    renderTab();
+  } catch(e) {}
+}
+
+// ── DETALJ ─────────────────────────────────────────────────────────────────
+function openDetalj(id) {
+  const r = (_rakningar.rakningar||[]).find(x=>x.id===id);
+  if (!r) return;
+  // Simple detail view — open in place
+  showTab('historik');
+  // TODO: could expand to full modal if needed
+}
+
+// ── HELPERS ────────────────────────────────────────────────────────────────
+function applyMobileLayout() {
+  const mob = window.innerWidth <= 600;
+  const navTabs = document.querySelector('.nav-tabs');
+  const botNav  = document.getElementById('bottom-nav');
+  if (navTabs) navTabs.style.display = mob ? 'none' : '';
+  if (botNav)  botNav.style.display  = mob ? 'flex' : 'none';
+}
+window.addEventListener('resize', applyMobileLayout);
+
+function fmtKr(v) { return (Math.round((v||0)*100)/100).toLocaleString('sv-SE',{minimumFractionDigits:2,maximumFractionDigits:2})+' kr'; }
+function today()  { return new Date().toISOString().slice(0,10); }
+function nowISO() { return new Date().toISOString(); }
+function openModal(id) { document.getElementById(id).classList.add('show'); }
+function closeModal(id){ document.getElementById(id).classList.remove('show'); }
+document.addEventListener('click',e=>{if(e.target.classList.contains('modal-overlay'))e.target.classList.remove('show');});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.modal-overlay.show').forEach(m=>m.classList.remove('show'));});
+function toast(msg,type='ok'){
+  const t=document.getElementById('toast');
+  t.style.background=type==='err'?'var(--red-bg)':type==='warn'?'var(--amber-bg)':'var(--green-bg)';
+  t.style.color=type==='err'?'var(--red-text)':type==='warn'?'var(--amber-text)':'var(--green-text)';
+  t.innerHTML=(type==='ok'?'<i class="ti ti-check"></i>':type==='warn'?'<i class="ti ti-alert-triangle"></i>':'<i class="ti ti-x"></i>')+' '+msg;
+  t.style.opacity='1';t.style.transform='translateY(0)';
+  setTimeout(()=>{t.style.opacity='0';t.style.transform='translateY(6px)';},2800);
+}
+function doLogout(){sessionStorage.setItem('ccs_logged_out','1');sessionStorage.removeItem('ccs_session');sessionStorage.removeItem('ccs_portal_user');window.location.replace('index.html');}
+</script>
+</body>
+</html>

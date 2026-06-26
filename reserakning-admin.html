@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reseräkning Admin – CCSthlm</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏕️</text></svg>">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/tabler-icons.min.css">
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f5f5f3;--bg2:#fff;--bg3:#eeede8;--bg4:#e5e4de;
+  --text:#1a1a18;--text2:#5a5a57;--text3:#909088;
+  --accent:#3B6D11;--accent2:#27500A;--accent-glow:rgba(59,109,17,.1);
+  --red:#A32D2D;--red-bg:#FCEBEB;--red-text:#501313;
+  --amber:#854F0B;--amber-bg:#FAEEDA;--amber-text:#412402;
+  --green-bg:#EAF3DE;--green-text:#27500A;
+  --blue:#1a4f7a;--blue-bg:#e0f0ff;
+  --border:rgba(0,0,0,.10);--border2:rgba(0,0,0,.18);
+  --radius:8px;--radius-lg:14px;--shadow:0 2px 16px rgba(0,0,0,.08);
+  --sidebar:240px;
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:var(--bg3);color:var(--text);min-height:100vh;display:flex;}
+.sidebar{width:var(--sidebar);flex-shrink:0;background:var(--bg2);border-right:1px solid var(--border2);display:flex;flex-direction:column;position:fixed;inset:0 auto 0 0;z-index:10;}
+.sidebar-logo{padding:16px 18px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:9px;}
+.sidebar-logo i{font-size:22px;color:var(--accent);}
+.sidebar-logo-text{font-size:14px;font-weight:700;}
+.sidebar-logo-sub{font-size:10px;color:var(--text3);}
+.sidebar-nav{flex:1;padding:8px 0;}
+.nav-item{display:flex;align-items:center;gap:9px;padding:9px 18px;cursor:pointer;font-size:13px;color:var(--text2);border-left:2px solid transparent;transition:all .15s;}
+.nav-item:hover{background:var(--bg3);}
+.nav-item.active{background:var(--bg3);color:var(--accent2);border-left-color:var(--accent);font-weight:600;}
+.nav-item i{font-size:15px;}
+.nav-group{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);padding:12px 18px 4px;}
+.sidebar-footer{padding:12px 18px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:6px;}
+.sb-user{display:flex;align-items:center;gap:8px;padding-bottom:8px;border-bottom:1px solid var(--border);margin-bottom:2px;}
+.sb-avatar{width:28px;height:28px;border-radius:50%;background:var(--accent);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+.main{margin-left:var(--sidebar);flex:1;display:flex;flex-direction:column;}
+.topbar{padding:14px 24px;border-bottom:1px solid var(--border2);display:flex;justify-content:space-between;align-items:center;background:var(--bg2);position:sticky;top:0;z-index:5;flex-wrap:wrap;gap:10px;}
+.topbar h1{font-size:17px;font-weight:700;}
+.content{padding:20px 24px;flex:1;}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:16px;box-shadow:var(--shadow);}
+.card-header{padding:12px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+.card-title{font-size:14px;font-weight:600;}
+table{width:100%;border-collapse:collapse;}
+th{text-align:left;padding:9px 13px;font-size:11px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--border);background:var(--bg3);}
+td{padding:10px 13px;font-size:13px;border-bottom:1px solid var(--border);vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:rgba(59,109,17,.02);}
+.status-badge{display:inline-flex;font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;}
+.s-utkast{background:var(--bg3);color:var(--text3);}
+.s-inskickad{background:var(--blue-bg);color:var(--blue);}
+.s-godkand{background:var(--green-bg);color:var(--green-text);}
+.s-utbetald{background:var(--amber-bg);color:var(--amber-text);}
+.s-nekad{background:var(--red-bg);color:var(--red-text);}
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
+.fg.full{grid-template-columns:1fr;}
+.ff{display:flex;flex-direction:column;gap:4px;}
+.ff label{font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.04em;}
+.ff input,.ff select{padding:9px 11px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius);font-size:13px;font-family:inherit;}
+.ff input:focus,.ff select:focus{outline:none;border-color:var(--accent);}
+.fhelp{font-size:11px;color:var(--text3);margin-top:2px;}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto;}
+.modal-overlay.show{display:flex;}
+.modal{background:var(--bg2);border-radius:var(--radius-lg);width:100%;max-width:560px;margin:auto;box-shadow:0 8px 40px rgba(0,0,0,.2);}
+.modal-header{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--bg2);}
+.modal-title{font-size:15px;font-weight:700;}
+.modal-close{background:none;border:none;cursor:pointer;color:var(--text3);font-size:20px;}
+.modal-body{padding:16px 18px;max-height:70vh;overflow-y:auto;}
+.modal-footer{padding:12px 18px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px;position:sticky;bottom:0;background:var(--bg2);}
+.btn-primary{padding:9px 18px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px;}
+.btn-primary:hover{background:var(--accent2);}
+.btn-secondary{padding:8px 14px;background:var(--bg3);color:var(--text2);border:1px solid var(--border2);border-radius:var(--radius);font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:5px;}
+.btn-secondary:hover{background:var(--bg4);}
+.btn-portal{width:100%;padding:8px;background:var(--bg3);color:var(--text2);border:1px solid var(--border2);border-radius:var(--radius);font-size:12px;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:7px;}
+.btn-logout{width:100%;padding:8px;background:var(--red-bg);color:var(--red);border:1px solid rgba(163,45,45,.2);border-radius:var(--radius);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:7px;}
+.stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px;}
+.stat{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px 16px;display:flex;align-items:center;gap:12px;}
+.stat-icon{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;}
+.si-blue{background:var(--blue-bg);color:var(--blue);}
+.si-amber{background:var(--amber-bg);color:var(--amber);}
+.si-green{background:var(--green-bg);color:var(--green-text);}
+.si-red{background:var(--red-bg);color:var(--red);}
+.stat-val{font-size:20px;font-weight:700;}
+.stat-lbl{font-size:11px;color:var(--text3);}
+.filter-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
+.filter-bar select,.filter-bar input{padding:7px 10px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);font-size:12px;font-family:inherit;}
+#toast{position:fixed;bottom:22px;right:22px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);padding:10px 14px;font-size:13px;z-index:999;box-shadow:var(--shadow);opacity:0;transform:translateY(6px);transition:all .25s;pointer-events:none;display:flex;align-items:center;gap:6px;}
+@media(max-width:700px){.sidebar{display:none;}.main{margin-left:0;}.stat-row{grid-template-columns:1fr 1fr;}}
+</style>
+</head>
+<body>
+<nav class="sidebar">
+  <div class="sidebar-logo"><i class="ti ti-car"></i><div><div class="sidebar-logo-text">Reseräkning Admin</div><div class="sidebar-logo-sub">CCSthlm</div></div></div>
+  <div class="sidebar-nav">
+    <div class="nav-group">Räkningar</div>
+    <div class="nav-item active" id="nav-alla" onclick="showView('alla')"><i class="ti ti-list"></i> Alla räkningar</div>
+    <div class="nav-item" id="nav-inskickade" onclick="showView('inskickade')"><i class="ti ti-inbox"></i> Inskickade</div>
+    <div class="nav-item" id="nav-godkanda" onclick="showView('godkanda')"><i class="ti ti-check"></i> Godkända</div>
+    <div class="nav-item" id="nav-utbetalda" onclick="showView('utbetalda')"><i class="ti ti-coin"></i> Utbetalda</div>
+    <div class="nav-group">Inställningar</div>
+    <div class="nav-item" id="nav-inst" onclick="showView('inst')"><i class="ti ti-settings"></i> Km-ersättning</div>
+  </div>
+  <div class="sidebar-footer">
+    <div class="sb-user"><div class="sb-avatar" id="sb-avatar">?</div><div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" id="sb-name">–</div><div style="font-size:10px;color:var(--text3)">Reseräkning Admin</div></div></div>
+    <button class="btn-portal" onclick="window.location.href='index.html'"><i class="ti ti-arrow-left"></i> Portal</button>
+    <button class="btn-logout" onclick="doLogout()"><i class="ti ti-logout"></i> Logga ut</button>
+  </div>
+</nav>
+
+<div class="main">
+  <div class="topbar">
+    <div><h1 id="view-title">Alla räkningar</h1><div style="font-size:12px;color:var(--text2)" id="view-sub">Administrera reseräkningar</div></div>
+    <div style="display:flex;gap:8px">
+      <button class="btn-secondary" onclick="exportExcel()"><i class="ti ti-table-export"></i> Excel</button>
+    </div>
+  </div>
+  <div class="content">
+    <div class="stat-row">
+      <div class="stat"><div class="stat-icon si-blue"><i class="ti ti-inbox"></i></div><div><div class="stat-val" id="st-inskickade">0</div><div class="stat-lbl">Inskickade</div></div></div>
+      <div class="stat"><div class="stat-icon si-amber"><i class="ti ti-check"></i></div><div><div class="stat-val" id="st-godkanda">0</div><div class="stat-lbl">Godkända</div></div></div>
+      <div class="stat"><div class="stat-icon si-green"><i class="ti ti-coin"></i></div><div><div class="stat-val" id="st-utbetalda">0</div><div class="stat-lbl">Utbetalda</div></div></div>
+      <div class="stat"><div class="stat-icon si-red"><i class="ti ti-currency-kronor"></i></div><div><div class="stat-val" id="st-totalt">0</div><div class="stat-lbl">Totalt att betala</div></div></div>
+    </div>
+    <div class="filter-bar" id="filter-bar">
+      <select id="f-status" onchange="renderTable()"><option value="">Alla statusar</option><option value="inskickad">Inskickad</option><option value="godkand">Godkänd</option><option value="utbetald">Utbetald</option><option value="nekad">Nekad</option></select>
+      <select id="f-camping" onchange="renderTable()"><option value="">Alla campingar</option></select>
+      <input type="text" id="f-sok" placeholder="🔍 Sök namn…" oninput="renderTable()">
+    </div>
+    <div id="list-container"></div>
+  </div>
+</div>
+
+<!-- STATUS MODAL -->
+<div class="modal-overlay" id="modal-status">
+  <div class="modal" style="max-width:460px">
+    <div class="modal-header"><span class="modal-title">Uppdatera status</span><button class="modal-close" onclick="closeModal('modal-status')"><i class="ti ti-x"></i></button></div>
+    <div class="modal-body">
+      <input type="hidden" id="status-id">
+      <div class="ff" style="margin-bottom:12px"><label>Ny status</label>
+        <select id="status-val">
+          <option value="godkand">Godkänd</option>
+          <option value="utbetald">Utbetald</option>
+          <option value="nekad">Nekad</option>
+          <option value="inskickad">Återställ till Inskickad</option>
+        </select>
+      </div>
+      <div class="ff"><label>Kommentar</label><input type="text" id="status-kommentar" placeholder="Valfri notering"></div>
+    </div>
+    <div class="modal-footer"><button class="btn-secondary" onclick="closeModal('modal-status')">Avbryt</button><button class="btn-primary" onclick="saveStatus()"><i class="ti ti-check"></i> Spara</button></div>
+  </div>
+</div>
+
+<!-- DETALJ MODAL -->
+<div class="modal-overlay" id="modal-detalj">
+  <div class="modal" style="max-width:640px">
+    <div class="modal-header"><div><div class="modal-title" id="detalj-title">–</div><div style="font-size:11px;color:var(--text3);margin-top:2px" id="detalj-meta">–</div></div><button class="modal-close" onclick="closeModal('modal-detalj')"><i class="ti ti-x"></i></button></div>
+    <div class="modal-body" id="detalj-body"></div>
+    <div class="modal-footer" id="detalj-footer"></div>
+  </div>
+</div>
+
+<div id="toast"></div>
+<script>
+const GH_REPO        = 'CCSthlm/besiktning-camping';
+const PATH_RAKNINGAR = 'reserakning/rakningar.json';
+const PATH_INST      = 'reserakning/installningar.json';
+const STATUS_LABEL   = {utkast:'Utkast',inskickad:'Inskickad',godkand:'Godkänd',utbetald:'Utbetald',nekad:'Nekad'};
+const STATUS_CLASS   = {utkast:'s-utkast',inskickad:'s-inskickad',godkand:'s-godkand',utbetald:'s-utbetald',nekad:'s-nekad'};
+const CAMPINGAR      = ['CC Björkö Örns Camping','CC Östnora Camping','CC Kapellskärs Camping','CC Mista Camping','CC Storsveds Camping','CC Örstigs Camping','Gräddös Pärla Kök & Bar','Östnora Kök & Bar','Sektionen'];
+
+let _user=null, _rakningar={rakningar:[]}, _rakningSha=null, _inst={kmBil:0.25,kmHusbil:0.40}, _instSha=null, _currentView='alla';
+
+(async function init(){
+  const sess=sessionStorage.getItem('ccs_session')||sessionStorage.getItem('ccs_portal_user');
+  if(!sess){window.location.replace('index.html');return;}
+  try{_user=JSON.parse(sess);}catch(e){window.location.replace('index.html');return;}
+  const roles=_user.adminRoles||[];
+  const ok=roles.some(r=>['global','reserakning-admin'].includes(r))||_user.role==='Admin';
+  if(!ok){alert('Du har inte behörighet.');window.location.replace('index.html');return;}
+  document.getElementById('sb-avatar').textContent=_user.name.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase();
+  document.getElementById('sb-name').textContent=_user.name;
+  const campSel=document.getElementById('f-camping');
+  CAMPINGAR.forEach(c=>campSel.insertAdjacentHTML('beforeend',`<option>${c}</option>`));
+  await Promise.all([loadJSON(PATH_RAKNINGAR,'_rakningar','_rakningSha'),loadJSON(PATH_INST,'_inst','_instSha')]);
+  renderStats();renderTable();
+})();
+
+async function loadJSON(path,stateKey,shaKey){
+  const token=localStorage.getItem('gh_token')||'';if(!token)return;
+  try{
+    const res=await fetch(`https://api.github.com/repos/${GH_REPO}/contents/${path}`,{headers:{'Authorization':'token '+token}});
+    if(!res.ok)return;
+    const gh=await res.json();window[shaKey]=gh.sha;
+    const bytes=Uint8Array.from(atob(gh.content.replace(/\n/g,'')),c=>c.charCodeAt(0));
+    window[stateKey]=JSON.parse(new TextDecoder('utf-8').decode(bytes));
+    if(!window[stateKey].rakningar&&stateKey==='_rakningar')window[stateKey].rakningar=[];
+  }catch(e){console.warn(path,e.message);}
+}
+
+async function saveJSON(path,stateKey,shaKey,msg){
+  const token=localStorage.getItem('gh_token')||'';if(!token){toast('Token saknas','warn');return;}
+  const url=`https://api.github.com/repos/${GH_REPO}/contents/${path}`;
+  try{
+    if(!window[shaKey]){const chk=await fetch(url,{headers:{'Authorization':'token '+token}});if(chk.ok)window[shaKey]=(await chk.json()).sha;}
+    const json=JSON.stringify(window[stateKey],null,2);
+    const enc=new TextEncoder().encode(json);let b64='';
+    for(let i=0;i<enc.length;i+=8192)b64+=String.fromCharCode(...enc.slice(i,i+8192));
+    const content=btoa(b64);
+    const payload={message:msg+' '+new Date().toISOString().slice(0,10),content,branch:'main'};
+    if(window[shaKey])payload.sha=window[shaKey];
+    const res=await fetch(url,{method:'PUT',headers:{'Authorization':'token '+token,'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    const d=await res.json();if(!res.ok)throw new Error(d.message||res.status);
+    window[shaKey]=d.content?.sha||window[shaKey];
+  }catch(e){toast('Fel: '+e.message,'err');throw e;}
+}
+
+function renderStats(){
+  const r=_rakningar.rakningar||[];
+  const ink=r.filter(x=>x.status==='inskickad');
+  const god=r.filter(x=>x.status==='godkand');
+  const utb=r.filter(x=>x.status==='utbetald');
+  const tot=god.reduce((s,x)=>s+(x.resor||[]).reduce((ss,rr)=>ss+Number(rr.ersattning||0),0),0);
+  document.getElementById('st-inskickade').textContent=ink.length;
+  document.getElementById('st-godkanda').textContent=god.length;
+  document.getElementById('st-utbetalda').textContent=utb.length;
+  document.getElementById('st-totalt').textContent=fmtKr(tot);
+}
+
+function getFiltered(){
+  let list=[...(_rakningar.rakningar||[])].filter(r=>r.status!=='utkast');
+  if(_currentView==='inskickade')list=list.filter(r=>r.status==='inskickad');
+  else if(_currentView==='godkanda')list=list.filter(r=>r.status==='godkand');
+  else if(_currentView==='utbetalda')list=list.filter(r=>r.status==='utbetald');
+  const st=document.getElementById('f-status')?.value;
+  const cp=document.getElementById('f-camping')?.value;
+  const sok=(document.getElementById('f-sok')?.value||'').toLowerCase();
+  if(st)list=list.filter(r=>r.status===st);
+  if(cp)list=list.filter(r=>r.camping===cp);
+  if(sok)list=list.filter(r=>(r.namn||'').toLowerCase().includes(sok));
+  return list.sort((a,b)=>b.signeradTs?.localeCompare(a.signeradTs||''));
+}
+
+function renderTable(){
+  if(_currentView==='inst'){renderInst();return;}
+  const list=getFiltered();
+  const container=document.getElementById('list-container');
+  if(!list.length){container.innerHTML='<div style="text-align:center;padding:40px;color:var(--text3)"><i class="ti ti-inbox" style="font-size:36px;display:block;margin-bottom:10px"></i>Inga räkningar</div>';return;}
+  const rows=list.map(r=>{
+    const tot=(r.resor||[]).reduce((s,x)=>s+Number(x.ersattning||0),0);
+    return `<tr>
+      <td style="font-weight:500">${r.namn||'–'}</td>
+      <td style="font-size:12px;color:var(--text2)">${r.period||'–'}</td>
+      <td style="font-size:12px;color:var(--text2)">${r.camping||'–'}</td>
+      <td>${(r.resor||[]).length} resor</td>
+      <td style="font-weight:600;color:var(--accent)">${fmtKr(tot)}</td>
+      <td><span class="status-badge ${STATUS_CLASS[r.status]||''}">${STATUS_LABEL[r.status]||r.status}</span></td>
+      <td style="text-align:right;white-space:nowrap">
+        <span onclick="openDetalj('${r.id}')" style="cursor:pointer;color:var(--blue);font-size:12px;font-weight:500" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">Visa</span>
+        <span style="color:var(--border2);margin:0 5px">·</span>
+        <span onclick="openStatus('${r.id}')" style="cursor:pointer;color:var(--accent);font-size:12px;font-weight:500" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">Status</span>
+      </td>
+    </tr>`;
+  }).join('');
+  container.innerHTML=`<div class="card"><div style="overflow-x:auto"><table><thead><tr><th>Namn</th><th>Period</th><th>Camping</th><th>Resor</th><th>Belopp</th><th>Status</th><th></th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
+}
+
+function openDetalj(id){
+  const r=(_rakningar.rakningar||[]).find(x=>x.id===id);if(!r)return;
+  const tot=(r.resor||[]).reduce((s,x)=>s+Number(x.ersattning||0),0);
+  document.getElementById('detalj-title').textContent=r.namn+' – '+r.period;
+  document.getElementById('detalj-meta').textContent='Camping: '+r.camping+' · Inskickad: '+fmtDate(r.signeradTs);
+  document.getElementById('detalj-body').innerHTML=`
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;font-size:13px">
+      <div><div style="font-size:10px;font-weight:600;text-transform:uppercase;color:var(--text3);margin-bottom:3px">Kontonummer</div><div style="font-family:monospace">${r.konto||'–'}</div></div>
+      <div><div style="font-size:10px;font-weight:600;text-transform:uppercase;color:var(--text3);margin-bottom:3px">Syfte</div><div>${r.syfte||'–'}</div></div>
+    </div>
+    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin-bottom:8px">Resor</div>
+    ${(r.resor||[]).map(re=>`<div style="background:var(--bg3);border-radius:var(--radius);padding:10px 12px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:flex-start">
+      <div><div style="font-size:11px;color:var(--text3)">${re.datum||'–'} · ${re.fordonstyp==='husbil'?'Husbil/Bil+Husvagn':'Bil'}</div>
+        <div style="font-size:13px;font-weight:500;margin:2px 0">${re.stracka||'–'}</div>
+        <div style="font-size:11px;color:var(--text2)">${re.km} km${re.syfte?' · '+re.syfte:''}</div>
+      </div>
+      <div style="font-weight:700;color:var(--accent);flex-shrink:0;margin-left:10px">${fmtKr(re.ersattning)}</div>
+    </div>`).join('')}
+    <div style="background:var(--green-bg);border-radius:var(--radius);padding:12px 14px;margin-top:10px;display:flex;justify-content:space-between;font-size:15px;font-weight:700">
+      <span style="color:var(--text2)">Totalt</span><span style="color:var(--accent)">${fmtKr(tot)}</span>
+    </div>`;
+  document.getElementById('detalj-footer').innerHTML=`
+    <button class="btn-secondary" onclick="closeModal('modal-detalj')">Stäng</button>
+    <button class="btn-primary" onclick="closeModal('modal-detalj');openStatus('${r.id}')"><i class="ti ti-edit"></i> Uppdatera status</button>`;
+  openModal('modal-detalj');
+}
+
+function openStatus(id){
+  document.getElementById('status-id').value=id;
+  const r=(_rakningar.rakningar||[]).find(x=>x.id===id);
+  document.getElementById('status-val').value=r?.status==='inskickad'?'godkand':r?.status||'godkand';
+  document.getElementById('status-kommentar').value='';
+  openModal('modal-status');
+}
+
+async function saveStatus(){
+  const id=document.getElementById('status-id').value;
+  const status=document.getElementById('status-val').value;
+  const kommentar=document.getElementById('status-kommentar').value.trim();
+  const i=(_rakningar.rakningar||[]).findIndex(r=>r.id===id);
+  if(i<0)return;
+  _rakningar.rakningar[i].status=status;
+  _rakningar.rakningar[i].statusKommentar=kommentar;
+  _rakningar.rakningar[i].statusTs=new Date().toISOString();
+  _rakningar.rakningar[i].statusAv=_user.name;
+  try{await saveJSON(PATH_RAKNINGAR,'_rakningar','_rakningSha','Status uppdaterad');toast('Status sparad','ok');closeModal('modal-status');renderStats();renderTable();}catch(e){}
+}
+
+function renderInst(){
+  document.getElementById('list-container').innerHTML=`
+    <div class="card">
+      <div class="card-header"><span class="card-title"><i class="ti ti-settings"></i> Km-ersättning</span></div>
+      <div style="padding:20px 18px">
+        <div class="fg">
+          <div class="ff"><label>Bil (kr/km)</label><input type="number" step="0.01" id="km-bil" value="${_inst.kmBil||0.25}"><div class="fhelp">Gäller för vanlig personbil</div></div>
+          <div class="ff"><label>Husbil / Bil+Husvagn (kr/km)</label><input type="number" step="0.01" id="km-husbil" value="${_inst.kmHusbil||0.40}"><div class="fhelp">Gäller för husbil eller bil med husvagn</div></div>
+        </div>
+        <button class="btn-primary" onclick="saveInst()"><i class="ti ti-check"></i> Spara inställningar</button>
+      </div>
+    </div>`;
+}
+
+async function saveInst(){
+  _inst.kmBil=parseFloat(document.getElementById('km-bil').value)||0.25;
+  _inst.kmHusbil=parseFloat(document.getElementById('km-husbil').value)||0.40;
+  try{await saveJSON(PATH_INST,'_inst','_instSha','Inställningar uppdaterade');toast('Sparat','ok');}catch(e){}
+}
+
+function exportExcel(){
+  try{
+    const wb=XLSX.utils.book_new();
+    const list=(_rakningar.rakningar||[]).filter(r=>r.status!=='utkast');
+    const rows=[['RESERÄKNINGAR – CCSthlm'],['Exporterad:',new Date().toLocaleString('sv-SE')],[],
+      ['ID','Namn','Period','Camping','Kontonummer','Resor','Total km','Belopp (kr)','Status','Inskickad'],
+      ...list.map(r=>{
+        const tot=(r.resor||[]).reduce((s,x)=>s+Number(x.ersattning||0),0);
+        const km=(r.resor||[]).reduce((s,x)=>s+Number(x.km||0),0);
+        return[r.id,r.namn||'',r.period||'',r.camping||'',r.konto||'',(r.resor||[]).length,km,tot,STATUS_LABEL[r.status]||r.status,fmtDate(r.signeradTs)];
+      })];
+    const ws=XLSX.utils.aoa_to_sheet(rows);
+    ws['!cols']=[{wch:16},{wch:22},{wch:14},{wch:24},{wch:18},{wch:8},{wch:10},{wch:12},{wch:12},{wch:16}];
+    XLSX.utils.book_append_sheet(wb,ws,'Reseräkningar');
+    XLSX.writeFile(wb,'Reserakningar_CCSthlm_'+new Date().toISOString().slice(0,10)+'.xlsx');
+    toast('Excel exporterad','ok');
+  }catch(e){toast('Fel: '+e.message,'err');}
+}
+
+const VIEW_META={alla:{title:'Alla räkningar',sub:'Alla inskickade räkningar'},inskickade:{title:'Inskickade',sub:'Väntar på godkännande'},godkanda:{title:'Godkända',sub:'Godkända – väntar på utbetalning'},utbetalda:{title:'Utbetalda',sub:'Utbetalda räkningar'},inst:{title:'Inställningar',sub:'Km-ersättning'}};
+function showView(v){
+  _currentView=v;
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('nav-'+v)?.classList.add('active');
+  const m=VIEW_META[v]||{title:v,sub:''};
+  document.getElementById('view-title').textContent=m.title;
+  document.getElementById('view-sub').textContent=m.sub;
+  const showFilter=v!=='inst';
+  document.getElementById('filter-bar').style.display=showFilter?'':'none';
+  renderTable();
+}
+function openModal(id){document.getElementById(id).classList.add('show');}
+function closeModal(id){document.getElementById(id).classList.remove('show');}
+document.addEventListener('click',e=>{if(e.target.classList.contains('modal-overlay'))e.target.classList.remove('show');});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.modal-overlay.show').forEach(m=>m.classList.remove('show'));});
+function fmtKr(v){return(Math.round((v||0)*100)/100).toLocaleString('sv-SE',{minimumFractionDigits:2,maximumFractionDigits:2})+' kr';}
+function fmtDate(iso){try{return new Date(iso).toLocaleString('sv-SE',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'});}catch(e){return iso||'–';}}
+function toast(msg,type='ok'){const t=document.getElementById('toast');t.style.background=type==='err'?'var(--red-bg)':type==='warn'?'var(--amber-bg)':'var(--green-bg)';t.style.color=type==='err'?'var(--red-text)':type==='warn'?'var(--amber-text)':'var(--green-text)';t.innerHTML=(type==='ok'?'<i class="ti ti-check"></i>':type==='warn'?'<i class="ti ti-alert-triangle"></i>':'<i class="ti ti-x"></i>')+' '+msg;t.style.opacity='1';t.style.transform='translateY(0)';setTimeout(()=>{t.style.opacity='0';t.style.transform='translateY(6px)';},2800);}
+function doLogout(){sessionStorage.setItem('ccs_logged_out','1');sessionStorage.removeItem('ccs_session');sessionStorage.removeItem('ccs_portal_user');window.location.replace('index.html');}
+</script>
+</body>
+</html>

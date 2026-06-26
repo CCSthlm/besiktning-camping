@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Godkänn reseräkningar – CCSthlm</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏕️</text></svg>">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/tabler-icons.min.css">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#f5f5f3;--bg2:#fff;--bg3:#eeede8;--bg4:#e5e4de;--text:#1a1a18;--text2:#5a5a57;--text3:#909088;--accent:#3B6D11;--accent2:#27500A;--accent-glow:rgba(59,109,17,.1);--red:#A32D2D;--red-bg:#FCEBEB;--red-text:#501313;--amber:#854F0B;--amber-bg:#FAEEDA;--amber-text:#412402;--green-bg:#EAF3DE;--green-text:#27500A;--blue:#1a4f7a;--blue-bg:#e0f0ff;--border:rgba(0,0,0,.10);--border2:rgba(0,0,0,.18);--radius:8px;--radius-lg:14px;--shadow:0 2px 16px rgba(0,0,0,.08);}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:var(--bg3);color:var(--text);min-height:100vh;}
+.topbar{background:var(--bg2);border-bottom:1px solid var(--border2);padding:12px 20px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;position:sticky;top:0;z-index:10;}
+.topbar-logo{display:flex;align-items:center;gap:10px;}
+.topbar-logo-text{font-size:15px;font-weight:700;}
+.topbar-logo-sub{font-size:10px;color:var(--text3);}
+.topbar-user{display:flex;align-items:center;gap:8px;}
+.topbar-avatar{width:30px;height:30px;border-radius:50%;background:var(--accent);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+.content{max-width:800px;margin:0 auto;padding:20px 16px 30px;}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:14px;box-shadow:var(--shadow);}
+.card-header{padding:12px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.card-title{font-size:14px;font-weight:600;display:flex;align-items:center;gap:7px;}
+.status-badge{display:inline-flex;font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;}
+.s-inskickad{background:var(--blue-bg);color:var(--blue);}
+.s-godkand{background:var(--green-bg);color:var(--green-text);}
+.s-utbetald{background:var(--amber-bg);color:var(--amber-text);}
+.s-nekad{background:var(--red-bg);color:var(--red-text);}
+.btn-primary{padding:9px 18px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px;}
+.btn-primary:hover{background:var(--accent2);}
+.btn-secondary{padding:8px 14px;background:var(--bg3);color:var(--text2);border:1px solid var(--border2);border-radius:var(--radius);font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:5px;}
+.btn-nek{padding:8px 14px;background:var(--red-bg);color:var(--red);border:1px solid rgba(163,45,45,.2);border-radius:var(--radius);font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:5px;}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;align-items:flex-start;justify-content:center;padding:16px;overflow-y:auto;}
+.modal-overlay.show{display:flex;}
+.modal{background:var(--bg2);border-radius:var(--radius-lg);width:100%;max-width:560px;margin:auto;box-shadow:0 8px 40px rgba(0,0,0,.2);}
+.modal-header{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+.modal-title{font-size:15px;font-weight:700;}
+.modal-close{background:none;border:none;cursor:pointer;color:var(--text3);font-size:20px;}
+.modal-body{padding:16px 18px;max-height:70vh;overflow-y:auto;}
+.modal-footer{padding:12px 18px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px;}
+.ff{display:flex;flex-direction:column;gap:4px;margin-bottom:12px;}
+.ff label{font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.04em;}
+.ff select,.ff input{padding:9px 11px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius);font-size:13px;font-family:inherit;}
+#toast{position:fixed;bottom:22px;right:16px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);padding:10px 14px;font-size:13px;z-index:999;box-shadow:var(--shadow);opacity:0;transform:translateY(6px);transition:all .25s;pointer-events:none;display:flex;align-items:center;gap:6px;}
+@media(max-width:600px){.content{padding:12px 12px;}}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="topbar-logo">
+    <span style="font-size:22px">🏕️</span>
+    <div><div class="topbar-logo-text">Godkänn reseräkningar</div><div class="topbar-logo-sub">CCSthlm</div></div>
+  </div>
+  <div class="topbar-user">
+    <div class="topbar-avatar" id="tb-avatar">?</div>
+    <button class="btn-secondary" onclick="window.location.href='index.html'"><i class="ti ti-arrow-left"></i> Portal</button>
+    <button onclick="doLogout()" style="padding:8px 12px;background:var(--red-bg);color:var(--red);border:1px solid rgba(163,45,45,.2);border-radius:var(--radius);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:5px"><i class="ti ti-logout"></i></button>
+  </div>
+</div>
+
+<div class="content" id="main-content"><div style="text-align:center;padding:40px;color:var(--text3)">Laddar…</div></div>
+
+<!-- BESLUT MODAL -->
+<div class="modal-overlay" id="modal-beslut">
+  <div class="modal">
+    <div class="modal-header"><span class="modal-title" id="beslut-title">Beslut</span><button class="modal-close" onclick="closeModal('modal-beslut')"><i class="ti ti-x"></i></button></div>
+    <div class="modal-body">
+      <input type="hidden" id="b-id">
+      <input type="hidden" id="b-action">
+      <div class="ff"><label>Kommentar</label><input type="text" id="b-kommentar" placeholder="Valfri kommentar"></div>
+    </div>
+    <div class="modal-footer"><button class="btn-secondary" onclick="closeModal('modal-beslut')">Avbryt</button><button class="btn-primary" id="b-confirm-btn" onclick="confirmBeslut()"><i class="ti ti-check"></i> Bekräfta</button></div>
+  </div>
+</div>
+
+<div id="toast"></div>
+<script>
+const GH_REPO='CCSthlm/besiktning-camping', PATH_RAKNINGAR='reserakning/rakningar.json';
+const STATUS_LABEL={utkast:'Utkast',inskickad:'Inskickad',godkand:'Godkänd',utbetald:'Utbetald',nekad:'Nekad'};
+const STATUS_CLASS={inskickad:'s-inskickad',godkand:'s-godkand',utbetald:'s-utbetald',nekad:'s-nekad'};
+let _user=null, _rakningar={rakningar:[]}, _sha=null;
+
+(async function init(){
+  const sess=sessionStorage.getItem('ccs_session')||sessionStorage.getItem('ccs_portal_user');
+  if(!sess){window.location.replace('index.html');return;}
+  try{_user=JSON.parse(sess);}catch(e){window.location.replace('index.html');return;}
+  const roles=_user.adminRoles||[];
+  const ok=roles.some(r=>['global','reserakning-admin','reserakning-godkannare','reserakning-utbetalare'].includes(r))||_user.role==='Admin';
+  if(!ok){alert('Du har inte behörighet.');window.location.replace('index.html');return;}
+  document.getElementById('tb-avatar').textContent=_user.name.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase();
+  await load();render();
+})();
+
+async function load(){
+  const token=localStorage.getItem('gh_token')||'';if(!token)return;
+  try{
+    const res=await fetch(`https://api.github.com/repos/${GH_REPO}/contents/${PATH_RAKNINGAR}`,{headers:{'Authorization':'token '+token}});
+    if(!res.ok)return;
+    const gh=await res.json();_sha=gh.sha;
+    const bytes=Uint8Array.from(atob(gh.content.replace(/\n/g,'')),c=>c.charCodeAt(0));
+    _rakningar=JSON.parse(new TextDecoder('utf-8').decode(bytes));
+    if(!_rakningar.rakningar)_rakningar.rakningar=[];
+  }catch(e){console.warn(e);}
+}
+
+async function save(msg){
+  const token=localStorage.getItem('gh_token')||'';
+  const url=`https://api.github.com/repos/${GH_REPO}/contents/${PATH_RAKNINGAR}`;
+  if(!_sha){const chk=await fetch(url,{headers:{'Authorization':'token '+token}});if(chk.ok)_sha=(await chk.json()).sha;}
+  const json=JSON.stringify(_rakningar,null,2);
+  const enc=new TextEncoder().encode(json);let b64='';
+  for(let i=0;i<enc.length;i+=8192)b64+=String.fromCharCode(...enc.slice(i,i+8192));
+  const payload={message:msg,content:btoa(b64),branch:'main'};if(_sha)payload.sha=_sha;
+  const res=await fetch(url,{method:'PUT',headers:{'Authorization':'token '+token,'Content-Type':'application/json'},body:JSON.stringify(payload)});
+  const d=await res.json();if(!res.ok)throw new Error(d.message);_sha=d.content?.sha||_sha;
+}
+
+function render(){
+  const roles=_user.adminRoles||[];
+  const isUtbetalare=roles.includes('reserakning-utbetalare')||roles.includes('global')||_user.role==='Admin';
+  const isGodkannare=roles.includes('reserakning-godkannare')||roles.includes('reserakning-admin')||roles.includes('global')||_user.role==='Admin';
+
+  // Filter by role
+  let list=[...(_rakningar.rakningar||[])].filter(r=>r.status!=='utkast');
+  if(isGodkannare&&!roles.includes('global')&&_user.role!=='Admin'){
+    // Godkännare ser bara räkningar för sin camping
+    const minCamping=_user.godkannarcamping||'';
+    if(minCamping) list=list.filter(r=>r.camping===minCamping);
+  }
+  list.sort((a,b)=>b.signeradTs?.localeCompare(a.signeradTs||''));
+
+  const c=document.getElementById('main-content');
+  const väntar=list.filter(r=>r.status==='inskickad');
+  const rest=list.filter(r=>r.status!=='inskickad');
+
+  let html='';
+  if(väntar.length){
+    html+=`<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin-bottom:10px">Väntar på godkännande (${väntar.length})</div>`;
+    html+=väntar.map(r=>renderCard(r,isGodkannare,isUtbetalare)).join('');
+  }
+  if(rest.length){
+    html+=`<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin:18px 0 10px">Historik</div>`;
+    html+=rest.map(r=>renderCard(r,false,isUtbetalare)).join('');
+  }
+  if(!list.length) html='<div style="text-align:center;padding:48px;color:var(--text3)"><i class="ti ti-check" style="font-size:40px;display:block;margin-bottom:10px;color:var(--accent)"></i>Inga reseräkningar att hantera</div>';
+  c.innerHTML=html;
+}
+
+function renderCard(r,canGodkann,canUtbetala){
+  const tot=(r.resor||[]).reduce((s,x)=>s+Number(x.ersattning||0),0);
+  const km=(r.resor||[]).reduce((s,x)=>s+Number(x.km||0),0);
+  const btns=[];
+  if(canGodkann&&r.status==='inskickad'){
+    btns.push(`<button class="btn-primary" onclick="beslut('${r.id}','godkand')"><i class="ti ti-check"></i> Godkänn</button>`);
+    btns.push(`<button class="btn-nek" onclick="beslut('${r.id}','nekad')"><i class="ti ti-x"></i> Neka</button>`);
+  }
+  if(canUtbetala&&r.status==='godkand'){
+    btns.push(`<button class="btn-primary" onclick="beslut('${r.id}','utbetald')"><i class="ti ti-coin"></i> Markera utbetald</button>`);
+  }
+  return `<div class="card">
+    <div class="card-header">
+      <span class="card-title"><i class="ti ti-file-text"></i>${r.namn} – ${r.period}</span>
+      <span class="status-badge ${STATUS_CLASS[r.status]||''}">${STATUS_LABEL[r.status]||r.status}</span>
+    </div>
+    <div style="padding:14px 18px">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;font-size:13px;margin-bottom:12px">
+        <div><div style="font-size:10px;font-weight:600;text-transform:uppercase;color:var(--text3);margin-bottom:3px">Camping</div>${r.camping||'–'}</div>
+        <div><div style="font-size:10px;font-weight:600;text-transform:uppercase;color:var(--text3);margin-bottom:3px">Konto</div><span style="font-family:monospace;font-size:12px">${r.konto||'–'}</span></div>
+        <div><div style="font-size:10px;font-weight:600;text-transform:uppercase;color:var(--text3);margin-bottom:3px">Belopp</div><span style="font-size:16px;font-weight:700;color:var(--accent)">${fmtKr(tot)}</span></div>
+      </div>
+      <div style="font-size:12px;color:var(--text2);margin-bottom:12px">${(r.resor||[]).length} resor · ${km} km · Inskickad ${fmtDate(r.signeradTs)}</div>
+      ${btns.length?`<div style="display:flex;gap:8px;flex-wrap:wrap">${btns.join('')}</div>`:''}
+    </div>
+  </div>`;
+}
+
+function beslut(id,action){
+  document.getElementById('b-id').value=id;
+  document.getElementById('b-action').value=action;
+  document.getElementById('b-kommentar').value='';
+  document.getElementById('beslut-title').textContent=action==='godkand'?'Godkänn räkning':action==='nekad'?'Neka räkning':'Markera som utbetald';
+  document.getElementById('b-confirm-btn').style.background=action==='nekad'?'var(--red)':'var(--accent)';
+  openModal('modal-beslut');
+}
+
+async function confirmBeslut(){
+  const id=document.getElementById('b-id').value;
+  const action=document.getElementById('b-action').value;
+  const kommentar=document.getElementById('b-kommentar').value.trim();
+  const i=(_rakningar.rakningar||[]).findIndex(r=>r.id===id);if(i<0)return;
+  _rakningar.rakningar[i].status=action;
+  _rakningar.rakningar[i].statusKommentar=kommentar;
+  _rakningar.rakningar[i].statusTs=new Date().toISOString();
+  _rakningar.rakningar[i].statusAv=_user.name;
+  try{await save('Status: '+action);toast(action==='godkand'?'Godkänd ✓':action==='nekad'?'Nekad':'Utbetald markerad','ok');closeModal('modal-beslut');render();}
+  catch(e){toast('Fel: '+e.message,'err');}
+}
+
+function openModal(id){document.getElementById(id).classList.add('show');}
+function closeModal(id){document.getElementById(id).classList.remove('show');}
+document.addEventListener('click',e=>{if(e.target.classList.contains('modal-overlay'))e.target.classList.remove('show');});
+function fmtKr(v){return(Math.round((v||0)*100)/100).toLocaleString('sv-SE',{minimumFractionDigits:2,maximumFractionDigits:2})+' kr';}
+function fmtDate(iso){try{return new Date(iso).toLocaleDateString('sv-SE');}catch(e){return iso||'–';}}
+function toast(msg,type='ok'){const t=document.getElementById('toast');t.style.background=type==='err'?'var(--red-bg)':type==='warn'?'var(--amber-bg)':'var(--green-bg)';t.style.color=type==='err'?'var(--red-text)':type==='warn'?'var(--amber-text)':'var(--green-text)';t.innerHTML=(type==='ok'?'<i class="ti ti-check"></i>':'<i class="ti ti-x"></i>')+' '+msg;t.style.opacity='1';t.style.transform='translateY(0)';setTimeout(()=>{t.style.opacity='0';t.style.transform='translateY(6px)';},2800);}
+function doLogout(){sessionStorage.setItem('ccs_logged_out','1');sessionStorage.removeItem('ccs_session');sessionStorage.removeItem('ccs_portal_user');window.location.replace('index.html');}
+</script>
+</body>
+</html>
