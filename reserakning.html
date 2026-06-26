@@ -216,92 +216,125 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
 const GH_REPO        = 'CCSthlm/besiktning-camping';
 const PATH_RAKNINGAR = 'reserakning/rakningar.json';
 const PATH_INST      = 'reserakning/installningar.json';
+const STATUS_LABEL   = {utkast:'Utkast',inskickad:'Inskickad',godkand:'Godkänd',utbetald:'Utbetald',nekad:'Nekad'};
+const STATUS_CLASS   = {utkast:'s-utkast',inskickad:'s-inskickad',godkand:'s-godkand',utbetald:'s-utbetald',nekad:'s-nekad'};
+const CAMPINGAR      = ['CC Björkö Örns Camping','CC Östnora Camping','CC Kapellskärs Camping','CC Mista Camping','CC Storsveds Camping','CC Örstigs Camping','Gräddös Pärla Kök & Bar','Östnora Kök & Bar','Sektionen'];
 
-const STATUS_LABEL = {utkast:'Utkast',inskickad:'Inskickad',godkand:'Godkänd',utbetald:'Utbetald',nekad:'Nekad'};
-const STATUS_CLASS = {utkast:'s-utkast',inskickad:'s-inskickad',godkand:'s-godkand',utbetald:'s-utbetald',nekad:'s-nekad'};
-const CAMPINGAR = ['CC Björkö Örns Camping','CC Östnora Camping','CC Kapellskärs Camping','CC Mista Camping','CC Storsveds Camping','CC Örstigs Camping','Gräddös Pärla Kök & Bar','Östnora Kök & Bar','Sektionen'];
-
-let _user = null;
-let _rakningar = {rakningar:[]};
-let _inst = {kmBil:0.25, kmHusbil:0.40};
+// ── STATE ─────────────────────────────────────────────────────────────────
+let _user       = null;
+let _rakningar  = { rakningar: [] };
+let _inst       = { kmBil: 0.25, kmHusbil: 0.40 };
 let _currentTab = 'aktiv';
-const _sha = { '_rakningSha': null, '_instSha': null };
+let _shaRak     = null;   // SHA för rakningar.json
+let _shaInst    = null;   // SHA för installningar.json
 
+// ── INIT ──────────────────────────────────────────────────────────────────
 (async function init() {
   const sess = sessionStorage.getItem('ccs_session') || sessionStorage.getItem('ccs_portal_user');
   if (!sess) { window.location.replace('index.html'); return; }
   try { _user = JSON.parse(sess); } catch(e) { window.location.replace('index.html'); return; }
 
-  const initials = _user.name.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase();
-  document.getElementById('tb-avatar').textContent = initials;
-  document.getElementById('tb-name').textContent = _user.name;
+  // Ensure user has a stable id
+  if (!_user.id) _user.id = _user.email || _user.name;
 
-  // Populate camping dropdown
+  document.getElementById('tb-avatar').textContent = _user.name.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase();
+  document.getElementById('tb-name').textContent   = _user.name;
+
   const sel = document.getElementById('ny-camping');
   CAMPINGAR.forEach(c => sel.insertAdjacentHTML('beforeend', `<option>${c}</option>`));
-
-  // Prefill name
   document.getElementById('ny-namn').value = _user.name || '';
 
-  await loadAll();
+  await loadRakningar();
+  await loadInst();
   applyMobileLayout();
   renderTab();
 })();
 
-async function loadAll() {
-  await Promise.all([
-    loadJSON(PATH_RAKNINGAR, '_rakningar', '_rakningSha'),
-    loadJSON(PATH_INST, '_inst', '_instSha'),
-  ]);
+// ── LOAD ──────────────────────────────────────────────────────────────────
+async function loadRakningar() {
+  const token = localStorage.getItem('gh_token') || '';
+  if (!token) return;
+  try {
+    const res = await fetch(
+      `https://api.github.com/repos/${GH_REPO}/contents/${PATH_RAKNINGAR}`,
+      { headers: { 'Authorization': 'token ' + token } }
+    );
+    if (res.status === 404) return; // Fil finns inte än
+    if (!res.ok) { console.error('loadRakningar HTTP', res.status); return; }
+    const gh    = await res.json();
+    _shaRak     = gh.sha;
+    const bytes = Uint8Array.from(atob(gh.content.replace(/\n/g, '')), c => c.charCodeAt(0));
+    const data  = JSON.parse(new TextDecoder('utf-8').decode(bytes));
+    _rakningar  = data;
+    if (!_rakningar.rakningar) _rakningar.rakningar = [];
+    console.log('Laddade rakningar:', _rakningar.rakningar.length, 'st, SHA:', _shaRak);
+  } catch(e) { console.error('loadRakningar', e); }
 }
 
-async function loadJSON(path, stateKey, shaKey) {
-  const token = localStorage.getItem('gh_token')||'';
-  if (!token) { console.warn('Ingen GitHub-token'); return; }
+async function loadInst() {
+  const token = localStorage.getItem('gh_token') || '';
+  if (!token) return;
   try {
-    const res = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/${path}`, {headers:{'Authorization':'token '+token}});
-    if (res.status === 404) { console.info('Fil saknas, skapas vid första sparning:', path); return; }
+    const res = await fetch(
+      `https://api.github.com/repos/${GH_REPO}/contents/${PATH_INST}`,
+      { headers: { 'Authorization': 'token ' + token } }
+    );
+    if (res.status === 404) return;
     if (!res.ok) return;
-    const gh = await res.json();
-    _sha[shaKey] = gh.sha;
-    const bytes = Uint8Array.from(atob(gh.content.replace(/\n/g,'')), c=>c.charCodeAt(0));
-    const parsed = JSON.parse(new TextDecoder('utf-8').decode(bytes));
-    if (stateKey === '_rakningar') { _rakningar = parsed; if (!_rakningar.rakningar) _rakningar.rakningar = []; }
-    if (stateKey === '_inst')      { _inst = parsed; }
-  } catch(e) { console.warn(path, e.message); }
+    const gh   = await res.json();
+    _shaInst   = gh.sha;
+    const bytes = Uint8Array.from(atob(gh.content.replace(/\n/g, '')), c => c.charCodeAt(0));
+    _inst      = JSON.parse(new TextDecoder('utf-8').decode(bytes));
+    console.log('Laddade inst:', _inst);
+  } catch(e) { console.error('loadInst', e); }
 }
 
-async function saveJSON(path, stateKey, shaKey, msg) {
-  const token = localStorage.getItem('gh_token')||'';
-  if (!token) { toast('GitHub-token saknas','warn'); return; }
-  const url = `https://api.github.com/repos/${GH_REPO}/contents/${path}`;
+// ── SAVE ──────────────────────────────────────────────────────────────────
+async function saveRakningar(msg) {
+  const token = localStorage.getItem('gh_token') || '';
+  if (!token) { toast('GitHub-token saknas', 'warn'); return false; }
+  const url = `https://api.github.com/repos/${GH_REPO}/contents/${PATH_RAKNINGAR}`;
   try {
-    if (!_sha[shaKey]) {
-      const chk = await fetch(url, {headers:{'Authorization':'token '+token}});
-      if (chk.ok) _sha[shaKey] = (await chk.json()).sha;
+    // Hämta alltid senaste SHA för att undvika konflikter
+    if (!_shaRak) {
+      const chk = await fetch(url, { headers: { 'Authorization': 'token ' + token } });
+      if (chk.ok) _shaRak = (await chk.json()).sha;
     }
-    const data = stateKey === '_rakningar' ? _rakningar : _inst;
-    console.log('Sparar:', path, JSON.stringify(data).slice(0,80)+'…');
-    const json = JSON.stringify(data, null, 2);
-    const enc = new TextEncoder().encode(json);
+    const json    = JSON.stringify(_rakningar, null, 2);
+    const encoded = new TextEncoder().encode(json);
     let b64 = '';
-    for (let i=0; i<enc.length; i+=8192) b64 += String.fromCharCode(...enc.slice(i,i+8192));
-    const content = btoa(b64);
-    const payload = {message: msg+' '+today(), content, branch:'main'};
-    if (_sha[shaKey]) payload.sha = _sha[shaKey];
-    const res = await fetch(url, {method:'PUT', headers:{'Authorization':'token '+token,'Content-Type':'application/json'}, body:JSON.stringify(payload)});
+    for (let i = 0; i < encoded.length; i += 8192) {
+      b64 += String.fromCharCode(...encoded.slice(i, i + 8192));
+    }
+    const b64content = btoa(b64);
+    const payload = { message: msg + ' ' + today(), content: b64content, branch: 'main' };
+    if (_shaRak) payload.sha = _shaRak;
+
+    console.log('Sparar rakningar:', JSON.stringify(_rakningar).slice(0, 120));
+
+    const res = await fetch(url, {
+      method: 'PUT',
+      headers: { 'Authorization': 'token ' + token, 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
     const d = await res.json();
-    if (!res.ok) throw new Error(d.message||res.status);
-    _sha[shaKey] = d.content?.sha || _sha[shaKey];
-  } catch(e) { toast('Fel: '+e.message,'err'); throw e; }
+    if (!res.ok) throw new Error(d.message || 'HTTP ' + res.status);
+    _shaRak = d.content?.sha || _shaRak;
+    console.log('Sparat! Ny SHA:', _shaRak);
+    return true;
+  } catch(e) {
+    console.error('saveRakningar', e);
+    toast('Fel vid sparande: ' + e.message, 'err');
+    return false;
+  }
 }
 
-// ── TABS ───────────────────────────────────────────────────────────────────
+// ── TABS ──────────────────────────────────────────────────────────────────
 function showTab(tab) {
   _currentTab = tab;
-  ['aktiv','historik'].forEach(t => {
-    document.getElementById('tab-'+t)?.classList.toggle('active', t===tab);
-    document.getElementById('bnav-'+t)?.classList.toggle('active', t===tab);
+  ['aktiv', 'historik'].forEach(t => {
+    document.getElementById('tab-' + t)?.classList.toggle('active', t === tab);
+    document.getElementById('bnav-' + t)?.classList.toggle('active', t === tab);
   });
   renderTab();
 }
@@ -311,9 +344,13 @@ function renderTab() {
   else renderHistorik();
 }
 
-// ── AKTIV RÄKNING ──────────────────────────────────────────────────────────
+// ── AKTIV RÄKNING ─────────────────────────────────────────────────────────
+function getUserId() {
+  return _user.id || _user.email || _user.name;
+}
+
 function getAktiv() {
-  return (_rakningar.rakningar||[]).find(r => r.userId === _user.id && r.status === 'utkast');
+  return (_rakningar.rakningar || []).find(r => r.userId === getUserId() && r.status === 'utkast');
 }
 
 function renderAktiv() {
@@ -321,50 +358,49 @@ function renderAktiv() {
   const c = document.getElementById('main-content');
   if (!aktiv) {
     c.innerHTML = `
-      <div class="empty"><i class="ti ti-file-plus" style="color:var(--accent)"></i>
+      <div class="empty">
+        <i class="ti ti-file-plus" style="color:var(--accent)"></i>
         <div style="font-size:16px;font-weight:600;margin-bottom:8px">Ingen aktiv reseräkning</div>
         <div style="font-size:13px;color:var(--text2);margin-bottom:20px">Skapa en ny räkning och lägg till dina resor löpande.</div>
         <button class="btn-primary" onclick="openModal('modal-ny')"><i class="ti ti-plus"></i> Skapa ny räkning</button>
       </div>`;
     return;
   }
-  const resor = aktiv.resor || [];
-  const totKm = resor.reduce((s,r)=>s+Number(r.km||0), 0);
-  const totEr = resor.reduce((s,r)=>s+Number(r.ersattning||0), 0);
-  const canSign = resor.length > 0 && aktiv.namn && aktiv.konto;
+  const resor    = aktiv.resor || [];
+  const totKm    = resor.reduce((s, r) => s + Number(r.km || 0), 0);
+  const totEr    = resor.reduce((s, r) => s + Number(r.ersattning || 0), 0);
+  const canSign  = resor.length > 0;
 
   c.innerHTML = `
-    <!-- Räkningshuvud -->
     <div class="card">
       <div class="card-header">
-        <span class="card-title"><i class="ti ti-file-text"></i> ${aktiv.period||'Reseräkning'}</span>
+        <span class="card-title"><i class="ti ti-file-text"></i> ${aktiv.period || 'Reseräkning'}</span>
         <span class="status-badge ${STATUS_CLASS[aktiv.status]}">${STATUS_LABEL[aktiv.status]}</span>
       </div>
       <div class="card-body">
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:13px">
-          <div><span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.04em">Namn</span><div style="margin-top:3px;font-weight:500">${aktiv.namn||'–'}</div></div>
-          <div><span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.04em">Kontonummer</span><div style="margin-top:3px;font-family:monospace">${aktiv.konto||'–'}</div></div>
-          <div><span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.04em">Camping</span><div style="margin-top:3px">${aktiv.camping||'–'}</div></div>
-          <div><span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.04em">Syfte</span><div style="margin-top:3px">${aktiv.syfte||'–'}</div></div>
+          <div><span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.04em">Namn</span><div style="margin-top:3px;font-weight:500">${aktiv.namn || '–'}</div></div>
+          <div><span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.04em">Kontonummer</span><div style="margin-top:3px;font-family:monospace;font-size:12px">${aktiv.konto || '–'}</div></div>
+          <div><span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.04em">Camping</span><div style="margin-top:3px">${aktiv.camping || '–'}</div></div>
+          <div><span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.04em">Syfte</span><div style="margin-top:3px">${aktiv.syfte || '–'}</div></div>
         </div>
       </div>
     </div>
 
-    <!-- Resor -->
     <div class="card">
       <div class="card-header">
         <span class="card-title"><i class="ti ti-route"></i> Resor (${resor.length})</span>
         <button class="btn-primary" onclick="openNyResa()"><i class="ti ti-plus"></i> Lägg till resa</button>
       </div>
       <div class="card-body" style="padding:12px 14px">
-        ${resor.length ? resor.map((r,i) => `
+        ${resor.length ? resor.map((r, i) => `
           <div class="resa-row">
             <div class="resa-body">
-              <div class="resa-datum">${r.datum||'–'} · ${r.fordonstyp==='husbil'?'Husbil/Bil+Husvagn':'Bil'}</div>
-              <div class="resa-strack">${r.stracka||'–'}</div>
+              <div class="resa-datum">${r.datum || '–'} · ${r.fordonstyp === 'husbil' ? 'Husbil/Bil+Husvagn' : 'Bil'}</div>
+              <div class="resa-strack">${r.stracka || '–'}</div>
               <div class="resa-details">
                 <span><i class="ti ti-road" style="font-size:11px"></i> ${r.km} km</span>
-                ${r.syfte?`<span>${r.syfte}</span>`:''}
+                ${r.syfte ? `<span>${r.syfte}</span>` : ''}
               </div>
             </div>
             <div class="resa-ersattning">${fmtKr(r.ersattning)}</div>
@@ -377,7 +413,6 @@ function renderAktiv() {
       </div>
     </div>
 
-    <!-- Summering + Signering -->
     <div class="card">
       <div class="card-header"><span class="card-title"><i class="ti ti-calculator"></i> Summering</span></div>
       <div class="card-body">
@@ -386,30 +421,31 @@ function renderAktiv() {
           <div class="summary-row"><span class="summary-label">Totalt antal km</span><span>${totKm} km</span></div>
           <div class="summary-row"><span class="summary-label">Total ersättning</span><span>${fmtKr(totEr)}</span></div>
         </div>
-        <button class="btn-sign" onclick="signeraRakning()" ${canSign?'':'disabled'}>
+        <button class="btn-sign" onclick="signeraRakning()" ${canSign ? '' : 'disabled'}>
           <i class="ti ti-pen"></i> Signera och skicka in
         </button>
-        ${!canSign?`<div style="text-align:center;font-size:11px;color:var(--text3);margin-top:8px">Lägg till minst en resa för att kunna signera</div>`:''}
+        ${!canSign ? `<div style="text-align:center;font-size:11px;color:var(--text3);margin-top:8px">Lägg till minst en resa för att kunna signera</div>` : ''}
       </div>
     </div>`;
 }
 
-// ── HISTORIK ───────────────────────────────────────────────────────────────
+// ── HISTORIK ──────────────────────────────────────────────────────────────
 function renderHistorik() {
-  const hist = (_rakningar.rakningar||[]).filter(r => r.userId === _user.id && r.status !== 'utkast')
-    .sort((a,b) => b.skapad?.localeCompare(a.skapad||''));
+  const hist = (_rakningar.rakningar || [])
+    .filter(r => r.userId === getUserId() && r.status !== 'utkast')
+    .sort((a, b) => (b.signeradTs || '').localeCompare(a.signeradTs || ''));
   const c = document.getElementById('main-content');
   if (!hist.length) {
     c.innerHTML = '<div class="empty"><i class="ti ti-history"></i>Inga inskickade räkningar</div>';
     return;
   }
   c.innerHTML = hist.map(r => {
-    const totEr = (r.resor||[]).reduce((s,x)=>s+Number(x.ersattning||0),0);
-    return `<div class="card" style="cursor:pointer" onclick="openDetalj('${r.id}')">
+    const totEr = (r.resor || []).reduce((s, x) => s + Number(x.ersattning || 0), 0);
+    return `<div class="card">
       <div class="card-body" style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
         <div>
-          <div style="font-weight:600;margin-bottom:4px">${r.period||'–'}</div>
-          <div style="font-size:12px;color:var(--text2)">${r.camping||'–'} · ${(r.resor||[]).length} resor · ${(r.resor||[]).reduce((s,x)=>s+Number(x.km||0),0)} km</div>
+          <div style="font-weight:600;margin-bottom:4px">${r.period || '–'}</div>
+          <div style="font-size:12px;color:var(--text2)">${r.camping || '–'} · ${(r.resor || []).length} resor · ${(r.resor || []).reduce((s, x) => s + Number(x.km || 0), 0)} km</div>
         </div>
         <div style="text-align:right">
           <div style="font-size:18px;font-weight:700;color:var(--accent)">${fmtKr(totEr)}</div>
@@ -420,163 +456,158 @@ function renderHistorik() {
   }).join('');
 }
 
-// ── NY RÄKNING ─────────────────────────────────────────────────────────────
-function saveNyRakning() {
+// ── NY RÄKNING ────────────────────────────────────────────────────────────
+async function saveNyRakning() {
   const namn   = document.getElementById('ny-namn').value.trim();
   const konto  = document.getElementById('ny-konto').value.trim();
   const camping= document.getElementById('ny-camping').value;
   const period = document.getElementById('ny-period').value.trim();
-  if (!namn)   { toast('Ange namn','warn'); return; }
-  if (!konto)  { toast('Ange kontonummer','warn'); return; }
-  if (!period) { toast('Ange period','warn'); return; }
+  if (!namn)   { toast('Ange namn', 'warn'); return; }
+  if (!konto)  { toast('Ange kontonummer', 'warn'); return; }
+  if (!period) { toast('Ange period', 'warn'); return; }
 
-  if (!_rakningar.rakningar) _rakningar.rakningar = [];
-  _rakningar.rakningar.push({
-    id: 'RR-' + Date.now(),
-    userId: _user.id || _user.email || _user.name,
+  const rakning = {
+    id:       'RR-' + Date.now(),
+    userId:   getUserId(),
     namn, konto, camping, period,
-    syfte: document.getElementById('ny-syfte').value.trim(),
-    resor: [],
-    status: 'utkast',
-    skapad: nowISO(),
+    syfte:    document.getElementById('ny-syfte').value.trim(),
+    resor:    [],
+    status:   'utkast',
+    skapad:   nowISO(),
     skapadAv: _user.name,
-  });
-  saveJSON(PATH_RAKNINGAR,'_rakningar','_rakningSha','Ny reseräkning').then(()=>{
-    toast('Räkning skapad','ok');
+  };
+  _rakningar.rakningar.push(rakning);
+
+  const ok = await saveRakningar('Ny reseräkning');
+  if (ok) {
+    toast('Räkning skapad', 'ok');
     closeModal('modal-ny');
     renderTab();
-  });
+  } else {
+    // Rollback
+    _rakningar.rakningar.pop();
+  }
 }
 
-// ── RESA ───────────────────────────────────────────────────────────────────
+// ── RESA ──────────────────────────────────────────────────────────────────
 function openNyResa() {
   document.getElementById('resa-modal-title').textContent = 'Lägg till resa';
-  document.getElementById('r-edit-idx').value = '';
-  document.getElementById('r-datum').value = today();
-  document.getElementById('r-fordonstyp').value = 'bil';
-  document.getElementById('r-stracka').value = '';
-  document.getElementById('r-km').value = '';
-  document.getElementById('r-ersattning').value = '';
-  document.getElementById('r-syfte').value = '';
+  document.getElementById('r-edit-idx').value             = '';
+  document.getElementById('r-datum').value                = today();
+  document.getElementById('r-fordonstyp').value           = 'bil';
+  document.getElementById('r-stracka').value              = '';
+  document.getElementById('r-km').value                   = '';
+  document.getElementById('r-ersattning').value           = '';
+  document.getElementById('r-syfte').value                = '';
   openModal('modal-resa');
 }
 
 function editResa(i) {
-  const aktiv = getAktiv();
-  if (!aktiv) return;
+  const aktiv = getAktiv(); if (!aktiv) return;
   const r = aktiv.resor[i];
   document.getElementById('resa-modal-title').textContent = 'Redigera resa';
-  document.getElementById('r-edit-idx').value = i;
-  document.getElementById('r-datum').value = r.datum||'';
-  document.getElementById('r-fordonstyp').value = r.fordonstyp||'bil';
-  document.getElementById('r-stracka').value = r.stracka||'';
-  document.getElementById('r-km').value = r.km||'';
-  document.getElementById('r-ersattning').value = fmtKr(r.ersattning);
-  document.getElementById('r-syfte').value = r.syfte||'';
+  document.getElementById('r-edit-idx').value             = i;
+  document.getElementById('r-datum').value                = r.datum || '';
+  document.getElementById('r-fordonstyp').value           = r.fordonstyp || 'bil';
+  document.getElementById('r-stracka').value              = r.stracka || '';
+  document.getElementById('r-km').value                   = r.km || '';
+  document.getElementById('r-ersattning').value           = fmtKr(r.ersattning);
+  document.getElementById('r-syfte').value                = r.syfte || '';
   openModal('modal-resa');
 }
 
 function calcErsattning() {
-  const km  = parseFloat(document.getElementById('r-km').value)||0;
-  const typ = document.getElementById('r-fordonstyp').value;
-  const rate = typ==='husbil' ? (_inst.kmHusbil||0.40) : (_inst.kmBil||0.25);
+  const km   = parseFloat(document.getElementById('r-km').value) || 0;
+  const typ  = document.getElementById('r-fordonstyp').value;
+  const rate = typ === 'husbil' ? (_inst.kmHusbil || 0.40) : (_inst.kmBil || 0.25);
   document.getElementById('r-ersattning').value = km ? fmtKr(km * rate) : '';
 }
-
 document.getElementById('r-fordonstyp').addEventListener('change', calcErsattning);
+document.getElementById('r-km').addEventListener('input', calcErsattning);
 
-function saveResa() {
+async function saveResa() {
   const datum   = document.getElementById('r-datum').value;
   const stracka = document.getElementById('r-stracka').value.trim();
-  const km      = parseFloat(document.getElementById('r-km').value)||0;
-  if (!datum)   { toast('Ange datum','warn'); return; }
-  if (!stracka) { toast('Ange körsträcka','warn'); return; }
-  if (!km)      { toast('Ange antal km','warn'); return; }
+  const km      = parseFloat(document.getElementById('r-km').value) || 0;
+  if (!datum)   { toast('Ange datum', 'warn'); return; }
+  if (!stracka) { toast('Ange körsträcka', 'warn'); return; }
+  if (!km)      { toast('Ange antal km', 'warn'); return; }
 
-  const typ  = document.getElementById('r-fordonstyp').value;
-  const rate = typ==='husbil' ? (_inst.kmHusbil||0.40) : (_inst.kmBil||0.25);
-  const resa = {
-    datum, fordonstyp:typ, stracka, km,
-    ersattning: Math.round(km * rate * 100)/100,
+  const aktiv = getAktiv(); if (!aktiv) return;
+  const typ   = document.getElementById('r-fordonstyp').value;
+  const rate  = typ === 'husbil' ? (_inst.kmHusbil || 0.40) : (_inst.kmBil || 0.25);
+  const resa  = {
+    datum, fordonstyp: typ, stracka, km,
+    ersattning: Math.round(km * rate * 100) / 100,
     syfte: document.getElementById('r-syfte').value.trim(),
     ts: nowISO(),
   };
 
-  const aktiv = getAktiv();
-  if (!aktiv) return;
   const editIdx = document.getElementById('r-edit-idx').value;
+  const backup  = [...aktiv.resor];
   if (editIdx !== '') aktiv.resor[parseInt(editIdx)] = resa;
   else aktiv.resor.push(resa);
-  aktiv.resor.sort((a,b)=>a.datum.localeCompare(b.datum));
+  aktiv.resor.sort((a, b) => a.datum.localeCompare(b.datum));
 
-  saveJSON(PATH_RAKNINGAR,'_rakningar','_rakningSha','Resa uppdaterad').then(()=>{
-    toast('Resa sparad','ok');
+  const ok = await saveRakningar('Resa uppdaterad');
+  if (ok) {
+    toast('Resa sparad', 'ok');
     closeModal('modal-resa');
     renderTab();
-  });
+  } else {
+    aktiv.resor = backup; // Rollback
+  }
 }
 
-function deleteResa(i) {
+async function deleteResa(i) {
   if (!confirm('Ta bort denna resa?')) return;
-  const aktiv = getAktiv();
-  if (!aktiv) return;
+  const aktiv = getAktiv(); if (!aktiv) return;
+  const backup = [...aktiv.resor];
   aktiv.resor.splice(i, 1);
-  saveJSON(PATH_RAKNINGAR,'_rakningar','_rakningSha','Resa borttagen').then(()=>{
-    toast('Resa borttagen','ok');
-    renderTab();
-  });
+  const ok = await saveRakningar('Resa borttagen');
+  if (ok) { toast('Resa borttagen', 'ok'); renderTab(); }
+  else    { aktiv.resor = backup; }
 }
 
-// ── SIGNERA ────────────────────────────────────────────────────────────────
+// ── SIGNERA ───────────────────────────────────────────────────────────────
 async function signeraRakning() {
-  const aktiv = getAktiv();
-  if (!aktiv) return;
-  if (!confirm(`Signera och skicka in reseräkning för ${aktiv.period}?\n\nTotalt: ${fmtKr(aktiv.resor.reduce((s,r)=>s+Number(r.ersattning||0),0))}\n\nEfter signering kan räkningen inte redigeras.`)) return;
-  aktiv.status = 'inskickad';
+  const aktiv = getAktiv(); if (!aktiv) return;
+  const tot   = aktiv.resor.reduce((s, r) => s + Number(r.ersattning || 0), 0);
+  if (!confirm(`Signera och skicka in reseräkning för ${aktiv.period}?\n\nTotalt: ${fmtKr(tot)}\n\nEfter signering kan räkningen inte redigeras.`)) return;
+  aktiv.status     = 'inskickad';
   aktiv.signeradAv = _user.name;
   aktiv.signeradTs = nowISO();
-  try {
-    await saveJSON(PATH_RAKNINGAR,'_rakningar','_rakningSha','Reseräkning signerad');
-    toast('Räkning inskickad ✓','ok');
-    renderTab();
-  } catch(e) {}
+  const ok = await saveRakningar('Reseräkning signerad');
+  if (ok) { toast('Räkning inskickad ✓', 'ok'); renderTab(); }
+  else    { aktiv.status = 'utkast'; delete aktiv.signeradAv; delete aktiv.signeradTs; }
 }
 
-// ── DETALJ ─────────────────────────────────────────────────────────────────
-function openDetalj(id) {
-  const r = (_rakningar.rakningar||[]).find(x=>x.id===id);
-  if (!r) return;
-  // Simple detail view — open in place
-  showTab('historik');
-  // TODO: could expand to full modal if needed
-}
-
-// ── HELPERS ────────────────────────────────────────────────────────────────
+// ── HELPERS ───────────────────────────────────────────────────────────────
 function applyMobileLayout() {
-  const mob = window.innerWidth <= 600;
+  const mob     = window.innerWidth <= 600;
   const navTabs = document.querySelector('.nav-tabs');
   const botNav  = document.getElementById('bottom-nav');
   if (navTabs) navTabs.style.display = mob ? 'none' : '';
-  if (botNav)  botNav.style.display  = mob ? 'flex' : 'none';
+  if (botNav)  botNav.style.display  = mob ? 'flex'  : 'none';
 }
 window.addEventListener('resize', applyMobileLayout);
 
-function fmtKr(v) { return (Math.round((v||0)*100)/100).toLocaleString('sv-SE',{minimumFractionDigits:2,maximumFractionDigits:2})+' kr'; }
-function today()  { return new Date().toISOString().slice(0,10); }
-function nowISO() { return new Date().toISOString(); }
-function openModal(id) { document.getElementById(id).classList.add('show'); }
-function closeModal(id){ document.getElementById(id).classList.remove('show'); }
-document.addEventListener('click',e=>{if(e.target.classList.contains('modal-overlay'))e.target.classList.remove('show');});
-document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.modal-overlay.show').forEach(m=>m.classList.remove('show'));});
-function toast(msg,type='ok'){
-  const t=document.getElementById('toast');
-  t.style.background=type==='err'?'var(--red-bg)':type==='warn'?'var(--amber-bg)':'var(--green-bg)';
-  t.style.color=type==='err'?'var(--red-text)':type==='warn'?'var(--amber-text)':'var(--green-text)';
-  t.innerHTML=(type==='ok'?'<i class="ti ti-check"></i>':type==='warn'?'<i class="ti ti-alert-triangle"></i>':'<i class="ti ti-x"></i>')+' '+msg;
-  t.style.opacity='1';t.style.transform='translateY(0)';
-  setTimeout(()=>{t.style.opacity='0';t.style.transform='translateY(6px)';},2800);
+function fmtKr(v)  { return (Math.round((v || 0) * 100) / 100).toLocaleString('sv-SE', {minimumFractionDigits:2, maximumFractionDigits:2}) + ' kr'; }
+function today()   { return new Date().toISOString().slice(0, 10); }
+function nowISO()  { return new Date().toISOString(); }
+function openModal(id)  { document.getElementById(id).classList.add('show'); }
+function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+document.addEventListener('click', e => { if (e.target.classList.contains('modal-overlay')) e.target.classList.remove('show'); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') document.querySelectorAll('.modal-overlay.show').forEach(m => m.classList.remove('show')); });
+function toast(msg, type='ok') {
+  const t = document.getElementById('toast');
+  t.style.background = type==='err' ? 'var(--red-bg)' : type==='warn' ? 'var(--amber-bg)' : 'var(--green-bg)';
+  t.style.color      = type==='err' ? 'var(--red-text)' : type==='warn' ? 'var(--amber-text)' : 'var(--green-text)';
+  t.innerHTML = (type==='ok' ? '<i class="ti ti-check"></i>' : type==='warn' ? '<i class="ti ti-alert-triangle"></i>' : '<i class="ti ti-x"></i>') + ' ' + msg;
+  t.style.opacity = '1'; t.style.transform = 'translateY(0)';
+  setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translateY(6px)'; }, 2800);
 }
-function doLogout(){sessionStorage.setItem('ccs_logged_out','1');sessionStorage.removeItem('ccs_session');sessionStorage.removeItem('ccs_portal_user');window.location.replace('index.html');}
+function doLogout() { sessionStorage.setItem('ccs_logged_out','1'); sessionStorage.removeItem('ccs_session'); sessionStorage.removeItem('ccs_portal_user'); window.location.replace('index.html'); }
 </script>
 </body>
 </html>
