@@ -40,6 +40,19 @@
       "status": "utkast",
       "skapad": "2026-06-26T12:42:33.302Z",
       "skapadAv": "Massimo Johansson"
+    },
+    {
+      "id": "RR-1782478403937",
+      "userId": "domain_oktoberfest2027@cc-camping.se",
+      "namn": "Utbildningsresa Oktoberfest 2027",
+      "konto": "1212121212",
+      "camping": "CC Björkö Örns Camping",
+      "period": "Juni 26",
+      "syfte": "Testar",
+      "resor": [],
+      "status": "utkast",
+      "skapad": "2026-06-26T12:53:23.937Z",
+      "skapadAv": "Utbildningsresa Oktoberfest 2027"
     }
   ]
 }
