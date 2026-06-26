@@ -707,7 +707,6 @@ async function loginMS_continue(account) {
 
 // ─── PORTAL VIEW ──────────────────────────────────────────────────────────
 async function showPortal() {
-  console.log('Inloggad:', _currentUser.name, '| adminRoles:', JSON.stringify(_currentUser.adminRoles || []), '| role:', _currentUser.role);
   document.getElementById('screen-login').classList.remove('active');
   document.getElementById('screen-portal').classList.add('active');
   const u = _currentUser;
@@ -854,16 +853,14 @@ function openNewsArchive() {
 function renderApps() {
   const u = _currentUser;
   const userApps = u.apps || [];
-  const hasAdminRole = (u.adminRoles||[]).length > 0 || u.role === 'Admin';
+  const userRoles = u.adminRoles || (u.role === 'Admin' ? ['global'] : []);
+  const hasAdminRole = userRoles.some(r => ['global','sektions'].includes(r)) || u.role === 'Admin';
   const accessible = ALL_APPS.filter(app => {
-    const userRoles = u.adminRoles || (u.role === 'Admin' ? ['global'] : []);
-    // requiredRoles — visas om användaren har minst en av rollerna, oavsett admin-status
+    // requiredRoles — visas om användaren har rollen, oavsett admin-status
     if (app.requiredRoles) {
-      const has = userRoles.some(r => app.requiredRoles.includes(r));
-      console.log(`App ${app.id} (requiredRoles): userRoles=${JSON.stringify(userRoles)}, required=${JSON.stringify(app.requiredRoles)}, result=${has}`);
-      return has;
+      return userRoles.some(r => app.requiredRoles.includes(r));
     }
-    // adminRolesRequired — kräver admin-roll
+    // adminRolesRequired — kräver specifik adminroll
     if (app.adminRolesRequired) {
       return userRoles.some(r => app.adminRolesRequired.includes(r));
     }
@@ -871,7 +868,7 @@ function renderApps() {
     if (u.domainOnly) return app.roles.length === 0;
     // Empty roles = accessible to all logged-in users
     if (app.roles.length === 0) return true;
-    // Admin page — requires adminRoles or legacy Admin role
+    // Admin page — requires global or sektions role
     if (app.id === 'admin') return hasAdminRole;
     // Other apps — role match + app assigned to user (or user is Admin)
     return app.roles.includes(u.role) && (u.role==='Admin' || userApps.includes(app.id));
