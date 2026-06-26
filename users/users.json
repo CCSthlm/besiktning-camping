@@ -59,9 +59,7 @@
       "email": "dorry.johansson@cc-camping.se",
       "pin": "1212",
       "pnr": "",
-      "adminRoles": [
-        "reserakning-utbetalare"
-      ],
+      "adminRoles": [],
       "role": "Användare",
       "active": true,
       "apps": [],
