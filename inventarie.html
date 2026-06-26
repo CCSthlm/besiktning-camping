@@ -23,27 +23,23 @@
 }
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:var(--bg3);color:var(--text);min-height:100vh;}
 
-/* PORTAL TOPBAR */
-.portal-topbar{background:var(--bg2);border-bottom:1px solid var(--border2);padding:14px 20px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;position:sticky;top:0;z-index:10;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:var(--bg3);color:var(--text);min-height:100vh;}
+.portal-topbar{background:var(--bg2);border-bottom:1px solid var(--border2);padding:12px 20px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;position:sticky;top:0;z-index:10;}
 .portal-logo{display:flex;align-items:center;gap:10px;}
-.portal-logo-icon{font-size:26px;}
-.portal-logo-text{font-size:16px;font-weight:700;color:var(--text);}
-.portal-logo-sub{font-size:11px;color:var(--text3);}
-.portal-user{display:flex;align-items:center;gap:10px;}
-.portal-avatar{width:32px;height:32px;border-radius:50%;background:var(--accent);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-.portal-username{font-size:13px;font-weight:500;color:var(--text2);}
+.portal-logo-icon{font-size:24px;}
+.portal-logo-text{font-size:15px;font-weight:700;color:var(--text);}
+.portal-logo-sub{font-size:10px;color:var(--text3);}
+.portal-user{display:flex;align-items:center;gap:8px;}
+.portal-avatar{width:30px;height:30px;border-radius:50%;background:var(--accent);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.portal-username{font-size:12px;font-weight:500;color:var(--text2);}
 .portal-role{font-size:10px;color:var(--text3);}
-
-/* NAV TABS */
-.nav-tabs{background:var(--bg2);border-bottom:1px solid var(--border2);padding:0 20px;display:flex;gap:0;overflow-x:auto;}
+.nav-tabs{background:var(--bg2);border-bottom:1px solid var(--border2);padding:0 20px;display:flex;gap:0;overflow-x:auto;position:sticky;top:57px;z-index:9;}
 .nav-tabs::-webkit-scrollbar{display:none;}
-.nav-tab-item{padding:10px 14px;font-size:13px;font-weight:500;color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all .15s;display:flex;align-items:center;gap:6px;font-family:inherit;background:none;border-top:none;border-left:none;border-right:none;}
+.nav-tab-item{padding:10px 14px;font-size:13px;font-weight:500;color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all .15s;display:flex;align-items:center;gap:6px;font-family:inherit;background:none;border-top:none;border-left:none;border-right:none;border-bottom:2px solid transparent;}
 .nav-tab-item:hover{color:var(--text);}
 .nav-tab-item.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:600;}
 .nav-tab-item i{font-size:14px;}
-
-/* MAIN */
-.main{flex:1;display:flex;flex-direction:column;min-height:100vh;}
+.main{display:flex;flex-direction:column;min-height:calc(100vh - 110px);}
 .topbar{padding:12px 20px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;}
 .topbar h1{font-size:16px;font-weight:700;}
 .topbar-sub{font-size:11px;color:var(--text2);}
@@ -190,15 +186,35 @@ tr:hover td{background:rgba(59,109,17,.02);}
 </head>
 <body>
 
+<div class="portal-topbar">
+  <div class="portal-logo">
+    <span class="portal-logo-icon">🏕️</span>
+    <div>
+      <div class="portal-logo-text">Inventarieregister</div>
+      <div class="portal-logo-sub">Caravan Club of Sweden – Stockholmssektionen</div>
+    </div>
+  </div>
+  <div class="portal-user">
+    <div class="portal-avatar" id="sb-avatar">?</div>
+    <div><div class="portal-username" id="sb-name">–</div><div class="portal-role" id="sb-role">Läsare</div></div>
+    <button onclick="window.location.href='index.html'" style="padding:6px 12px;background:var(--bg3);color:var(--text2);border:1px solid var(--border2);border-radius:var(--radius);font-size:12px;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:5px"><i class="ti ti-arrow-left"></i> Portal</button>
+    <button onclick="doLogout()" style="padding:6px 12px;background:var(--red-bg);color:var(--red);border:1px solid rgba(163,45,45,.2);border-radius:var(--radius);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:5px"><i class="ti ti-logout"></i> Logga ut</button>
+  </div>
+</div>
+
+<div class="nav-tabs">
+  <button class="nav-tab-item active" id="nav-alla" onclick="showView('alla')"><i class="ti ti-list"></i><span>Alla enheter</span></button>
+  <button class="nav-tab-item" id="nav-tradlost-nat" onclick="showView('tradlost-nat')"><i class="ti ti-wifi"></i><span>Trådlösa nät</span></button>
+  <button class="nav-tab-item" id="nav-ip-lista" onclick="showView('ip-lista')"><i class="ti ti-network"></i><span>IP-adresser</span></button>
+  <button class="nav-tab-item" id="nav-defekta" onclick="showView('defekta')"><i class="ti ti-alert-triangle" style="color:var(--red)"></i><span>Defekta</span></button>
+</div>
 
 <div class="main">
   <div class="topbar">
-    <div style="display:flex;align-items:center;gap:10px">
-<div><h1 id="view-title">Alla enheter</h1><div class="topbar-sub" id="view-sub">Samtliga inventarieposter</div></div>
-    </div>
+    <div><h1 id="view-title">Alla enheter</h1><div class="topbar-sub" id="view-sub">Samtliga inventarieposter</div></div>
     <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
       <div class="view-toggle">
-        <button class="view-btn active" id="vt-kort" onclick="setViewMode('kort')" title="Kortvvy"><i class="ti ti-layout-grid"></i></button>
+        <button class="view-btn active" id="vt-kort" onclick="setViewMode('kort')" title="Kortvy"><i class="ti ti-layout-grid"></i></button>
         <button class="view-btn" id="vt-lista" onclick="setViewMode('lista')" title="Listvy"><i class="ti ti-list"></i></button>
       </div>
       <button class="btn-secondary" onclick="exportExcel()"><i class="ti ti-table-export"></i> Excel</button>
