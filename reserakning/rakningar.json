@@ -27,6 +27,19 @@
       "statusKommentar": "Utbetalning 26 juni",
       "statusTs": "2026-06-26T12:40:30.821Z",
       "statusAv": "Massimo Johansson"
+    },
+    {
+      "id": "RR-1782477753302",
+      "userId": "admin1",
+      "namn": "Massimo Johansson",
+      "konto": "7511183571",
+      "camping": "CC Björkö Örns Camping",
+      "period": "Juni",
+      "syfte": "Körningar mellan campingar",
+      "resor": [],
+      "status": "utkast",
+      "skapad": "2026-06-26T12:42:33.302Z",
+      "skapadAv": "Massimo Johansson"
     }
   ]
 }
