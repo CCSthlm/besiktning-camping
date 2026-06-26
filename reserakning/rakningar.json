@@ -77,7 +77,17 @@
       "camping": "CC Björkö Örns Camping",
       "period": "Juni 26",
       "syfte": "Testar",
-      "resor": [],
+      "resor": [
+        {
+          "datum": "2026-06-26",
+          "fordonstyp": "bil",
+          "stracka": "Hemma - BÖ - Hemma",
+          "km": 240,
+          "ersattning": 600,
+          "syfte": "Månadsmöte, Ledningsgruppsmöte",
+          "ts": "2026-06-26T13:48:47.577Z"
+        }
+      ],
       "status": "utkast",
       "skapad": "2026-06-26T13:48:42.291Z",
       "skapadAv": "Utbildningsresa Oktoberfest 2027"
