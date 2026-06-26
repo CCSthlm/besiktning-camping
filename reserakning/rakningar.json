@@ -88,11 +88,14 @@
           "ts": "2026-06-26T13:48:47.577Z"
         }
       ],
-      "status": "inskickad",
+      "status": "nekad",
       "skapad": "2026-06-26T13:48:42.291Z",
       "skapadAv": "Utbildningsresa Oktoberfest 2027",
       "signeradAv": "Utbildningsresa Oktoberfest 2027",
-      "signeradTs": "2026-06-26T13:48:51.688Z"
+      "signeradTs": "2026-06-26T13:48:51.688Z",
+      "statusKommentar": "Gör om",
+      "statusTs": "2026-06-26T14:37:46.701Z",
+      "statusAv": "Dorry Johansson"
     },
     {
       "id": "RR-1782481862853",
