@@ -441,19 +441,93 @@ function renderHistorik() {
   }
   c.innerHTML = hist.map(r => {
     const totEr = (r.resor || []).reduce((s, x) => s + Number(x.ersattning || 0), 0);
-    return `<div class="card">
+    const totKm = (r.resor || []).reduce((s, x) => s + Number(x.km || 0), 0);
+    return `<div class="card" style="cursor:pointer" onclick="openDetalj('${r.id}')">
       <div class="card-body" style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
         <div>
           <div style="font-weight:600;margin-bottom:4px">${r.period || '–'}</div>
-          <div style="font-size:12px;color:var(--text2)">${r.camping || '–'} · ${(r.resor || []).length} resor · ${(r.resor || []).reduce((s, x) => s + Number(x.km || 0), 0)} km</div>
+          <div style="font-size:12px;color:var(--text2)">${r.camping || '–'} · ${(r.resor || []).length} resor · ${totKm} km</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:3px">Inskickad ${fmtDate(r.signeradTs)}</div>
         </div>
-        <div style="text-align:right">
+        <div style="text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:6px">
           <div style="font-size:18px;font-weight:700;color:var(--accent)">${fmtKr(totEr)}</div>
           <span class="status-badge ${STATUS_CLASS[r.status]}">${STATUS_LABEL[r.status]}</span>
         </div>
       </div>
     </div>`;
   }).join('');
+}
+
+function openDetalj(id) {
+  const r = (_rakningar.rakningar || []).find(x => x.id === id);
+  if (!r) return;
+  const totEr = (r.resor || []).reduce((s, x) => s + Number(x.ersattning || 0), 0);
+  const totKm = (r.resor || []).reduce((s, x) => s + Number(x.km || 0), 0);
+
+  // Build modal dynamically
+  let modal = document.getElementById('modal-detalj');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.className = 'modal-overlay';
+    modal.id = 'modal-detalj';
+    document.body.appendChild(modal);
+  }
+
+  modal.innerHTML = `
+    <div class="modal" style="max-width:600px">
+      <div class="modal-header">
+        <div>
+          <div class="modal-title">${r.period || '–'}</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px">${r.id} · <span class="status-badge ${STATUS_CLASS[r.status]}" style="font-size:10px">${STATUS_LABEL[r.status]}</span></div>
+        </div>
+        <button class="modal-close" onclick="closeModal('modal-detalj')"><i class="ti ti-x"></i></button>
+      </div>
+      <div class="modal-body">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;font-size:13px">
+          <div><div style="font-size:10px;font-weight:600;text-transform:uppercase;color:var(--text3);margin-bottom:3px">Namn</div><div style="font-weight:500">${r.namn || '–'}</div></div>
+          <div><div style="font-size:10px;font-weight:600;text-transform:uppercase;color:var(--text3);margin-bottom:3px">Kontonummer</div><div style="font-family:monospace;font-size:12px">${r.konto || '–'}</div></div>
+          <div><div style="font-size:10px;font-weight:600;text-transform:uppercase;color:var(--text3);margin-bottom:3px">Camping</div><div>${r.camping || '–'}</div></div>
+          <div><div style="font-size:10px;font-weight:600;text-transform:uppercase;color:var(--text3);margin-bottom:3px">Syfte</div><div>${r.syfte || '–'}</div></div>
+        </div>
+
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin-bottom:8px">Resor (${(r.resor||[]).length})</div>
+        ${(r.resor || []).map(re => `
+          <div style="background:var(--bg3);border-radius:var(--radius);padding:10px 13px;margin-bottom:7px">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
+              <div style="flex:1;min-width:0">
+                <div style="font-size:11px;color:var(--text3);margin-bottom:2px">${re.datum || '–'} · ${re.fordonstyp === 'husbil' ? 'Husbil / Bil+Husvagn' : 'Bil'}</div>
+                <div style="font-size:13px;font-weight:500;margin-bottom:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${re.stracka || '–'}</div>
+                <div style="font-size:11px;color:var(--text2);display:flex;gap:10px;flex-wrap:wrap">
+                  <span><i class="ti ti-road" style="font-size:11px"></i> ${re.km} km</span>
+                  ${re.syfte ? `<span>${re.syfte}</span>` : ''}
+                </div>
+              </div>
+              <div style="font-size:15px;font-weight:700;color:var(--accent);flex-shrink:0">${fmtKr(re.ersattning)}</div>
+            </div>
+          </div>`).join('')}
+
+        <div style="background:var(--green-bg);border-radius:var(--radius);padding:13px 15px;margin-top:10px">
+          <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px">
+            <span style="color:var(--text2)">Totalt antal km</span><span>${totKm} km</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:16px;font-weight:700">
+            <span style="color:var(--text2)">Total ersättning</span><span style="color:var(--accent)">${fmtKr(totEr)}</span>
+          </div>
+        </div>
+
+        ${r.statusKommentar ? `<div style="margin-top:12px;padding:10px 13px;background:var(--amber-bg);border-radius:var(--radius);font-size:12px;color:var(--amber-text)"><strong>Kommentar:</strong> ${r.statusKommentar}</div>` : ''}
+
+        <div style="margin-top:12px;font-size:11px;color:var(--text3)">
+          Signerad av ${r.signeradAv || '–'} · ${fmtDate(r.signeradTs)}
+          ${r.statusAv ? ` · Hanterad av ${r.statusAv} ${fmtDate(r.statusTs)}` : ''}
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="closeModal('modal-detalj')">Stäng</button>
+      </div>
+    </div>`;
+
+  openModal('modal-detalj');
 }
 
 // ── NY RÄKNING ────────────────────────────────────────────────────────────
@@ -593,6 +667,7 @@ function applyMobileLayout() {
 window.addEventListener('resize', applyMobileLayout);
 
 function fmtKr(v)  { return (Math.round((v || 0) * 100) / 100).toLocaleString('sv-SE', {minimumFractionDigits:2, maximumFractionDigits:2}) + ' kr'; }
+function fmtDate(iso) { try { return new Date(iso).toLocaleString('sv-SE', {year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}); } catch(e) { return iso || '–'; } }
 function today()   { return new Date().toISOString().slice(0, 10); }
 function nowISO()  { return new Date().toISOString(); }
 function openModal(id)  { document.getElementById(id).classList.add('show'); }
