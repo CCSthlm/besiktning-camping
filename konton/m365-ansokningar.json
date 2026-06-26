@@ -138,7 +138,7 @@
     {
       "id": "M365-2606-F9O4",
       "ts": "2026-06-25T21:07:46.527Z",
-      "status": "ny",
+      "status": "behandlad",
       "fname": "Dorry",
       "lname": "Johansson",
       "pnr": "19121212-1212",
@@ -151,7 +151,17 @@
       "startDatum": "2026-06-22",
       "chef": "Massimo",
       "övrigt": "",
-      "gdpr": true
+      "gdpr": true,
+      "m365": {
+        "upn": "dorry.johansson@cc-camping.se",
+        "skapadTs": "2026-06-26T07:42:00.223Z",
+        "skapadAv": "Massimo Johansson"
+      },
+      "handläggning": {
+        "av": "Massimo Johansson",
+        "kommentar": "M365-konto skapat: dorry.johansson@cc-camping.se · Licens tilldelad · Grupper: Caravan Club of Sweden - Stockholmssektionen",
+        "ts": "2026-06-26T07:42:00.223Z"
+      }
     }
   ]
 }
