@@ -17,7 +17,8 @@
       "pnr": "19751118-3571",
       "adminRoles": [
         "global",
-        "avvikelse-ledning"
+        "avvikelse-ledning",
+        "reserakning-godkannare"
       ]
     },
     {
