@@ -1282,7 +1282,7 @@ function saveUser() {
     pin,
     pnr: document.getElementById('user-pnr').value.trim(),
     adminRoles,
-    role: adminRoles.includes('global') ? 'Admin' : adminRoles.length ? 'Admin' : 'Besiktningsman',
+    role: adminRoles.includes('global') || adminRoles.includes('sektions') ? 'Admin' : 'Användare',
     active: document.getElementById('user-active').value==='true',
     apps,
     plCampingId: document.getElementById('user-pl-camping').value,
