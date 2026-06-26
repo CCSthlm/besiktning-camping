@@ -707,7 +707,7 @@ async function loginMS_continue(account) {
 
 // ─── PORTAL VIEW ──────────────────────────────────────────────────────────
 async function showPortal() {
-  console.log('Inloggad:', _currentUser.name, '| adminRoles:', JSON.stringify(_currentUser.adminRoles || []));
+  console.log('Inloggad:', _currentUser.name, '| adminRoles:', JSON.stringify(_currentUser.adminRoles || []), '| role:', _currentUser.role);
   document.getElementById('screen-login').classList.remove('active');
   document.getElementById('screen-portal').classList.add('active');
   const u = _currentUser;
@@ -859,7 +859,9 @@ function renderApps() {
     const userRoles = u.adminRoles || (u.role === 'Admin' ? ['global'] : []);
     // requiredRoles — visas om användaren har minst en av rollerna, oavsett admin-status
     if (app.requiredRoles) {
-      return userRoles.some(r => app.requiredRoles.includes(r));
+      const has = userRoles.some(r => app.requiredRoles.includes(r));
+      console.log(`App ${app.id} (requiredRoles): userRoles=${JSON.stringify(userRoles)}, required=${JSON.stringify(app.requiredRoles)}, result=${has}`);
+      return has;
     }
     // adminRolesRequired — kräver admin-roll
     if (app.adminRolesRequired) {
