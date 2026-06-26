@@ -492,6 +492,16 @@ tr:hover td{background:var(--bg3);}
             <label class="checkbox-item"><input type="checkbox" id="role-avvikelse-brand"> <i class="ti ti-flame" style="font-size:14px;color:#c2410c"></i> <span><strong>Brandskyddsansvarig</strong> – brand/SBA-ärenden</span></label>
           </div>
           <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin:10px 0 6px;padding-top:8px;border-top:1px solid var(--border)">Nyheter & driftstörningar</div>
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin:10px 0 6px;padding-top:8px;border-top:1px solid var(--border)">Reseräkningar</div>
+          <div class="role-section" style="padding:9px 12px;border-left:3px solid #3B6D11;">
+            <label class="checkbox-item"><input type="checkbox" id="role-reserakning-admin"> <i class="ti ti-car" style="font-size:14px;color:#3B6D11"></i> <span><strong>Reseräkning Admin</strong> – administrera alla räkningar och inställningar</span></label>
+          </div>
+          <div class="role-section" style="padding:9px 12px;border-left:3px solid #1a4f7a;">
+            <label class="checkbox-item"><input type="checkbox" id="role-reserakning-godkannare"> <i class="ti ti-check" style="font-size:14px;color:#1a4f7a"></i> <span><strong>Reseräkning Godkännare</strong> – godkänn/neka räkningar för sin camping</span></label>
+          </div>
+          <div class="role-section" style="padding:9px 12px;border-left:3px solid #854F0B;">
+            <label class="checkbox-item"><input type="checkbox" id="role-reserakning-utbetalare"> <i class="ti ti-coin" style="font-size:14px;color:#854F0B"></i> <span><strong>Reseräkning Utbetalare</strong> – markera räkningar som utbetalda</span></label>
+          </div>
           <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin:10px 0 6px;padding-top:8px;border-top:1px solid var(--border)">Inventarie</div>
           <div class="role-section" style="padding:9px 12px;border-left:3px solid #3B6D11;">
             <label class="checkbox-item"><input type="checkbox" id="role-inventarieadmin"> <i class="ti ti-devices" style="font-size:14px;color:#3B6D11"></i> <span><strong>Inventarieadmin</strong> – skapa och redigera inventarier</span></label>
@@ -626,6 +636,9 @@ const ADMIN_ROLES = {
   'avvikelse-anlaggning':{ key:'avvikelse-anlaggning', label:'Anläggningsansvarig', icon:'ti-tent',           color:'#3B6D11', badge:'badge-besiktnings' },
   'avvikelse-brand':    { key:'avvikelse-brand',    label:'Brandskyddsansvarig',   icon:'ti-flame',          color:'#c2410c', badge:'badge-personal' },
   'nyhetsadmin':        { key:'nyhetsadmin',        label:'Nyhetsadmin',           icon:'ti-speakerphone',   color:'#7c3aed', badge:'badge-global' },
+  'reserakning-admin':      { key:'reserakning-admin',      label:'Reseräkning Admin',          icon:'ti-car',            color:'#3B6D11', badge:'badge-global' },
+  'reserakning-godkannare': { key:'reserakning-godkannare', label:'Reseräkning Godkännare',     icon:'ti-check',          color:'#1a4f7a', badge:'badge-personal' },
+  'reserakning-utbetalare': { key:'reserakning-utbetalare', label:'Reseräkning Utbetalare',     icon:'ti-coin',           color:'#854F0B', badge:'badge-personal' },
   'inventarieadmin':    { key:'inventarieadmin',    label:'Inventarieadmin',       icon:'ti-devices',       color:'#3B6D11', badge:'badge-global' },
   'kontoadmin':         { key:'kontoadmin',         label:'Kontoadmin (M365)',      icon:'ti-brand-windows', color:'#1a4f7a', badge:'badge-global' },
   'störningsadmin':     { key:'störningsadmin',     label:'Störningsrapportadmin', icon:'ti-file-alert',     color:'#7c3aed', badge:'badge-global' },
@@ -935,6 +948,11 @@ function buildSidebar() {
   }
 
   const isKonto = _myAdminRoles.some(r=>['global','sektions','kontoadmin'].includes(r));
+  const isRR = _myAdminRoles.some(r=>['global','reserakning-admin'].includes(r));
+  if (isRR) {
+    html += `<div class="nav-group-label"><i class="ti ti-car"></i> Reseräkningar</div>`;
+    html += `<div class="nav-item" onclick="window.location.href='reserakning-admin.html'"><i class="ti ti-external-link"></i> Reseräkning Admin</div>`;
+  }
   const isInventarie = _myAdminRoles.some(r=>['global','inventarieadmin'].includes(r)) || true; // alla kan läsa
   if (isInventarie) {
     html += `<div class="nav-group-label"><i class="ti ti-devices"></i> Inventarie</div>`;
@@ -1174,7 +1192,7 @@ function openAddUser() {
   document.getElementById('user-pin').value = '';
   document.getElementById('user-pnr').value = '';
   document.getElementById('user-active').value = 'true';
-  ['global','sektions','besiktnings','personal','avvikelse-admin','avvikelse-ledning','avvikelse-anlaggning','avvikelse-brand','nyhetsadmin','störningsadmin','kontoadmin','inventarieadmin'].forEach(r => { const el=document.getElementById('role-'+r); if(el) el.checked=false; });
+  ['global','sektions','besiktnings','personal','avvikelse-admin','avvikelse-ledning','avvikelse-anlaggning','avvikelse-brand','nyhetsadmin','störningsadmin','kontoadmin','inventarieadmin','reserakning-admin','reserakning-godkannare','reserakning-utbetalare'].forEach(r => { const el=document.getElementById('role-'+r); if(el) el.checked=false; });
   buildAppCheckboxes([]);
   populatePLCampingSelect('');
   openModal('modal-user');
@@ -1192,7 +1210,7 @@ function openEditUser(id) {
   document.getElementById('user-active').value = u.active===false?'false':'true';
   // Set admin role checkboxes
   const roles = u.adminRoles || (u.role==='Admin'?['global']:[]);
-  ['global','sektions','besiktnings','personal','avvikelse-admin','avvikelse-ledning','avvikelse-anlaggning','avvikelse-brand','nyhetsadmin','störningsadmin','kontoadmin','inventarieadmin'].forEach(r => {
+  ['global','sektions','besiktnings','personal','avvikelse-admin','avvikelse-ledning','avvikelse-anlaggning','avvikelse-brand','nyhetsadmin','störningsadmin','kontoadmin','inventarieadmin','reserakning-admin','reserakning-godkannare','reserakning-utbetalare'].forEach(r => {
     const el=document.getElementById('role-'+r);
     if(el) el.checked = roles.includes(r);
   });
@@ -1220,7 +1238,7 @@ function saveUser() {
   const pin = document.getElementById('user-pin').value.trim();
   if (!name) { alert('Namn krävs.'); return; }
   if (!pin || !/^\d{4}$/.test(pin)) { alert('PIN-kod måste vara 4 siffror.'); return; }
-  const adminRoles = ['global','sektions','besiktnings','personal','avvikelse-admin','avvikelse-ledning','avvikelse-anlaggning','avvikelse-brand','nyhetsadmin','störningsadmin','kontoadmin','inventarieadmin'].filter(r => document.getElementById('role-'+r)?.checked);
+  const adminRoles = ['global','sektions','besiktnings','personal','avvikelse-admin','avvikelse-ledning','avvikelse-anlaggning','avvikelse-brand','nyhetsadmin','störningsadmin','kontoadmin','inventarieadmin','reserakning-admin','reserakning-godkannare','reserakning-utbetalare'].filter(r => document.getElementById('role-'+r)?.checked);
   const apps = Array.from(document.querySelectorAll('#user-apps-check input:checked')).map(e=>e.value);
   const editId = document.getElementById('user-edit-id').value;
   const obj = {
