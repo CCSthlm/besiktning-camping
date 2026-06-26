@@ -59,9 +59,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
 
 <div class="page-header">
   <div class="page-header-icon"><i class="ti ti-brand-windows"></i></div>
-  <div>
+  <div style="flex:1">
     <div class="page-header-title">Ansökan om Microsoft 365-konto</div>
     <div class="page-header-sub">Caravan Club of Sweden – Stockholmssektionen</div>
+  </div>
+  <div style="display:flex;gap:8px">
+    <button onclick="window.location.href='index.html'" style="padding:7px 13px;background:var(--bg3);color:var(--text2);border:1px solid var(--border2);border-radius:var(--radius);font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:5px"><i class="ti ti-arrow-left"></i> Portal</button>
+    <button onclick="sessionStorage.setItem('ccs_logged_out','1');sessionStorage.removeItem('ccs_session');sessionStorage.removeItem('ccs_portal_user');window.location.replace('index.html')" style="padding:7px 13px;background:var(--red-bg);color:var(--red);border:1px solid rgba(163,45,45,.2);border-radius:var(--radius);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:5px"><i class="ti ti-logout"></i> Logga ut</button>
   </div>
 </div>
 
