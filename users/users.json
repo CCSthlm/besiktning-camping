@@ -52,6 +52,22 @@
         "it-support"
       ],
       "created": "2026-06-13"
+    },
+    {
+      "id": "umquxld7f6twr",
+      "name": "Dorry Johansson",
+      "email": "dorry.johansson@cc-campingse",
+      "pin": "1212",
+      "pnr": "",
+      "adminRoles": [
+        "reserakning-godkannare"
+      ],
+      "role": "Admin",
+      "active": true,
+      "apps": [],
+      "plCampingId": "",
+      "godkannarcamping": "CC Björkö Örns Camping",
+      "created": "2026-06-26"
     }
   ],
   "campings": [
