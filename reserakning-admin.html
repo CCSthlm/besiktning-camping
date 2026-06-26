@@ -170,7 +170,8 @@ const STATUS_LABEL   = {utkast:'Utkast',inskickad:'Inskickad',godkand:'Godkänd'
 const STATUS_CLASS   = {utkast:'s-utkast',inskickad:'s-inskickad',godkand:'s-godkand',utbetald:'s-utbetald',nekad:'s-nekad'};
 const CAMPINGAR      = ['CC Björkö Örns Camping','CC Östnora Camping','CC Kapellskärs Camping','CC Mista Camping','CC Storsveds Camping','CC Örstigs Camping','Gräddös Pärla Kök & Bar','Östnora Kök & Bar','Sektionen'];
 
-let _user=null, _rakningar={rakningar:[]}, _rakningSha=null, _inst={kmBil:0.25,kmHusbil:0.40}, _instSha=null, _currentView='alla';
+let _user=null, _rakningar={rakningar:[]}, _inst={kmBil:0.25,kmHusbil:0.40}, _currentView='alla';
+let _shaRak=null, _shaInst=null;
 
 (async function init(){
   const sess=sessionStorage.getItem('ccs_session')||sessionStorage.getItem('ccs_portal_user');
@@ -191,28 +192,37 @@ async function loadJSON(path,stateKey,shaKey){
   const token=localStorage.getItem('gh_token')||'';if(!token)return;
   try{
     const res=await fetch(`https://api.github.com/repos/${GH_REPO}/contents/${path}`,{headers:{'Authorization':'token '+token}});
+    if(res.status===404)return;
     if(!res.ok)return;
-    const gh=await res.json();window[shaKey]=gh.sha;
+    const gh=await res.json();
+    if(shaKey==='_rakningSha') _shaRak=gh.sha; else _shaInst=gh.sha;
     const bytes=Uint8Array.from(atob(gh.content.replace(/\n/g,'')),c=>c.charCodeAt(0));
-    window[stateKey]=JSON.parse(new TextDecoder('utf-8').decode(bytes));
-    if(!window[stateKey].rakningar&&stateKey==='_rakningar')window[stateKey].rakningar=[];
+    const parsed=JSON.parse(new TextDecoder('utf-8').decode(bytes));
+    if(stateKey==='_rakningar'){_rakningar=parsed;if(!_rakningar.rakningar)_rakningar.rakningar=[];}
+    if(stateKey==='_inst')_inst=parsed;
   }catch(e){console.warn(path,e.message);}
 }
 
 async function saveJSON(path,stateKey,shaKey,msg){
   const token=localStorage.getItem('gh_token')||'';if(!token){toast('Token saknas','warn');return;}
   const url=`https://api.github.com/repos/${GH_REPO}/contents/${path}`;
+  const sha=shaKey==='_rakningSha'?_shaRak:_shaInst;
+  const data=stateKey==='_rakningar'?_rakningar:_inst;
   try{
-    if(!window[shaKey]){const chk=await fetch(url,{headers:{'Authorization':'token '+token}});if(chk.ok)window[shaKey]=(await chk.json()).sha;}
-    const json=JSON.stringify(window[stateKey],null,2);
+    let currentSha=sha;
+    if(!currentSha){const chk=await fetch(url,{headers:{'Authorization':'token '+token}});if(chk.ok)currentSha=(await chk.json()).sha;}
+    const json=JSON.stringify(data,null,2);
     const enc=new TextEncoder().encode(json);let b64='';
     for(let i=0;i<enc.length;i+=8192)b64+=String.fromCharCode(...enc.slice(i,i+8192));
     const content=btoa(b64);
     const payload={message:msg+' '+new Date().toISOString().slice(0,10),content,branch:'main'};
-    if(window[shaKey])payload.sha=window[shaKey];
+    if(currentSha)payload.sha=currentSha;
+    console.log('Sparar',path,JSON.stringify(data).slice(0,80));
     const res=await fetch(url,{method:'PUT',headers:{'Authorization':'token '+token,'Content-Type':'application/json'},body:JSON.stringify(payload)});
     const d=await res.json();if(!res.ok)throw new Error(d.message||res.status);
-    window[shaKey]=d.content?.sha||window[shaKey];
+    const newSha=d.content?.sha||currentSha;
+    if(shaKey==='_rakningSha')_shaRak=newSha; else _shaInst=newSha;
+    toast('Sparat ✓','ok');
   }catch(e){toast('Fel: '+e.message,'err');throw e;}
 }
 
