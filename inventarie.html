@@ -165,17 +165,11 @@ tr:hover td{background:rgba(59,109,17,.02);}
   .card-grid{grid-template-columns:1fr;}
   .fg{grid-template-columns:1fr;}
   .fg.trio{grid-template-columns:1fr 1fr;}
-  .nav-tabs{display:none !important;}
-  .inv-bottom-nav{display:flex !important;}
   .portal-topbar{padding:10px 14px;}
   .view-toggle{display:none;}
-  /* Kortvy på mobil = liststil som portalen */
-  .inv-card{display:flex;flex-direction:row;align-items:center;gap:12px;padding:12px 14px;border-radius:var(--radius);}
-  .inv-card-top{flex:1;margin-bottom:0;}
+  .inv-card{flex-direction:row;align-items:center;}
   .inv-card-body{display:none;}
   .inv-card-footer{display:none;}
-  .stats-row .stat{padding:10px 12px;}
-  .stat-val{font-size:18px;}
 }
 .inv-bottom-nav{
   display:none;
@@ -362,6 +356,7 @@ let _sortCol = 'namn', _sortAsc = true;
   await Promise.all([loadData(PATH_ENHETER,'_enheter','_enhetSha'), loadData(PATH_HANDELSER,'_handelser','_handelSha'), loadData(PATH_NAT,'_nat','_natSha')]);
   renderStats();
   renderList();
+  applyMobileLayout();
 })();
 
 // ── DATA ────────────────────────────────────────────────────────────────────
@@ -1336,6 +1331,21 @@ function toast(msg,type='ok'){
   setTimeout(()=>{t.style.opacity='0';t.style.transform='translateY(6px)';},2800);
 }
 function doLogout(){ sessionStorage.setItem('ccs_logged_out','1'); sessionStorage.removeItem('ccs_session'); sessionStorage.removeItem('ccs_portal_user'); window.location.replace('index.html'); }
+
+// ── MOBILE LAYOUT ─────────────────────────────────────────────────────────
+function isMobile() { return window.innerWidth <= 768; }
+
+function applyMobileLayout() {
+  const mobile = isMobile();
+  const navTabs   = document.querySelector('.nav-tabs');
+  const bottomNav = document.getElementById('inv-bottom-nav');
+  const content   = document.querySelector('.content');
+  if (navTabs)   navTabs.style.display   = mobile ? 'none'  : '';
+  if (bottomNav) bottomNav.style.display = mobile ? 'flex'  : 'none';
+  if (content)   content.style.paddingBottom = mobile ? '72px' : '14px';
+}
+
+window.addEventListener('resize', applyMobileLayout);
 </script>
 <!-- MOBILE BOTTOM NAV -->
 <div class="inv-bottom-nav" id="inv-bottom-nav">
