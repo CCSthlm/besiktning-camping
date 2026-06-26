@@ -68,6 +68,19 @@
       "statusKommentar": "",
       "statusTs": "2026-06-26T13:43:37.630Z",
       "statusAv": "Dorry Johansson"
+    },
+    {
+      "id": "RR-1782481722291",
+      "userId": "domain_oktoberfest2027@cc-camping.se",
+      "namn": "Utbildningsresa Oktoberfest 2027 2",
+      "konto": "1212121212",
+      "camping": "CC Björkö Örns Camping",
+      "period": "Juni 26",
+      "syfte": "Testar",
+      "resor": [],
+      "status": "utkast",
+      "skapad": "2026-06-26T13:48:42.291Z",
+      "skapadAv": "Utbildningsresa Oktoberfest 2027"
     }
   ]
 }
