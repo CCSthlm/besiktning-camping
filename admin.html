@@ -1081,7 +1081,7 @@ async function saveNewsData() {
       const check = await fetch(url, {headers:{'Authorization':'token '+token}});
       if (check.ok) { const d = await check.json(); _newsSha = d.sha; }
     }
-    const jsonContent = btoa(unescape(encodeURIComponent(JSON.stringify(_newsData,null,2))));
+    const _ne=new TextEncoder().encode(JSON.stringify(_newsData,null,2));let _nb='';for(let i=0;i<_ne.length;i+=8192)_nb+=String.fromCharCode(..._ne.slice(i,i+8192));const jsonContent=btoa(_nb);
     const payload = {message:'Nyheter uppdaterade '+today(), content:jsonContent, branch:'main'};
     if (_newsSha) payload.sha = _newsSha;
     const res = await fetch(url,{method:'PUT',headers:{'Authorization':'token '+token,'Content-Type':'application/json'},body:JSON.stringify(payload)});
@@ -1100,7 +1100,7 @@ async function saveLinksData() {
   if (!token) { toast('GitHub-token saknas','warn'); return; }
   const url = 'https://api.github.com/repos/'+GH_REPO+'/contents/'+LINKS_PATH;
   try {
-    const jsonContent = btoa(unescape(encodeURIComponent(JSON.stringify(_linksData,null,2))));
+    const _le=new TextEncoder().encode(JSON.stringify(_linksData,null,2));let _lb='';for(let i=0;i<_le.length;i+=8192)_lb+=String.fromCharCode(..._le.slice(i,i+8192));const jsonContent=btoa(_lb);
     const payload = {message:'Länkar uppdaterade '+today(), content:jsonContent, branch:'main'};
     if (_linksSha) payload.sha = _linksSha;
     const res = await fetch(url,{method:'PUT',headers:{'Authorization':'token '+token,'Content-Type':'application/json'},body:JSON.stringify(payload)});
@@ -1119,14 +1119,18 @@ async function saveData() {
     let sha = null;
     const chk = await fetch(url,{headers:{'Authorization':'token '+token}});
     if (chk.ok) sha = (await chk.json()).sha;
-    const content = btoa(unescape(encodeURIComponent(JSON.stringify(_data,null,2))));
+    const json = JSON.stringify(_data, null, 2);
+    const enc  = new TextEncoder().encode(json);
+    let b64 = '';
+    for (let i = 0; i < enc.length; i += 8192) b64 += String.fromCharCode(...enc.slice(i, i+8192));
+    const content = btoa(b64);
     const payload = {message:'Admin uppdatering '+today(), content, branch:'main'};
     if (sha) payload.sha = sha;
     const res = await fetch(url,{method:'PUT',headers:{'Authorization':'token '+token,'Content-Type':'application/json'},body:JSON.stringify(payload)});
     if (!res.ok) throw new Error((await res.json()).message||res.status);
     document.getElementById('gh-status-text').textContent = 'Sparat '+new Date().toLocaleTimeString('sv-SE');
-    toast('Sparat','ok');
-  } catch(e) { toast('Fel: '+e.message,'err'); }
+    toast('Sparat ✓','ok');
+  } catch(e) { toast('Fel vid sparande: '+e.message,'err'); console.error('saveData',e); }
 }
 
 // ── RENDER ALL ────────────────────────────────────────────────────────────
