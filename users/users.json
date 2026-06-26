@@ -60,13 +60,13 @@
       "pin": "1212",
       "pnr": "",
       "adminRoles": [
-        "reserakning-utbetalare"
+        "reserakning-godkannare"
       ],
       "role": "Användare",
       "active": true,
       "apps": [],
       "plCampingId": "",
-      "godkannarcamping": "",
+      "godkannarcamping": "CC Björkö Örns Camping",
       "created": "2026-06-26"
     }
   ],
