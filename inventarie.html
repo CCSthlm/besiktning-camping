@@ -161,17 +161,31 @@ tr:hover td{background:rgba(59,109,17,.02);}
 
 @media(max-width:768px){
   .topbar{padding:10px 14px;}
-  .content{padding:10px 14px;}
+  .content{padding:10px 14px 80px;}
   .stats-row{grid-template-columns:repeat(2,1fr);}
   .card-grid{grid-template-columns:1fr;}
   .fg{grid-template-columns:1fr;}
   .fg.trio{grid-template-columns:1fr 1fr;}
   .portal-username,.portal-role{display:none;}
+  .nav-tabs{display:none;}
+  .inv-bottom-nav{display:flex;}
 }
 @media(max-width:480px){
   .stats-row{grid-template-columns:repeat(2,1fr);}
-  .nav-tab-item span{display:none;}
 }
+.inv-bottom-nav{
+  display:none;
+  position:fixed;bottom:0;left:0;right:0;
+  background:var(--bg2);border-top:1px solid var(--border2);
+  z-index:50;padding:6px 0 10px;
+}
+.inv-nav-tab{
+  flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;
+  font-size:11px;color:var(--text3);cursor:pointer;padding:4px 0;
+  font-family:inherit;background:none;border:none;
+}
+.inv-nav-tab i{font-size:22px;}
+.inv-nav-tab.active{color:var(--accent);}
 </style>
 </head>
 <body>
@@ -1244,6 +1258,8 @@ function showView(v) {
   _currentView = v;
   document.querySelectorAll('.nav-tab-item').forEach(n=>n.classList.remove('active'));
   document.getElementById('nav-'+v)?.classList.add('active');
+  document.querySelectorAll('.inv-nav-tab').forEach(n=>n.classList.remove('active'));
+  document.getElementById('bnav-'+v)?.classList.add('active');
   const m = VIEW_META[v]||{title:v,sub:''};
   document.getElementById('view-title').textContent = m.title;
   document.getElementById('view-sub').textContent   = m.sub;
@@ -1297,5 +1313,13 @@ function toast(msg,type='ok'){
 }
 function doLogout(){ sessionStorage.setItem('ccs_logged_out','1'); sessionStorage.removeItem('ccs_session'); sessionStorage.removeItem('ccs_portal_user'); window.location.replace('index.html'); }
 </script>
+<!-- MOBILE BOTTOM NAV -->
+<div class="inv-bottom-nav" id="inv-bottom-nav">
+  <button class="inv-nav-tab active" id="bnav-alla" onclick="showView('alla')"><i class="ti ti-list"></i><span style="font-size:10px">Alla</span></button>
+  <button class="inv-nav-tab" id="bnav-tradlost-nat" onclick="showView('tradlost-nat')"><i class="ti ti-wifi"></i><span style="font-size:10px">Trådlöst</span></button>
+  <button class="inv-nav-tab" id="bnav-ip-lista" onclick="showView('ip-lista')"><i class="ti ti-network"></i><span style="font-size:10px">IP</span></button>
+  <button class="inv-nav-tab" id="bnav-defekta" onclick="showView('defekta')"><i class="ti ti-alert-triangle" style="color:var(--red)"></i><span style="font-size:10px">Defekta</span></button>
+</div>
+
 </body>
 </html>
