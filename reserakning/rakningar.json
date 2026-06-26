@@ -88,9 +88,11 @@
           "ts": "2026-06-26T13:48:47.577Z"
         }
       ],
-      "status": "utkast",
+      "status": "inskickad",
       "skapad": "2026-06-26T13:48:42.291Z",
-      "skapadAv": "Utbildningsresa Oktoberfest 2027"
+      "skapadAv": "Utbildningsresa Oktoberfest 2027",
+      "signeradAv": "Utbildningsresa Oktoberfest 2027",
+      "signeradTs": "2026-06-26T13:48:51.688Z"
     }
   ]
 }
