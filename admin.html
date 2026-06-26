@@ -1291,6 +1291,7 @@ function saveUser() {
   if (editId) {
     const i = _data.users.findIndex(u=>u.id===editId);
     if (i>=0) _data.users[i] = {..._data.users[i], ...obj};
+    console.log('Sparar användare:', JSON.stringify(_data.users.find(u=>u.id===editId)));
   } else {
     _data.users.push({id:'u'+uid(), ...obj, created:today()});
   }
