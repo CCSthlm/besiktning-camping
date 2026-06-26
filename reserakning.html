@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Reseräkning – CCSthlm</title>
+<title>Reseräkning - CCSthlm</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏕️</text></svg>">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/tabler-icons.min.css">
 <style>
@@ -111,6 +111,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
 .modal-body{padding:16px 18px;max-height:70vh;overflow-y:auto;}
 .modal-footer{padding:12px 18px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px;position:sticky;bottom:0;background:var(--bg2);}
 
+.resa-link{cursor:pointer;font-size:11px;font-weight:500;}
+.resa-link:hover{text-decoration:underline;}
+.resa-link.accent{color:var(--accent);}
+.resa-link.danger{color:var(--red);}
 /* TOAST */
 #toast{position:fixed;bottom:76px;right:16px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);padding:10px 14px;font-size:13px;z-index:999;box-shadow:var(--shadow);opacity:0;transform:translateY(6px);transition:all .25s;pointer-events:none;display:flex;align-items:center;gap:6px;}
 
@@ -162,7 +166,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
         </div>
       </div>
       <div class="fg full">
-        <div class="ff"><label>Körsträcka <span class="req">*</span></label><input type="text" id="r-stracka" placeholder="T.ex. Åkersberga centrum – Björkö Örns Camping via Norrtälje"></div>
+        <div class="ff"><label>Körsträcka <span class="req">*</span></label><input type="text" id="r-stracka" placeholder="T.ex. Åkersberga centrum - Björkö Örns Camping via Norrtälje"></div>
       </div>
       <div class="fg">
         <div class="ff"><label>Antal km <span class="req">*</span></label><input type="number" id="r-km" placeholder="0" min="0" oninput="calcErsattning()"></div>
@@ -347,13 +351,47 @@ function renderTab() {
   else renderHistorik();
 }
 
+
+// ── RENDER HELPERS ────────────────────────────────────────────────────────
+function nekadBanner(aktiv) {
+  if (aktiv.status !== 'nekad') return '';
+  return '<div style="background:var(--red-bg);border:1px solid rgba(163,45,45,.2);border-radius:var(--radius-lg);padding:14px 18px;margin-bottom:14px;display:flex;gap:12px;align-items:flex-start">'
+    + '<i class="ti ti-alert-circle" style="font-size:22px;color:var(--red);flex-shrink:0;margin-top:1px"></i>'
+    + '<div>'
+    + '<div style="font-weight:700;color:var(--red);margin-bottom:4px">Räkning nekad</div>'
+    + '<div style="font-size:13px;color:var(--red-text);margin-bottom:10px">' + (aktiv.statusKommentar || 'Ingen kommentar angiven.') + '</div>'
+    + '<div style="font-size:11px;color:var(--red-text);margin-bottom:10px">Nekad av ' + (aktiv.statusAv || '-') + ' - ' + fmtDate(aktiv.statusTs) + '</div>'
+    + '<button class="btn-primary" onclick="ateroppnaRakning()" style="background:var(--red);font-size:12px;padding:7px 14px">'
+    + '<i class="ti ti-edit"></i> Öppna för redigering</button>'
+    + '</div></div>';
+}
+
+function resorHTML(resor, status) {
+  if (!resor.length) return '<div style="text-align:center;padding:20px;color:var(--text3);font-size:13px">Inga resor tillagda ännu</div>';
+  const nekad = status === 'nekad';
+  return resor.map((r, i) => {
+    const editBtn  = nekad ? '' : '<span class="resa-link accent" onclick="editResa(' + i + ')">Redigera</span>';
+    const delBtn   = nekad ? '' : '<span class="resa-link danger" onclick="deleteResa(' + i + ')">Ta bort</span>';
+    const syfteEl  = r.syfte ? '<span>' + r.syfte + '</span>' : '';
+    return '<div class="resa-row">'
+      + '<div class="resa-body">'
+      + '<div class="resa-datum">' + (r.datum || '-') + ' - ' + (r.fordonstyp === 'husbil' ? 'Husbil/Bil+Husvagn' : 'Bil') + '</div>'
+      + '<div class="resa-strack">' + (r.stracka || '-') + '</div>'
+      + '<div class="resa-details"><span><i class="ti ti-road" style="font-size:11px"></i> ' + r.km + ' km</span>' + syfteEl + '</div>'
+      + '</div>'
+      + '<div class="resa-ersattning">' + fmtKr(r.ersattning) + '</div>'
+      + '<div class="resa-actions">' + editBtn + delBtn + '</div>'
+      + '</div>';
+  }).join('');
+}
+
 // ── AKTIV RÄKNING ─────────────────────────────────────────────────────────
 function getUserId() {
   return _user.id || _user.email || _user.name;
 }
 
 function getAktiv() {
-  return (_rakningar.rakningar || []).find(r => r.userId === getUserId() && r.status === 'utkast');
+  return (_rakningar.rakningar || []).find(r => r.userId === getUserId() && ['utkast','nekad'].includes(r.status));
 }
 
 function renderAktiv() {
@@ -375,6 +413,7 @@ function renderAktiv() {
   const canSign  = resor.length > 0;
 
   c.innerHTML = `
+    ${nekadBanner(aktiv)}
     <div class="card">
       <div class="card-header">
         <span class="card-title"><i class="ti ti-file-text"></i> ${aktiv.period || 'Reseräkning'}</span>
@@ -382,10 +421,10 @@ function renderAktiv() {
       </div>
       <div class="card-body">
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:13px">
-          <div><span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.04em">Namn</span><div style="margin-top:3px;font-weight:500">${aktiv.namn || '–'}</div></div>
-          <div><span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.04em">Kontonummer</span><div style="margin-top:3px;font-family:monospace;font-size:12px">${aktiv.konto || '–'}</div></div>
-          <div><span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.04em">Camping</span><div style="margin-top:3px">${aktiv.camping || '–'}</div></div>
-          <div><span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.04em">Syfte</span><div style="margin-top:3px">${aktiv.syfte || '–'}</div></div>
+          <div><span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.04em">Namn</span><div style="margin-top:3px;font-weight:500">${aktiv.namn || '-'}</div></div>
+          <div><span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.04em">Kontonummer</span><div style="margin-top:3px;font-family:monospace;font-size:12px">${aktiv.konto || '-'}</div></div>
+          <div><span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.04em">Camping</span><div style="margin-top:3px">${aktiv.camping || '-'}</div></div>
+          <div><span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.04em">Syfte</span><div style="margin-top:3px">${aktiv.syfte || '-'}</div></div>
         </div>
       </div>
     </div>
@@ -393,26 +432,10 @@ function renderAktiv() {
     <div class="card">
       <div class="card-header">
         <span class="card-title"><i class="ti ti-route"></i> Resor (${resor.length})</span>
-        <button class="btn-primary" onclick="openNyResa()"><i class="ti ti-plus"></i> Lägg till resa</button>
+        ${aktiv.status !== 'nekad' ? '<button class="btn-primary" onclick="openNyResa()"><i class=\"ti ti-plus\"></i> Lägg till resa</button>' : ''}
       </div>
       <div class="card-body" style="padding:12px 14px">
-        ${resor.length ? resor.map((r, i) => `
-          <div class="resa-row">
-            <div class="resa-body">
-              <div class="resa-datum">${r.datum || '–'} · ${r.fordonstyp === 'husbil' ? 'Husbil/Bil+Husvagn' : 'Bil'}</div>
-              <div class="resa-strack">${r.stracka || '–'}</div>
-              <div class="resa-details">
-                <span><i class="ti ti-road" style="font-size:11px"></i> ${r.km} km</span>
-                ${r.syfte ? `<span>${r.syfte}</span>` : ''}
-              </div>
-            </div>
-            <div class="resa-ersattning">${fmtKr(r.ersattning)}</div>
-            <div class="resa-actions">
-              <span onclick="editResa(${i})" style="cursor:pointer;color:var(--accent);font-size:11px" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">Redigera</span>
-              <span onclick="deleteResa(${i})" style="cursor:pointer;color:var(--red);font-size:11px" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">Ta bort</span>
-            </div>
-          </div>`).join('')
-        : `<div style="text-align:center;padding:20px;color:var(--text3);font-size:13px">Inga resor tillagda ännu</div>`}
+        ${resorHTML(resor, aktiv.status)}
       </div>
     </div>
 
@@ -424,10 +447,10 @@ function renderAktiv() {
           <div class="summary-row"><span class="summary-label">Totalt antal km</span><span>${totKm} km</span></div>
           <div class="summary-row"><span class="summary-label">Total ersättning</span><span>${fmtKr(totEr)}</span></div>
         </div>
-        <button class="btn-sign" onclick="signeraRakning()" ${canSign ? '' : 'disabled'}>
+        <button class="btn-sign" onclick="signeraRakning()" ${(canSign && aktiv.status !== 'nekad') ? '' : 'disabled'}>
           <i class="ti ti-pen"></i> Signera och skicka in
         </button>
-        ${!canSign ? `<div style="text-align:center;font-size:11px;color:var(--text3);margin-top:8px">Lägg till minst en resa för att kunna signera</div>` : ''}
+        ${!canSign ? '<div style="text-align:center;font-size:11px;color:var(--text3);margin-top:8px">Lagg till minst en resa for att kunna signera</div>' : ''}
       </div>
     </div>`;
 }
@@ -448,8 +471,8 @@ function renderInskickade() {
     return `<div class="card" style="cursor:pointer" onclick="openDetalj('${r.id}')">
       <div class="card-body" style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
         <div>
-          <div style="font-weight:600;margin-bottom:4px">${r.period || '–'}</div>
-          <div style="font-size:12px;color:var(--text2)">${r.camping || '–'} · ${(r.resor || []).length} resor · ${totKm} km</div>
+          <div style="font-weight:600;margin-bottom:4px">${r.period || '-'}</div>
+          <div style="font-size:12px;color:var(--text2)">${r.camping || '-'} - ${(r.resor || []).length} resor - ${totKm} km</div>
           <div style="font-size:11px;color:var(--text3);margin-top:3px">Inskickad ${fmtDate(r.signeradTs)}</div>
         </div>
         <div style="text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:6px">
@@ -464,7 +487,7 @@ function renderInskickade() {
 // ── HISTORIK ──────────────────────────────────────────────────────────────
 function renderHistorik() {
   const hist = (_rakningar.rakningar || [])
-    .filter(r => r.userId === getUserId() && ['utbetald','nekad'].includes(r.status))
+    .filter(r => r.userId === getUserId() && r.status === 'utbetald')
     .sort((a, b) => (b.signeradTs || '').localeCompare(a.signeradTs || ''));
   const c = document.getElementById('main-content');
   if (!hist.length) {
@@ -477,8 +500,8 @@ function renderHistorik() {
     return `<div class="card" style="cursor:pointer" onclick="openDetalj('${r.id}')">
       <div class="card-body" style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
         <div>
-          <div style="font-weight:600;margin-bottom:4px">${r.period || '–'}</div>
-          <div style="font-size:12px;color:var(--text2)">${r.camping || '–'} · ${(r.resor || []).length} resor · ${totKm} km</div>
+          <div style="font-weight:600;margin-bottom:4px">${r.period || '-'}</div>
+          <div style="font-size:12px;color:var(--text2)">${r.camping || '-'} - ${(r.resor || []).length} resor - ${totKm} km</div>
           <div style="font-size:11px;color:var(--text3);margin-top:3px">Inskickad ${fmtDate(r.signeradTs)}</div>
         </div>
         <div style="text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:6px">
@@ -496,7 +519,6 @@ function openDetalj(id) {
   const totEr = (r.resor || []).reduce((s, x) => s + Number(x.ersattning || 0), 0);
   const totKm = (r.resor || []).reduce((s, x) => s + Number(x.km || 0), 0);
 
-  // Build modal dynamically
   let modal = document.getElementById('modal-detalj');
   if (!modal) {
     modal = document.createElement('div');
@@ -505,59 +527,48 @@ function openDetalj(id) {
     document.body.appendChild(modal);
   }
 
-  modal.innerHTML = `
-    <div class="modal" style="max-width:600px">
-      <div class="modal-header">
-        <div>
-          <div class="modal-title">${r.period || '–'}</div>
-          <div style="font-size:11px;color:var(--text3);margin-top:2px">${r.id} · <span class="status-badge ${STATUS_CLASS[r.status]}" style="font-size:10px">${STATUS_LABEL[r.status]}</span></div>
-        </div>
-        <button class="modal-close" onclick="closeModal('modal-detalj')"><i class="ti ti-x"></i></button>
-      </div>
-      <div class="modal-body">
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;font-size:13px">
-          <div><div style="font-size:10px;font-weight:600;text-transform:uppercase;color:var(--text3);margin-bottom:3px">Namn</div><div style="font-weight:500">${r.namn || '–'}</div></div>
-          <div><div style="font-size:10px;font-weight:600;text-transform:uppercase;color:var(--text3);margin-bottom:3px">Kontonummer</div><div style="font-family:monospace;font-size:12px">${r.konto || '–'}</div></div>
-          <div><div style="font-size:10px;font-weight:600;text-transform:uppercase;color:var(--text3);margin-bottom:3px">Camping</div><div>${r.camping || '–'}</div></div>
-          <div><div style="font-size:10px;font-weight:600;text-transform:uppercase;color:var(--text3);margin-bottom:3px">Syfte</div><div>${r.syfte || '–'}</div></div>
-        </div>
+  const resorHtml = (r.resor || []).map(re => {
+    const syfteEl = re.syfte ? '<span>' + re.syfte + '</span>' : '';
+    return '<div style="background:var(--bg3);border-radius:var(--radius);padding:10px 13px;margin-bottom:7px">'
+      + '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">'
+      + '<div style="flex:1;min-width:0">'
+      + '<div style="font-size:11px;color:var(--text3);margin-bottom:2px">' + (re.datum || '-') + ' - ' + (re.fordonstyp === 'husbil' ? 'Husbil / Bil+Husvagn' : 'Bil') + '</div>'
+      + '<div style="font-size:13px;font-weight:500;margin-bottom:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + (re.stracka || '-') + '</div>'
+      + '<div style="font-size:11px;color:var(--text2);display:flex;gap:10px;flex-wrap:wrap">'
+      + '<span><i class="ti ti-road" style="font-size:11px"></i> ' + re.km + ' km</span>' + syfteEl
+      + '</div></div>'
+      + '<div style="font-size:15px;font-weight:700;color:var(--accent);flex-shrink:0">' + fmtKr(re.ersattning) + '</div>'
+      + '</div></div>';
+  }).join('');
 
-        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin-bottom:8px">Resor (${(r.resor||[]).length})</div>
-        ${(r.resor || []).map(re => `
-          <div style="background:var(--bg3);border-radius:var(--radius);padding:10px 13px;margin-bottom:7px">
-            <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
-              <div style="flex:1;min-width:0">
-                <div style="font-size:11px;color:var(--text3);margin-bottom:2px">${re.datum || '–'} · ${re.fordonstyp === 'husbil' ? 'Husbil / Bil+Husvagn' : 'Bil'}</div>
-                <div style="font-size:13px;font-weight:500;margin-bottom:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${re.stracka || '–'}</div>
-                <div style="font-size:11px;color:var(--text2);display:flex;gap:10px;flex-wrap:wrap">
-                  <span><i class="ti ti-road" style="font-size:11px"></i> ${re.km} km</span>
-                  ${re.syfte ? `<span>${re.syfte}</span>` : ''}
-                </div>
-              </div>
-              <div style="font-size:15px;font-weight:700;color:var(--accent);flex-shrink:0">${fmtKr(re.ersattning)}</div>
-            </div>
-          </div>`).join('')}
+  const kommentarEl = r.statusKommentar
+    ? '<div style="margin-top:12px;padding:10px 13px;background:var(--amber-bg);border-radius:var(--radius);font-size:12px;color:var(--amber-text)"><strong>Kommentar:</strong> ' + r.statusKommentar + '</div>'
+    : '';
+  const statusAvEl = r.statusAv ? ' - Hanterad av ' + r.statusAv + ' ' + fmtDate(r.statusTs) : '';
 
-        <div style="background:var(--green-bg);border-radius:var(--radius);padding:13px 15px;margin-top:10px">
-          <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px">
-            <span style="color:var(--text2)">Totalt antal km</span><span>${totKm} km</span>
-          </div>
-          <div style="display:flex;justify-content:space-between;font-size:16px;font-weight:700">
-            <span style="color:var(--text2)">Total ersättning</span><span style="color:var(--accent)">${fmtKr(totEr)}</span>
-          </div>
-        </div>
-
-        ${r.statusKommentar ? `<div style="margin-top:12px;padding:10px 13px;background:var(--amber-bg);border-radius:var(--radius);font-size:12px;color:var(--amber-text)"><strong>Kommentar:</strong> ${r.statusKommentar}</div>` : ''}
-
-        <div style="margin-top:12px;font-size:11px;color:var(--text3)">
-          Signerad av ${r.signeradAv || '–'} · ${fmtDate(r.signeradTs)}
-          ${r.statusAv ? ` · Hanterad av ${r.statusAv} ${fmtDate(r.statusTs)}` : ''}
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button class="btn-secondary" onclick="closeModal('modal-detalj')">Stäng</button>
-      </div>
-    </div>`;
+  modal.innerHTML = '<div class="modal" style="max-width:600px">'
+    + '<div class="modal-header"><div>'
+    + '<div class="modal-title">' + (r.period || '-') + '</div>'
+    + '<div style="font-size:11px;color:var(--text3);margin-top:2px">' + r.id + ' - <span class="status-badge ' + (STATUS_CLASS[r.status] || '') + '" style="font-size:10px">' + (STATUS_LABEL[r.status] || r.status) + '</span></div>'
+    + '</div><button class="modal-close" onclick="closeModal(\'modal-detalj\')"><i class="ti ti-x"></i></button></div>'
+    + '<div class="modal-body">'
+    + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;font-size:13px">'
+    + '<div><div style="font-size:10px;font-weight:600;text-transform:uppercase;color:var(--text3);margin-bottom:3px">Namn</div><div style="font-weight:500">' + (r.namn || '-') + '</div></div>'
+    + '<div><div style="font-size:10px;font-weight:600;text-transform:uppercase;color:var(--text3);margin-bottom:3px">Kontonummer</div><div style="font-family:monospace;font-size:12px">' + (r.konto || '-') + '</div></div>'
+    + '<div><div style="font-size:10px;font-weight:600;text-transform:uppercase;color:var(--text3);margin-bottom:3px">Camping</div><div>' + (r.camping || '-') + '</div></div>'
+    + '<div><div style="font-size:10px;font-weight:600;text-transform:uppercase;color:var(--text3);margin-bottom:3px">Syfte</div><div>' + (r.syfte || '-') + '</div></div>'
+    + '</div>'
+    + '<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin-bottom:8px">Resor (' + (r.resor||[]).length + ')</div>'
+    + resorHtml
+    + '<div style="background:var(--green-bg);border-radius:var(--radius);padding:13px 15px;margin-top:10px">'
+    + '<div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px"><span style="color:var(--text2)">Totalt antal km</span><span>' + totKm + ' km</span></div>'
+    + '<div style="display:flex;justify-content:space-between;font-size:16px;font-weight:700"><span style="color:var(--text2)">Total ersattning</span><span style="color:var(--accent)">' + fmtKr(totEr) + '</span></div>'
+    + '</div>'
+    + kommentarEl
+    + '<div style="margin-top:12px;font-size:11px;color:var(--text3)">Signerad av ' + (r.signeradAv || '-') + ' - ' + fmtDate(r.signeradTs) + statusAvEl + '</div>'
+    + '</div>'
+    + '<div class="modal-footer"><button class="btn-secondary" onclick="closeModal(\'modal-detalj\')">Stang</button></div>'
+    + '</div>';
 
   openModal('modal-detalj');
 }
@@ -675,6 +686,22 @@ async function deleteResa(i) {
   else    { aktiv.resor = backup; }
 }
 
+// ── ÅTERÖPPNA NEKAD ──────────────────────────────────────────────────────
+async function ateroppnaRakning() {
+  const aktiv = getAktiv();
+  if (!aktiv || aktiv.status !== 'nekad') return;
+  if (!confirm('Öppna räkningen för redigering?\n\nDu kan sedan ändra dina resor och skicka in på nytt.')) return;
+  aktiv.status = 'utkast';
+  delete aktiv.statusKommentar;
+  delete aktiv.statusAv;
+  delete aktiv.statusTs;
+  delete aktiv.signeradAv;
+  delete aktiv.signeradTs;
+  const ok = await saveRakningar('Räkning återöppnad för redigering');
+  if (ok) { toast('Räkning öppnad för redigering','ok'); renderTab(); }
+  else { aktiv.status = 'nekad'; }
+}
+
 // ── SIGNERA ───────────────────────────────────────────────────────────────
 async function signeraRakning() {
   const aktiv = getAktiv(); if (!aktiv) return;
@@ -684,7 +711,7 @@ async function signeraRakning() {
   aktiv.signeradAv = _user.name;
   aktiv.signeradTs = nowISO();
   const ok = await saveRakningar('Reseräkning signerad');
-  if (ok) { toast('Räkning inskickad ✓', 'ok'); renderTab(); }
+  if (ok) { toast('Rakning inskickad', 'ok'); renderTab(); }
   else    { aktiv.status = 'utkast'; delete aktiv.signeradAv; delete aktiv.signeradTs; }
 }
 
@@ -699,7 +726,7 @@ function applyMobileLayout() {
 window.addEventListener('resize', applyMobileLayout);
 
 function fmtKr(v)  { return (Math.round((v || 0) * 100) / 100).toLocaleString('sv-SE', {minimumFractionDigits:2, maximumFractionDigits:2}) + ' kr'; }
-function fmtDate(iso) { try { return new Date(iso).toLocaleString('sv-SE', {year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}); } catch(e) { return iso || '–'; } }
+function fmtDate(iso) { try { return new Date(iso).toLocaleString('sv-SE', {year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}); } catch(e) { return iso || '-'; } }
 function today()   { return new Date().toISOString().slice(0, 10); }
 function nowISO()  { return new Date().toISOString(); }
 function openModal(id)  { document.getElementById(id).classList.add('show'); }
