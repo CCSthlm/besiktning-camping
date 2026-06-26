@@ -713,7 +713,10 @@ async function showPortal() {
   const initials = u.name.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase();
   document.getElementById('portal-avatar').textContent = initials;
   document.getElementById('portal-username').textContent = u.name;
-  document.getElementById('portal-role').textContent = u.role + (u.authMethod==='microsoft'?' · Microsoft 365':'');
+  const roleLabel = u.adminRoles?.includes('global') || (u.role === 'Admin' && !u.adminRoles?.length) ? 'Admin'
+    : u.adminRoles?.length ? 'Användare'
+    : u.role || 'Användare';
+  document.getElementById('portal-role').textContent = roleLabel + (u.authMethod==='microsoft'?' · Microsoft 365':'');
   if (u.domainOnly) {
     document.getElementById('portal-role').innerHTML = 'Domänanvändare · Microsoft 365 &nbsp;<span style="font-size:10px;background:var(--amber-bg);color:var(--amber-text);padding:1px 7px;border-radius:20px;font-weight:600">Begränsad åtkomst</span>';
   }
@@ -852,11 +855,13 @@ function openNewsArchive() {
 
 function renderApps() {
   const u = _currentUser;
-  const userApps = u.apps || [];
-  const userRoles = u.adminRoles || (u.role === 'Admin' ? ['global'] : []);
-  const hasAdminRole = userRoles.some(r => ['global','sektions'].includes(r)) || u.role === 'Admin';
+  const userApps   = u.apps || [];
+  const userRoles  = u.adminRoles || [];
+  const isGlobalAdmin = userRoles.includes('global') || (u.role === 'Admin' && userRoles.length === 0);
+  const hasAdminRole  = userRoles.some(r => ['global','sektions'].includes(r));
+
   const accessible = ALL_APPS.filter(app => {
-    // requiredRoles — visas om användaren har rollen, oavsett admin-status
+    // requiredRoles — visas om användaren har exakt den rollen i adminRoles
     if (app.requiredRoles) {
       return userRoles.some(r => app.requiredRoles.includes(r));
     }
@@ -864,14 +869,15 @@ function renderApps() {
     if (app.adminRolesRequired) {
       return userRoles.some(r => app.adminRolesRequired.includes(r));
     }
-    // Domain-only users: only see apps with no role restriction
-    if (u.domainOnly) return app.roles.length === 0;
-    // Empty roles = accessible to all logged-in users
-    if (app.roles.length === 0) return true;
-    // Admin page — requires global or sektions role
+    // Admin page — bara global/sektions
     if (app.id === 'admin') return hasAdminRole;
-    // Other apps — role match + app assigned to user (or user is Admin)
-    return app.roles.includes(u.role) && (u.role==='Admin' || userApps.includes(app.id));
+    // Generella appar (roles:[]) — alla inloggade ser dem utom domainOnly
+    if (app.roles.length === 0) {
+      return !u.domainOnly || app.roles.length === 0;
+    }
+    // Specifika appar — kräver rätt role OCH att appen är tilldelad, ELLER global admin
+    if (isGlobalAdmin) return true;
+    return app.roles.includes(u.role) && userApps.includes(app.id);
   });
   const el = document.getElementById('app-launcher-content');
   if (!accessible.length) {
