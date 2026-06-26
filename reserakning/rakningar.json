@@ -8,17 +8,7 @@
       "camping": "CC Björkö Örns Camping",
       "period": "Test period",
       "syfte": "Heewwqq",
-      "resor": [
-        {
-          "datum": "2026-06-26",
-          "fordonstyp": "husbil",
-          "stracka": "Hemma - BÖ - Hemma",
-          "km": 240,
-          "ersattning": 480,
-          "syfte": "Månadsmöte, Ledningsgruppsmöte",
-          "ts": "2026-06-26T12:29:19.462Z"
-        }
-      ],
+      "resor": [],
       "status": "utkast",
       "skapad": "2026-06-26T12:27:59.124Z",
       "skapadAv": "Massimo Johansson"
