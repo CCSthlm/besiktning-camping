@@ -134,12 +134,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
     <div class="topbar-avatar" id="tb-avatar">?</div>
     <span class="topbar-name" id="tb-name">–</span>
     <button class="btn-secondary" onclick="window.location.href='index.html'"><i class="ti ti-arrow-left"></i> Portal</button>
-    <button onclick="doLogout()" style="padding:8px 12px;background:var(--red-bg);color:var(--red);border:1px solid rgba(163,45,45,.2);border-radius:var(--radius);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:5px"><i class="ti ti-logout"></i></button>
+    <button class="btn-secondary" onclick="doLogout()" style="color:var(--red);border-color:rgba(163,45,45,.3)"><i class="ti ti-logout"></i> Logga ut</button>
   </div>
 </div>
 
 <div class="nav-tabs">
   <button class="nav-tab active" id="tab-aktiv" onclick="showTab('aktiv')"><i class="ti ti-file-text"></i> Aktiv räkning</button>
+  <button class="nav-tab" id="tab-inskickade" onclick="showTab('inskickade')"><i class="ti ti-inbox"></i> Inskickade</button>
   <button class="nav-tab" id="tab-historik" onclick="showTab('historik')"><i class="ti ti-history"></i> Historik</button>
 </div>
 
@@ -207,6 +208,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
 
 <div class="bottom-nav" id="bottom-nav">
   <button class="bottom-nav-tab active" id="bnav-aktiv" onclick="showTab('aktiv')"><i class="ti ti-file-text"></i><span>Aktiv</span></button>
+  <button class="bottom-nav-tab" id="bnav-inskickade" onclick="showTab('inskickade')"><i class="ti ti-inbox"></i><span>Inskickade</span></button>
   <button class="bottom-nav-tab" id="bnav-historik" onclick="showTab('historik')"><i class="ti ti-history"></i><span>Historik</span></button>
 </div>
 
@@ -332,7 +334,7 @@ async function saveRakningar(msg) {
 // ── TABS ──────────────────────────────────────────────────────────────────
 function showTab(tab) {
   _currentTab = tab;
-  ['aktiv', 'historik'].forEach(t => {
+  ['aktiv', 'inskickade', 'historik'].forEach(t => {
     document.getElementById('tab-' + t)?.classList.toggle('active', t === tab);
     document.getElementById('bnav-' + t)?.classList.toggle('active', t === tab);
   });
@@ -340,7 +342,8 @@ function showTab(tab) {
 }
 
 function renderTab() {
-  if (_currentTab === 'aktiv') renderAktiv();
+  if (_currentTab === 'aktiv')      renderAktiv();
+  else if (_currentTab === 'inskickade') renderInskickade();
   else renderHistorik();
 }
 
@@ -429,14 +432,43 @@ function renderAktiv() {
     </div>`;
 }
 
+// ── INSKICKADE ────────────────────────────────────────────────────────────
+function renderInskickade() {
+  const list = (_rakningar.rakningar || [])
+    .filter(r => r.userId === getUserId() && ['inskickad','godkand'].includes(r.status))
+    .sort((a, b) => (b.signeradTs || '').localeCompare(a.signeradTs || ''));
+  const c = document.getElementById('main-content');
+  if (!list.length) {
+    c.innerHTML = '<div class="empty"><i class="ti ti-inbox"></i><div style="font-size:15px;font-weight:600;margin-bottom:6px">Inga inskickade räkningar</div><div style="font-size:13px;color:var(--text2)">Räkningar du skickat in men som ännu inte betalats ut visas här.</div></div>';
+    return;
+  }
+  c.innerHTML = list.map(r => {
+    const totEr = (r.resor || []).reduce((s, x) => s + Number(x.ersattning || 0), 0);
+    const totKm = (r.resor || []).reduce((s, x) => s + Number(x.km || 0), 0);
+    return `<div class="card" style="cursor:pointer" onclick="openDetalj('${r.id}')">
+      <div class="card-body" style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+        <div>
+          <div style="font-weight:600;margin-bottom:4px">${r.period || '–'}</div>
+          <div style="font-size:12px;color:var(--text2)">${r.camping || '–'} · ${(r.resor || []).length} resor · ${totKm} km</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:3px">Inskickad ${fmtDate(r.signeradTs)}</div>
+        </div>
+        <div style="text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:6px">
+          <div style="font-size:18px;font-weight:700;color:var(--accent)">${fmtKr(totEr)}</div>
+          <span class="status-badge ${STATUS_CLASS[r.status]}">${STATUS_LABEL[r.status]}</span>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
 // ── HISTORIK ──────────────────────────────────────────────────────────────
 function renderHistorik() {
   const hist = (_rakningar.rakningar || [])
-    .filter(r => r.userId === getUserId() && r.status !== 'utkast')
+    .filter(r => r.userId === getUserId() && ['utbetald','nekad'].includes(r.status))
     .sort((a, b) => (b.signeradTs || '').localeCompare(a.signeradTs || ''));
   const c = document.getElementById('main-content');
   if (!hist.length) {
-    c.innerHTML = '<div class="empty"><i class="ti ti-history"></i>Inga inskickade räkningar</div>';
+    c.innerHTML = '<div class="empty"><i class="ti ti-history"></i><div style="font-size:15px;font-weight:600;margin-bottom:6px">Ingen historik ännu</div><div style="font-size:13px;color:var(--text2)">Utbetalda och nekade räkningar visas här.</div></div>';
     return;
   }
   c.innerHTML = hist.map(r => {
