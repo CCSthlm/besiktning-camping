@@ -497,7 +497,22 @@ tr:hover td{background:var(--bg3);}
             <label class="checkbox-item"><input type="checkbox" id="role-reserakning-admin"> <i class="ti ti-car" style="font-size:14px;color:#3B6D11"></i> <span><strong>Reseräkning Admin</strong> – administrera alla räkningar och inställningar</span></label>
           </div>
           <div class="role-section" style="padding:9px 12px;border-left:3px solid #1a4f7a;">
-            <label class="checkbox-item"><input type="checkbox" id="role-reserakning-godkannare"> <i class="ti ti-check" style="font-size:14px;color:#1a4f7a"></i> <span><strong>Reseräkning Godkännare</strong> – godkänn/neka räkningar för sin camping</span></label>
+            <label class="checkbox-item"><input type="checkbox" id="role-reserakning-godkannare" onchange="toggleGodkannarcamping()"> <i class="ti ti-check" style="font-size:14px;color:#1a4f7a"></i> <span><strong>Reseräkning Godkännare</strong> – godkänn/neka räkningar för sin camping</span></label>
+            <div id="godkannare-camping-wrap" style="display:none;margin-top:8px;padding-left:22px">
+              <label style="font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.04em;display:block;margin-bottom:4px">Godkännare för camping</label>
+              <select id="godkannare-camping" style="padding:7px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius);font-size:12px;font-family:inherit;width:100%;max-width:300px">
+                <option value="">– Välj camping –</option>
+                <option>CC Björkö Örns Camping</option>
+                <option>CC Östnora Camping</option>
+                <option>CC Kapellskärs Camping</option>
+                <option>CC Mista Camping</option>
+                <option>CC Storsveds Camping</option>
+                <option>CC Örstigs Camping</option>
+                <option>Gräddös Pärla Kök &amp; Bar</option>
+                <option>Östnora Kök &amp; Bar</option>
+                <option>Sektionen</option>
+              </select>
+            </div>
           </div>
           <div class="role-section" style="padding:9px 12px;border-left:3px solid #854F0B;">
             <label class="checkbox-item"><input type="checkbox" id="role-reserakning-utbetalare"> <i class="ti ti-coin" style="font-size:14px;color:#854F0B"></i> <span><strong>Reseräkning Utbetalare</strong> – markera räkningar som utbetalda</span></label>
@@ -1195,6 +1210,7 @@ function openAddUser() {
   ['global','sektions','besiktnings','personal','avvikelse-admin','avvikelse-ledning','avvikelse-anlaggning','avvikelse-brand','nyhetsadmin','störningsadmin','kontoadmin','inventarieadmin','reserakning-admin','reserakning-godkannare','reserakning-utbetalare'].forEach(r => { const el=document.getElementById('role-'+r); if(el) el.checked=false; });
   buildAppCheckboxes([]);
   populatePLCampingSelect('');
+  toggleGodkannarcamping();
   openModal('modal-user');
 }
 
@@ -1216,6 +1232,9 @@ function openEditUser(id) {
   });
   buildAppCheckboxes(u.apps||[]);
   populatePLCampingSelect(u.plCampingId||'');
+  toggleGodkannarcamping();
+  const gcEl = document.getElementById('godkannare-camping');
+  if (gcEl) gcEl.value = u.godkannarcamping || '';
   openModal('modal-user');
 }
 
@@ -1224,6 +1243,16 @@ function buildAppCheckboxes(selected) {
   c.innerHTML = APP_LIST.map(a =>
     `<label class="checkbox-item"><input type="checkbox" value="${a.id}" ${selected.includes(a.id)?'checked':''}> ${a.name}</label>`
   ).join('');
+}
+
+function toggleGodkannarcamping() {
+  const checked = document.getElementById('role-reserakning-godkannare')?.checked;
+  const wrap    = document.getElementById('godkannare-camping-wrap');
+  if (wrap) wrap.style.display = checked ? '' : 'none';
+  if (!checked) {
+    const sel = document.getElementById('godkannare-camping');
+    if (sel) sel.value = '';
+  }
 }
 
 function populatePLCampingSelect(selected) {
@@ -1241,6 +1270,8 @@ function saveUser() {
   const adminRoles = ['global','sektions','besiktnings','personal','avvikelse-admin','avvikelse-ledning','avvikelse-anlaggning','avvikelse-brand','nyhetsadmin','störningsadmin','kontoadmin','inventarieadmin','reserakning-admin','reserakning-godkannare','reserakning-utbetalare'].filter(r => document.getElementById('role-'+r)?.checked);
   const apps = Array.from(document.querySelectorAll('#user-apps-check input:checked')).map(e=>e.value);
   const editId = document.getElementById('user-edit-id').value;
+  const godkannarcamping = adminRoles.includes('reserakning-godkannare')
+    ? (document.getElementById('godkannare-camping')?.value || '') : '';
   const obj = {
     name,
     email: document.getElementById('user-email').value.trim(),
@@ -1251,6 +1282,7 @@ function saveUser() {
     active: document.getElementById('user-active').value==='true',
     apps,
     plCampingId: document.getElementById('user-pl-camping').value,
+    godkannarcamping,
   };
   if (editId) {
     const i = _data.users.findIndex(u=>u.id===editId);
