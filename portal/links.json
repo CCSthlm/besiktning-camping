@@ -17,6 +17,12 @@
       "name": "Avtalshantering - OneFlow",
       "url": "https://app.oneflow.com/login",
       "active": true
+    },
+    {
+      "id": "mquswlffd4nm",
+      "name": "Caravan Club of Sweden - Stockholmssektionen",
+      "url": "https://caravanclub.se/stockholm/",
+      "active": true
     }
   ]
 }
