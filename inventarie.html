@@ -155,33 +155,41 @@ tr:hover td{background:rgba(59,109,17,.02);}
 #toast{position:fixed;bottom:20px;right:20px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);padding:10px 14px;font-size:13px;z-index:999;box-shadow:var(--shadow);opacity:0;transform:translateY(6px);transition:all .25s;pointer-events:none;display:flex;align-items:center;gap:6px;}
 
 
-@media(max-width:768px){
+@media(max-width:900px){
+  .portal-username,.portal-role{display:none;}
+}
+@media(max-width:600px){
   .topbar{padding:10px 14px;}
-  .content{padding:10px 14px 80px;}
+  .content{padding:10px 14px 72px;}
   .stats-row{grid-template-columns:repeat(2,1fr);}
   .card-grid{grid-template-columns:1fr;}
   .fg{grid-template-columns:1fr;}
   .fg.trio{grid-template-columns:1fr 1fr;}
-  .portal-username,.portal-role{display:none;}
-  .nav-tabs{display:none;}
-  .inv-bottom-nav{display:flex;}
-}
-@media(max-width:480px){
-  .stats-row{grid-template-columns:repeat(2,1fr);}
+  .nav-tabs{display:none !important;}
+  .inv-bottom-nav{display:flex !important;}
+  .portal-topbar{padding:10px 14px;}
+  .view-toggle{display:none;}
+  /* Kortvy på mobil = liststil som portalen */
+  .inv-card{display:flex;flex-direction:row;align-items:center;gap:12px;padding:12px 14px;border-radius:var(--radius);}
+  .inv-card-top{flex:1;margin-bottom:0;}
+  .inv-card-body{display:none;}
+  .inv-card-footer{display:none;}
+  .stats-row .stat{padding:10px 12px;}
+  .stat-val{font-size:18px;}
 }
 .inv-bottom-nav{
   display:none;
   position:fixed;bottom:0;left:0;right:0;
   background:var(--bg2);border-top:1px solid var(--border2);
-  z-index:50;padding:6px 0 10px;
+  z-index:50;padding:6px 0 env(safe-area-inset-bottom,10px);
 }
 .inv-nav-tab{
   flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;
-  font-size:11px;color:var(--text3);cursor:pointer;padding:4px 0;
+  font-size:12px;color:var(--text3);cursor:pointer;padding:4px 0;
   font-family:inherit;background:none;border:none;
 }
 .inv-nav-tab i{font-size:22px;}
-.inv-nav-tab.active{color:var(--accent);}
+.inv-nav-tab.active{color:var(--accent);font-weight:600;}
 </style>
 </head>
 <body>
