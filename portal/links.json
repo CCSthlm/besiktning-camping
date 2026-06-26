@@ -11,6 +11,12 @@
       "name": "Sök fordonsuppgifter",
       "url": "https://fordon-fu-regnr.transportstyrelsen.se/",
       "active": true
+    },
+    {
+      "id": "mqusvf3z2e5d",
+      "name": "Avtalshantering - OneFlow",
+      "url": "https://app.oneflow.com/login",
+      "active": true
     }
   ]
 }
