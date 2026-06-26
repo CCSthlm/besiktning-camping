@@ -102,7 +102,17 @@
       "camping": "CC Östnora Camping",
       "period": "Juni 26",
       "syfte": "Testar",
-      "resor": [],
+      "resor": [
+        {
+          "datum": "2026-06-26",
+          "fordonstyp": "bil",
+          "stracka": "Hemma - Östnora - Hemma",
+          "km": 120,
+          "ersattning": 300,
+          "syfte": "Månadsmöte, Ledningsgruppsmöte",
+          "ts": "2026-06-26T13:51:15.325Z"
+        }
+      ],
       "status": "utkast",
       "skapad": "2026-06-26T13:51:02.853Z",
       "skapadAv": "Utbildningsresa Oktoberfest 2027"
