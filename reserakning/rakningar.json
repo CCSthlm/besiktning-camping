@@ -19,11 +19,14 @@
           "ts": "2026-06-26T12:30:34.050Z"
         }
       ],
-      "status": "inskickad",
+      "status": "godkand",
       "skapad": "2026-06-26T12:27:59.124Z",
       "skapadAv": "Massimo Johansson",
       "signeradAv": "Massimo Johansson",
-      "signeradTs": "2026-06-26T12:30:57.531Z"
+      "signeradTs": "2026-06-26T12:30:57.531Z",
+      "statusKommentar": "OK",
+      "statusTs": "2026-06-26T12:31:42.568Z",
+      "statusAv": "Massimo Johansson"
     }
   ]
 }
