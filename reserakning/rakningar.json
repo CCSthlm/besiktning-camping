@@ -125,7 +125,17 @@
       "camping": "CC Björkö Örns Camping",
       "period": "Juni",
       "syfte": "Hjälpa Christoffer med peter",
-      "resor": [],
+      "resor": [
+        {
+          "datum": "2026-06-25",
+          "fordonstyp": "bil",
+          "stracka": "Åkersberga - BÖ - Åkersberga",
+          "km": 150,
+          "ersattning": 375,
+          "syfte": "Hjälpa christoffer",
+          "ts": "2026-06-27T15:06:53.165Z"
+        }
+      ],
       "status": "utkast",
       "skapad": "2026-06-27T15:06:17.516Z",
       "skapadAv": "Malin Liljedahl Björkö Örn"
