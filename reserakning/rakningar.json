@@ -116,6 +116,19 @@
       "skapadAv": "Utbildningsresa Oktoberfest 2027",
       "signeradAv": "Utbildningsresa Oktoberfest 2027",
       "signeradTs": "2026-06-26T13:51:19.683Z"
+    },
+    {
+      "id": "RR-1782572777515",
+      "userId": "domain_malin.liljedahl@cc-camping.se",
+      "namn": "Jörgen Liljedahl",
+      "konto": "71353078426",
+      "camping": "CC Björkö Örns Camping",
+      "period": "Juni",
+      "syfte": "Hjälpa Christoffer med peter",
+      "resor": [],
+      "status": "utkast",
+      "skapad": "2026-06-27T15:06:17.516Z",
+      "skapadAv": "Malin Liljedahl Björkö Örn"
     }
   ]
 }
