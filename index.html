@@ -498,7 +498,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
         <!-- Populated by JS -->
       </div>
       <div class="portal-sidebar">
-<div class="links-card">
+<div class="links-card" id="arshjul-widget" style="display:none">
+          <div class="links-card-header" style="justify-content:space-between">
+            <span><i class="ti ti-calendar-event"></i> Kommande aktiviteter</span>
+            <a href="arshjul.html" style="font-size:10px;color:var(--accent);text-decoration:none;font-weight:500">Visa allt</a>
+          </div>
+          <div id="arshjul-widget-list" style="padding:6px 0"></div>
+        </div>
+        <div class="links-card">
           <div class="links-card-header"><i class="ti ti-link"></i> Snabblänkar</div>
           <div class="links-list" id="portal-links-list">
             <div class="links-empty">Inga länkar konfigurerade</div>
@@ -547,6 +554,8 @@ const ALL_APPS = [
   {id:'m365-admin', name:'M365-ansökningar', desc:'Hantera och handlägga ansökningar om Microsoft 365-konto.', icon:'ti-brand-windows', color:'app-icon-blue', url:'m365-admin.html', roles:[], badge:'', newTab:false, group:'admin', adminRolesRequired:['global','sektions','kontoadmin']},
   {id:'storning-admin', name:'Störningsrapporter', desc:'Hantera störningsrapporter, skriv beslut och se historik.', icon:'ti-file-alert', color:'app-icon-amber', url:'storning-admin.html', roles:[], badge:'', newTab:false, group:'admin', adminRolesRequired:['global','störningsadmin']},
   {id:'avvikelse-admin',name:'Avvikelsehantering',     desc:'Dashboard, ärendelista, handläggning och statistik för avvikelser.',                   icon:'ti-dashboard',      color:'app-icon-amber', url:'avvikelse-admin.html',   roles:[], badge:'', newTab:false, group:'admin', adminRolesRequired:['global','avvikelse-admin','avvikelse-ledning','avvikelse-anlaggning','avvikelse-brand']},
+  {id:'arshjul', name:'Årshjul', desc:'Se sektionens årsplanering och kommande aktiviteter.', icon:'ti-circle-dot', color:'app-icon-green', url:'arshjul.html', roles:[], badge:'', newTab:false, group:'generell'},
+  {id:'arshjul-admin', name:'Årshjul Admin', desc:'Administrera och underhåll årshjulets aktiviteter.', icon:'ti-circle-dot', color:'app-icon-green', url:'arshjul-admin.html', roles:[], badge:'', newTab:false, group:'admin', adminRolesRequired:['arshjul-admin','global']},
   {id:'admin',          name:'Administration',         desc:'Hantera användare, campingar och systeminställningar.',                                  icon:'ti-settings-2',     color:'app-icon-amber', url:'admin.html',             roles:['Admin'], badge:'ADMIN', newTab:false, group:'admin'},
 ];
 
@@ -814,6 +823,7 @@ async function showPortal() {
   await loadPortalNews();
   await loadPortalLinks();
   renderApps();
+  loadArshjulWidget();
   renderLinks();
   renderBanners();
   initMobileLayout();
@@ -1056,6 +1066,45 @@ function appCardAdmin(app) {
     ${badge}
     <i class="ti ti-chevron-right" style="color:var(--text3);font-size:13px;flex-shrink:0"></i>
   </a>`;
+}
+
+async function loadArshjulWidget() {
+  const token = localStorage.getItem('gh_token') || '';
+  if (!token) return;
+  try {
+    const res = await fetch('https://api.github.com/repos/CCSthlm/besiktning-camping/contents/arshjul/aktiviteter.json',
+      {headers:{'Authorization':'token '+token}});
+    if (!res.ok) return;
+    const gh  = await res.json();
+    const bytes = Uint8Array.from(atob(gh.content.replace(/\n/g,'')), c=>c.charCodeAt(0));
+    const data  = JSON.parse(new TextDecoder('utf-8').decode(bytes));
+    const acts  = data.aktiviteter || [];
+    const now   = new Date();
+    const later = new Date(now.getTime() + 28 * 24 * 60 * 60 * 1000);
+    const MANADER = ['Jan','Feb','Mar','Apr','Maj','Jun','Jul','Aug','Sep','Okt','Nov','Dec'];
+    const CAT_COL = {'Camping':'#3B6D11','Styrelse':'#1a4f7a','Restaurang':'#c2560a','Underhåll':'#8a6c00','Ekonomi':'#6b3fa0','Övrigt':'#5a5a57'};
+    const upcoming = acts.filter(a => {
+      const sm = new Date(now.getFullYear(), a.startManad - 1, a.startDag || 1);
+      const em = new Date(now.getFullYear(), (a.slutManad || a.startManad) - 1, a.slutDag || 28);
+      return em >= now && sm <= later;
+    }).slice(0, 6);
+    const widget = document.getElementById('arshjul-widget');
+    const list   = document.getElementById('arshjul-widget-list');
+    if (!upcoming.length) { widget.style.display='none'; return; }
+    widget.style.display = '';
+    list.innerHTML = upcoming.map(a => {
+      const col = CAT_COL[a.kategori] || '#888';
+      const mon = MANADER[a.startManad - 1];
+      const dag = a.startDag ? ' ' + a.startDag : '';
+      return `<div style="display:flex;align-items:flex-start;gap:8px;padding:7px 16px;border-bottom:1px solid var(--border)">
+        <div style="width:8px;height:8px;border-radius:50%;background:${col};flex-shrink:0;margin-top:4px"></div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:12px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${a.titel}</div>
+          <div style="font-size:11px;color:var(--text3)">${mon}${dag} · ${a.ansvarig}</div>
+        </div>
+      </div>`;
+    }).join('') + `<div style="padding:7px 16px"><a href="arshjul.html" style="font-size:11px;color:var(--accent);text-decoration:none">Öppna årshjulet →</a></div>`;
+  } catch(e) { console.warn('Årshjul widget:', e); }
 }
 
 function setAppSession(e, appId) {
