@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Årshjul Admin – CCSthlm</title>
+<link rel="icon" href="https://raw.githubusercontent.com/CCSthlm/besiktning-camping/main/Images/CC-Logga.png" type="image/png">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/tabler-icons.min.css">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f5f5f3;--bg2:#fff;--bg3:#eeede8;--bg4:#e5e4de;
+  --text:#1a1a18;--text2:#5a5a57;--text3:#909088;
+  --accent:#3B6D11;--accent2:#27500A;--accent-glow:rgba(59,109,17,.1);
+  --red:#A32D2D;--red-bg:#FCEBEB;
+  --amber:#854F0B;--amber-bg:#FAEEDA;
+  --border:rgba(0,0,0,.10);--border2:rgba(0,0,0,.16);
+  --radius:8px;--radius-lg:14px;--shadow:0 2px 16px rgba(0,0,0,.08);
+  --sidebar:220px;
+
+  --cat-camping:#3B6D11;--cat-styrelse:#1a4f7a;
+  --cat-restaurang:#c2560a;--cat-underhall:#8a6c00;
+  --cat-ekonomi:#6b3fa0;--cat-ovrigt:#5a5a57;
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:var(--bg3);color:var(--text);min-height:100vh;display:flex;}
+.sidebar{width:var(--sidebar);flex-shrink:0;background:var(--bg2);border-right:1px solid var(--border2);display:flex;flex-direction:column;position:fixed;inset:0 auto 0 0;z-index:10;}
+.sidebar-logo{padding:14px 16px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:9px;}
+.sidebar-logo img{width:30px;height:30px;object-fit:contain;}
+.sidebar-logo-text{font-size:13px;font-weight:700;}
+.sidebar-logo-sub{font-size:10px;color:var(--text3);}
+.sidebar-nav{flex:1;padding:8px 0;}
+.nav-item{display:flex;align-items:center;gap:8px;padding:9px 16px;cursor:pointer;font-size:13px;color:var(--text2);border-left:2px solid transparent;transition:all .15s;}
+.nav-item:hover{background:var(--bg3);}
+.nav-item.active{background:var(--bg3);color:var(--accent);border-left-color:var(--accent);font-weight:600;}
+.nav-item i{font-size:15px;}
+.nav-group{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);padding:10px 16px 4px;}
+.sidebar-footer{padding:10px 12px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:6px;}
+.btn-portal{width:100%;padding:7px 10px;background:var(--bg3);color:var(--text2);border:1px solid var(--border2);border-radius:var(--radius);font-size:12px;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:6px;text-decoration:none;}
+.btn-logout{width:100%;padding:7px 10px;background:var(--red-bg);color:var(--red);border:1px solid rgba(163,45,45,.2);border-radius:var(--radius);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:6px;}
+
+.main{margin-left:var(--sidebar);flex:1;display:flex;flex-direction:column;}
+.topbar{padding:14px 22px;border-bottom:1px solid var(--border2);display:flex;justify-content:space-between;align-items:center;background:var(--bg2);position:sticky;top:0;z-index:5;flex-wrap:wrap;gap:10px;}
+.topbar h1{font-size:17px;font-weight:700;}
+.content{padding:20px 22px;}
+
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:14px;box-shadow:var(--shadow);}
+.card-header{padding:12px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+.card-title{font-size:14px;font-weight:600;}
+table{width:100%;border-collapse:collapse;}
+th{text-align:left;padding:9px 14px;font-size:11px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--border);background:var(--bg3);}
+td{padding:10px 14px;font-size:13px;border-bottom:1px solid var(--border);vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:rgba(59,109,17,.02);}
+.cat-badge{display:inline-flex;font-size:11px;font-weight:600;padding:2px 8px;border-radius:12px;}
+
+.btn-primary{padding:9px 16px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px;transition:background .15s;}
+.btn-primary:hover{background:var(--accent2);}
+.btn-secondary{padding:7px 12px;background:var(--bg3);color:var(--text2);border:1px solid var(--border2);border-radius:var(--radius);font-size:12px;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:5px;}
+.btn-secondary:hover{background:var(--bg4);}
+.btn-danger{padding:5px 8px;background:var(--red-bg);color:var(--red);border:none;border-radius:var(--radius);font-size:12px;cursor:pointer;font-family:inherit;}
+
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:100;align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto;}
+.modal-overlay.show{display:flex;}
+.modal{background:var(--bg2);border-radius:var(--radius-lg);width:100%;max-width:520px;margin:auto;box-shadow:0 8px 40px rgba(0,0,0,.2);}
+.modal-header{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--bg2);}
+.modal-title{font-size:15px;font-weight:700;}
+.modal-close{background:none;border:none;cursor:pointer;color:var(--text3);font-size:20px;}
+.modal-body{padding:16px 18px;max-height:72vh;overflow-y:auto;}
+.modal-footer{padding:12px 18px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px;background:var(--bg2);}
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
+.fg.full{grid-template-columns:1fr;}
+.ff{display:flex;flex-direction:column;gap:4px;}
+.ff label{font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.04em;}
+.ff input,.ff select,.ff textarea{padding:9px 11px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius);font-size:13px;font-family:inherit;color:var(--text);}
+.ff input:focus,.ff select:focus,.ff textarea:focus{outline:none;border-color:var(--accent);}
+.fsect{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);padding:10px 0 6px;border-bottom:1px solid var(--border);margin:12px 0 10px;}
+.filter-bar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;}
+.filter-btn{padding:5px 12px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;border:1.5px solid var(--border2);background:var(--bg3);color:var(--text2);transition:all .15s;}
+.filter-btn.active{background:var(--accent);color:#fff;border-color:var(--accent);}
+#toast{position:fixed;bottom:22px;right:22px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);padding:10px 14px;font-size:13px;z-index:999;box-shadow:var(--shadow);opacity:0;transform:translateY(6px);transition:all .25s;pointer-events:none;display:flex;align-items:center;gap:6px;}
+</style>
+</head>
+<body>
+<nav class="sidebar">
+  <div class="sidebar-logo">
+    <img src="https://raw.githubusercontent.com/CCSthlm/besiktning-camping/main/Images/CC-Logga.png" alt="CC">
+    <div><div class="sidebar-logo-text">Årshjul Admin</div><div class="sidebar-logo-sub">CCSthlm</div></div>
+  </div>
+  <div class="sidebar-nav">
+    <div class="nav-group">Aktiviteter</div>
+    <div class="nav-item active" id="nav-alla" onclick="showView('alla')"><i class="ti ti-list"></i> Alla aktiviteter</div>
+    <div class="nav-item" id="nav-sektion" onclick="showView('sektion')"><i class="ti ti-world"></i> Sektionsgemensamma</div>
+    <div class="nav-item" id="nav-camping" onclick="showView('camping')"><i class="ti ti-tent"></i> Campingspecifika</div>
+    <div class="nav-group">Verktyg</div>
+    <div class="nav-item" id="nav-kopiera" onclick="showView('kopiera')"><i class="ti ti-copy"></i> Kopiera år</div>
+  </div>
+  <div class="sidebar-footer">
+    <a href="arshjul.html" class="btn-portal"><i class="ti ti-eye"></i> Visa årshjul</a>
+    <a href="index.html" class="btn-portal"><i class="ti ti-arrow-left"></i> Portal</a>
+    <button class="btn-logout" onclick="doLogout()"><i class="ti ti-logout"></i> Logga ut</button>
+  </div>
+</nav>
+
+<div class="main">
+  <div class="topbar">
+    <div><h1 id="view-title">Alla aktiviteter</h1><div style="font-size:12px;color:var(--text2)" id="view-sub">Administrera årshjulets aktiviteter</div></div>
+    <button class="btn-primary" onclick="openNy()"><i class="ti ti-plus"></i> Ny aktivitet</button>
+  </div>
+  <div class="content" id="main-content"></div>
+</div>
+
+<!-- EDIT MODAL -->
+<div class="modal-overlay" id="modal-edit">
+  <div class="modal">
+    <div class="modal-header"><span class="modal-title" id="edit-title">Ny aktivitet</span><button class="modal-close" onclick="closeModal('modal-edit')"><i class="ti ti-x"></i></button></div>
+    <div class="modal-body">
+      <input type="hidden" id="edit-id">
+      <div class="fsect">Grundinformation</div>
+      <div class="fg full"><div class="ff"><label>Titel *</label><input type="text" id="e-titel" placeholder="Aktivitetens namn"></div></div>
+      <div class="fg full"><div class="ff"><label>Beskrivning</label><textarea id="e-beskr" rows="3" placeholder="Kort beskrivning av aktiviteten"></textarea></div></div>
+      <div class="fg">
+        <div class="ff"><label>Kategori *</label><select id="e-kat">
+          <option>Camping</option><option>Styrelse</option><option>Restaurang</option>
+          <option>Underhåll</option><option>Ekonomi</option><option>Övrigt</option>
+        </select></div>
+        <div class="ff"><label>Ansvarig *</label><select id="e-ansvarig">
+          <option>Campingvärd</option><option>Campingråd</option><option>Campingansvarig</option>
+          <option>Restaurangansvarig</option><option>Styrelse</option>
+        </select></div>
+      </div>
+      <div class="fg full"><div class="ff"><label>Camping (lämna tomt = sektionsgemensam)</label>
+        <select id="e-camping">
+          <option value="">Sektionsgemensam</option>
+          <option>CC Björkö Örns Camping</option><option>CC Östnora Camping</option>
+          <option>CC Kapellskärs Camping</option><option>CC Mista Camping</option>
+          <option>CC Storsveds Camping</option><option>CC Örstigs Camping</option>
+          <option>Gräddös Pärla Kök &amp; Bar</option><option>Östnora Kök &amp; Bar</option>
+        </select>
+      </div></div>
+
+      <div class="fsect">Period</div>
+      <div class="fg">
+        <div class="ff"><label>Startmånad *</label><select id="e-sm">
+          <option value="1">Januari</option><option value="2">Februari</option><option value="3">Mars</option>
+          <option value="4">April</option><option value="5">Maj</option><option value="6">Juni</option>
+          <option value="7">Juli</option><option value="8">Augusti</option><option value="9">September</option>
+          <option value="10">Oktober</option><option value="11">November</option><option value="12">December</option>
+        </select></div>
+        <div class="ff"><label>Startdag</label><input type="number" id="e-sd" min="1" max="31" placeholder="1-31"></div>
+      </div>
+      <div class="fg">
+        <div class="ff"><label>Slutmånad</label><select id="e-em">
+          <option value="">– Samma som start –</option>
+          <option value="1">Januari</option><option value="2">Februari</option><option value="3">Mars</option>
+          <option value="4">April</option><option value="5">Maj</option><option value="6">Juni</option>
+          <option value="7">Juli</option><option value="8">Augusti</option><option value="9">September</option>
+          <option value="10">Oktober</option><option value="11">November</option><option value="12">December</option>
+        </select></div>
+        <div class="ff"><label>Slutdag</label><input type="number" id="e-ed" min="1" max="31" placeholder="1-31"></div>
+      </div>
+
+      <div class="fsect">Inställningar</div>
+      <div class="fg">
+        <div class="ff"><label>Status</label><select id="e-status">
+          <option>Planerad</option><option>Pågående</option><option>Klar</option>
+        </select></div>
+        <div class="ff"><label>Återkommande varje år</label><select id="e-atar">
+          <option value="true">Ja</option><option value="false">Nej</option>
+        </select></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeModal('modal-edit')">Avbryt</button>
+      <button class="btn-primary" onclick="saveAkt()"><i class="ti ti-check"></i> Spara</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+<script>
+const GH_REPO = 'CCSthlm/besiktning-camping';
+const PATH    = 'arshjul/aktiviteter.json';
+const MANADER_FULL = ['Januari','Februari','Mars','April','Maj','Juni','Juli','Augusti','September','Oktober','November','December'];
+const CAT_COLOR = {'Camping':'#3B6D11','Styrelse':'#1a4f7a','Restaurang':'#c2560a','Underhåll':'#8a6c00','Ekonomi':'#6b3fa0','Övrigt':'#5a5a57'};
+
+let _data = { aktiviteter: [] }, _sha = null, _view = 'alla';
+
+(async function init() {
+  const sess = sessionStorage.getItem('ccs_session') || sessionStorage.getItem('ccs_portal_user');
+  if (!sess) { window.location.replace('index.html'); return; }
+  const u = JSON.parse(sess);
+  const ok = (u.adminRoles||[]).some(r => ['global','arshjul-admin'].includes(r)) || u.role === 'Admin';
+  if (!ok) { alert('Du har inte behörighet.'); window.location.replace('index.html'); return; }
+  await load();
+  renderView();
+})();
+
+async function load() {
+  const token = localStorage.getItem('gh_token') || '';
+  if (!token) return;
+  try {
+    const res = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/${PATH}`, {headers:{'Authorization':'token '+token}});
+    if (res.status === 404) return;
+    if (!res.ok) return;
+    const gh = await res.json(); _sha = gh.sha;
+    const bytes = Uint8Array.from(atob(gh.content.replace(/\n/g,'')), c=>c.charCodeAt(0));
+    _data = JSON.parse(new TextDecoder('utf-8').decode(bytes));
+    if (!_data.aktiviteter) _data.aktiviteter = [];
+  } catch(e) { console.error(e); }
+}
+
+async function save(msg) {
+  const token = localStorage.getItem('gh_token') || '';
+  if (!token) { toast('GitHub-token saknas','warn'); return false; }
+  const url = `https://api.github.com/repos/${GH_REPO}/contents/${PATH}`;
+  try {
+    if (!_sha) { const c = await fetch(url,{headers:{'Authorization':'token '+token}}); if(c.ok) _sha=(await c.json()).sha; }
+    _data.uppdaterad = new Date().toISOString();
+    const json = JSON.stringify(_data, null, 2);
+    const enc  = new TextEncoder().encode(json);
+    let b64=''; for(let i=0;i<enc.length;i+=8192) b64+=String.fromCharCode(...enc.slice(i,i+8192));
+    const payload = {message: msg, content: btoa(b64), branch:'main'};
+    if (_sha) payload.sha = _sha;
+    const res = await fetch(url,{method:'PUT',headers:{'Authorization':'token '+token,'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    const d = await res.json();
+    if (!res.ok) throw new Error(d.message);
+    _sha = d.content?.sha || _sha;
+    return true;
+  } catch(e) { toast('Fel: '+e.message,'err'); return false; }
+}
+
+function getList() {
+  if (_view==='sektion') return _data.aktiviteter.filter(a=>!a.camping);
+  if (_view==='camping') return _data.aktiviteter.filter(a=>!!a.camping);
+  return _data.aktiviteter;
+}
+
+function renderView() {
+  if (_view==='kopiera') { renderKopiera(); return; }
+  const list = getList().slice().sort((a,b)=>a.startManad-b.startManad);
+  const c = document.getElementById('main-content');
+  if (!list.length) {
+    c.innerHTML = '<div style="text-align:center;padding:48px;color:var(--text3)"><i class="ti ti-calendar-off" style="font-size:36px;display:block;margin-bottom:10px"></i>Inga aktiviteter</div>';
+    return;
+  }
+  const rows = list.map(a => {
+    const col = CAT_COLOR[a.kategori] || '#888';
+    const period = MANADER_FULL[a.startManad-1] + (a.slutManad && a.slutManad!==a.startManad ? ' – '+MANADER_FULL[a.slutManad-1] : '');
+    return `<tr>
+      <td style="font-weight:500">${a.titel}</td>
+      <td><span class="cat-badge" style="background:${col}18;color:${col}">${a.kategori}</span></td>
+      <td style="font-size:12px;color:var(--text2)">${a.ansvarig}</td>
+      <td style="font-size:12px;color:var(--text2)">${period}</td>
+      <td style="font-size:12px;color:var(--text2)">${a.camping||'Sektionsgemensam'}</td>
+      <td style="font-size:12px;color:var(--text2)">${a.status||'Planerad'}</td>
+      <td style="text-align:right;white-space:nowrap">
+        <span onclick="openEdit('${a.id}')" style="cursor:pointer;color:var(--accent);font-size:12px;font-weight:500;margin-right:8px">Redigera</span>
+        <span onclick="deleteAkt('${a.id}')" style="cursor:pointer;color:var(--red);font-size:12px;font-weight:500">Ta bort</span>
+      </td>
+    </tr>`;
+  }).join('');
+  c.innerHTML = `<div class="card"><div style="overflow-x:auto"><table><thead><tr><th>Titel</th><th>Kategori</th><th>Ansvarig</th><th>Period</th><th>Camping</th><th>Status</th><th></th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
+}
+
+function renderKopiera() {
+  const c = document.getElementById('main-content');
+  const curYear = new Date().getFullYear();
+  c.innerHTML = `<div class="card"><div class="card-header"><span class="card-title"><i class="ti ti-copy"></i> Kopiera årshjul</span></div>
+    <div style="padding:24px 20px;max-width:400px">
+      <p style="font-size:13px;color:var(--text2);margin-bottom:20px">Kopiera alla återkommande aktiviteter från ett år till ett annat. Inga befintliga aktiviteter skrivs över.</p>
+      <div class="fg">
+        <div class="ff"><label>Från år</label><input type="number" id="kop-fran" value="${curYear}" min="2020" max="2040"></div>
+        <div class="ff"><label>Till år</label><input type="number" id="kop-till" value="${curYear+1}" min="2020" max="2040"></div>
+      </div>
+      <button class="btn-primary" onclick="kopieraAr()" style="margin-top:8px"><i class="ti ti-copy"></i> Kopiera återkommande aktiviteter</button>
+    </div></div>`;
+}
+
+async function kopieraAr() {
+  const fran = parseInt(document.getElementById('kop-fran').value);
+  const till = parseInt(document.getElementById('kop-till').value);
+  if (fran === till) { toast('Välj olika år','warn'); return; }
+  const atar = _data.aktiviteter.filter(a => a.atarkommande);
+  let added = 0;
+  atar.forEach(a => {
+    const ny = {...a, id:'AK-'+Date.now()+'-'+Math.random().toString(36).slice(2,6), status:'Planerad'};
+    _data.aktiviteter.push(ny);
+    added++;
+  });
+  const ok = await save(`Kopierade ${added} aktiviteter till ${till}`);
+  if (ok) toast(`${added} aktiviteter kopierade`, 'ok');
+}
+
+function showView(v) {
+  _view = v;
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('nav-'+v)?.classList.add('active');
+  const titles = {alla:'Alla aktiviteter',sektion:'Sektionsgemensamma',camping:'Campingspecifika',kopiera:'Kopiera år'};
+  document.getElementById('view-title').textContent = titles[v]||v;
+  document.getElementById('view-sub').textContent = 'Administrera årshjulets aktiviteter';
+  renderView();
+}
+
+function openNy() {
+  document.getElementById('edit-title').textContent = 'Ny aktivitet';
+  document.getElementById('edit-id').value = '';
+  ['e-titel','e-beskr','e-sd','e-ed'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('e-kat').value      = 'Camping';
+  document.getElementById('e-ansvarig').value = 'Campingvärd';
+  document.getElementById('e-camping').value  = '';
+  document.getElementById('e-sm').value       = '1';
+  document.getElementById('e-em').value       = '';
+  document.getElementById('e-status').value   = 'Planerad';
+  document.getElementById('e-atar').value     = 'true';
+  openModal('modal-edit');
+}
+
+function openEdit(id) {
+  const a = _data.aktiviteter.find(x=>x.id===id); if(!a) return;
+  document.getElementById('edit-title').textContent = 'Redigera aktivitet';
+  document.getElementById('edit-id').value    = a.id;
+  document.getElementById('e-titel').value    = a.titel||'';
+  document.getElementById('e-beskr').value    = a.beskrivning||'';
+  document.getElementById('e-kat').value      = a.kategori||'Camping';
+  document.getElementById('e-ansvarig').value = a.ansvarig||'Campingvärd';
+  document.getElementById('e-camping').value  = a.camping||'';
+  document.getElementById('e-sm').value       = a.startManad||'1';
+  document.getElementById('e-sd').value       = a.startDag||'';
+  document.getElementById('e-em').value       = a.slutManad||'';
+  document.getElementById('e-ed').value       = a.slutDag||'';
+  document.getElementById('e-status').value   = a.status||'Planerad';
+  document.getElementById('e-atar').value     = a.atarkommande ? 'true':'false';
+  openModal('modal-edit');
+}
+
+async function saveAkt() {
+  const titel = document.getElementById('e-titel').value.trim();
+  if (!titel) { toast('Ange titel','warn'); return; }
+  const id = document.getElementById('edit-id').value;
+  const obj = {
+    id: id || 'AK-'+Date.now(),
+    titel,
+    beskrivning: document.getElementById('e-beskr').value.trim(),
+    kategori:    document.getElementById('e-kat').value,
+    ansvarig:    document.getElementById('e-ansvarig').value,
+    camping:     document.getElementById('e-camping').value || null,
+    startManad:  parseInt(document.getElementById('e-sm').value),
+    slutManad:   parseInt(document.getElementById('e-em').value)||null,
+    startDag:    parseInt(document.getElementById('e-sd').value)||null,
+    slutDag:     parseInt(document.getElementById('e-ed').value)||null,
+    status:      document.getElementById('e-status').value,
+    atarkommande:document.getElementById('e-atar').value==='true',
+  };
+  if (obj.slutManad === obj.startManad) obj.slutManad = null;
+  if (id) {
+    const i = _data.aktiviteter.findIndex(a=>a.id===id);
+    if (i>=0) _data.aktiviteter[i] = obj;
+  } else {
+    _data.aktiviteter.push(obj);
+  }
+  const ok = await save(id ? 'Uppdaterade '+titel : 'Lade till '+titel);
+  if (ok) { toast('Sparat','ok'); closeModal('modal-edit'); renderView(); }
+}
+
+async function deleteAkt(id) {
+  const a = _data.aktiviteter.find(x=>x.id===id);
+  if (!a || !confirm('Ta bort "'+a.titel+'"?')) return;
+  _data.aktiviteter = _data.aktiviteter.filter(x=>x.id!==id);
+  const ok = await save('Tog bort '+a.titel);
+  if (ok) { toast('Borttagen','ok'); renderView(); }
+}
+
+function openModal(id)  { document.getElementById(id).classList.add('show'); }
+function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+document.addEventListener('click',e=>{if(e.target.classList.contains('modal-overlay'))e.target.classList.remove('show');});
+function toast(msg,type='ok'){const t=document.getElementById('toast');t.style.background=type==='err'?'var(--red-bg)':type==='warn'?'var(--amber-bg)':'var(--bg2)';t.style.color=type==='err'?'var(--red)':type==='warn'?'var(--amber)':'var(--accent)';t.innerHTML=(type==='ok'?'<i class="ti ti-check"></i>':'<i class="ti ti-x"></i>')+' '+msg;t.style.opacity='1';t.style.transform='translateY(0)';setTimeout(()=>{t.style.opacity='0';t.style.transform='translateY(6px)';},2800);}
+function doLogout(){sessionStorage.removeItem('ccs_session');sessionStorage.removeItem('ccs_portal_user');window.location.replace('index.html');}
+</script>
+</body>
+</html>

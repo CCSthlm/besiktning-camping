@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Årshjul – CCSthlm</title>
+<link rel="icon" href="https://raw.githubusercontent.com/CCSthlm/besiktning-camping/main/Images/CC-Logga.png" type="image/png">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/tabler-icons.min.css">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f5f5f3;--bg2:#fff;--bg3:#eeede8;--bg4:#e5e4de;
+  --text:#1a1a18;--text2:#5a5a57;--text3:#909088;
+  --accent:#3B6D11;--accent2:#27500A;
+  --border:rgba(0,0,0,.10);--border2:rgba(0,0,0,.16);
+  --radius:10px;--radius-lg:16px;--shadow:0 4px 24px rgba(0,0,0,.08);
+
+  --cat-camping:#3B6D11;
+  --cat-styrelse:#1a4f7a;
+  --cat-restaurang:#c2560a;
+  --cat-underhall:#8a6c00;
+  --cat-ekonomi:#6b3fa0;
+  --cat-ovrigt:#5a5a57;
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:var(--bg3);color:var(--text);min-height:100vh;}
+
+/* TOPBAR */
+.topbar{background:var(--bg2);border-bottom:1px solid var(--border2);padding:12px 24px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;position:sticky;top:0;z-index:20;box-shadow:0 2px 8px rgba(0,0,0,.05);}
+.topbar-left{display:flex;align-items:center;gap:12px;}
+.topbar-logo{width:36px;height:36px;object-fit:contain;}
+.topbar-brand{font-size:15px;font-weight:700;}
+.topbar-sub{font-size:11px;color:var(--text3);}
+.topbar-right{display:flex;align-items:center;gap:8px;}
+.btn-sm{padding:7px 14px;background:var(--bg3);color:var(--text2);border:1px solid var(--border2);border-radius:var(--radius);font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:5px;text-decoration:none;transition:background .15s;}
+.btn-sm:hover{background:var(--bg4);}
+
+/* LAYOUT */
+.layout{display:grid;grid-template-columns:1fr 340px;gap:0;height:calc(100vh - 57px);}
+.wheel-pane{padding:24px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;overflow-y:auto;}
+.detail-pane{background:var(--bg2);border-left:1px solid var(--border2);display:flex;flex-direction:column;overflow:hidden;}
+
+/* FILTERS */
+.filter-bar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:20px;justify-content:center;}
+.filter-chip{padding:5px 12px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;border:1.5px solid transparent;transition:all .15s;display:flex;align-items:center;gap:5px;}
+.filter-chip.all{background:var(--bg4);color:var(--text2);border-color:var(--border2);}
+.filter-chip.all.active{background:var(--text);color:#fff;border-color:var(--text);}
+.fc-camping{background:rgba(59,109,17,.1);color:var(--cat-camping);}
+.fc-camping.active{background:var(--cat-camping);color:#fff;}
+.fc-styrelse{background:rgba(26,79,122,.1);color:var(--cat-styrelse);}
+.fc-styrelse.active{background:var(--cat-styrelse);color:#fff;}
+.fc-restaurang{background:rgba(194,86,10,.1);color:var(--cat-restaurang);}
+.fc-restaurang.active{background:var(--cat-restaurang);color:#fff;}
+.fc-underhall{background:rgba(138,108,0,.1);color:var(--cat-underhall);}
+.fc-underhall.active{background:var(--cat-underhall);color:#fff;}
+.fc-ekonomi{background:rgba(107,63,160,.1);color:var(--cat-ekonomi);}
+.fc-ekonomi.active{background:var(--cat-ekonomi);color:#fff;}
+.fc-ovrigt{background:rgba(90,90,87,.1);color:var(--cat-ovrigt);}
+.fc-ovrigt.active{background:var(--cat-ovrigt);color:#fff;}
+
+/* SVG WHEEL */
+.wheel-wrap{position:relative;width:min(520px,90vw);aspect-ratio:1;}
+.wheel-wrap svg{width:100%;height:100%;overflow:visible;}
+.month-label{font-size:11px;font-weight:600;fill:var(--text2);text-anchor:middle;dominant-baseline:middle;pointer-events:none;transition:fill .15s;}
+.month-seg{cursor:pointer;transition:opacity .15s;}
+.month-seg:hover .seg-bg{opacity:.85;}
+.seg-bg{transition:all .2s;}
+.month-num{font-size:10px;fill:var(--text3);text-anchor:middle;dominant-baseline:middle;pointer-events:none;}
+.center-info{pointer-events:none;}
+.center-month{font-size:17px;font-weight:700;fill:var(--text);text-anchor:middle;dominant-baseline:middle;}
+.center-count{font-size:12px;fill:var(--text3);text-anchor:middle;dominant-baseline:middle;}
+.act-arc{cursor:pointer;transition:opacity .2s;}
+.act-arc:hover{opacity:.75;}
+
+/* DETAIL PANE */
+.detail-header{padding:18px 20px 14px;border-bottom:1px solid var(--border);}
+.detail-month{font-size:18px;font-weight:700;margin-bottom:2px;}
+.detail-sub{font-size:12px;color:var(--text3);}
+.detail-list{flex:1;overflow-y:auto;padding:12px 16px;}
+.detail-empty{text-align:center;padding:40px 20px;color:var(--text3);}
+.detail-empty i{font-size:36px;display:block;margin-bottom:8px;}
+.act-card{background:var(--bg3);border-radius:var(--radius);padding:12px 14px;margin-bottom:8px;border-left:3px solid transparent;cursor:pointer;transition:background .15s;}
+.act-card:hover{background:var(--bg4);}
+.act-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:5px;}
+.act-titel{font-size:13px;font-weight:600;line-height:1.3;}
+.act-badge{font-size:10px;font-weight:600;padding:2px 7px;border-radius:10px;flex-shrink:0;white-space:nowrap;}
+.act-meta{font-size:11px;color:var(--text3);display:flex;gap:10px;flex-wrap:wrap;}
+.act-desc{font-size:11px;color:var(--text2);margin-top:6px;line-height:1.5;}
+
+/* YEAR TOGGLE */
+.year-bar{display:flex;align-items:center;gap:8px;margin-bottom:16px;}
+.year-btn{width:28px;height:28px;border-radius:50%;background:var(--bg4);border:none;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:background .15s;}
+.year-btn:hover{background:var(--border2);}
+.year-label{font-size:15px;font-weight:700;min-width:50px;text-align:center;}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:100;align-items:center;justify-content:center;padding:20px;}
+.modal-overlay.show{display:flex;}
+.modal{background:var(--bg2);border-radius:var(--radius-lg);width:100%;max-width:480px;box-shadow:0 8px 40px rgba(0,0,0,.18);}
+.modal-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+.modal-title{font-size:15px;font-weight:700;}
+.modal-close{background:none;border:none;cursor:pointer;font-size:20px;color:var(--text3);}
+.modal-body{padding:18px 20px;}
+.modal-row{margin-bottom:12px;}
+.modal-label{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px;}
+.modal-val{font-size:13px;color:var(--text);}
+
+/* LEGEND */
+.legend{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:12px;}
+.legend-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text2);}
+.legend-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+
+@media(max-width:768px){
+  .layout{grid-template-columns:1fr;height:auto;}
+  .detail-pane{border-left:none;border-top:1px solid var(--border2);min-height:300px;}
+  .wheel-pane{padding:16px;}
+}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="topbar-left">
+    <img src="https://raw.githubusercontent.com/CCSthlm/besiktning-camping/main/Images/CC-Logga.png" class="topbar-logo" alt="CC">
+    <div><div class="topbar-brand">Årshjul</div><div class="topbar-sub">Caravan Club of Sweden – Stockholmssektionen</div></div>
+  </div>
+  <div class="topbar-right">
+    <a href="index.html" class="btn-sm"><i class="ti ti-arrow-left"></i> Portal</a>
+  </div>
+</div>
+
+<div class="layout">
+  <!-- WHEEL PANE -->
+  <div class="wheel-pane">
+    <div class="year-bar">
+      <button class="year-btn" onclick="changeYear(-1)"><i class="ti ti-chevron-left"></i></button>
+      <span class="year-label" id="year-label">2026</span>
+      <button class="year-btn" onclick="changeYear(1)"><i class="ti ti-chevron-right"></i></button>
+    </div>
+    <div class="filter-bar" id="filter-bar">
+      <span class="filter-chip all active" onclick="setFilter('all',this)">Alla</span>
+      <span class="filter-chip fc-camping" onclick="setFilter('Camping',this)"><i class="ti ti-tent"></i> Camping</span>
+      <span class="filter-chip fc-styrelse" onclick="setFilter('Styrelse',this)"><i class="ti ti-building"></i> Styrelse</span>
+      <span class="filter-chip fc-restaurang" onclick="setFilter('Restaurang',this)"><i class="ti ti-tools-kitchen-2"></i> Restaurang</span>
+      <span class="filter-chip fc-underhall" onclick="setFilter('Underhåll',this)"><i class="ti ti-tool"></i> Underhåll</span>
+      <span class="filter-chip fc-ekonomi" onclick="setFilter('Ekonomi',this)"><i class="ti ti-coin"></i> Ekonomi</span>
+      <span class="filter-chip fc-ovrigt" onclick="setFilter('Övrigt',this)"><i class="ti ti-dots"></i> Övrigt</span>
+    </div>
+
+    <div class="wheel-wrap">
+      <svg id="wheel-svg" viewBox="-260 -260 520 520" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <filter id="shadow-soft">
+            <feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity="0.12"/>
+          </filter>
+        </defs>
+        <!-- Rendered by JS -->
+      </svg>
+    </div>
+
+    <div class="legend" id="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:var(--cat-camping)"></div>Camping</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--cat-styrelse)"></div>Styrelse</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--cat-restaurang)"></div>Restaurang</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--cat-underhall)"></div>Underhåll</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--cat-ekonomi)"></div>Ekonomi</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--cat-ovrigt)"></div>Övrigt</div>
+    </div>
+  </div>
+
+  <!-- DETAIL PANE -->
+  <div class="detail-pane">
+    <div class="detail-header">
+      <div class="detail-month" id="detail-month">Välj en månad</div>
+      <div class="detail-sub" id="detail-sub">Klicka på ett segment i hjulet</div>
+    </div>
+    <div class="detail-list" id="detail-list">
+      <div class="detail-empty"><i class="ti ti-hand-click"></i>Klicka på en månad i hjulet för att se aktiviteter</div>
+    </div>
+  </div>
+</div>
+
+<!-- ACTIVITY MODAL -->
+<div class="modal-overlay" id="modal-act" onclick="if(event.target===this)this.classList.remove('show')">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="m-titel">–</span>
+      <button class="modal-close" onclick="document.getElementById('modal-act').classList.remove('show')"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-row"><div class="modal-label">Beskrivning</div><div class="modal-val" id="m-desc">–</div></div>
+      <div class="modal-row"><div class="modal-label">Kategori</div><div class="modal-val" id="m-kat">–</div></div>
+      <div class="modal-row"><div class="modal-label">Ansvarig</div><div class="modal-val" id="m-ansvarig">–</div></div>
+      <div class="modal-row"><div class="modal-label">Camping</div><div class="modal-val" id="m-camping">–</div></div>
+      <div class="modal-row"><div class="modal-label">Period</div><div class="modal-val" id="m-period">–</div></div>
+      <div class="modal-row"><div class="modal-label">Status</div><div class="modal-val" id="m-status">–</div></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const GH_REPO = 'CCSthlm/besiktning-camping';
+const PATH    = 'arshjul/aktiviteter.json';
+const MANADER = ['Jan','Feb','Mar','Apr','Maj','Jun','Jul','Aug','Sep','Okt','Nov','Dec'];
+const MANADER_FULL = ['Januari','Februari','Mars','April','Maj','Juni','Juli','Augusti','September','Oktober','November','December'];
+
+const CAT_COLOR = {
+  'Camping':   '#3B6D11',
+  'Styrelse':  '#1a4f7a',
+  'Restaurang':'#c2560a',
+  'Underhåll': '#8a6c00',
+  'Ekonomi':   '#6b3fa0',
+  'Övrigt':    '#5a5a57',
+};
+
+let _data = { aktiviteter: [] };
+let _year = new Date().getFullYear();
+let _filter = 'all';
+let _selMonth = null;
+
+(async function init() {
+  const token = localStorage.getItem('gh_token') || '';
+  if (token) {
+    try {
+      const res = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/${PATH}`, {
+        headers: { 'Authorization': 'token ' + token }
+      });
+      if (res.ok) {
+        const gh = await res.json();
+        const bytes = Uint8Array.from(atob(gh.content.replace(/\n/g,'')), c=>c.charCodeAt(0));
+        _data = JSON.parse(new TextDecoder('utf-8').decode(bytes));
+      }
+    } catch(e) { console.warn('Load error:', e); }
+  }
+  document.getElementById('year-label').textContent = _year;
+  drawWheel();
+})();
+
+function changeYear(d) {
+  _year += d;
+  document.getElementById('year-label').textContent = _year;
+  drawWheel();
+  if (_selMonth !== null) showMonth(_selMonth);
+}
+
+function setFilter(f, el) {
+  _filter = f;
+  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  drawWheel();
+  if (_selMonth !== null) showMonth(_selMonth);
+}
+
+function getFiltered() {
+  if (_filter === 'all') return _data.aktiviteter;
+  return _data.aktiviteter.filter(a => a.kategori === _filter);
+}
+
+function getMonthActs(m) {
+  return getFiltered().filter(a => {
+    const s = a.startManad, e = a.slutManad || a.startManad;
+    return m >= s && m <= e;
+  });
+}
+
+// ── SVG WHEEL ──────────────────────────────────────────────────────────────
+function polarToXY(angle, r) {
+  const rad = (angle - 90) * Math.PI / 180;
+  return { x: r * Math.cos(rad), y: r * Math.sin(rad) };
+}
+
+function arcPath(startAngle, endAngle, innerR, outerR) {
+  const s1 = polarToXY(startAngle, outerR);
+  const e1 = polarToXY(endAngle,   outerR);
+  const s2 = polarToXY(endAngle,   innerR);
+  const e2 = polarToXY(startAngle, innerR);
+  const lg = (endAngle - startAngle) > 180 ? 1 : 0;
+  return `M ${s1.x} ${s1.y} A ${outerR} ${outerR} 0 ${lg} 1 ${e1.x} ${e1.y} L ${s2.x} ${s2.y} A ${innerR} ${innerR} 0 ${lg} 0 ${e2.x} ${e2.y} Z`;
+}
+
+function drawWheel() {
+  const svg = document.getElementById('wheel-svg');
+  svg.innerHTML = `<defs><filter id="sf"><feDropShadow dx="0" dy="1" stdDeviation="3" flood-opacity="0.10"/></filter></defs>`;
+
+  const OUTER = 220, INNER = 120, GAP = 1.2;
+  const segDeg = 360 / 12;
+  const today = new Date();
+  const curMonth = (today.getFullYear() === _year) ? today.getMonth() + 1 : null;
+
+  for (let m = 1; m <= 12; m++) {
+    const startA = (m - 1) * segDeg + GAP;
+    const endA   = m * segDeg - GAP;
+    const acts   = getMonthActs(m);
+    const isCur  = m === curMonth;
+    const isSel  = m === _selMonth;
+    const midA   = (startA + endA) / 2;
+    const fill   = isSel ? '#e8f3de' : isCur ? '#f0f8e8' : '#f8f8f6';
+    const stroke = isSel ? '#3B6D11' : isCur ? '#7fb84e' : '#e0dfd8';
+    const sw     = isSel ? 2 : 1;
+
+    const g = document.createElementNS('http://www.w3.org/2000/svg','g');
+    g.setAttribute('class','month-seg');
+    g.setAttribute('data-month', m);
+    g.style.cursor = 'pointer';
+    g.addEventListener('click', () => showMonth(m));
+
+    // Background segment
+    const path = document.createElementNS('http://www.w3.org/2000/svg','path');
+    path.setAttribute('d', arcPath(startA, endA, INNER, OUTER));
+    path.setAttribute('fill', fill);
+    path.setAttribute('stroke', stroke);
+    path.setAttribute('stroke-width', sw);
+    path.setAttribute('class','seg-bg');
+    g.appendChild(path);
+
+    // Month label
+    const labelPos = polarToXY(midA, (INNER + OUTER) / 2);
+    const abbr = document.createElementNS('http://www.w3.org/2000/svg','text');
+    abbr.setAttribute('x', labelPos.x); abbr.setAttribute('y', labelPos.y - 6);
+    abbr.setAttribute('class','month-label');
+    abbr.setAttribute('font-size','11');
+    abbr.setAttribute('font-weight', isSel || isCur ? '700' : '600');
+    abbr.setAttribute('fill', isSel ? '#27500A' : isCur ? '#3B6D11' : '#5a5a57');
+    abbr.setAttribute('text-anchor','middle'); abbr.setAttribute('dominant-baseline','middle');
+    abbr.textContent = MANADER[m-1];
+    g.appendChild(abbr);
+
+    // Activity count dot
+    if (acts.length > 0) {
+      const countPos = polarToXY(midA, (INNER + OUTER) / 2);
+      const circle = document.createElementNS('http://www.w3.org/2000/svg','circle');
+      circle.setAttribute('cx', countPos.x); circle.setAttribute('cy', countPos.y + 8);
+      circle.setAttribute('r', 7); circle.setAttribute('fill', '#3B6D11');
+      g.appendChild(circle);
+      const cnt = document.createElementNS('http://www.w3.org/2000/svg','text');
+      cnt.setAttribute('x', countPos.x); cnt.setAttribute('y', countPos.y + 9);
+      cnt.setAttribute('text-anchor','middle'); cnt.setAttribute('dominant-baseline','middle');
+      cnt.setAttribute('font-size','8'); cnt.setAttribute('fill','#fff'); cnt.setAttribute('font-weight','700');
+      cnt.textContent = acts.length;
+      g.appendChild(cnt);
+    }
+
+    svg.appendChild(g);
+  }
+
+  // Activity arcs — inner rings per category
+  const cats = Object.keys(CAT_COLOR);
+  const ringW = 14, ringGap = 2;
+  const startR = INNER - 6;
+
+  cats.forEach((cat, ci) => {
+    const r = startR - ci * (ringW + ringGap);
+    if (r < 20) return;
+    const actsForCat = _data.aktiviteter.filter(a => {
+      if (_filter !== 'all' && a.kategori !== _filter) return false;
+      return a.kategori === cat;
+    });
+
+    // Draw faint ring background
+    const ringBg = document.createElementNS('http://www.w3.org/2000/svg','circle');
+    ringBg.setAttribute('cx',0); ringBg.setAttribute('cy',0);
+    ringBg.setAttribute('r', r - ringW/2);
+    ringBg.setAttribute('fill','none');
+    ringBg.setAttribute('stroke', CAT_COLOR[cat] + '18');
+    ringBg.setAttribute('stroke-width', ringW);
+    svg.appendChild(ringBg);
+
+    actsForCat.forEach(a => {
+      const s = a.startManad, e = a.slutManad || a.startManad;
+      const startA = (s - 1) * segDeg + GAP + 2;
+      const endA   = e * segDeg - GAP - 2;
+      if (endA <= startA) return;
+
+      const arc = document.createElementNS('http://www.w3.org/2000/svg','path');
+      arc.setAttribute('d', arcPath(startA, endA, r - ringW, r));
+      arc.setAttribute('fill', CAT_COLOR[cat]);
+      arc.setAttribute('opacity','0.85');
+      arc.setAttribute('class','act-arc');
+      arc.addEventListener('click', (ev) => { ev.stopPropagation(); openModal(a); });
+
+      const titleEl = document.createElementNS('http://www.w3.org/2000/svg','title');
+      titleEl.textContent = a.titel + ' (' + cat + ')';
+      arc.appendChild(titleEl);
+      svg.appendChild(arc);
+    });
+  });
+
+  // Center circle
+  const centerCircle = document.createElementNS('http://www.w3.org/2000/svg','circle');
+  centerCircle.setAttribute('cx',0); centerCircle.setAttribute('cy',0);
+  centerCircle.setAttribute('r',18); centerCircle.setAttribute('fill','var(--bg2)');
+  centerCircle.setAttribute('stroke','var(--border2)'); centerCircle.setAttribute('stroke-width','1');
+  svg.appendChild(centerCircle);
+
+  // Center logo text
+  const cl = document.createElementNS('http://www.w3.org/2000/svg','text');
+  cl.setAttribute('x',0); cl.setAttribute('y',1);
+  cl.setAttribute('text-anchor','middle'); cl.setAttribute('dominant-baseline','middle');
+  cl.setAttribute('font-size','9'); cl.setAttribute('font-weight','700');
+  cl.setAttribute('fill','var(--accent)'); cl.textContent = 'CC';
+  svg.appendChild(cl);
+}
+
+function showMonth(m) {
+  _selMonth = m;
+  drawWheel();
+  const acts = getMonthActs(m);
+  document.getElementById('detail-month').textContent = MANADER_FULL[m-1];
+  document.getElementById('detail-sub').textContent = acts.length + ' aktivitet' + (acts.length !== 1 ? 'er' : '');
+  const list = document.getElementById('detail-list');
+  if (!acts.length) {
+    list.innerHTML = '<div class="detail-empty"><i class="ti ti-calendar-off"></i>Inga aktiviteter denna månad</div>';
+    return;
+  }
+  list.innerHTML = acts.map(a => {
+    const col = CAT_COLOR[a.kategori] || '#888';
+    const period = a.startManad === a.slutManad
+      ? MANADER_FULL[a.startManad-1] + (a.startDag ? ' ' + a.startDag : '')
+      : MANADER_FULL[a.startManad-1] + ' – ' + MANADER_FULL[(a.slutManad||a.startManad)-1];
+    return `<div class="act-card" style="border-left-color:${col}" onclick="openModal(${JSON.stringify(a).replace(/"/g,'&quot;')})">
+      <div class="act-card-top">
+        <div class="act-titel">${a.titel}</div>
+        <span class="act-badge" style="background:${col}18;color:${col}">${a.kategori}</span>
+      </div>
+      <div class="act-meta">
+        <span><i class="ti ti-user" style="font-size:10px"></i> ${a.ansvarig}</span>
+        <span><i class="ti ti-calendar" style="font-size:10px"></i> ${period}</span>
+        ${a.camping ? `<span><i class="ti ti-tent" style="font-size:10px"></i> ${a.camping}</span>` : '<span>Sektionsgemensam</span>'}
+      </div>
+      ${a.beskrivning ? `<div class="act-desc">${a.beskrivning}</div>` : ''}
+    </div>`;
+  }).join('');
+}
+
+function openModal(a) {
+  if (typeof a === 'string') a = JSON.parse(a);
+  document.getElementById('m-titel').textContent  = a.titel;
+  document.getElementById('m-desc').textContent   = a.beskrivning || '–';
+  document.getElementById('m-kat').textContent    = a.kategori;
+  document.getElementById('m-ansvarig').textContent = a.ansvarig;
+  document.getElementById('m-camping').textContent = a.camping || 'Sektionsgemensam';
+  const s = MANADER_FULL[a.startManad-1] + (a.startDag ? ' ' + a.startDag : '');
+  const e = a.slutManad && a.slutManad !== a.startManad ? ' – ' + MANADER_FULL[a.slutManad-1] + (a.slutDag ? ' ' + a.slutDag : '') : '';
+  document.getElementById('m-period').textContent  = s + e;
+  document.getElementById('m-status').textContent  = a.status || '–';
+  document.getElementById('modal-act').classList.add('show');
+}
+
+// Auto-select current month
+const cm = new Date().getMonth() + 1;
+setTimeout(() => showMonth(cm), 100);
+</script>
+</body>
+</html>
