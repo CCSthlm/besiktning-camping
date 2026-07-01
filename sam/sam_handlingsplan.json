@@ -1,0 +1,4 @@
+{"atgarder":[
+  {"id":"AT-001","kalla":"Riskbedömning","kallaId":"RB-001","titel":"Besiktning gasolanläggning Björkö Örn","beskrivning":"Årlig besiktning av gasolanläggning. Kontroll av slangar och kopplingar.","camping":"CC Björkö Örns Camping","ansvarig":"Campingansvarig","deadline":"2026-05-01","status":"Öppen","skapad":"2026-01-15T10:00:00Z"},
+  {"id":"AT-002","kalla":"Riskbedömning","kallaId":"RB-003","titel":"Halkskydd toalett Östnora","beskrivning":"Montera halkskyddsmatta vid ingång. Sätt upp varningsskylt.","camping":"CC Östnora Camping","ansvarig":"Campingvärd","deadline":"2026-05-15","status":"Pågående","skapad":"2026-02-01T10:00:00Z"}
+],"uppdaterad":"2026-07-01T00:00:00Z"}

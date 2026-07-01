@@ -1,0 +1,4 @@
+{"utbildningar":[
+  {"id":"UT-001","typ":"Brand","camping":"CC Björkö Örns Camping","datum":"2025-04-20","antalDeltagare":4,"ansvarig":"Campingansvarig","giltigTill":"2027-04-20","anteckningar":"Genomfört med extern instruktör från räddningstjänsten.","skapad":"2025-04-20T10:00:00Z"},
+  {"id":"UT-002","typ":"HLR","camping":null,"datum":"2025-03-10","antalDeltagare":8,"ansvarig":"Styrelse","giltigTill":"2027-03-10","anteckningar":"Sektionsgemensam utbildning, alla campingansvariga deltog.","skapad":"2025-03-10T10:00:00Z"}
+],"uppdaterad":"2026-07-01T00:00:00Z"}

@@ -1,0 +1,5 @@
+{"riskbedomningar":[
+  {"id":"RB-001","camping":"CC Björkö Örns Camping","kategori":"Gasol","beskrivning":"Gasolanläggning vid servicebyggnad — risk för läckage","sannolikhet":2,"konsekvens":3,"riskniva":6,"ansvarig":"Campingansvarig","atgard":"Årlig besiktning av gasolanläggning. Kontroll av slangar och kopplingar.","deadline":"2026-05-01","status":"Öppen","skapad":"2026-01-15T10:00:00Z","skapadAv":"Admin"},
+  {"id":"RB-002","camping":null,"kategori":"Brand","beskrivning":"Sektionsgemensam risk — brandskydd i servicebyggnader","sannolikhet":1,"konsekvens":3,"riskniva":3,"ansvarig":"Campingansvarig","atgard":"Kontrollera brandvarnare och brandsläckare varje säsong.","deadline":"2026-04-15","status":"Öppen","skapad":"2026-01-15T10:00:00Z","skapadAv":"Admin"},
+  {"id":"RB-003","camping":"CC Östnora Camping","kategori":"Fall","beskrivning":"Halt underlag vid toalettbyggnad vid regn","sannolikhet":3,"konsekvens":2,"riskniva":6,"ansvarig":"Campingvärd","atgard":"Montera halkskyddsmatta vid ingång. Sätt upp varningsskylt.","deadline":"2026-05-15","status":"Pågående","skapad":"2026-02-01T10:00:00Z","skapadAv":"Admin"}
+],"uppdaterad":"2026-07-01T00:00:00Z"}
