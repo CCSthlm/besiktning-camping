@@ -67,52 +67,141 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
 .login-footer{text-align:center;margin-top:20px;font-size:11px;color:var(--text3);}
 
 /* ─── APP LAUNCHER ─── */
-.portal-wrap{width:100%;max-width:960px;animation:fadeUp .45s ease both;}
-.portal-main{display:flex;gap:20px;align-items:flex-start;}
-.portal-apps{flex:1;min-width:0;}
-.portal-links{width:220px;flex-shrink:0;}
-.links-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;}
-.links-card-header{padding:11px 16px;border-bottom:1px solid var(--border);font-size:12px;font-weight:600;color:var(--text2);display:flex;align-items:center;gap:6px;}
-.links-list{padding:8px 0;}
-.link-item{display:flex;align-items:center;gap:8px;padding:8px 16px;font-size:13px;color:var(--accent);text-decoration:none;transition:background .15s;cursor:pointer;}
-.link-item:hover{background:var(--bg3);color:var(--accent2);}
-.link-item i{font-size:13px;color:var(--text3);flex-shrink:0;}
-.links-empty{padding:14px 16px;font-size:12px;color:var(--text3);font-style:italic;}
-@media(max-width:700px){.portal-main{flex-direction:column;}.portal-links{width:100%;}}
-.portal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:32px;flex-wrap:wrap;gap:12px;}
-.portal-header-left{display:flex;align-items:center;gap:14px;}
-.portal-header-left img{width:52px;height:auto;}
-.portal-header-left h1{font-size:22px;font-weight:700;}
-.portal-header-left p{font-size:13px;color:var(--text2);margin-top:2px;}
-.user-chip{display:flex;align-items:center;gap:8px;background:var(--bg2);border:1px solid var(--border2);border-radius:40px;padding:7px 14px 7px 10px;}
-.user-avatar{width:30px;height:30px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0;}
-.user-chip-info{font-size:13px;}
+.portal-wrap{width:100%;max-width:1080px;animation:fadeUp .45s ease both;}
+
+/* Topbar */
+.portal-topbar{
+  background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);
+  padding:16px 24px;margin-bottom:24px;
+  display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;
+  box-shadow:0 2px 12px rgba(0,0,0,.05);
+}
+.portal-topbar-left{display:flex;align-items:center;gap:14px;}
+.portal-topbar-left img{width:42px;height:auto;}
+.portal-topbar-brand{display:flex;flex-direction:column;}
+.portal-topbar-brand h1{font-size:17px;font-weight:700;letter-spacing:-.01em;}
+.portal-topbar-brand p{font-size:12px;color:var(--text2);margin-top:1px;}
+.portal-topbar-right{display:flex;align-items:center;gap:10px;}
+
+/* User chip */
+.user-chip{display:flex;align-items:center;gap:10px;background:var(--bg3);border:1px solid var(--border);border-radius:40px;padding:6px 14px 6px 8px;}
+.user-avatar{width:32px;height:32px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0;}
+.user-chip-info{font-size:13px;line-height:1.2;}
 .user-chip-name{font-weight:600;}
 .user-chip-role{font-size:11px;color:var(--text2);}
-.btn-logout{background:none;border:none;cursor:pointer;color:var(--text3);font-size:20px;margin-left:4px;transition:color .15s;}
-.btn-logout:hover{color:var(--red);}
+.btn-logout{padding:9px 16px;background:rgba(163,45,45,.08);color:var(--red);border:1px solid rgba(163,45,45,.2);border-radius:var(--radius);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:6px;transition:all .15s;}
+.btn-logout:hover{background:rgba(163,45,45,.15);}
 
-.app-grid{display:flex;flex-direction:column;gap:8px;}
-.app-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:14px 18px;cursor:pointer;transition:border-color .2s,background .15s;position:relative;text-decoration:none;display:flex;align-items:center;gap:16px;}
-.app-card:hover{border-color:var(--accent);background:var(--bg3);}
-.app-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
-.app-icon-blue{background:rgba(79,142,247,.18);color:var(--accent);}
-.app-icon-green{background:rgba(52,211,153,.15);color:var(--green);}
-.app-icon-amber{background:rgba(251,191,36,.13);color:var(--amber);}
-.app-icon-purple{background:rgba(167,139,250,.15);color:#a78bfa;}
+/* Layout */
+.portal-main{display:flex;gap:20px;align-items:flex-start;}
+.portal-apps{flex:1;min-width:0;}
+.portal-sidebar{width:220px;flex-shrink:0;display:flex;flex-direction:column;gap:14px;}
+
+/* Section */
+.section-group{margin-bottom:28px;}
+.section-header{display:flex;align-items:baseline;gap:8px;margin-bottom:12px;}
+.section-label{font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--text3);}
+.section-sublabel{font-size:11px;color:var(--text3);font-weight:400;}
+
+/* Generell — full-width list with left accent */
+.app-list{display:flex;flex-direction:column;gap:6px;}
+.app-card-list{
+  background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);
+  padding:13px 16px;cursor:pointer;text-decoration:none;
+  display:flex;align-items:center;gap:14px;
+  border-left:3px solid transparent;
+  transition:border-color .18s,box-shadow .18s,transform .12s;
+}
+.app-card-list:hover{border-left-color:var(--accent);box-shadow:0 4px 16px rgba(59,109,17,.10);transform:translateY(-1px);}
+.app-icon{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;}
+.app-icon-blue{background:rgba(26,79,122,.12);color:#1a4f7a;}
+.app-icon-green{background:rgba(59,109,17,.12);color:var(--accent);}
+.app-icon-amber{background:rgba(133,79,11,.12);color:var(--amber);}
+.app-icon-purple{background:rgba(124,58,237,.12);color:#7c3aed;}
+.app-icon-red{background:rgba(163,45,45,.12);color:var(--red);}
 .app-card-body{flex:1;min-width:0;}
-.app-name{font-size:14px;font-weight:600;margin-bottom:2px;}
-.app-desc{font-size:12px;color:var(--text2);line-height:1.5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.app-arrow{color:var(--text3);font-size:16px;flex-shrink:0;transition:color .15s,transform .15s;}
-.app-card:hover .app-arrow{color:var(--accent);transform:translateX(3px);}
-.app-badge{background:var(--accent);color:#fff;font-size:10px;font-weight:600;padding:2px 7px;border-radius:20px;letter-spacing:.04em;flex-shrink:0;}
-.app-badge-admin{background:var(--amber);color:#000;}
+.app-name{font-size:14px;font-weight:600;color:var(--text);margin-bottom:1px;}
+.app-desc{font-size:12px;color:var(--text2);line-height:1.45;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.app-arrow{color:var(--text3);font-size:14px;flex-shrink:0;transition:color .15s,transform .15s;}
+.app-card-list:hover .app-arrow{color:var(--accent);transform:translateX(3px);}
+.app-badge{background:var(--accent);color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;letter-spacing:.05em;flex-shrink:0;}
+.app-badge-admin{background:var(--amber);color:#fff;}
 
-.section-label{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);margin-bottom:8px;margin-top:24px;}
-.section-label:first-child{margin-top:0;}
+/* Specifik — 2-column tile grid */
+.app-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.app-card-tile{
+  background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);
+  padding:18px 16px 16px;cursor:pointer;text-decoration:none;
+  display:flex;flex-direction:column;align-items:flex-start;gap:10px;
+  transition:border-color .18s,box-shadow .18s,transform .12s;
+  position:relative;overflow:hidden;
+}
+.app-card-tile::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--accent),rgba(59,109,17,.3));
+  opacity:0;transition:opacity .2s;
+}
+.app-card-tile:hover{border-color:var(--accent);box-shadow:0 6px 20px rgba(59,109,17,.12);transform:translateY(-2px);}
+.app-card-tile:hover::before{opacity:1;}
+.app-tile-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:19px;}
+.app-tile-name{font-size:14px;font-weight:600;color:var(--text);}
+.app-tile-desc{font-size:11px;color:var(--text2);line-height:1.5;}
+.app-tile-footer{display:flex;align-items:center;justify-content:space-between;width:100%;margin-top:auto;}
+.app-tile-arrow{color:var(--accent);font-size:13px;opacity:0;transition:opacity .15s;}
+.app-card-tile:hover .app-tile-arrow{opacity:1;}
+
+/* Admin — compact dark-tinted row */
+.admin-section{
+  background:linear-gradient(135deg,rgba(39,80,10,.04),rgba(133,79,11,.03));
+  border:1px solid rgba(59,109,17,.15);border-radius:var(--radius-lg);
+  overflow:hidden;margin-top:4px;
+}
+.admin-section-header{
+  padding:10px 16px;
+  background:rgba(59,109,17,.06);
+  border-bottom:1px solid rgba(59,109,17,.12);
+  display:flex;align-items:center;gap:7px;
+}
+.admin-section-header span{font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--accent);}
+.admin-section-header i{font-size:13px;color:var(--accent);}
+.app-list-admin{display:flex;flex-direction:column;gap:0;}
+.app-card-admin{
+  text-decoration:none;display:flex;align-items:center;gap:12px;
+  padding:11px 16px;cursor:pointer;
+  border-bottom:1px solid rgba(59,109,17,.08);
+  transition:background .15s;
+}
+.app-card-admin:last-child{border-bottom:none;}
+.app-card-admin:hover{background:rgba(59,109,17,.06);}
+.app-card-admin .app-name{font-size:13px;font-weight:500;}
+.app-card-admin .app-desc{font-size:11px;}
+
+/* Sidebar */
+.links-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;}
+.links-card-header{padding:11px 16px;border-bottom:1px solid var(--border);font-size:11px;font-weight:700;color:var(--text2);letter-spacing:.06em;text-transform:uppercase;display:flex;align-items:center;gap:7px;}
+.links-list{padding:6px 0;}
+.link-item{display:flex;align-items:center;gap:9px;padding:8px 16px;font-size:13px;color:var(--accent);text-decoration:none;transition:background .15s;cursor:pointer;}
+.link-item:hover{background:var(--bg3);color:var(--accent2);}
+.link-item i{font-size:12px;color:var(--text3);flex-shrink:0;}
+.links-empty{padding:14px 16px;font-size:12px;color:var(--text3);font-style:italic;}
+
+/* Greeting card in sidebar */
+.greeting-card{background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:var(--radius-lg);padding:16px;color:#fff;}
+.greeting-card-time{font-size:11px;opacity:.75;margin-bottom:4px;}
+.greeting-card-name{font-size:15px;font-weight:700;}
+.greeting-card-sub{font-size:11px;opacity:.8;margin-top:3px;}
 
 .no-access{text-align:center;padding:60px 24px;color:var(--text2);}
 .no-access i{font-size:40px;color:var(--text3);margin-bottom:12px;display:block;}
+
+@media(max-width:700px){
+  .portal-topbar{border-radius:var(--radius);padding:12px 16px;}
+  .portal-main{flex-direction:column;}
+  .portal-sidebar{width:100%;flex-direction:row;flex-wrap:wrap;}
+  .links-card{flex:1;min-width:200px;}
+  .app-grid-2{grid-template-columns:1fr;}
+  .portal-topbar-brand p{display:none;}
+}
 
 /* ─── HIDDEN STATES ─── */
 .screen{display:none;}
@@ -411,9 +500,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
       <div class="portal-apps" id="app-launcher-content">
         <!-- Populated by JS -->
       </div>
-      <div class="portal-links">
+      <div class="portal-sidebar">
+        <div class="greeting-card" id="greeting-card">
+          <div class="greeting-card-time" id="greeting-time">God dag</div>
+          <div class="greeting-card-name" id="greeting-name">–</div>
+          <div class="greeting-card-sub" id="greeting-sub">–</div>
+        </div>
         <div class="links-card">
-          <div class="links-card-header"><i class="ti ti-link"></i> Länkar</div>
+          <div class="links-card-header"><i class="ti ti-link"></i> Snabblänkar</div>
           <div class="links-list" id="portal-links-list">
             <div class="links-empty">Inga länkar konfigurerade</div>
           </div>
@@ -717,6 +811,14 @@ async function showPortal() {
     : u.adminRoles?.length ? 'Användare'
     : u.role || 'Användare';
   document.getElementById('portal-role').textContent = roleLabel + (u.authMethod==='microsoft'?' · Microsoft 365':'');
+
+  // Update greeting card
+  const hour = new Date().getHours();
+  const greet = hour < 10 ? 'God morgon' : hour < 13 ? 'God förmiddag' : hour < 18 ? 'God eftermiddag' : 'God kväll';
+  const firstName = (u.name||'').split(' ')[0];
+  document.getElementById('greeting-time').textContent = greet + ',';
+  document.getElementById('greeting-name').textContent = firstName;
+  document.getElementById('greeting-sub').textContent = roleLabel + (u.authMethod==='microsoft'?' · Microsoft 365':'');
   if (u.domainOnly) {
     document.getElementById('portal-role').innerHTML = 'Domänanvändare · Microsoft 365 &nbsp;<span style="font-size:10px;background:var(--amber-bg);color:var(--amber-text);padding:1px 7px;border-radius:20px;font-weight:600">Begränsad åtkomst</span>';
   }
@@ -892,37 +994,78 @@ function renderApps() {
   ];
 
   let html = '';
-  const mob = window.innerWidth <= 768;
-  groups.forEach(g => {
-    const apps = accessible.filter(a => a.group === g.key);
-    if (!apps.length) return;
-    if (!mob) {
-      html += `<div class="section-label">${g.label}<span style="font-size:10px;font-weight:400;color:var(--text3);margin-left:6px">${g.sub}</span></div>`;
-      html += '<div class="app-grid">';
-      apps.forEach(app => { html += appCardHTML(app); });
-      html += '</div>';
-    } else {
-      html += `<div class="section-label" style="padding:12px 16px 4px;font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--text3)">${g.label}</div>`;
-      html += '<div class="app-group-grid">';
-      apps.forEach(app => { html += appCardHTML(app); });
-      html += '</div>';
-    }
-  });
+
+  // ── Generella applikationer ──────────────────────────────────────
+  const generell = accessible.filter(a => a.group === 'generell');
+  if (generell.length) {
+    html += '<div class="section-group">';
+    html += '<div class="section-header"><span class="section-label">Generella applikationer</span><span class="section-sublabel">Tillgängliga för alla inloggade</span></div>';
+    html += '<div class="app-list">';
+    generell.forEach(app => { html += appCardList(app); });
+    html += '</div></div>';
+  }
+
+  // ── Tilldelade applikationer ─────────────────────────────────────
+  const specifik = accessible.filter(a => a.group === 'specifik');
+  if (specifik.length) {
+    html += '<div class="section-group">';
+    html += '<div class="section-header"><span class="section-label">Applikationer</span><span class="section-sublabel">Tilldelade din användare</span></div>';
+    html += '<div class="app-grid-2">';
+    specifik.forEach(app => { html += appCardTile(app); });
+    html += '</div></div>';
+  }
+
+  // ── Administration ────────────────────────────────────────────────
+  const admin = accessible.filter(a => a.group === 'admin');
+  if (admin.length) {
+    html += '<div class="admin-section">';
+    html += '<div class="admin-section-header"><i class="ti ti-lock"></i><span>Administration</span><span style="font-size:10px;font-weight:400;text-transform:none;letter-spacing:0;margin-left:4px;opacity:.7">Kräver adminbehörighet</span></div>';
+    html += '<div class="app-list-admin">';
+    admin.forEach(app => { html += appCardAdmin(app); });
+    html += '</div></div>';
+  }
 
   el.innerHTML = html;
 }
 
-function appCardHTML(app) {
-  const badge = app.badge ? `<span class="app-badge ${app.badge==='ADMIN'?'app-badge-admin':''}">${app.badge}</span>` : '';
+function appCardList(app) {
   const target = app.newTab ? 'target="_blank" rel="noopener"' : '';
-  return `<a class="app-card" href="${app.url}" ${target} onclick="setAppSession(event,'${app.id}')">
+  return `<a class="app-card-list" href="${app.url}" ${target} onclick="setAppSession(event,'${app.id}')">
     <div class="app-icon ${app.color}"><i class="ti ${app.icon}"></i></div>
     <div class="app-card-body">
       <div class="app-name">${app.name}</div>
       <div class="app-desc">${app.desc}</div>
     </div>
-    ${badge}
     <i class="ti ti-chevron-right app-arrow"></i>
+  </a>`;
+}
+
+function appCardTile(app) {
+  const target = app.newTab ? 'target="_blank" rel="noopener"' : '';
+  return `<a class="app-card-tile" href="${app.url}" ${target} onclick="setAppSession(event,'${app.id}')">
+    <div class="app-tile-icon app-icon ${app.color}"><i class="ti ${app.icon}"></i></div>
+    <div>
+      <div class="app-tile-name">${app.name}</div>
+      <div class="app-tile-desc">${app.desc}</div>
+    </div>
+    <div class="app-tile-footer">
+      <span style="font-size:10px;color:var(--text3)"></span>
+      <i class="ti ti-arrow-right app-tile-arrow"></i>
+    </div>
+  </a>`;
+}
+
+function appCardAdmin(app) {
+  const badge = app.badge ? `<span class="app-badge ${app.badge==='ADMIN'?'app-badge-admin':''}" style="font-size:9px;padding:2px 6px">${app.badge}</span>` : '';
+  const target = app.newTab ? 'target="_blank" rel="noopener"' : '';
+  return `<a class="app-card-admin" href="${app.url}" ${target} onclick="setAppSession(event,'${app.id}')">
+    <div class="app-icon ${app.color}" style="width:30px;height:30px;border-radius:7px;font-size:14px"><i class="ti ${app.icon}"></i></div>
+    <div class="app-card-body">
+      <div class="app-name">${app.name}</div>
+      <div class="app-desc">${app.desc}</div>
+    </div>
+    ${badge}
+    <i class="ti ti-chevron-right" style="color:var(--text3);font-size:13px;flex-shrink:0"></i>
   </a>`;
 }
 
