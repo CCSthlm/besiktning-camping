@@ -1,0 +1,20 @@
+{
+  "riskbedomningar": [
+    {
+      "id": "RB-1782941855519",
+      "camping": "CC Björkö Örns Camping",
+      "kategori": "Ergonomi",
+      "beskrivning": "Test besk",
+      "sannolikhet": 3,
+      "konsekvens": 3,
+      "riskniva": 9,
+      "atgard": "",
+      "ansvarig": "Massimo Johansson",
+      "deadline": null,
+      "status": "Öppen",
+      "skapad": "2026-07-01T21:37:35.519Z",
+      "skapadAv": "Massimo Johansson"
+    }
+  ],
+  "uppdaterad": "2026-07-01T21:37:36.834Z"
+}
