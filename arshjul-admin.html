@@ -6,6 +6,7 @@
 <title>Årshjul Admin – CCSthlm</title>
 <link rel="icon" href="https://raw.githubusercontent.com/CCSthlm/besiktning-camping/main/Images/CC-Logga.png" type="image/png">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/tabler-icons.min.css">
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -104,7 +105,12 @@ tr:hover td{background:rgba(59,109,17,.02);}
 <div class="main">
   <div class="topbar">
     <div><h1 id="view-title">Alla aktiviteter</h1><div style="font-size:12px;color:var(--text2)" id="view-sub">Administrera årshjulets aktiviteter</div></div>
-    <button class="btn-primary" onclick="openNy()"><i class="ti ti-plus"></i> Ny aktivitet</button>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn-secondary" onclick="exportExcel()"><i class="ti ti-table-export"></i> Exportera Excel</button>
+      <button class="btn-secondary" onclick="document.getElementById('import-file').click()"><i class="ti ti-table-import"></i> Importera Excel</button>
+      <input type="file" id="import-file" accept=".xlsx,.xls" style="display:none" onchange="importExcel(this)">
+      <button class="btn-primary" onclick="openNy()"><i class="ti ti-plus"></i> Ny aktivitet</button>
+    </div>
   </div>
   <div class="content" id="main-content"></div>
 </div>
@@ -299,6 +305,171 @@ function showView(v) {
   document.getElementById('view-title').textContent = titles[v]||v;
   document.getElementById('view-sub').textContent = 'Administrera årshjulets aktiviteter';
   renderView();
+}
+
+function exportExcel() {
+  const MANADER = ['Januari','Februari','Mars','April','Maj','Juni','Juli','Augusti','September','Oktober','November','December'];
+  try {
+    const wb = XLSX.utils.book_new();
+
+    // Header rows
+    const header = [
+      ['ÅRSHJUL – Caravan Club of Sweden, Stockholmssektionen'],
+      ['Exporterad:', new Date().toLocaleString('sv-SE')],
+      [''],
+      ['INSTRUKTIONER FÖR IMPORT:'],
+      ['- Redigera raderna nedan (rad 7 och neråt)'],
+      ['- Lägg till nya rader i samma format'],
+      ['- Ta INTE bort eller ändra rubrikraden (rad 7)'],
+      ['- ID-kolumnen: lämna tom för nya aktiviteter, behåll befintliga ID för uppdateringar'],
+      ['- Månadsvärden: ange siffra 1-12 (1=Januari, 12=December)'],
+      ['- Camping: lämna tom för sektionsgemensamma aktiviteter'],
+      ['- Återkommande: Ja / Nej'],
+      ['- Status: Planerad / Pågående / Klar'],
+      [''],
+      // Column headers
+      ['ID','Titel','Beskrivning','Kategori','Ansvarig','Camping','Startmånad','Startdag','Slutmånad','Slutdag','Status','Återkommande'],
+    ];
+
+    const rows = _data.aktiviteter.map(a => [
+      a.id || '',
+      a.titel || '',
+      a.beskrivning || '',
+      a.kategori || '',
+      a.ansvarig || '',
+      a.camping || '',
+      a.startManad || '',
+      a.startDag || '',
+      a.slutManad || '',
+      a.slutDag || '',
+      a.status || 'Planerad',
+      a.atarkommande ? 'Ja' : 'Nej',
+    ]);
+
+    const ws = XLSX.utils.aoa_to_sheet([...header, ...rows]);
+
+    // Column widths
+    ws['!cols'] = [
+      {wch:14},{wch:32},{wch:44},{wch:14},{wch:20},
+      {wch:28},{wch:12},{wch:10},{wch:12},{wch:10},{wch:12},{wch:14}
+    ];
+
+    // Style header row (row 7 = index 6, 0-based)
+    const headerRow = 13; // 0-based index of column header row
+    ['A','B','C','D','E','F','G','H','I','J','K','L'].forEach(col => {
+      const cell = ws[col + (headerRow + 1)];
+      if (cell) {
+        cell.s = {
+          fill: {fgColor:{rgb:'3B6D11'}},
+          font: {bold:true, color:{rgb:'FFFFFF'}},
+          alignment: {horizontal:'center'}
+        };
+      }
+    });
+
+    XLSX.utils.book_append_sheet(wb, ws, 'Årshjul');
+    XLSX.writeFile(wb, 'Arshjul_CCSthlm_' + new Date().toISOString().slice(0,10) + '.xlsx');
+    toast('Excel exporterad ✓', 'ok');
+  } catch(e) { toast('Fel vid export: ' + e.message, 'err'); }
+}
+
+async function importExcel(input) {
+  const file = input.files[0];
+  if (!file) return;
+  input.value = ''; // Reset so same file can be re-imported
+
+  try {
+    const buf = await file.arrayBuffer();
+    const wb  = XLSX.read(buf, {type:'array'});
+    const ws  = wb.Sheets[wb.SheetNames[0]];
+    const rows = XLSX.utils.sheet_to_json(ws, {header:1, defval:''});
+
+    // Find header row — look for 'Titel' in any row
+    let headerIdx = -1;
+    for (let i = 0; i < rows.length; i++) {
+      if (rows[i].includes('Titel')) { headerIdx = i; break; }
+    }
+    if (headerIdx < 0) { toast('Kunde inte hitta rubrikraden. Kontrollera filen.', 'err'); return; }
+
+    const headers = rows[headerIdx].map(h => String(h).trim().toLowerCase());
+    const col = name => headers.indexOf(name.toLowerCase());
+
+    const iId      = col('id');
+    const iTitel   = col('titel');
+    const iBeskr   = col('beskrivning');
+    const iKat     = col('kategori');
+    const iAns     = col('ansvarig');
+    const iCamp    = col('camping');
+    const iSm      = col('startmånad');
+    const iSd      = col('startdag');
+    const iEm      = col('slutmånad');
+    const iEd      = col('slutdag');
+    const iStatus  = col('status');
+    const iAtar    = col('återkommande');
+
+    const KATEGORIER = ['Camping','Styrelse','Restaurang','Underhåll','Ekonomi','Övrigt'];
+    const ANSVARIGA  = ['Campingvärd','Campingråd','Campingansvarig','Restaurangansvarig','Styrelse'];
+
+    const aktiviteter = [];
+    let errors = [];
+
+    for (let r = headerIdx + 1; r < rows.length; r++) {
+      const row = rows[r];
+      const titel = String(row[iTitel] || '').trim();
+      if (!titel) continue; // Skip empty rows
+
+      const kat = String(row[iKat] || '').trim();
+      const ans = String(row[iAns] || '').trim();
+      const sm  = parseInt(row[iSm]);
+
+      // Validate
+      if (!KATEGORIER.includes(kat)) {
+        errors.push(`Rad ${r+1}: Ogiltig kategori "${kat}". Giltiga: ${KATEGORIER.join(', ')}`);
+        continue;
+      }
+      if (!ANSVARIGA.includes(ans)) {
+        errors.push(`Rad ${r+1}: Ogiltig ansvarig "${ans}". Giltiga: ${ANSVARIGA.join(', ')}`);
+        continue;
+      }
+      if (!sm || sm < 1 || sm > 12) {
+        errors.push(`Rad ${r+1}: Ogiltig startmånad "${row[iSm]}". Ange 1-12.`);
+        continue;
+      }
+
+      const akt = {
+        id:          String(row[iId] || '').trim() || ('AK-' + Date.now() + '-' + r),
+        titel,
+        beskrivning: String(row[iBeskr] || '').trim(),
+        kategori:    kat,
+        ansvarig:    ans,
+        camping:     String(row[iCamp] || '').trim() || null,
+        startManad:  sm,
+        startDag:    parseInt(row[iSd]) || null,
+        slutManad:   parseInt(row[iEm]) || null,
+        slutDag:     parseInt(row[iEd]) || null,
+        status:      String(row[iStatus] || 'Planerad').trim(),
+        atarkommande:String(row[iAtar] || '').trim().toLowerCase() === 'ja',
+      };
+      if (akt.slutManad === akt.startManad) akt.slutManad = null;
+      aktiviteter.push(akt);
+    }
+
+    if (errors.length) {
+      const msg = `${errors.length} rad(er) kunde inte importeras:\n\n${errors.slice(0,5).join('\n')}${errors.length>5?'\n…och '+(errors.length-5)+' till':''}`;
+      if (!confirm(msg + '\n\nFortsätta och importera ' + aktiviteter.length + ' giltiga rader?')) return;
+    }
+
+    if (!aktiviteter.length) { toast('Inga giltiga rader hittades i filen.', 'warn'); return; }
+
+    if (!confirm(`Importera ${aktiviteter.length} aktiviteter?\n\nDetta ersätter ALLA befintliga aktiviteter i årshjulet. Åtgärden kan inte ångras.`)) return;
+
+    _data.aktiviteter = aktiviteter;
+    const ok = await save('Importerade ' + aktiviteter.length + ' aktiviteter från Excel');
+    if (ok) {
+      toast(`${aktiviteter.length} aktiviteter importerade ✓`, 'ok');
+      renderView();
+    }
+  } catch(e) { toast('Fel vid import: ' + e.message, 'err'); }
 }
 
 function openNy() {
