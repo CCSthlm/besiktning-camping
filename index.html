@@ -20,6 +20,9 @@
 }
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:var(--bg3);color:var(--text);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;}
 
+/* Portal screen overrides body centering */
+#screen-portal.active{align-self:stretch;width:100%;}
+
 /* ─── LOGIN SCREEN ─── */
 .login-wrap{width:100%;max-width:420px;animation:fadeUp .45s ease both;}
 @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
@@ -67,7 +70,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
 .login-footer{text-align:center;margin-top:20px;font-size:11px;color:var(--text3);}
 
 /* ─── APP LAUNCHER ─── */
-.portal-wrap{width:100%;max-width:1080px;animation:fadeUp .45s ease both;}
+.portal-wrap{width:100%;max-width:1080px;animation:fadeUp .45s ease both;padding:0 0 32px;}
 
 /* Topbar */
 .portal-topbar{
@@ -93,7 +96,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
 .btn-logout:hover{background:rgba(163,45,45,.15);}
 
 /* Layout */
-.portal-main{display:flex;gap:20px;align-items:flex-start;}
+.portal-main{display:flex;gap:20px;align-items:flex-start;padding:20px 20px 0;}
 .portal-apps{flex:1;min-width:0;}
 .portal-sidebar{width:220px;flex-shrink:0;display:flex;flex-direction:column;gap:14px;}
 
@@ -190,12 +193,85 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
 .no-access i{font-size:40px;color:var(--text3);margin-bottom:12px;display:block;}
 
 @media(max-width:700px){
-  .portal-topbar{border-radius:var(--radius);padding:12px 16px;}
-  .portal-main{flex-direction:column;}
-  .portal-sidebar{width:100%;flex-direction:row;flex-wrap:wrap;}
-  .links-card{flex:1;min-width:200px;}
-  .app-grid-2{grid-template-columns:1fr;}
+  /* Body — porta till top-align på portalsidan */
+  body{padding:0;justify-content:flex-start;align-items:stretch;}
+
+  /* Login — behåll centrerat men med padding */
+  .screen-login-inner{padding:20px 16px;}
+  .login-wrap{max-width:100%;}
+
+  /* Portal wrap */
+  .portal-wrap{padding:0;}
+
+  /* Topbar — komprimera till 2 rader vid behov */
+  .portal-topbar{
+    border-radius:0;
+    padding:10px 14px;
+    flex-wrap:wrap;
+    gap:8px;
+    position:sticky;top:0;z-index:20;
+  }
+  .portal-topbar-left{gap:8px;}
+  .portal-topbar-left img{width:34px;height:34px;}
+  .portal-topbar-brand h1{font-size:14px;}
   .portal-topbar-brand p{display:none;}
+
+  /* User chip — kompakt */
+  .user-chip{padding:5px 10px 5px 6px;gap:7px;}
+  .user-avatar{width:28px;height:28px;font-size:11px;}
+  .user-chip-name{font-size:12px;}
+  .user-chip-role{display:none;}
+  #portal-greeting{display:none;}
+
+  /* Logga ut — bara ikon på mobil */
+  .btn-logout{padding:8px 10px;}
+  .btn-logout span{display:none;}
+
+  /* Portal main */
+  .portal-main{
+    flex-direction:column;
+    padding:12px 12px 80px;
+    gap:14px;
+  }
+  .portal-apps{min-width:0;}
+
+  /* Sidebar — horisontell rad */
+  .portal-sidebar{
+    width:100%;
+    flex-direction:column;
+    gap:10px;
+  }
+  .links-card{width:100%;}
+
+  /* Section headers */
+  .section-header{margin-bottom:8px;}
+  .section-label{font-size:10px;}
+  .section-sublabel{display:none;}
+
+  /* List cards — lite kompaktare */
+  .app-card-list{padding:11px 14px;border-radius:var(--radius);}
+  .app-icon{width:32px;height:32px;font-size:15px;border-radius:7px;}
+  .app-name{font-size:13px;}
+  .app-desc{font-size:11px;}
+
+  /* Tile grid — 1 kolumn */
+  .app-grid-2{grid-template-columns:1fr;}
+  .app-card-tile{padding:14px 14px 12px;gap:8px;}
+  .app-tile-icon{width:36px;height:36px;font-size:17px;}
+
+  /* Admin section */
+  .app-card-admin{padding:10px 14px;}
+
+  /* Banners */
+  .banner-zone{margin:0 0 10px;}
+  .banner{padding:11px 14px;}
+}
+
+/* Extra liten skärm */
+@media(max-width:380px){
+  .portal-topbar-brand h1{font-size:13px;}
+  .user-chip-name{font-size:11px;}
+  .btn-logout{padding:7px 8px;}
 }
 
 /* ─── HIDDEN STATES ─── */
@@ -480,7 +556,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
           </div>
         </div>
         <button onclick="logout()" class="btn-logout">
-          <i class="ti ti-logout" style="font-size:15px"></i> Logga ut
+          <i class="ti ti-logout" style="font-size:15px"></i><span> Logga ut</span>
         </button>
       </div>
     </div>
