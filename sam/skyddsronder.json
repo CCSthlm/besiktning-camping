@@ -1,0 +1,203 @@
+{
+  "skyddsronder": [
+    {
+      "id": "SR-1782941908320",
+      "camping": null,
+      "datum": "2026-07-01",
+      "genomfordAv": "Skyddsombudet",
+      "punkter": [
+        {
+          "sektion": "Brand",
+          "punkt": "Brandvarnare kontrollerade och fungerar",
+          "status": "OK",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Brand",
+          "punkt": "Brandsläckare kontrollerade och inte utgångna",
+          "status": "OK",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Brand",
+          "punkt": "Brandslang och utrustning tillgänglig och funktionell",
+          "status": "OK",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Brand",
+          "punkt": "Utrymningsvägar fria och tydligt markerade",
+          "status": "OK",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Brand",
+          "punkt": "Brandfarliga material korrekt förvarade",
+          "status": "OK",
+          "anteckning": ""
+        },
+        {
+          "sektion": "El & Belysning",
+          "punkt": "Elcentraler i gott skick utan synliga skador",
+          "status": "Ej kontrollerad",
+          "anteckning": ""
+        },
+        {
+          "sektion": "El & Belysning",
+          "punkt": "Utomhusuttag och elstolpar i godkänt skick",
+          "status": "Ej kontrollerad",
+          "anteckning": ""
+        },
+        {
+          "sektion": "El & Belysning",
+          "punkt": "Elcykelladdare och utrustning säkert installerad",
+          "status": "Ej kontrollerad",
+          "anteckning": ""
+        },
+        {
+          "sektion": "El & Belysning",
+          "punkt": "Belysning fungerar på vägar och allmänna ytor",
+          "status": "Ej kontrollerad",
+          "anteckning": ""
+        },
+        {
+          "sektion": "El & Belysning",
+          "punkt": "Inga lösa kablar eller elrisker synliga",
+          "status": "Ej kontrollerad",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Gasol",
+          "punkt": "Gasolanläggning besiktigad inom giltig period",
+          "status": "Ej kontrollerad",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Gasol",
+          "punkt": "Gasoltillbehör kontrollerade (slangar, kopplingar)",
+          "status": "Ej kontrollerad",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Gasol",
+          "punkt": "Varningsskyltar för gasol uppsatta",
+          "status": "Ej kontrollerad",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Gasol",
+          "punkt": "Ventilation i utrymmen med gasol godkänd",
+          "status": "Ej kontrollerad",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Vägar, Ytor & Fall",
+          "punkt": "Campingvägar i godkänt skick utan gropar eller hinder",
+          "status": "Ej kontrollerad",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Vägar, Ytor & Fall",
+          "punkt": "Halkskydd på trappor och ingångar",
+          "status": "Ej kontrollerad",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Vägar, Ytor & Fall",
+          "punkt": "Dräneringen fungerar (ingen stående vatten)",
+          "status": "Ej kontrollerad",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Vägar, Ytor & Fall",
+          "punkt": "Lekplatsutrustning säker och i gott skick",
+          "status": "Ej kontrollerad",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Vägar, Ytor & Fall",
+          "punkt": "Trappor och räcken stabila",
+          "status": "Ej kontrollerad",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Toaletter & Hygien",
+          "punkt": "Vatten- och avloppsanläggning fungerar",
+          "status": "Ej kontrollerad",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Toaletter & Hygien",
+          "punkt": "Sanitetsanläggningar rena och funktionella",
+          "status": "Ej kontrollerad",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Toaletter & Hygien",
+          "punkt": "Rengöringsprodukter korrekt förvarade",
+          "status": "Ej kontrollerad",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Toaletter & Hygien",
+          "punkt": "Dricksvattenkvalitet OK (senaste kontroll)",
+          "status": "Ej kontrollerad",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Personalutrymmen",
+          "punkt": "Personalrum/kontor i godkänt skick",
+          "status": "Ej kontrollerad",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Personalutrymmen",
+          "punkt": "Första hjälpen-utrustning komplett och tillgänglig",
+          "status": "Ej kontrollerad",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Personalutrymmen",
+          "punkt": "Ergonomiska arbetsställningar möjliga",
+          "status": "Ej kontrollerad",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Personalutrymmen",
+          "punkt": "Skyddsutrustning tillgänglig för personal",
+          "status": "Ej kontrollerad",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Psykosocial miljö",
+          "punkt": "Rutiner för ensamarbete finns och följs",
+          "status": "Ej kontrollerad",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Psykosocial miljö",
+          "punkt": "Möjlighet att rapportera problem/kränkningar finns",
+          "status": "Ej kontrollerad",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Psykosocial miljö",
+          "punkt": "Arbetsbelastning diskuteras regelbundet",
+          "status": "Ej kontrollerad",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Psykosocial miljö",
+          "punkt": "Introduktion/upplärning för ny personal genomförs",
+          "status": "Ej kontrollerad",
+          "anteckning": ""
+        }
+      ],
+      "signerad": false,
+      "signeradAv": null,
+      "signeradTs": null,
+      "skapad": "2026-07-01T21:38:28.320Z"
+    }
+  ],
+  "uppdaterad": "2026-07-01T21:38:28.600Z"
+}
