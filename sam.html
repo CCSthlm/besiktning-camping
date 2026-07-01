@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SAM – CCSthlm</title>
+<link rel="icon" href="https://raw.githubusercontent.com/CCSthlm/besiktning-camping/main/Images/CC-Logga.png" type="image/png">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/tabler-icons.min.css">
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f5f5f3;--bg2:#fff;--bg3:#eeede8;--bg4:#e5e4de;
+  --text:#1a1a18;--text2:#5a5a57;--text3:#909088;
+  --accent:#3B6D11;--accent2:#27500A;--accent-glow:rgba(59,109,17,.1);
+  --red:#A32D2D;--red-bg:#FCEBEB;--red-light:#fff0f0;
+  --amber:#854F0B;--amber-bg:#FAEEDA;--amber-light:#fffbf0;
+  --green-bg:#EAF3DE;--green-text:#27500A;
+  --blue:#1a4f7a;--blue-bg:#e0f0ff;
+  --border:rgba(0,0,0,.09);--border2:rgba(0,0,0,.15);
+  --radius:8px;--radius-lg:14px;--shadow:0 2px 12px rgba(0,0,0,.07);
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:var(--bg3);color:var(--text);min-height:100vh;display:flex;flex-direction:column;}
+
+/* TOP NAV */
+.topnav{background:var(--bg2);border-bottom:1px solid var(--border2);padding:0 20px;display:flex;align-items:stretch;gap:0;position:sticky;top:0;z-index:20;box-shadow:0 2px 8px rgba(0,0,0,.05);}
+.topnav-brand{display:flex;align-items:center;gap:10px;padding:12px 20px 12px 0;border-right:1px solid var(--border);margin-right:8px;}
+.topnav-brand img{width:32px;height:32px;object-fit:contain;}
+.topnav-brand-text{font-size:15px;font-weight:700;}
+.topnav-brand-sub{font-size:10px;color:var(--text3);}
+.nav-tabs{display:flex;flex:1;overflow-x:auto;}
+.nav-tabs::-webkit-scrollbar{display:none;}
+.nav-tab{padding:0 16px;font-size:13px;font-weight:500;color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;display:flex;align-items:center;gap:6px;transition:all .15s;background:none;border-top:none;border-left:none;border-right:none;font-family:inherit;min-height:52px;}
+.nav-tab:hover{color:var(--text);}
+.nav-tab.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:600;}
+.topnav-right{display:flex;align-items:center;gap:8px;padding-left:12px;border-left:1px solid var(--border);margin-left:auto;}
+.btn-sm{padding:6px 12px;background:var(--bg3);color:var(--text2);border:1px solid var(--border2);border-radius:var(--radius);font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:5px;text-decoration:none;transition:background .15s;white-space:nowrap;}
+.btn-sm:hover{background:var(--bg4);}
+
+/* CONTENT */
+.content{flex:1;padding:20px;max-width:1100px;margin:0 auto;width:100%;}
+
+/* CARDS */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:14px;box-shadow:var(--shadow);}
+.card-header{padding:13px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+.card-title{font-size:14px;font-weight:600;display:flex;align-items:center;gap:7px;}
+.card-body{padding:16px 18px;}
+
+/* GRID */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+
+/* STAT CARDS */
+.stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px;display:flex;align-items:center;gap:14px;box-shadow:var(--shadow);}
+.stat-icon{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.si-red{background:var(--red-bg);color:var(--red);}
+.si-amber{background:var(--amber-bg);color:var(--amber);}
+.si-green{background:var(--green-bg);color:var(--green-text);}
+.si-blue{background:var(--blue-bg);color:var(--blue);}
+.stat-val{font-size:24px;font-weight:700;line-height:1;}
+.stat-lbl{font-size:12px;color:var(--text3);margin-top:3px;}
+
+/* RISK LEVELS */
+.risk-hog{background:#fce8e8;color:#7f1d1d;border:1px solid #f5a5a5;}
+.risk-medium{background:#fef3c7;color:#78350f;border:1px solid #fcd34d;}
+.risk-lag{background:var(--green-bg);color:var(--green-text);border:1px solid #86efac;}
+.risk-badge{display:inline-flex;font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px;}
+
+/* STATUS */
+.status-badge{display:inline-flex;font-size:11px;font-weight:600;padding:2px 8px;border-radius:10px;}
+.s-open{background:var(--red-bg);color:var(--red);}
+.s-ongoing{background:var(--amber-bg);color:var(--amber);}
+.s-done{background:var(--green-bg);color:var(--green-text);}
+.s-accepted{background:var(--bg4);color:var(--text3);}
+
+/* SOURCE BADGE */
+.source-badge{display:inline-flex;font-size:10px;font-weight:600;padding:2px 7px;border-radius:8px;}
+.src-risk{background:rgba(163,45,45,.1);color:var(--red);}
+.src-rond{background:rgba(133,79,11,.1);color:var(--amber);}
+.src-avv{background:var(--blue-bg);color:var(--blue);}
+
+/* TABLE */
+table{width:100%;border-collapse:collapse;}
+th{text-align:left;padding:9px 14px;font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--border);background:var(--bg3);}
+td{padding:10px 14px;font-size:13px;border-bottom:1px solid var(--border);vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:rgba(59,109,17,.025);}
+
+/* FILTER BAR */
+.filter-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
+.filter-bar select,.filter-bar input{padding:7px 11px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);font-size:12px;font-family:inherit;}
+
+/* RISK MATRIX */
+.risk-matrix{display:inline-grid;grid-template-columns:repeat(4,44px);grid-template-rows:repeat(4,44px);gap:3px;margin:8px 0;}
+.matrix-cell{border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;}
+.matrix-header{background:none;font-size:10px;color:var(--text3);font-weight:600;}
+
+/* CHECKLIST */
+.check-section{margin-bottom:18px;}
+.check-section-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:7px;}
+.check-item{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);}
+.check-item:last-child{border-bottom:none;}
+.check-label{flex:1;font-size:13px;color:var(--text);}
+.check-options{display:flex;gap:6px;flex-shrink:0;}
+.check-opt{padding:4px 10px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;border:1.5px solid var(--border2);background:var(--bg3);color:var(--text2);transition:all .15s;}
+.check-opt.ok.active{background:#22c55e;color:#fff;border-color:#22c55e;}
+.check-opt.anm.active{background:var(--amber);color:#fff;border-color:var(--amber);}
+.check-opt.ej.active{background:var(--bg4);color:var(--text3);border-color:var(--bg4);}
+.check-note{width:100%;margin-top:6px;padding:6px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius);font-size:12px;font-family:inherit;resize:vertical;}
+
+/* FORM */
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
+.fg.full{grid-template-columns:1fr;}
+.fg.thirds{grid-template-columns:1fr 1fr 1fr;}
+.ff{display:flex;flex-direction:column;gap:4px;}
+.ff label{font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.04em;}
+.ff input,.ff select,.ff textarea{padding:9px 11px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius);font-size:13px;font-family:inherit;color:var(--text);}
+.ff input:focus,.ff select:focus,.ff textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow);}
+.fsect{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);padding:10px 0 6px;border-bottom:1px solid var(--border);margin:14px 0 10px;}
+
+/* BUTTONS */
+.btn-primary{padding:9px 18px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px;transition:background .15s;}
+.btn-primary:hover{background:var(--accent2);}
+.btn-secondary{padding:8px 14px;background:var(--bg3);color:var(--text2);border:1px solid var(--border2);border-radius:var(--radius);font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:5px;}
+.btn-secondary:hover{background:var(--bg4);}
+.btn-danger{padding:6px 10px;background:var(--red-bg);color:var(--red);border:none;border-radius:var(--radius);font-size:11px;cursor:pointer;font-family:inherit;}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.42);z-index:100;align-items:flex-start;justify-content:center;padding:16px;overflow-y:auto;}
+.modal-overlay.show{display:flex;}
+.modal{background:var(--bg2);border-radius:var(--radius-lg);width:100%;max-width:580px;margin:auto;box-shadow:0 8px 40px rgba(0,0,0,.2);}
+.modal-lg{max-width:760px;}
+.modal-header{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--bg2);z-index:2;}
+.modal-title{font-size:15px;font-weight:700;}
+.modal-close{background:none;border:none;cursor:pointer;color:var(--text3);font-size:20px;}
+.modal-body{padding:16px 18px;max-height:75vh;overflow-y:auto;}
+.modal-footer{padding:12px 18px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px;background:var(--bg2);position:sticky;bottom:0;}
+
+/* SIGN BOX */
+.sign-box{background:var(--green-bg);border:1px solid rgba(59,109,17,.2);border-radius:var(--radius-lg);padding:16px;margin-top:12px;}
+.sign-box-title{font-size:12px;font-weight:700;color:var(--green-text);margin-bottom:10px;}
+.sign-row{display:flex;gap:10px;align-items:flex-end;}
+
+/* ALERT BOX */
+.alert{border-radius:var(--radius);padding:12px 14px;font-size:13px;display:flex;align-items:flex-start;gap:10px;margin-bottom:12px;}
+.alert-red{background:var(--red-bg);color:var(--red);}
+.alert-amber{background:var(--amber-bg);color:var(--amber);}
+.alert-green{background:var(--green-bg);color:var(--green-text);}
+.alert-blue{background:var(--blue-bg);color:var(--blue);}
+
+/* EMPTY */
+.empty{text-align:center;padding:40px 20px;color:var(--text3);}
+.empty i{font-size:36px;display:block;margin-bottom:10px;}
+
+/* TOAST */
+#toast{position:fixed;bottom:22px;right:16px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);padding:10px 14px;font-size:13px;z-index:999;box-shadow:var(--shadow);opacity:0;transform:translateY(6px);transition:all .25s;pointer-events:none;display:flex;align-items:center;gap:6px;}
+
+/* ADMIN INDICATOR */
+.admin-bar{background:var(--accent);color:#fff;text-align:center;font-size:11px;font-weight:600;padding:4px;letter-spacing:.04em;}
+
+@media(max-width:700px){
+  .content{padding:12px;}
+  .grid-2,.grid-3,.grid-4{grid-template-columns:1fr;}
+  .nav-tab span{display:none;}
+  .topnav-brand-sub{display:none;}
+  .fg{grid-template-columns:1fr;}
+  .fg.thirds{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<div class="topnav">
+  <div class="topnav-brand">
+    <img src="https://raw.githubusercontent.com/CCSthlm/besiktning-camping/main/Images/CC-Logga.png" alt="CC">
+    <div>
+      <div class="topnav-brand-text">SAM</div>
+      <div class="topnav-brand-sub">Systematiskt Arbetsmiljöarbete</div>
+    </div>
+  </div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" id="tab-dashboard"   onclick="showView('dashboard')"><i class="ti ti-dashboard"></i> <span>Dashboard</span></button>
+    <button class="nav-tab" id="tab-risk"        onclick="showView('risk')"><i class="ti ti-alert-triangle"></i> <span>Riskbedömning</span></button>
+    <button class="nav-tab" id="tab-ronde"       onclick="showView('ronde')"><i class="ti ti-checklist"></i> <span>Skyddsrond</span></button>
+    <button class="nav-tab" id="tab-atgarder"    onclick="showView('atgarder')"><i class="ti ti-list-check"></i> <span>Handlingsplan</span></button>
+    <button class="nav-tab" id="tab-utbildning"  onclick="showView('utbildning')"><i class="ti ti-school"></i> <span>Utbildningar</span></button>
+  </div>
+  <div class="topnav-right">
+    <a href="index.html" class="btn-sm"><i class="ti ti-arrow-left"></i> Portal</a>
+  </div>
+</div>
+
+<div id="admin-bar" style="display:none" class="admin-bar"><i class="ti ti-lock-open" style="font-size:11px"></i> Du redigerar som SAM-ansvarig</div>
+
+<div class="content" id="main-content">
+  <div class="empty"><i class="ti ti-loader" style="animation:spin 1s linear infinite"></i>Laddar…</div>
+</div>
+
+<!-- RISK MODAL -->
+<div class="modal-overlay" id="modal-risk">
+  <div class="modal">
+    <div class="modal-header"><span class="modal-title" id="risk-modal-title">Ny riskbedömning</span><button class="modal-close" onclick="closeModal('modal-risk')"><i class="ti ti-x"></i></button></div>
+    <div class="modal-body">
+      <input type="hidden" id="risk-id">
+      <div class="fg full"><div class="ff"><label>Riskbeskrivning *</label><textarea id="risk-beskr" rows="2" placeholder="Beskriv risken tydligt"></textarea></div></div>
+      <div class="fg">
+        <div class="ff"><label>Kategori *</label><select id="risk-kat">
+          <option>Brand</option><option>El</option><option>Gasol</option>
+          <option>Fall</option><option>Ergonomi</option><option>Psykosocial</option><option>Övrigt</option>
+        </select></div>
+        <div class="ff"><label>Camping</label><select id="risk-camping">
+          <option value="">Sektionsgemensam</option>
+          <option>CC Björkö Örns Camping</option><option>CC Östnora Camping</option>
+          <option>CC Kapellskärs Camping</option><option>CC Mista Camping</option>
+          <option>CC Storsveds Camping</option><option>CC Örstigs Camping</option>
+          <option>Gräddös Pärla Kök &amp; Bar</option><option>Östnora Kök &amp; Bar</option>
+        </select></div>
+      </div>
+      <div class="fg thirds">
+        <div class="ff"><label>Sannolikhet (1–3)</label><select id="risk-sann">
+          <option value="1">1 – Osannolik</option><option value="2">2 – Möjlig</option><option value="3">3 – Sannolik</option>
+        </select></div>
+        <div class="ff"><label>Konsekvens (1–3)</label><select id="risk-kons">
+          <option value="1">1 – Lindrig</option><option value="2">2 – Allvarlig</option><option value="3">3 – Kritisk</option>
+        </select></div>
+        <div class="ff"><label>Risknivå</label>
+          <div id="risk-niva-display" style="padding:9px 11px;border-radius:var(--radius);font-weight:700;font-size:14px;text-align:center;background:var(--bg3)">–</div>
+        </div>
+      </div>
+      <div class="fg full"><div class="ff"><label>Åtgärd *</label><textarea id="risk-atgard" rows="2" placeholder="Beskriv åtgärden"></textarea></div></div>
+      <div class="fg">
+        <div class="ff"><label>Ansvarig</label><input type="text" id="risk-ansvarig" placeholder="Namn eller roll"></div>
+        <div class="ff"><label>Deadline</label><input type="date" id="risk-deadline"></div>
+      </div>
+      <div class="fg full"><div class="ff"><label>Status</label><select id="risk-status">
+        <option value="Öppen">Öppen</option><option value="Pågående">Pågående</option>
+        <option value="Åtgärdad">Åtgärdad</option><option value="Accepterad">Accepterad</option>
+      </select></div></div>
+    </div>
+    <div class="modal-footer"><button class="btn-secondary" onclick="closeModal('modal-risk')">Avbryt</button><button class="btn-primary" onclick="saveRisk()"><i class="ti ti-check"></i> Spara</button></div>
+  </div>
+</div>
+
+<!-- SKYDDSROND MODAL -->
+<div class="modal-overlay" id="modal-ronde">
+  <div class="modal modal-lg">
+    <div class="modal-header"><span class="modal-title" id="ronde-modal-title">Ny skyddsrond</span><button class="modal-close" onclick="closeModal('modal-ronde')"><i class="ti ti-x"></i></button></div>
+    <div class="modal-body" id="ronde-modal-body"></div>
+    <div class="modal-footer"><button class="btn-secondary" onclick="closeModal('modal-ronde')">Avbryt</button><button class="btn-primary" onclick="saveRonde()"><i class="ti ti-check"></i> Spara skyddsrond</button></div>
+  </div>
+</div>
+
+<!-- ÅTGÄRD MODAL -->
+<div class="modal-overlay" id="modal-atgard">
+  <div class="modal">
+    <div class="modal-header"><span class="modal-title" id="atgard-modal-title">Åtgärd</span><button class="modal-close" onclick="closeModal('modal-atgard')"><i class="ti ti-x"></i></button></div>
+    <div class="modal-body">
+      <input type="hidden" id="at-id">
+      <div class="fg full"><div class="ff"><label>Titel *</label><input type="text" id="at-titel" placeholder="Kort beskrivning av åtgärden"></div></div>
+      <div class="fg full"><div class="ff"><label>Beskrivning</label><textarea id="at-beskr" rows="2"></textarea></div></div>
+      <div class="fg">
+        <div class="ff"><label>Ansvarig</label><input type="text" id="at-ansvarig"></div>
+        <div class="ff"><label>Deadline</label><input type="date" id="at-deadline"></div>
+      </div>
+      <div class="fg">
+        <div class="ff"><label>Camping</label><select id="at-camping">
+          <option value="">Sektionsgemensam</option>
+          <option>CC Björkö Örns Camping</option><option>CC Östnora Camping</option>
+          <option>CC Kapellskärs Camping</option><option>CC Mista Camping</option>
+          <option>CC Storsveds Camping</option><option>CC Örstigs Camping</option>
+          <option>Gräddös Pärla Kök &amp; Bar</option><option>Östnora Kök &amp; Bar</option>
+        </select></div>
+        <div class="ff"><label>Status</label><select id="at-status">
+          <option value="Öppen">Öppen</option><option value="Pågående">Pågående</option><option value="Klar">Klar</option>
+        </select></div>
+      </div>
+    </div>
+    <div class="modal-footer"><button class="btn-secondary" onclick="closeModal('modal-atgard')">Avbryt</button><button class="btn-primary" onclick="saveAtgard()"><i class="ti ti-check"></i> Spara</button></div>
+  </div>
+</div>
+
+<!-- UTBILDNING MODAL -->
+<div class="modal-overlay" id="modal-utb">
+  <div class="modal">
+    <div class="modal-header"><span class="modal-title" id="utb-modal-title">Utbildning</span><button class="modal-close" onclick="closeModal('modal-utb')"><i class="ti ti-x"></i></button></div>
+    <div class="modal-body">
+      <input type="hidden" id="utb-id">
+      <div class="fg">
+        <div class="ff"><label>Typ *</label><select id="utb-typ">
+          <option>Brand</option><option>HLR</option><option>Elsäkerhet</option>
+          <option>Gasol</option><option>Livsmedel</option><option>Övrigt</option>
+        </select></div>
+        <div class="ff"><label>Camping</label><select id="utb-camping">
+          <option value="">Sektionsgemensam</option>
+          <option>CC Björkö Örns Camping</option><option>CC Östnora Camping</option>
+          <option>CC Kapellskärs Camping</option><option>CC Mista Camping</option>
+          <option>CC Storsveds Camping</option><option>CC Örstigs Camping</option>
+          <option>Gräddös Pärla Kök &amp; Bar</option><option>Östnora Kök &amp; Bar</option>
+        </select></div>
+      </div>
+      <div class="fg">
+        <div class="ff"><label>Datum *</label><input type="date" id="utb-datum"></div>
+        <div class="ff"><label>Antal deltagare</label><input type="number" id="utb-antal" min="1"></div>
+      </div>
+      <div class="fg">
+        <div class="ff"><label>Ansvarig</label><input type="text" id="utb-ansvarig"></div>
+        <div class="ff"><label>Giltig till</label><input type="date" id="utb-giltig"></div>
+      </div>
+      <div class="fg full"><div class="ff"><label>Anteckningar</label><textarea id="utb-not" rows="2"></textarea></div></div>
+    </div>
+    <div class="modal-footer"><button class="btn-secondary" onclick="closeModal('modal-utb')">Avbryt</button><button class="btn-primary" onclick="saveUtb()"><i class="ti ti-check"></i> Spara</button></div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<style>@keyframes spin{to{transform:rotate(360deg)}}</style>
+<script>
+const GH_REPO = 'CCSthlm/besiktning-camping';
+const PATHS = {
+  risk:   'sam/riskbedomningar.json',
+  ronde:  'sam/skyddsronder.json',
+  hp:     'sam/handlingsplan.json',
+  utb:    'sam/utbildningar.json',
+  avv:    'avvikelse/storningsrapporter.json',
+};
+const CAMPINGAR = ['CC Björkö Örns Camping','CC Östnora Camping','CC Kapellskärs Camping','CC Mista Camping','CC Storsveds Camping','CC Örstigs Camping','Gräddös Pärla Kök & Bar','Östnora Kök & Bar'];
+const AVV_TYPER_SAM = ['Brand','El','Personskada','Fallolycka','Tillbud','Gasol'];
+
+const CHECKLISTOR = [
+  { sektion:'Brand', icon:'ti-flame', punkter:[
+    'Brandvarnare kontrollerade och fungerar',
+    'Brandsläckare kontrollerade och inte utgångna',
+    'Brandslang och utrustning tillgänglig och funktionell',
+    'Utrymningsvägar fria och tydligt markerade',
+    'Brandfarliga material korrekt förvarade',
+  ]},
+  { sektion:'El & Belysning', icon:'ti-bolt', punkter:[
+    'Elcentraler i gott skick utan synliga skador',
+    'Utomhusuttag och elstolpar i godkänt skick',
+    'Elcykelladdare och utrustning säkert installerad',
+    'Belysning fungerar på vägar och allmänna ytor',
+    'Inga lösa kablar eller elrisker synliga',
+  ]},
+  { sektion:'Gasol', icon:'ti-gas-station', punkter:[
+    'Gasolanläggning besiktigad inom giltig period',
+    'Gasoltillbehör kontrollerade (slangar, kopplingar)',
+    'Varningsskyltar för gasol uppsatta',
+    'Ventilation i utrymmen med gasol godkänd',
+  ]},
+  { sektion:'Vägar, Ytor & Fall', icon:'ti-road', punkter:[
+    'Campingvägar i godkänt skick utan gropar eller hinder',
+    'Halkskydd på trappor och ingångar',
+    'Dräneringen fungerar (ingen stående vatten)',
+    'Lekplatsutrustning säker och i gott skick',
+    'Trappor och räcken stabila',
+  ]},
+  { sektion:'Toaletter & Hygien', icon:'ti-droplet', punkter:[
+    'Vatten- och avloppsanläggning fungerar',
+    'Sanitetsanläggningar rena och funktionella',
+    'Rengöringsprodukter korrekt förvarade',
+    'Dricksvattenkvalitet OK (senaste kontroll)',
+  ]},
+  { sektion:'Personalutrymmen', icon:'ti-building', punkter:[
+    'Personalrum/kontor i godkänt skick',
+    'Första hjälpen-utrustning komplett och tillgänglig',
+    'Ergonomiska arbetsställningar möjliga',
+    'Skyddsutrustning tillgänglig för personal',
+  ]},
+  { sektion:'Psykosocial miljö', icon:'ti-heart', punkter:[
+    'Rutiner för ensamarbete finns och följs',
+    'Möjlighet att rapportera problem/kränkningar finns',
+    'Arbetsbelastning diskuteras regelbundet',
+    'Introduktion/upplärning för ny personal genomförs',
+  ]},
+];
+
+let _user = null, _isAdmin = false;
+let _data = { risk:null, ronde:null, hp:null, utb:null, avv:null };
+let _sha  = { risk:null, ronde:null, hp:null,  utb:null };
+let _view = 'dashboard';
+let _rondeState = {};
+
+(async function init() {
+  const sess = sessionStorage.getItem('ccs_session') || sessionStorage.getItem('ccs_portal_user');
+  if (!sess) { window.location.replace('index.html'); return; }
+  _user = JSON.parse(sess);
+  _isAdmin = (_user.adminRoles||[]).some(r=>['global','sam-ansvarig'].includes(r)) || _user.role==='Admin';
+  if (_isAdmin) document.getElementById('admin-bar').style.display = '';
+  await loadAll();
+  showView('dashboard');
+})();
+
+async function loadAll() {
+  await Promise.all(Object.entries(PATHS).map(([key, path]) => loadJSON(key, path)));
+}
+
+async function loadJSON(key, path) {
+  const token = localStorage.getItem('gh_token') || '';
+  if (!token) return;
+  try {
+    const res = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/${path}`, {headers:{'Authorization':'token '+token}});
+    if (res.status === 404) {
+      _data[key] = key === 'avv' ? { rapporter: [] } : { [dataKey(key)]: [] };
+      return;
+    }
+    if (!res.ok) return;
+    const gh = await res.json();
+    if (key !== 'avv') _sha[key] = gh.sha;
+    const bytes = Uint8Array.from(atob(gh.content.replace(/\n/g,'')), c=>c.charCodeAt(0));
+    _data[key] = JSON.parse(new TextDecoder('utf-8').decode(bytes));
+  } catch(e) { console.warn(key, e.message); }
+}
+
+function dataKey(key) { return {risk:'riskbedomningar',ronde:'skyddsronder',hp:'atgarder',utb:'utbildningar',avv:'rapporter'}[key]; }
+
+async function saveJSON(key, msg) {
+  const token = localStorage.getItem('gh_token') || '';
+  if (!token) { toast('GitHub-token saknas','warn'); return false; }
+  const path = PATHS[key];
+  const url = `https://api.github.com/repos/${GH_REPO}/contents/${path}`;
+  try {
+    if (!_sha[key]) { const c=await fetch(url,{headers:{'Authorization':'token '+token}}); if(c.ok) _sha[key]=(await c.json()).sha; }
+    _data[key].uppdaterad = new Date().toISOString();
+    const json = JSON.stringify(_data[key], null, 2);
+    const enc  = new TextEncoder().encode(json);
+    let b64=''; for(let i=0;i<enc.length;i+=8192) b64+=String.fromCharCode(...enc.slice(i,i+8192));
+    const payload={message:msg,content:btoa(b64),branch:'main'};
+    if(_sha[key]) payload.sha=_sha[key];
+    const res=await fetch(url,{method:'PUT',headers:{'Authorization':'token '+token,'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    const d=await res.json(); if(!res.ok) throw new Error(d.message);
+    _sha[key]=d.content?.sha||_sha[key];
+    return true;
+  } catch(e) { toast('Fel: '+e.message,'err'); return false; }
+}
+
+function showView(v) {
+  _view = v;
+  ['dashboard','risk','ronde','atgarder','utbildning'].forEach(t => {
+    document.getElementById('tab-'+t)?.classList.toggle('active', t===v);
+  });
+  const views = {dashboard:renderDashboard,risk:renderRisk,ronde:renderRonde,atgarder:renderAtgarder,utbildning:renderUtbildning};
+  (views[v] || renderDashboard)();
+}
+
+// ── HELPERS ────────────────────────────────────────────────────────────────
+function riskColor(n) { return n>=7?'risk-hog':n>=4?'risk-medium':'risk-lag'; }
+function riskText(n)  { return n>=7?'Hög':n>=4?'Medium':'Låg'; }
+function fmtDate(iso) { try{return new Date(iso).toLocaleDateString('sv-SE');}catch(e){return iso||'–';} }
+function today()      { return new Date().toISOString().slice(0,10); }
+function nowISO()     { return new Date().toISOString(); }
+function isOverdue(d) { return d && d < today(); }
+function daysLeft(d)  { if(!d) return null; const diff=Math.round((new Date(d)-new Date())/(1000*60*60*24)); return diff; }
+
+function statusClass(s) { return {Öppen:'s-open',Pågående:'s-ongoing',Klar:'s-done',Åtgärdad:'s-done',Accepterad:'s-accepted'}[s]||'s-open'; }
+
+function getRisks()   { return (_data.risk?.riskbedomningar||[]); }
+function getRonder()  { return (_data.ronde?.skyddsronder||[]); }
+function getAtgarder(){ return (_data.hp?.atgarder||[]); }
+function getUtb()     { return (_data.utb?.utbildningar||[]); }
+function getAvv()     { return (_data.avv?.rapporter||[]).filter(r=>AVV_TYPER_SAM.some(t=>r.typ?.includes(t)||r.kategori?.includes(t))); }
+
+// ── DASHBOARD ──────────────────────────────────────────────────────────────
+function renderDashboard() {
+  const risks   = getRisks();
+  const atg     = getAtgarder();
+  const utb     = getUtb();
+  const ronder  = getRonder();
+  const hogRisk = risks.filter(r=>r.riskniva>=7&&r.status!=='Åtgärdad'&&r.status!=='Accepterad');
+  const overdue = atg.filter(a=>a.status!=='Klar'&&isOverdue(a.deadline));
+  const soonUtb = utb.filter(u=>{ const d=daysLeft(u.giltigTill); return d!==null&&d<=90&&d>=0; });
+  const senRond = ronder.length ? ronder.sort((a,b)=>b.datum?.localeCompare(a.datum||'')||0)[0] : null;
+  const avvSAM  = getAvv().slice(0,5);
+
+  document.getElementById('main-content').innerHTML = `
+    <div class="grid-4" style="margin-bottom:18px">
+      <div class="stat-card"><div class="stat-icon ${hogRisk.length?'si-red':'si-green'}"><i class="ti ti-alert-triangle"></i></div><div><div class="stat-val">${hogRisk.length}</div><div class="stat-lbl">Högriskposter</div></div></div>
+      <div class="stat-card"><div class="stat-icon ${overdue.length?'si-red':'si-green'}"><i class="ti ti-clock-exclamation"></i></div><div><div class="stat-val">${overdue.length}</div><div class="stat-lbl">Förfallna åtgärder</div></div></div>
+      <div class="stat-card"><div class="stat-icon si-blue"><i class="ti ti-checklist"></i></div><div><div class="stat-val">${ronder.length}</div><div class="stat-lbl">Skyddsronder</div></div></div>
+      <div class="stat-card"><div class="stat-icon ${soonUtb.length?'si-amber':'si-green'}"><i class="ti ti-school"></i></div><div><div class="stat-val">${soonUtb.length}</div><div class="stat-lbl">Utb. löper ut snart</div></div></div>
+    </div>
+
+    <div class="grid-2">
+      <div>
+        ${hogRisk.length ? `<div class="card">
+          <div class="card-header"><span class="card-title"><i class="ti ti-alert-triangle" style="color:var(--red)"></i> Högriskposter</span><button class="btn-sm" onclick="showView('risk')">Se alla</button></div>
+          <div style="padding:8px 0">
+            ${hogRisk.map(r=>`<div style="padding:10px 18px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
+              <div>
+                <div style="font-size:13px;font-weight:500">${r.beskrivning.slice(0,60)}${r.beskrivning.length>60?'…':''}</div>
+                <div style="font-size:11px;color:var(--text3);margin-top:3px">${r.camping||'Sektionsgemensam'} · ${r.kategori}</div>
+              </div>
+              <span class="risk-badge ${riskColor(r.riskniva)}">${r.riskniva}</span>
+            </div>`).join('')}
+          </div>
+        </div>` : `<div class="alert alert-green"><i class="ti ti-check-circle"></i>Inga högriskposter — bra jobbat!</div>`}
+
+        ${overdue.length ? `<div class="card">
+          <div class="card-header"><span class="card-title"><i class="ti ti-clock-exclamation" style="color:var(--red)"></i> Förfallna åtgärder (${overdue.length})</span><button class="btn-sm" onclick="showView('atgarder')">Se alla</button></div>
+          <div style="padding:8px 0">
+            ${overdue.slice(0,4).map(a=>`<div style="padding:10px 18px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:8px">
+              <div>
+                <div style="font-size:13px;font-weight:500">${a.titel}</div>
+                <div style="font-size:11px;color:var(--red);margin-top:3px">Förföll ${fmtDate(a.deadline)}</div>
+              </div>
+              <span class="status-badge ${statusClass(a.status)}">${a.status}</span>
+            </div>`).join('')}
+          </div>
+        </div>` : ''}
+      </div>
+
+      <div>
+        <div class="card">
+          <div class="card-header"><span class="card-title"><i class="ti ti-checklist"></i> Senaste skyddsrond</span><button class="btn-sm" onclick="showView('ronde')">Alla ronder</button></div>
+          <div class="card-body">
+            ${senRond ? `
+              <div style="font-size:14px;font-weight:600;margin-bottom:4px">${senRond.camping||'Sektionsgemensam'}</div>
+              <div style="font-size:12px;color:var(--text2);margin-bottom:8px">Genomförd ${fmtDate(senRond.datum)} av ${senRond.genomfordAv||'–'}</div>
+              <div style="font-size:12px;color:var(--text2)">Anmärkningar: <strong>${(senRond.punkter||[]).filter(p=>p.status==='Anmärkning').length}</strong> st</div>
+              ${senRond.signerad ? '<div style="font-size:11px;color:var(--green-text);margin-top:6px"><i class="ti ti-check"></i> Signerad av skyddsombud</div>' : '<div style="font-size:11px;color:var(--amber);margin-top:6px"><i class="ti ti-clock"></i> Väntar på signering</div>'}
+            ` : '<div style="color:var(--text3);font-size:13px">Ingen skyddsrond genomförd ännu.</div>'}
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><span class="card-title"><i class="ti ti-file-alert" style="color:var(--blue)"></i> Avvikelser (SAM-relevanta)</span></div>
+          <div style="padding:8px 0">
+            ${avvSAM.length ? avvSAM.map(a=>`<div style="padding:9px 18px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center">
+              <div>
+                <div style="font-size:12px;font-weight:500">${a.titel||a.typ||'Avvikelse'}</div>
+                <div style="font-size:11px;color:var(--text3)">${fmtDate(a.skapad||a.datum)} · ${a.plats||a.camping||''}</div>
+              </div>
+              <span style="font-size:10px;background:var(--blue-bg);color:var(--blue);padding:2px 7px;border-radius:8px;font-weight:600">${a.typ||a.kategori||'–'}</span>
+            </div>`).join('') : '<div style="padding:14px 18px;font-size:12px;color:var(--text3)">Inga SAM-relevanta avvikelser.</div>'}
+          </div>
+        </div>
+      </div>
+    </div>`;
+}
+
+// ── RISKBEDÖMNING ──────────────────────────────────────────────────────────
+function renderRisk() {
+  const risks = getRisks();
+  const canEdit = _isAdmin;
+  document.getElementById('main-content').innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+      <div style="font-size:13px;color:var(--text2)">${risks.length} riskbedömningar registrerade</div>
+      ${canEdit?`<button class="btn-primary" onclick="openRiskModal()"><i class="ti ti-plus"></i> Ny riskbedömning</button>`:''}
+    </div>
+    ${risks.length ? `<div class="card"><div style="overflow-x:auto"><table>
+      <thead><tr><th>Risk</th><th>Kategori</th><th>Camping</th><th>Nivå</th><th>Åtgärd</th><th>Deadline</th><th>Status</th>${canEdit?'<th></th>':''}</tr></thead>
+      <tbody>${risks.map(r=>`<tr>
+        <td style="max-width:220px"><div style="font-weight:500;font-size:13px">${r.beskrivning}</div></td>
+        <td><span style="font-size:11px;background:var(--bg3);padding:2px 7px;border-radius:6px">${r.kategori}</span></td>
+        <td style="font-size:12px;color:var(--text2)">${r.camping||'Sektionsgemensam'}</td>
+        <td><span class="risk-badge ${riskColor(r.riskniva)}">${riskText(r.riskniva)} (${r.riskniva})</span></td>
+        <td style="font-size:12px;color:var(--text2);max-width:180px">${r.atgard||'–'}</td>
+        <td style="font-size:12px;${isOverdue(r.deadline)?'color:var(--red);font-weight:600':''}">${r.deadline?fmtDate(r.deadline):'–'}</td>
+        <td><span class="status-badge ${statusClass(r.status)}">${r.status}</span></td>
+        ${canEdit?`<td style="white-space:nowrap">
+          <span onclick="openRiskModal('${r.id}')" style="cursor:pointer;color:var(--accent);font-size:12px;font-weight:500;margin-right:8px">Redigera</span>
+          <span onclick="deleteRisk('${r.id}')" style="cursor:pointer;color:var(--red);font-size:12px">Ta bort</span>
+        </td>`:''}
+      </tr>`).join('')}</tbody>
+    </table></div></div>`
+    : `<div class="empty"><i class="ti ti-alert-triangle"></i>Inga riskbedömningar registrerade ännu</div>`}`;
+}
+
+function openRiskModal(id) {
+  const r = id ? getRisks().find(x=>x.id===id) : null;
+  document.getElementById('risk-modal-title').textContent = r ? 'Redigera riskbedömning' : 'Ny riskbedömning';
+  document.getElementById('risk-id').value      = r?.id||'';
+  document.getElementById('risk-beskr').value   = r?.beskrivning||'';
+  document.getElementById('risk-kat').value     = r?.kategori||'Brand';
+  document.getElementById('risk-camping').value = r?.camping||'';
+  document.getElementById('risk-sann').value    = r?.sannolikhet||'1';
+  document.getElementById('risk-kons').value    = r?.konsekvens||'1';
+  document.getElementById('risk-atgard').value  = r?.atgard||'';
+  document.getElementById('risk-ansvarig').value= r?.ansvarig||'';
+  document.getElementById('risk-deadline').value= r?.deadline||'';
+  document.getElementById('risk-status').value  = r?.status||'Öppen';
+  updateRiskNiva();
+  openModal('modal-risk');
+}
+
+function updateRiskNiva() {
+  const s=parseInt(document.getElementById('risk-sann').value)||1;
+  const k=parseInt(document.getElementById('risk-kons').value)||1;
+  const n=s*k;
+  const el=document.getElementById('risk-niva-display');
+  el.textContent=n; el.className='';
+  el.style.cssText=`padding:9px 11px;border-radius:var(--radius);font-weight:700;font-size:16px;text-align:center;${n>=7?'background:#fce8e8;color:#7f1d1d':n>=4?'background:#fef3c7;color:#78350f':'background:var(--green-bg);color:var(--green-text)'}`;
+}
+document.getElementById('risk-sann').addEventListener('change',updateRiskNiva);
+document.getElementById('risk-kons').addEventListener('change',updateRiskNiva);
+
+async function saveRisk() {
+  const beskr = document.getElementById('risk-beskr').value.trim();
+  if (!beskr) { toast('Ange riskbeskrivning','warn'); return; }
+  const id   = document.getElementById('risk-id').value;
+  const sann = parseInt(document.getElementById('risk-sann').value);
+  const kons = parseInt(document.getElementById('risk-kons').value);
+  const obj  = {
+    id: id || 'RB-'+Date.now(),
+    camping:     document.getElementById('risk-camping').value||null,
+    kategori:    document.getElementById('risk-kat').value,
+    beskrivning: beskr,
+    sannolikhet: sann, konsekvens: kons, riskniva: sann*kons,
+    atgard:      document.getElementById('risk-atgard').value.trim(),
+    ansvarig:    document.getElementById('risk-ansvarig').value.trim(),
+    deadline:    document.getElementById('risk-deadline').value||null,
+    status:      document.getElementById('risk-status').value,
+    skapad:      id ? getRisks().find(r=>r.id===id)?.skapad : nowISO(),
+    skapadAv:    _user.name,
+  };
+  if (!_data.risk) _data.risk = { riskbedomningar: [] };
+  if (id) { const i=_data.risk.riskbedomningar.findIndex(r=>r.id===id); if(i>=0)_data.risk.riskbedomningar[i]=obj; }
+  else _data.risk.riskbedomningar.push(obj);
+
+  // Auto-create action in handlingsplan
+  if (!id) {
+    if (!_data.hp) _data.hp={atgarder:[]};
+    _data.hp.atgarder.push({
+      id:'AT-'+Date.now(), kalla:'Riskbedömning', kallaId:obj.id,
+      titel:'Åtgärda: '+beskr.slice(0,60), beskrivning:obj.atgard,
+      camping:obj.camping, ansvarig:obj.ansvarig, deadline:obj.deadline,
+      status:'Öppen', skapad:nowISO()
+    });
+    await saveJSON('hp','Åtgärd från riskbedömning');
+  }
+  const ok = await saveJSON('risk','Riskbedömning: '+beskr.slice(0,40));
+  if (ok) { toast('Sparat','ok'); closeModal('modal-risk'); renderRisk(); }
+}
+
+async function deleteRisk(id) {
+  const r = getRisks().find(x=>x.id===id);
+  if (!r||!confirm('Ta bort riskbedömningen?')) return;
+  _data.risk.riskbedomningar = _data.risk.riskbedomningar.filter(x=>x.id!==id);
+  const ok = await saveJSON('risk','Tog bort riskbedömning');
+  if (ok) { toast('Borttagen','ok'); renderRisk(); }
+}
+
+// ── SKYDDSROND ─────────────────────────────────────────────────────────────
+function renderRonde() {
+  const ronder = getRonder().slice().sort((a,b)=>b.datum?.localeCompare(a.datum||''));
+  const canEdit = _isAdmin;
+  document.getElementById('main-content').innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+      <div style="font-size:13px;color:var(--text2)">${ronder.length} skyddsronder genomförda</div>
+      ${canEdit?`<button class="btn-primary" onclick="openRondeModal()"><i class="ti ti-plus"></i> Ny skyddsrond</button>`:''}
+    </div>
+    ${ronder.length ? ronder.map(r=>{
+      const anm = (r.punkter||[]).filter(p=>p.status==='Anmärkning').length;
+      return `<div class="card" style="margin-bottom:10px">
+        <div class="card-header">
+          <div>
+            <div style="font-size:14px;font-weight:600">${r.camping||'Sektionsgemensam'} – ${fmtDate(r.datum)}</div>
+            <div style="font-size:12px;color:var(--text2);margin-top:2px">Genomförd av ${r.genomfordAv||'–'} · ${anm} anmärkning${anm!==1?'ar':''}</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            ${r.signerad ? `<span style="font-size:11px;color:var(--green-text);font-weight:600"><i class="ti ti-check-circle"></i> Signerad</span>`
+            : canEdit ? `<button class="btn-primary" style="font-size:12px;padding:6px 12px" onclick="signeraRonde('${r.id}')"><i class="ti ti-pen"></i> Signera</button>` : '<span style="font-size:11px;color:var(--amber)">Väntar signering</span>'}
+          </div>
+        </div>
+        ${anm>0?`<div style="padding:10px 18px;font-size:12px;color:var(--amber);border-bottom:1px solid var(--border)"><i class="ti ti-alert-triangle"></i> ${anm} punkt${anm!==1?'er':''} med anmärkning – åtgärder skapade i handlingsplanen</div>`:''}
+        ${r.signerad&&r.signeradAv?`<div style="padding:8px 18px;font-size:11px;color:var(--text3)">Signerad av ${r.signeradAv} (skyddsombud) ${fmtDate(r.signeradTs)}</div>`:''}
+      </div>`;
+    }).join('') : `<div class="empty"><i class="ti ti-checklist"></i>Inga skyddsronder genomförda ännu</div>`}`;
+}
+
+function openRondeModal() {
+  _rondeState = {};
+  const html = `
+    <div class="fg">
+      <div class="ff"><label>Camping *</label><select id="ronde-camping">
+        <option value="">Sektionsgemensam</option>
+        ${CAMPINGAR.map(c=>`<option>${c}</option>`).join('')}
+      </select></div>
+      <div class="ff"><label>Datum *</label><input type="date" id="ronde-datum" value="${today()}"></div>
+    </div>
+    <div class="fg full"><div class="ff"><label>Genomförd av *</label><input type="text" id="ronde-av" placeholder="Namn på genomförare"></div></div>
+    <div class="fsect">Checklistpunkter</div>
+    ${CHECKLISTOR.map((sek,si)=>`
+      <div class="check-section">
+        <div class="check-section-title"><i class="ti ${sek.icon}"></i>${sek.sektion}</div>
+        ${sek.punkter.map((punkt,pi)=>`
+          <div class="check-item">
+            <div class="check-label">${punkt}</div>
+            <div>
+              <div class="check-options">
+                <button type="button" class="check-opt ok" id="cp-${si}-${pi}-ok"   onclick="setCheck(${si},${pi},'OK')">OK</button>
+                <button type="button" class="check-opt anm" id="cp-${si}-${pi}-anm" onclick="setCheck(${si},${pi},'Anmärkning')">Anm.</button>
+                <button type="button" class="check-opt ej" id="cp-${si}-${pi}-ej"   onclick="setCheck(${si},${pi},'Ej aktuellt')">Ej akt.</button>
+              </div>
+              <textarea class="check-note" id="cn-${si}-${pi}" placeholder="Anteckning…" style="display:none" rows="2"></textarea>
+            </div>
+          </div>`).join('')}
+      </div>`).join('')}
+    <div class="sign-box">
+      <div class="sign-box-title"><i class="ti ti-pen"></i> Signering av skyddsombud (valfritt vid skapande)</div>
+      <div class="fg">
+        <div class="ff"><label>Skyddsombudets namn</label><input type="text" id="ronde-ombud" placeholder="Namn"></div>
+      </div>
+    </div>`;
+  document.getElementById('ronde-modal-title').textContent='Ny skyddsrond';
+  document.getElementById('ronde-modal-body').innerHTML=html;
+  openModal('modal-ronde');
+}
+
+function setCheck(si, pi, status) {
+  const key = `${si}-${pi}`;
+  _rondeState[key] = status;
+  ['ok','anm','ej'].forEach(t => document.getElementById(`cp-${si}-${pi}-${t}`)?.classList.remove('active'));
+  const map={'OK':'ok','Anmärkning':'anm','Ej aktuellt':'ej'};
+  document.getElementById(`cp-${si}-${pi}-${map[status]}`)?.classList.add('active');
+  const note = document.getElementById(`cn-${si}-${pi}`);
+  if (note) note.style.display = status==='Anmärkning'?'':'none';
+}
+
+async function saveRonde() {
+  const camping = document.getElementById('ronde-camping').value;
+  const datum   = document.getElementById('ronde-datum').value;
+  const av      = document.getElementById('ronde-av').value.trim();
+  const ombud   = document.getElementById('ronde-ombud').value.trim();
+  if (!datum||!av) { toast('Ange datum och genomförare','warn'); return; }
+
+  const punkter = [];
+  CHECKLISTOR.forEach((sek,si)=>sek.punkter.forEach((punkt,pi)=>{
+    const key=`${si}-${pi}`;
+    const status=_rondeState[key]||'Ej kontrollerad';
+    const note=document.getElementById(`cn-${si}-${pi}`)?.value.trim()||'';
+    punkter.push({sektion:sek.sektion,punkt,status,anteckning:note});
+  }));
+
+  const anmarkningar = punkter.filter(p=>p.status==='Anmärkning');
+  const id = 'SR-'+Date.now();
+  const ronde = {
+    id, camping:camping||null, datum, genomfordAv:av,
+    punkter, signerad:!!ombud, signeradAv:ombud||null,
+    signeradTs: ombud?nowISO():null, skapad:nowISO()
+  };
+
+  if (!_data.ronde) _data.ronde={skyddsronder:[]};
+  _data.ronde.skyddsronder.push(ronde);
+
+  // Create actions for anmärkningar
+  if (anmarkningar.length) {
+    if (!_data.hp) _data.hp={atgarder:[]};
+    anmarkningar.forEach(a=>{
+      _data.hp.atgarder.push({
+        id:'AT-'+Date.now()+'-'+Math.random().toString(36).slice(2,5),
+        kalla:'Skyddsrond', kallaId:id,
+        titel:`Skyddsrond: ${a.punkt.slice(0,50)}`,
+        beskrivning:a.anteckning||a.punkt,
+        camping:camping||null, ansvarig:'Campingansvarig',
+        deadline:null, status:'Öppen', skapad:nowISO()
+      });
+    });
+    await saveJSON('hp','Åtgärder från skyddsrond');
+  }
+  const ok = await saveJSON('ronde','Skyddsrond '+datum);
+  if (ok) { toast(`Skyddsrond sparad${anmarkningar.length?` – ${anmarkningar.length} åtgärder skapade`:''}`, 'ok'); closeModal('modal-ronde'); renderRonde(); }
+}
+
+async function signeraRonde(id) {
+  const ombud = prompt('Skyddsombudets namn:');
+  if (!ombud) return;
+  const i = _data.ronde.skyddsronder.findIndex(r=>r.id===id);
+  if (i<0) return;
+  _data.ronde.skyddsronder[i].signerad    = true;
+  _data.ronde.skyddsronder[i].signeradAv  = ombud;
+  _data.ronde.skyddsronder[i].signeradTs  = nowISO();
+  const ok = await saveJSON('ronde','Signerad skyddsrond av '+ombud);
+  if (ok) { toast('Signerad av '+ombud,'ok'); renderRonde(); }
+}
+
+// ── HANDLINGSPLAN ──────────────────────────────────────────────────────────
+function renderAtgarder() {
+  // Sync avvikelser
+  syncAvvToHP();
+  const atg = getAtgarder();
+  const canEdit = _isAdmin;
+  document.getElementById('main-content').innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+      <div class="filter-bar" style="margin:0">
+        <select id="f-hp-status" onchange="renderAtgarder()"><option value="">Alla statusar</option><option>Öppen</option><option>Pågående</option><option>Klar</option></select>
+        <select id="f-hp-kalla" onchange="renderAtgarder()"><option value="">Alla källor</option><option>Riskbedömning</option><option>Skyddsrond</option><option>Avvikelse</option></select>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="btn-secondary" onclick="exportHP()"><i class="ti ti-table-export"></i> Excel</button>
+        ${canEdit?`<button class="btn-primary" onclick="openAtgardModal()"><i class="ti ti-plus"></i> Ny åtgärd</button>`:''}
+      </div>
+    </div>
+    <div id="hp-table-wrap"></div>`;
+  renderHPTable();
+}
+
+function renderHPTable() {
+  const fStatus = document.getElementById('f-hp-status')?.value||'';
+  const fKalla  = document.getElementById('f-hp-kalla')?.value||'';
+  let atg = getAtgarder();
+  if (fStatus) atg = atg.filter(a=>a.status===fStatus);
+  if (fKalla)  atg = atg.filter(a=>a.kalla===fKalla);
+  atg.sort((a,b)=>{ const od=(isOverdue(a.deadline)?0:1)-(isOverdue(b.deadline)?0:1); return od||a.deadline?.localeCompare(b.deadline||'')||0; });
+  const canEdit=_isAdmin;
+  const wrap=document.getElementById('hp-table-wrap');
+  if (!wrap) return;
+  if (!atg.length) { wrap.innerHTML='<div class="empty"><i class="ti ti-list-check"></i>Inga åtgärder matchar filtret</div>'; return; }
+  wrap.innerHTML=`<div class="card"><div style="overflow-x:auto"><table>
+    <thead><tr><th>Åtgärd</th><th>Källa</th><th>Camping</th><th>Ansvarig</th><th>Deadline</th><th>Status</th>${canEdit?'<th></th>':''}</tr></thead>
+    <tbody>${atg.map(a=>`<tr>
+      <td style="max-width:200px"><div style="font-weight:500">${a.titel}</div>${a.beskrivning?`<div style="font-size:11px;color:var(--text3);margin-top:2px">${a.beskrivning.slice(0,60)}${a.beskrivning.length>60?'…':''}</div>`:''}</td>
+      <td><span class="source-badge src-${a.kalla==='Riskbedömning'?'risk':a.kalla==='Skyddsrond'?'rond':'avv'}">${a.kalla||'–'}</span></td>
+      <td style="font-size:12px;color:var(--text2)">${a.camping||'Sektionsgemensam'}</td>
+      <td style="font-size:12px">${a.ansvarig||'–'}</td>
+      <td style="font-size:12px;${isOverdue(a.deadline)&&a.status!=='Klar'?'color:var(--red);font-weight:600':''}">${a.deadline?fmtDate(a.deadline):'–'}</td>
+      <td><span class="status-badge ${statusClass(a.status)}">${a.status}</span></td>
+      ${canEdit?`<td><span onclick="openAtgardModal('${a.id}')" style="cursor:pointer;color:var(--accent);font-size:12px;font-weight:500;margin-right:8px">Redigera</span><span onclick="deleteAtgard('${a.id}')" style="cursor:pointer;color:var(--red);font-size:12px">Ta bort</span></td>`:''}
+    </tr>`).join('')}
+    </tbody></table></div></div>`;
+}
+
+function syncAvvToHP() {
+  const avv = getAvv();
+  if (!_data.hp) _data.hp={atgarder:[]};
+  let added=0;
+  avv.forEach(a=>{
+    const exists=_data.hp.atgarder.some(x=>x.kallaId===a.id&&x.kalla==='Avvikelse');
+    if (!exists) {
+      _data.hp.atgarder.push({
+        id:'AT-AVV-'+a.id, kalla:'Avvikelse', kallaId:a.id,
+        titel:`Avvikelse: ${(a.titel||a.typ||'').slice(0,60)}`,
+        beskrivning:a.beskrivning||a.atgard||'',
+        camping:a.camping||a.plats||null, ansvarig:'',
+        deadline:null, status:'Öppen', skapad:a.skapad||nowISO()
+      });
+      added++;
+    }
+  });
+}
+
+function openAtgardModal(id) {
+  const a=id?getAtgarder().find(x=>x.id===id):null;
+  document.getElementById('atgard-modal-title').textContent=a?'Redigera åtgärd':'Ny åtgärd';
+  document.getElementById('at-id').value=a?.id||'';
+  document.getElementById('at-titel').value=a?.titel||'';
+  document.getElementById('at-beskr').value=a?.beskrivning||'';
+  document.getElementById('at-ansvarig').value=a?.ansvarig||'';
+  document.getElementById('at-deadline').value=a?.deadline||'';
+  document.getElementById('at-camping').value=a?.camping||'';
+  document.getElementById('at-status').value=a?.status||'Öppen';
+  openModal('modal-atgard');
+}
+
+async function saveAtgard() {
+  const titel=document.getElementById('at-titel').value.trim();
+  if (!titel){toast('Ange titel','warn');return;}
+  const id=document.getElementById('at-id').value;
+  const obj={
+    id:id||'AT-'+Date.now(), kalla:id?getAtgarder().find(x=>x.id===id)?.kalla:'Manuell',
+    kallaId:null, titel,
+    beskrivning:document.getElementById('at-beskr').value.trim(),
+    camping:document.getElementById('at-camping').value||null,
+    ansvarig:document.getElementById('at-ansvarig').value.trim(),
+    deadline:document.getElementById('at-deadline').value||null,
+    status:document.getElementById('at-status').value,
+    skapad:id?getAtgarder().find(x=>x.id===id)?.skapad:nowISO()
+  };
+  if (!_data.hp)_data.hp={atgarder:[]};
+  if (id){const i=_data.hp.atgarder.findIndex(x=>x.id===id);if(i>=0)_data.hp.atgarder[i]=obj;}
+  else _data.hp.atgarder.push(obj);
+  const ok=await saveJSON('hp','Åtgärd: '+titel.slice(0,40));
+  if(ok){toast('Sparat','ok');closeModal('modal-atgard');renderAtgarder();}
+}
+
+async function deleteAtgard(id){
+  if(!confirm('Ta bort åtgärden?'))return;
+  _data.hp.atgarder=_data.hp.atgarder.filter(x=>x.id!==id);
+  const ok=await saveJSON('hp','Tog bort åtgärd');
+  if(ok){toast('Borttagen','ok');renderAtgarder();}
+}
+
+function exportHP(){
+  try{
+    const wb=XLSX.utils.book_new();
+    const rows=[['HANDLINGSPLAN – SAM, CCSthlm'],['Exporterad:',new Date().toLocaleString('sv-SE')],[],
+      ['Åtgärd','Källa','Camping','Ansvarig','Deadline','Status','Beskrivning'],
+      ...getAtgarder().map(a=>[a.titel,a.kalla||'',a.camping||'Sektionsgemensam',a.ansvarig||'',a.deadline||'',a.status,a.beskrivning||''])];
+    const ws=XLSX.utils.aoa_to_sheet(rows);
+    ws['!cols']=[{wch:36},{wch:16},{wch:24},{wch:18},{wch:12},{wch:12},{wch:40}];
+    XLSX.utils.book_append_sheet(wb,ws,'Handlingsplan');
+    XLSX.writeFile(wb,'SAM_Handlingsplan_'+new Date().toISOString().slice(0,10)+'.xlsx');
+    toast('Excel exporterad','ok');
+  }catch(e){toast('Fel: '+e.message,'err');}
+}
+
+// ── UTBILDNINGAR ────────────────────────────────────────────────────────────
+function renderUtbildning(){
+  const utb=getUtb().slice().sort((a,b)=>b.datum?.localeCompare(a.datum||''));
+  const canEdit=_isAdmin;
+  const soon=utb.filter(u=>{const d=daysLeft(u.giltigTill);return d!==null&&d<=90;});
+  document.getElementById('main-content').innerHTML=`
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+      <div style="font-size:13px;color:var(--text2)">${utb.length} utbildningar dokumenterade</div>
+      ${canEdit?`<button class="btn-primary" onclick="openUtbModal()"><i class="ti ti-plus"></i> Registrera utbildning</button>`:''}
+    </div>
+    ${soon.length?`<div class="alert alert-amber"><i class="ti ti-clock"></i>${soon.length} utbildning${soon.length!==1?'ar':''} löper ut inom 90 dagar.</div>`:''}
+    ${utb.length?`<div class="card"><div style="overflow-x:auto"><table>
+      <thead><tr><th>Typ</th><th>Camping</th><th>Datum</th><th>Deltagare</th><th>Ansvarig</th><th>Giltig till</th>${canEdit?'<th></th>':''}</tr></thead>
+      <tbody>${utb.map(u=>{
+        const dl=daysLeft(u.giltigTill);
+        const expiring=dl!==null&&dl<=90&&dl>=0;
+        const expired=dl!==null&&dl<0;
+        return`<tr>
+          <td><span style="font-size:12px;background:var(--bg3);padding:2px 8px;border-radius:6px;font-weight:600">${u.typ}</span></td>
+          <td style="font-size:12px;color:var(--text2)">${u.camping||'Sektionsgemensam'}</td>
+          <td style="font-size:12px">${fmtDate(u.datum)}</td>
+          <td style="font-size:12px;text-align:center">${u.antalDeltagare||'–'}</td>
+          <td style="font-size:12px">${u.ansvarig||'–'}</td>
+          <td style="font-size:12px;${expired?'color:var(--red);font-weight:600':expiring?'color:var(--amber);font-weight:600':''}">${u.giltigTill?fmtDate(u.giltigTill)+'('+dl+' dagar)':'–'}</td>
+          ${canEdit?`<td><span onclick="openUtbModal('${u.id}')" style="cursor:pointer;color:var(--accent);font-size:12px;font-weight:500;margin-right:8px">Redigera</span><span onclick="deleteUtb('${u.id}')" style="cursor:pointer;color:var(--red);font-size:12px">Ta bort</span></td>`:''}
+        </tr>`;
+      }).join('')}</tbody>
+    </table></div></div>`:`<div class="empty"><i class="ti ti-school"></i>Inga utbildningar registrerade ännu</div>`}`;
+}
+
+function openUtbModal(id){
+  const u=id?getUtb().find(x=>x.id===id):null;
+  document.getElementById('utb-modal-title').textContent=u?'Redigera utbildning':'Registrera utbildning';
+  document.getElementById('utb-id').value=u?.id||'';
+  document.getElementById('utb-typ').value=u?.typ||'Brand';
+  document.getElementById('utb-camping').value=u?.camping||'';
+  document.getElementById('utb-datum').value=u?.datum||today();
+  document.getElementById('utb-antal').value=u?.antalDeltagare||'';
+  document.getElementById('utb-ansvarig').value=u?.ansvarig||'';
+  document.getElementById('utb-giltig').value=u?.giltigTill||'';
+  document.getElementById('utb-not').value=u?.anteckningar||'';
+  openModal('modal-utb');
+}
+
+async function saveUtb(){
+  const datum=document.getElementById('utb-datum').value;
+  if(!datum){toast('Ange datum','warn');return;}
+  const id=document.getElementById('utb-id').value;
+  const obj={
+    id:id||'UT-'+Date.now(),
+    typ:document.getElementById('utb-typ').value,
+    camping:document.getElementById('utb-camping').value||null,
+    datum,
+    antalDeltagare:parseInt(document.getElementById('utb-antal').value)||null,
+    ansvarig:document.getElementById('utb-ansvarig').value.trim(),
+    giltigTill:document.getElementById('utb-giltig').value||null,
+    anteckningar:document.getElementById('utb-not').value.trim(),
+    skapad:id?getUtb().find(x=>x.id===id)?.skapad:nowISO()
+  };
+  if(!_data.utb)_data.utb={utbildningar:[]};
+  if(id){const i=_data.utb.utbildningar.findIndex(x=>x.id===id);if(i>=0)_data.utb.utbildningar[i]=obj;}
+  else _data.utb.utbildningar.push(obj);
+  const ok=await saveJSON('utb','Utbildning: '+obj.typ);
+  if(ok){toast('Sparat','ok');closeModal('modal-utb');renderUtbildning();}
+}
+
+async function deleteUtb(id){
+  if(!confirm('Ta bort utbildningen?'))return;
+  _data.utb.utbildningar=_data.utb.utbildningar.filter(x=>x.id!==id);
+  const ok=await saveJSON('utb','Tog bort utbildning');
+  if(ok){toast('Borttagen','ok');renderUtbildning();}
+}
+
+// ── UTILS ──────────────────────────────────────────────────────────────────
+function openModal(id){document.getElementById(id).classList.add('show');}
+function closeModal(id){document.getElementById(id).classList.remove('show');}
+document.addEventListener('click',e=>{if(e.target.classList.contains('modal-overlay'))e.target.classList.remove('show');});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.modal-overlay.show').forEach(m=>m.classList.remove('show'));});
+function toast(msg,type='ok'){const t=document.getElementById('toast');t.style.background=type==='err'?'var(--red-bg)':type==='warn'?'var(--amber-bg)':'var(--green-bg)';t.style.color=type==='err'?'var(--red)':type==='warn'?'var(--amber)':'var(--green-text)';t.innerHTML=(type==='ok'?'<i class="ti ti-check"></i>':type==='warn'?'<i class="ti ti-alert-triangle"></i>':'<i class="ti ti-x"></i>')+' '+msg;t.style.opacity='1';t.style.transform='translateY(0)';setTimeout(()=>{t.style.opacity='0';t.style.transform='translateY(6px)';},3000);}
+</script>
+</body>
+</html>
