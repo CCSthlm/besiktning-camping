@@ -185,11 +185,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
 .link-item i{font-size:12px;color:var(--text3);flex-shrink:0;}
 .links-empty{padding:14px 16px;font-size:12px;color:var(--text3);font-style:italic;}
 
-/* Greeting card in sidebar */
-.greeting-card{background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:var(--radius-lg);padding:16px;color:#fff;}
-.greeting-card-time{font-size:11px;opacity:.75;margin-bottom:4px;}
-.greeting-card-name{font-size:15px;font-weight:700;}
-.greeting-card-sub{font-size:11px;opacity:.8;margin-top:3px;}
 
 .no-access{text-align:center;padding:60px 24px;color:var(--text2);}
 .no-access i{font-size:40px;color:var(--text3);margin-bottom:12px;display:block;}
@@ -478,6 +473,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
         <div class="user-chip">
           <div class="user-avatar" id="portal-avatar">?</div>
           <div class="user-chip-info">
+            <div style="font-size:11px;color:var(--text3);margin-bottom:1px" id="portal-greeting">God dag</div>
             <div class="user-chip-name" id="portal-username">–</div>
             <div class="user-chip-role" id="portal-role">–</div>
           </div>
@@ -501,12 +497,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
         <!-- Populated by JS -->
       </div>
       <div class="portal-sidebar">
-        <div class="greeting-card" id="greeting-card">
-          <div class="greeting-card-time" id="greeting-time">God dag</div>
-          <div class="greeting-card-name" id="greeting-name">–</div>
-          <div class="greeting-card-sub" id="greeting-sub">–</div>
-        </div>
-        <div class="links-card">
+<div class="links-card">
           <div class="links-card-header"><i class="ti ti-link"></i> Snabblänkar</div>
           <div class="links-list" id="portal-links-list">
             <div class="links-empty">Inga länkar konfigurerade</div>
@@ -812,13 +803,10 @@ async function showPortal() {
     : u.role || 'Användare';
   document.getElementById('portal-role').textContent = roleLabel + (u.authMethod==='microsoft'?' · Microsoft 365':'');
 
-  // Update greeting card
+  // Greeting in topbar chip
   const hour = new Date().getHours();
   const greet = hour < 10 ? 'God morgon' : hour < 13 ? 'God förmiddag' : hour < 18 ? 'God eftermiddag' : 'God kväll';
-  const firstName = (u.name||'').split(' ')[0];
-  document.getElementById('greeting-time').textContent = greet + ',';
-  document.getElementById('greeting-name').textContent = firstName;
-  document.getElementById('greeting-sub').textContent = roleLabel + (u.authMethod==='microsoft'?' · Microsoft 365':'');
+  document.getElementById('portal-greeting').textContent = greet;
   if (u.domainOnly) {
     document.getElementById('portal-role').innerHTML = 'Domänanvändare · Microsoft 365 &nbsp;<span style="font-size:10px;background:var(--amber-bg);color:var(--amber-text);padding:1px 7px;border-radius:20px;font-weight:600">Begränsad åtkomst</span>';
   }
