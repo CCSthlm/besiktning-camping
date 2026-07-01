@@ -193,11 +193,11 @@
           "anteckning": ""
         }
       ],
-      "signerad": false,
-      "signeradAv": null,
-      "signeradTs": null,
+      "signerad": true,
+      "signeradAv": "Massimo",
+      "signeradTs": "2026-07-01T21:39:17.623Z",
       "skapad": "2026-07-01T21:38:28.320Z"
     }
   ],
-  "uppdaterad": "2026-07-01T21:38:28.600Z"
+  "uppdaterad": "2026-07-01T21:39:17.623Z"
 }
