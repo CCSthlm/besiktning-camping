@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>SBA – CCSthlm</title>
+<link rel="icon" href="https://raw.githubusercontent.com/CCSthlm/besiktning-camping/main/Images/CC-Logga.png" type="image/png">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/tabler-icons.min.css">
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f5f5f3;--bg2:#fff;--bg3:#eeede8;--bg4:#e5e4de;
+  --text:#1a1a18;--text2:#5a5a57;--text3:#909088;
+  --accent:#3B6D11;--accent2:#27500A;--accent-glow:rgba(59,109,17,.1);
+  --red:#A32D2D;--red-bg:#FCEBEB;--red-text:#501313;
+  --amber:#854F0B;--amber-bg:#FAEEDA;--amber-text:#412402;
+  --green-bg:#EAF3DE;--green-text:#27500A;
+  --blue:#1a4f7a;--blue-bg:#e0f0ff;
+  --border:rgba(0,0,0,.09);--border2:rgba(0,0,0,.15);
+  --radius:8px;--radius-lg:14px;--shadow:0 2px 12px rgba(0,0,0,.07);
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:var(--bg3);color:var(--text);min-height:100vh;display:flex;flex-direction:column;}
+
+/* TOPNAV */
+.topnav{background:var(--bg2);border-bottom:1px solid var(--border2);display:flex;align-items:stretch;position:sticky;top:0;z-index:30;box-shadow:0 2px 8px rgba(0,0,0,.06);}
+.topnav-brand{display:flex;align-items:center;gap:9px;padding:10px 16px 10px 14px;border-right:1px solid var(--border);flex-shrink:0;}
+.topnav-brand img{width:30px;height:30px;object-fit:contain;}
+.topnav-brand-text{font-size:14px;font-weight:700;white-space:nowrap;}
+.topnav-brand-sub{font-size:10px;color:var(--text3);}
+.nav-tabs{display:flex;flex:1;overflow-x:auto;-webkit-overflow-scrolling:touch;}
+.nav-tabs::-webkit-scrollbar{display:none;}
+.nav-tab{padding:0 14px;font-size:13px;font-weight:500;color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;display:flex;align-items:center;gap:5px;background:none;border-top:none;border-left:none;border-right:none;font-family:inherit;min-height:50px;transition:all .15s;}
+.nav-tab:hover{color:var(--text);}
+.nav-tab.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:600;}
+.topnav-right{display:flex;align-items:center;gap:7px;padding:0 12px;border-left:1px solid var(--border);flex-shrink:0;}
+.btn-portal{padding:6px 12px;background:var(--bg3);color:var(--text2);border:1px solid var(--border2);border-radius:var(--radius);font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:5px;text-decoration:none;transition:background .15s;white-space:nowrap;}
+.btn-portal:hover{background:var(--bg4);}
+
+/* ADMIN BAR */
+.admin-bar{background:var(--accent);color:#fff;text-align:center;font-size:11px;font-weight:600;padding:4px;letter-spacing:.04em;flex-shrink:0;}
+
+/* CONTENT */
+.content{flex:1;padding:16px;max-width:1080px;margin:0 auto;width:100%;padding-bottom:32px;}
+
+/* CARDS */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:12px;box-shadow:var(--shadow);}
+.card-header{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+.card-title{font-size:14px;font-weight:600;display:flex;align-items:center;gap:7px;}
+.card-body{padding:14px 16px;}
+
+/* GRID */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+
+/* STAT */
+.stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px;display:flex;align-items:center;gap:12px;box-shadow:var(--shadow);}
+.stat-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0;}
+.si-red{background:var(--red-bg);color:var(--red);}
+.si-amber{background:var(--amber-bg);color:var(--amber);}
+.si-green{background:var(--green-bg);color:var(--green-text);}
+.si-blue{background:var(--blue-bg);color:var(--blue);}
+.stat-val{font-size:22px;font-weight:700;line-height:1;}
+.stat-lbl{font-size:11px;color:var(--text3);margin-top:2px;}
+
+/* TRAFFIC LIGHT */
+.camping-status-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px 16px;box-shadow:var(--shadow);display:flex;align-items:center;gap:12px;}
+.traffic-dot{width:16px;height:16px;border-radius:50%;flex-shrink:0;}
+.td-red{background:#ef4444;}
+.td-amber{background:#f59e0b;}
+.td-green{background:#22c55e;}
+
+/* STATUS BADGE */
+.sbadge{display:inline-flex;font-size:11px;font-weight:600;padding:2px 8px;border-radius:10px;}
+.sb-open{background:var(--red-bg);color:var(--red);}
+.sb-ongoing{background:var(--amber-bg);color:var(--amber);}
+.sb-done{background:var(--green-bg);color:var(--green-text);}
+.sb-ok{background:var(--green-bg);color:var(--green-text);}
+.sb-warn{background:var(--amber-bg);color:var(--amber);}
+.sb-expired{background:var(--red-bg);color:var(--red);}
+
+/* SOURCE */
+.src-badge{display:inline-flex;font-size:10px;font-weight:600;padding:2px 7px;border-radius:8px;}
+.src-rond{background:rgba(133,79,11,.12);color:var(--amber);}
+.src-utrust{background:var(--blue-bg);color:var(--blue);}
+.src-avv{background:rgba(107,63,160,.12);color:#6b3fa0;}
+
+/* TABLE — scrollable on mobile */
+.table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+table{width:100%;border-collapse:collapse;min-width:500px;}
+th{text-align:left;padding:9px 12px;font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--border);background:var(--bg3);white-space:nowrap;}
+td{padding:10px 12px;font-size:13px;border-bottom:1px solid var(--border);vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:rgba(59,109,17,.025);}
+
+/* MOBILE CARD LIST (alternative to table on small screens) */
+.mobile-list{display:none;flex-direction:column;gap:8px;}
+.mobile-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:12px 14px;cursor:pointer;}
+.mobile-card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:6px;}
+.mobile-card-title{font-size:13px;font-weight:600;}
+.mobile-card-meta{font-size:11px;color:var(--text3);display:flex;gap:10px;flex-wrap:wrap;}
+
+/* FORM */
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
+.fg.full{grid-template-columns:1fr;}
+.fg.thirds{grid-template-columns:1fr 1fr 1fr;}
+.ff{display:flex;flex-direction:column;gap:3px;}
+.ff label{font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.04em;}
+.ff input,.ff select,.ff textarea{padding:9px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius);font-size:13px;font-family:inherit;color:var(--text);-webkit-appearance:none;}
+.ff input:focus,.ff select:focus,.ff textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow);}
+.fsect{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);padding:10px 0 5px;border-bottom:1px solid var(--border);margin:12px 0 8px;}
+
+/* CHECKLIST — mobile-first */
+.check-section{margin-bottom:16px;}
+.check-section-title{font-size:14px;font-weight:700;color:var(--text);padding:10px 0 8px;border-bottom:2px solid var(--border2);margin-bottom:8px;display:flex;align-items:center;gap:7px;}
+.check-item{padding:12px 0;border-bottom:1px solid var(--border);}
+.check-item:last-child{border-bottom:none;}
+.check-label{font-size:14px;color:var(--text);margin-bottom:8px;line-height:1.4;}
+.check-options{display:flex;gap:6px;margin-bottom:4px;}
+.check-opt{flex:1;padding:8px 4px;border-radius:var(--radius);font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid var(--border2);background:var(--bg3);color:var(--text2);text-align:center;transition:all .15s;-webkit-tap-highlight-color:transparent;}
+.check-opt.ok.active{background:#22c55e;color:#fff;border-color:#22c55e;}
+.check-opt.avv.active{background:var(--red);color:#fff;border-color:var(--red);}
+.check-opt.ej.active{background:var(--bg4);color:var(--text3);border-color:var(--bg4);}
+.check-note{width:100%;margin-top:6px;padding:8px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius);font-size:13px;font-family:inherit;resize:vertical;}
+
+/* SIGN BOX */
+.sign-box{background:var(--green-bg);border:1px solid rgba(59,109,17,.2);border-radius:var(--radius-lg);padding:14px;margin-top:14px;}
+.sign-box-title{font-size:12px;font-weight:700;color:var(--green-text);margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+
+/* FILTER BAR */
+.filter-bar{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px;}
+.filter-bar select,.filter-bar input{padding:7px 10px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);font-size:12px;font-family:inherit;-webkit-appearance:none;}
+
+/* BUTTONS */
+.btn-primary{padding:10px 18px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px;transition:background .15s;-webkit-tap-highlight-color:transparent;touch-action:manipulation;}
+.btn-primary:hover{background:var(--accent2);}
+.btn-secondary{padding:9px 14px;background:var(--bg3);color:var(--text2);border:1px solid var(--border2);border-radius:var(--radius);font-size:13px;font-weight:500;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:5px;-webkit-tap-highlight-color:transparent;}
+.btn-secondary:hover{background:var(--bg4);}
+.btn-block{width:100%;justify-content:center;padding:12px;}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;align-items:flex-end;justify-content:center;}
+.modal-overlay.show{display:flex;}
+.modal{background:var(--bg2);border-radius:var(--radius-lg) var(--radius-lg) 0 0;width:100%;max-width:600px;max-height:92vh;display:flex;flex-direction:column;box-shadow:0 -8px 40px rgba(0,0,0,.2);}
+.modal-handle{width:40px;height:4px;background:var(--border2);border-radius:2px;margin:10px auto 0;}
+.modal-header{padding:12px 18px 10px;display:flex;justify-content:space-between;align-items:center;flex-shrink:0;}
+.modal-title{font-size:15px;font-weight:700;}
+.modal-close{background:none;border:none;cursor:pointer;color:var(--text3);font-size:22px;padding:4px;}
+.modal-body{padding:0 18px 16px;overflow-y:auto;flex:1;-webkit-overflow-scrolling:touch;}
+.modal-footer{padding:12px 18px;border-top:1px solid var(--border);display:flex;gap:8px;flex-shrink:0;background:var(--bg2);}
+.modal-footer .btn-primary{flex:1;justify-content:center;}
+.modal-footer .btn-secondary{flex:1;justify-content:center;}
+
+/* ALERT */
+.alert{border-radius:var(--radius);padding:10px 12px;font-size:13px;display:flex;align-items:flex-start;gap:8px;margin-bottom:10px;}
+.alert-red{background:var(--red-bg);color:var(--red);}
+.alert-amber{background:var(--amber-bg);color:var(--amber-text);}
+.alert-green{background:var(--green-bg);color:var(--green-text);}
+
+/* EMPTY */
+.empty{text-align:center;padding:40px 20px;color:var(--text3);}
+.empty i{font-size:36px;display:block;margin-bottom:8px;}
+
+/* TOAST */
+#toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%) translateY(40px);background:var(--text);color:#fff;border-radius:var(--radius);padding:10px 18px;font-size:13px;z-index:999;box-shadow:var(--shadow);opacity:0;transition:all .25s;pointer-events:none;display:flex;align-items:center;gap:6px;white-space:nowrap;}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* RAPPORT PRINT */
+.rapport-section{page-break-inside:avoid;margin-bottom:20px;}
+.rapport-table{width:100%;border-collapse:collapse;font-size:12px;}
+.rapport-table th{background:var(--bg3);padding:6px 10px;text-align:left;font-size:11px;border:1px solid var(--border2);}
+.rapport-table td{padding:6px 10px;border:1px solid var(--border2);}
+
+@media(max-width:640px){
+  .content{padding:10px 10px 80px;}
+  .grid-2,.grid-3,.grid-4{grid-template-columns:1fr;}
+  .fg.thirds{grid-template-columns:1fr 1fr;}
+  .nav-tab span{display:none;}
+  .topnav-brand-sub{display:none;}
+  .table-wrap table{min-width:400px;}
+  .mobile-list{display:flex;}
+  .desktop-only{display:none!important;}
+}
+@media print{
+  .topnav,.admin-bar,#toast,.modal-overlay{display:none!important;}
+  .content{padding:0;max-width:100%;}
+  body{background:#fff;}
+}
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <div class="topnav-brand">
+    <img src="https://raw.githubusercontent.com/CCSthlm/besiktning-camping/main/Images/CC-Logga.png" alt="CC">
+    <div>
+      <div class="topnav-brand-text">SBA</div>
+      <div class="topnav-brand-sub">Brandskydd</div>
+    </div>
+  </div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" id="tab-dash"    onclick="showView('dash')"><i class="ti ti-dashboard"></i><span> Dashboard</span></button>
+    <button class="nav-tab"        id="tab-rond"    onclick="showView('rond')"><i class="ti ti-checklist"></i><span> Rond</span></button>
+    <button class="nav-tab"        id="tab-utrust"  onclick="showView('utrust')"><i class="ti ti-fire-extinguisher"></i><span> Utrustning</span></button>
+    <button class="nav-tab"        id="tab-atg"     onclick="showView('atg')"><i class="ti ti-list-check"></i><span> Åtgärder</span></button>
+    <button class="nav-tab"        id="tab-rapport" onclick="showView('rapport')"><i class="ti ti-report"></i><span> Rapport</span></button>
+  </div>
+  <div class="topnav-right">
+    <a href="index.html" class="btn-portal"><i class="ti ti-arrow-left"></i><span class="desktop-only"> Portal</span></a>
+  </div>
+</nav>
+<div class="admin-bar" id="admin-bar" style="display:none"><i class="ti ti-shield-check" style="font-size:11px"></i> SBA-ansvarig — redigeringsläge</div>
+
+<div class="content" id="main-content">
+  <div class="empty"><i class="ti ti-loader" style="animation:spin 1s linear infinite"></i>Laddar…</div>
+</div>
+
+<!-- UTRUSTNING MODAL -->
+<div class="modal-overlay" id="modal-utrust" onclick="if(event.target===this)closeModal('modal-utrust')">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-header"><span class="modal-title" id="utrust-title">Utrustning</span><button class="modal-close" onclick="closeModal('modal-utrust')"><i class="ti ti-x"></i></button></div>
+    <div class="modal-body">
+      <input type="hidden" id="u-id">
+      <div class="fg">
+        <div class="ff"><label>Typ *</label><select id="u-typ">
+          <option>Brandsläckare</option><option>Brandfiltar</option><option>Brandvarnare</option>
+          <option>Elcentral</option><option>Hjärtstartare</option><option>Förstahjälpen</option>
+          <option>Nödbelysning</option><option>Riskområde</option>
+        </select></div>
+        <div class="ff"><label>Camping *</label><select id="u-camping"></select></div>
+      </div>
+      <div class="fg full"><div class="ff"><label>Plats / Byggnad *</label><input type="text" id="u-plats" placeholder="T.ex. Servicebyggnad, toalett B, restaurangkök"></div></div>
+      <div class="fg">
+        <div class="ff"><label>Märke</label><input type="text" id="u-marke" placeholder="T.ex. Dafo"></div>
+        <div class="ff"><label>Modell</label><input type="text" id="u-modell" placeholder="T.ex. 6kg ABC"></div>
+      </div>
+      <div class="fg full"><div class="ff"><label>Serienummer</label><input type="text" id="u-serienr"></div></div>
+      <div class="fg">
+        <div class="ff"><label>Senaste kontroll</label><input type="date" id="u-senast"></div>
+        <div class="ff"><label>Nästa kontroll</label><input type="date" id="u-nasta"></div>
+      </div>
+      <div class="fg">
+        <div class="ff"><label>Ansvarig</label><input type="text" id="u-ansvarig"></div>
+        <div class="ff"><label>Status</label><select id="u-status">
+          <option value="OK">OK</option><option value="Kontroll behövs">Kontroll behövs</option><option value="Åtgärd krävs">Åtgärd krävs</option>
+        </select></div>
+      </div>
+      <div class="fg full"><div class="ff"><label>Länk utrymningsplan / ritning</label><input type="url" id="u-link" placeholder="https://..."></div></div>
+      <div class="fg full"><div class="ff"><label>Anteckningar</label><textarea id="u-not" rows="2"></textarea></div></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeModal('modal-utrust')">Avbryt</button>
+      <button class="btn-primary" onclick="saveUtrust()"><i class="ti ti-check"></i> Spara</button>
+    </div>
+  </div>
+</div>
+
+<!-- ÅTGÄRD MODAL -->
+<div class="modal-overlay" id="modal-atg" onclick="if(event.target===this)closeModal('modal-atg')">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-header"><span class="modal-title" id="atg-title">Åtgärd</span><button class="modal-close" onclick="closeModal('modal-atg')"><i class="ti ti-x"></i></button></div>
+    <div class="modal-body">
+      <input type="hidden" id="a-id">
+      <div class="fg full"><div class="ff"><label>Titel *</label><input type="text" id="a-titel"></div></div>
+      <div class="fg full"><div class="ff"><label>Beskrivning</label><textarea id="a-beskr" rows="2"></textarea></div></div>
+      <div class="fg">
+        <div class="ff"><label>Camping</label><select id="a-camping"></select></div>
+        <div class="ff"><label>Ansvarig</label><input type="text" id="a-ansvarig"></div>
+      </div>
+      <div class="fg">
+        <div class="ff"><label>Deadline</label><input type="date" id="a-deadline"></div>
+        <div class="ff"><label>Status</label><select id="a-status">
+          <option>Öppen</option><option>Pågående</option><option>Klar</option>
+        </select></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeModal('modal-atg')">Avbryt</button>
+      <button class="btn-primary" onclick="saveAtg()"><i class="ti ti-check"></i> Spara</button>
+    </div>
+  </div>
+</div>
+
+<!-- ROND MODAL -->
+<div class="modal-overlay" id="modal-rond" onclick="if(event.target===this)closeModal('modal-rond')">
+  <div class="modal" style="max-height:96vh">
+    <div class="modal-handle"></div>
+    <div class="modal-header"><span class="modal-title" id="rond-title">Ny brandskyddsrond</span><button class="modal-close" onclick="closeModal('modal-rond')"><i class="ti ti-x"></i></button></div>
+    <div class="modal-body" id="rond-body"></div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeModal('modal-rond')">Avbryt</button>
+      <button class="btn-primary" onclick="saveRond()"><i class="ti ti-check"></i> Spara rond</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+<style>@keyframes spin{to{transform:rotate(360deg)}}</style>
+<script>
+const GH_REPO  = 'CCSthlm/besiktning-camping';
+const PATHS    = { utrust:'sba/utrustning.json', ronder:'sba/ronder.json', atg:'sba/atgarder.json', avv:'avvikelse/data.json' };
+const CAMPINGAR = ['CC Björkö Örns Camping','CC Östnora Camping','CC Kapellskärs Camping','CC Mista Camping','CC Storsveds Camping','CC Örstigs Camping','Gräddös Pärla Kök & Bar','Östnora Kök & Bar'];
+
+const UTR_INTERVALL = { 'Brandsläckare':12,'Brandfiltar':36,'Brandvarnare':12,'Elcentral':60,'Hjärtstartare':12,'Förstahjälpen':12,'Nödbelysning':12,'Riskområde':null };
+
+const CHECKLISTOR = [
+  {s:'Brandvarnare & detektorer',i:'ti-bell', p:[
+    'Alla brandvarnare testade och fungerar',
+    'Batterier OK / anslutna till elnät',
+    'Inga brandvarnare blockerade eller övertäckta',
+    'Larmsignal hörbar i hela byggnaden',
+  ]},
+  {s:'Brandsläckare & filtar',i:'ti-fire-extinguisher', p:[
+    'Brandsläckare på angiven plats och monterade',
+    'Kontrollmärke ej utgånget',
+    'Brandfiltar på plats och i godkänt skick',
+    'Personal vet hur utrustningen används',
+  ]},
+  {s:'Utrymningsvägar & skyltar',i:'ti-door-exit', p:[
+    'Utrymningsvägar fria från hinder',
+    'Nödutgångsskyltar belysta och synliga',
+    'Utrymningsplan uppsatt och läsbar',
+    'Samlingspunkt tydligt markerad',
+  ]},
+  {s:'Elcentraler & elanläggning',i:'ti-bolt', p:[
+    'Elcentral fri från brandfarligt material',
+    'Inga synliga skador på kablar eller uttag',
+    'Inga lösa anslutningar',
+    'Utomhuselanläggning i godkänt skick',
+  ]},
+  {s:'Gasol',i:'ti-gas-station', p:[
+    'Gasolanläggning besiktigad inom giltig period',
+    'Slangar och kopplingar utan synliga skador',
+    'Ventilation i gasolförvaringsutrymme OK',
+    'Varningsskylt för gasol uppsatt',
+  ]},
+  {s:'Gästinformation & kommunikation',i:'ti-info-circle', p:[
+    'Brandregler synliga på campingen',
+    'Gästerna informeras om brandrisker vid incheckning',
+    'Telefonnummer till nödnummer (112) synligt',
+  ]},
+  {s:'Personalutrymmen & kök',i:'ti-building', p:[
+    'Köket fritt från brandrisker vid slutet av arbetsdag',
+    'Fläktar och ventilation rena (ingen fettansamling)',
+    'Eluttag inte överlastade',
+    'Brandsläckare i eller vid kök',
+  ]},
+];
+
+// ── STATE ──────────────────────────────────────────────────────────────────
+let _user    = null;
+let _isAdmin = false;  // sba-ansvarig eller global
+let _isLokal = false;  // sba-lokal (begränsad till sbaCamping)
+let _myCamp  = null;   // camping för sba-lokal
+let _data    = { utrust:null, ronder:null, atg:null, avv:null };
+let _sha     = { utrust:null, ronder:null, atg:null };
+let _view    = 'dash';
+let _rondState = {};
+
+// ── INIT ───────────────────────────────────────────────────────────────────
+(async function init() {
+  const sess = sessionStorage.getItem('ccs_session') || sessionStorage.getItem('ccs_portal_user');
+  if (!sess) { window.location.replace('index.html'); return; }
+  _user    = JSON.parse(sess);
+  const roles = _user.adminRoles || [];
+  _isAdmin = roles.some(r => ['global','sba-ansvarig'].includes(r)) || _user.role === 'Admin';
+  _isLokal = !_isAdmin && roles.includes('sba-lokal');
+  _myCamp  = _user.sbaCamping || null;
+
+  if (_isAdmin) document.getElementById('admin-bar').style.display = '';
+  else if (_isLokal && _myCamp) {
+    document.getElementById('admin-bar').style.display = '';
+    document.getElementById('admin-bar').textContent = 'Lokal SBA-ansvarig – ' + _myCamp;
+  }
+
+  // Populate camping dropdowns
+  ['u-camping','a-camping'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const opts = _isLokal && _myCamp ? [_myCamp] : CAMPINGAR;
+    opts.forEach(c => el.insertAdjacentHTML('beforeend', `<option>${c}</option>`));
+    if (_isLokal && _myCamp) el.value = _myCamp;
+  });
+
+  await loadAll();
+  showView('dash');
+})();
+
+// ── DATA ───────────────────────────────────────────────────────────────────
+async function loadAll() {
+  await Promise.all(Object.entries(PATHS).map(([k,p]) => loadJSON(k,p)));
+  syncAvvToAtg();
+}
+
+async function loadJSON(key, path) {
+  const token = localStorage.getItem('gh_token') || '';
+  if (!token) return;
+  try {
+    const res = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/${path}`, {headers:{'Authorization':'token '+token}});
+    if (res.status === 404) { _data[key] = defData(key); return; }
+    if (!res.ok) return;
+    const gh   = await res.json();
+    if (key !== 'avv') _sha[key] = gh.sha;
+    const bytes = Uint8Array.from(atob(gh.content.replace(/\n/g,'')), c=>c.charCodeAt(0));
+    _data[key]  = JSON.parse(new TextDecoder('utf-8').decode(bytes));
+  } catch(e) { console.warn(key, e.message); _data[key] = defData(key); }
+}
+
+function defData(key) {
+  return { utrust:{utrustning:[]}, ronder:{ronder:[]}, atg:{atgarder:[]}, avv:{ärenden:[]} }[key] || {};
+}
+
+async function saveData(key, msg) {
+  const token = localStorage.getItem('gh_token') || '';
+  if (!token) { toast('GitHub-token saknas','warn'); return false; }
+  const url   = `https://api.github.com/repos/${GH_REPO}/contents/${PATHS[key]}`;
+  try {
+    if (!_sha[key]) { const c=await fetch(url,{headers:{'Authorization':'token '+token}}); if(c.ok) _sha[key]=(await c.json()).sha; }
+    _data[key].uppdaterad = new Date().toISOString();
+    const json = JSON.stringify(_data[key], null, 2);
+    const enc  = new TextEncoder().encode(json);
+    let b64 = ''; for(let i=0;i<enc.length;i+=8192) b64+=String.fromCharCode(...enc.slice(i,i+8192));
+    const payload = {message:msg,content:btoa(b64),branch:'main'};
+    if(_sha[key]) payload.sha=_sha[key];
+    const res = await fetch(url,{method:'PUT',headers:{'Authorization':'token '+token,'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    const d   = await res.json(); if(!res.ok) throw new Error(d.message);
+    _sha[key] = d.content?.sha||_sha[key];
+    return true;
+  } catch(e) { toast('Fel: '+e.message,'err'); return false; }
+}
+
+// ── FILTER FOR LOCAL ROLE ──────────────────────────────────────────────────
+function filterCamp(list) {
+  if (!_isLokal || !_myCamp) return list;
+  return list.filter(x => x.camping === _myCamp);
+}
+function getUtrustning() { return filterCamp(_data.utrust?.utrustning||[]); }
+function getRonder()     { return filterCamp(_data.ronder?.ronder||[]); }
+function getAtgarder()   { return filterCamp(_data.atg?.atgarder||[]); }
+function getAvvSBA()     {
+  const avv = (_data.avv?.ärenden||[]).filter(r=>(r.kategori||'').toLowerCase().includes('brandtillbud'));
+  return filterCamp(avv.map(a=>({...a, camping:a.anläggning||a.camping||null})));
+}
+
+// ── HELPERS ────────────────────────────────────────────────────────────────
+function today()     { return new Date().toISOString().slice(0,10); }
+function nowISO()    { return new Date().toISOString(); }
+function fmtDate(d)  { try{return new Date(d).toLocaleDateString('sv-SE');}catch(e){return d||'–';} }
+function daysLeft(d) { if(!d) return null; return Math.round((new Date(d)-new Date())/(86400000)); }
+function isOverdue(d){ return d && d < today(); }
+
+function utrstStatus(u) {
+  if (!u.nastaKontroll) return 'ok';
+  const dl = daysLeft(u.nastaKontroll);
+  if (dl < 0)   return 'expired';
+  if (dl <= 90) return 'warn';
+  return 'ok';
+}
+function utrstBadge(u) {
+  const s = utrstStatus(u);
+  if (s==='expired') return '<span class="sbadge sb-expired">Utgången</span>';
+  if (s==='warn')    return '<span class="sbadge sb-warn">Snart</span>';
+  return '<span class="sbadge sb-ok">OK</span>';
+}
+function statusBadge(s) {
+  const cls = {Öppen:'sb-open',Pågående:'sb-ongoing',Klar:'sb-done'}[s]||'sb-open';
+  return `<span class="sbadge ${cls}">${s}</span>`;
+}
+function campingColor(camp) {
+  const utrust = ((_data.utrust?.utrustning||[]).filter(u=>u.camping===camp));
+  const ronder = ((_data.ronder?.ronder||[]).filter(r=>r.camping===camp));
+  const atg    = ((_data.atg?.atgarder||[]).filter(a=>a.camping===camp&&a.status!=='Klar'));
+  const expired = utrust.filter(u=>utrstStatus(u)==='expired').length;
+  const overdue = atg.filter(a=>isOverdue(a.deadline)).length;
+  if (expired>0||overdue>0) return 'td-red';
+  const soonUtrust = utrust.filter(u=>utrstStatus(u)==='warn').length;
+  const latestRond = ronder.sort((a,b)=>b.datum?.localeCompare(a.datum||''))[0];
+  const daysSinceRond = latestRond ? Math.round((new Date()-new Date(latestRond.datum))/86400000) : 999;
+  if (soonUtrust>0||daysSinceRond>270) return 'td-amber';
+  return 'td-green';
+}
+
+// ── VIEWS ──────────────────────────────────────────────────────────────────
+function showView(v) {
+  _view = v;
+  ['dash','rond','utrust','atg','rapport'].forEach(t =>
+    document.getElementById('tab-'+t)?.classList.toggle('active', t===v));
+  ({dash:renderDash, rond:renderRond, utrust:renderUtrust, atg:renderAtg, rapport:renderRapport}[v] || renderDash)();
+}
+
+// ── DASHBOARD ──────────────────────────────────────────────────────────────
+function renderDash() {
+  const camps = _isLokal && _myCamp ? [_myCamp] : CAMPINGAR;
+  const allUtrust = getUtrustning();
+  const allAtg    = getAtgarder();
+  const expired   = allUtrust.filter(u=>utrstStatus(u)==='expired').length;
+  const overdue   = allAtg.filter(a=>a.status!=='Klar'&&isOverdue(a.deadline)).length;
+  const senRond   = getRonder().sort((a,b)=>b.datum?.localeCompare(a.datum||''))[0];
+  const avvBrand  = getAvvSBA().length;
+
+  document.getElementById('main-content').innerHTML = `
+    <div class="grid-4" style="margin-bottom:14px">
+      <div class="stat-card"><div class="stat-icon ${expired?'si-red':'si-green'}"><i class="ti ti-fire-extinguisher"></i></div><div><div class="stat-val">${expired}</div><div class="stat-lbl">Utgången utrustning</div></div></div>
+      <div class="stat-card"><div class="stat-icon ${overdue?'si-red':'si-green'}"><i class="ti ti-clock-exclamation"></i></div><div><div class="stat-val">${overdue}</div><div class="stat-lbl">Förfallna åtgärder</div></div></div>
+      <div class="stat-card"><div class="stat-icon si-blue"><i class="ti ti-checklist"></i></div><div><div class="stat-val">${getRonder().length}</div><div class="stat-lbl">Brandskyddsronder</div></div></div>
+      <div class="stat-card"><div class="stat-icon ${avvBrand?'si-amber':'si-green'}"><i class="ti ti-flame"></i></div><div><div class="stat-val">${avvBrand}</div><div class="stat-lbl">Brandincidenter</div></div></div>
+    </div>
+
+    <div class="grid-2">
+      <div>
+        <div class="card">
+          <div class="card-header"><span class="card-title"><i class="ti ti-building"></i> Status per camping</span></div>
+          <div style="padding:8px 0">
+            ${camps.map(c=>{
+              const col=campingColor(c);
+              const open=allAtg.filter(a=>a.camping===c&&a.status!=='Klar').length;
+              const exp=allUtrust.filter(u=>u.camping===c&&utrstStatus(u)==='expired').length;
+              return`<div class="camping-status-card" style="border-radius:0;border:none;border-bottom:1px solid var(--border);padding:10px 16px">
+                <div class="traffic-dot ${col}"></div>
+                <div style="flex:1;min-width:0">
+                  <div style="font-size:13px;font-weight:500">${c}</div>
+                  <div style="font-size:11px;color:var(--text3);margin-top:2px">${exp?exp+' utgången utrust. · ':''} ${open} öppna åtgärder</div>
+                </div>
+                <button class="btn-portal" onclick="filterToCamping('${c}')" style="font-size:11px;padding:5px 9px">Visa</button>
+              </div>`;
+            }).join('')}
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="card">
+          <div class="card-header"><span class="card-title"><i class="ti ti-checklist"></i> Senaste brandskyddsrond</span><button class="btn-portal" onclick="showView('rond')" style="font-size:11px;padding:5px 9px">Alla</button></div>
+          <div class="card-body">
+            ${senRond ? `
+              <div style="font-size:14px;font-weight:600;margin-bottom:4px">${senRond.camping||'–'}</div>
+              <div style="font-size:12px;color:var(--text2);margin-bottom:6px">Genomförd ${fmtDate(senRond.datum)} av ${senRond.genomfordAv||'–'}</div>
+              <div style="font-size:13px;margin-bottom:4px">Avvikelser: <strong style="color:${(senRond.punkter||[]).filter(p=>p.status==='Avvikelse').length?'var(--red)':'var(--green-text)'}">${(senRond.punkter||[]).filter(p=>p.status==='Avvikelse').length}</strong></div>
+              ${senRond.signerad?`<div style="font-size:11px;color:var(--green-text)"><i class="ti ti-check"></i> Signerad av ${senRond.signeradAv}</div>`:`<div style="font-size:11px;color:var(--amber)"><i class="ti ti-clock"></i> Väntar på signering</div>`}
+            `:`<div style="color:var(--text3);font-size:13px">Ingen rond genomförd ännu.</div>`}
+          </div>
+        </div>
+
+        ${expired>0?`<div class="alert alert-red"><i class="ti ti-alert-triangle"></i><div><strong>${expired} utrustning är utgången.</strong><br><span style="font-size:12px">Kontrollera utrustningsregistret och boka service.</span></div></div>`:''}
+        ${overdue>0?`<div class="alert alert-amber"><i class="ti ti-clock"></i><strong>${overdue} åtgärder har passerat sin deadline.</strong></div>`:''}
+        ${!expired&&!overdue?`<div class="alert alert-green"><i class="ti ti-check-circle"></i>Allt ser bra ut — inget akut att åtgärda.</div>`:''}
+      </div>
+    </div>`;
+}
+
+function filterToCamping(c) { showView('utrust'); setTimeout(()=>{ const el=document.getElementById('f-camp'); if(el){el.value=c;renderUtrustTable();}},100); }
+
+// ── BRANDSKYDDSROND ────────────────────────────────────────────────────────
+function renderRond() {
+  const ronder = getRonder().slice().sort((a,b)=>b.datum?.localeCompare(a.datum||''));
+  const canEdit = _isAdmin||_isLokal;
+  document.getElementById('main-content').innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+      <div style="font-size:13px;color:var(--text2)">${ronder.length} ronder genomförda</div>
+      ${canEdit?`<button class="btn-primary" onclick="openRondModal()"><i class="ti ti-plus"></i> Ny rond</button>`:''}
+    </div>
+    ${ronder.length ? ronder.map(r=>{
+      const avv=(r.punkter||[]).filter(p=>p.status==='Avvikelse').length;
+      return`<div class="card" style="margin-bottom:10px">
+        <div class="card-header">
+          <div><div style="font-size:14px;font-weight:600">${r.camping||'–'}</div>
+            <div style="font-size:12px;color:var(--text2);margin-top:2px">${fmtDate(r.datum)} · ${r.genomfordAv||'–'} · ${avv} avvikelse${avv!==1?'r':''}</div></div>
+          <div style="display:flex;gap:8px;align-items:center">
+            ${r.signerad?`<span style="font-size:11px;color:var(--green-text);font-weight:600"><i class="ti ti-check-circle"></i> Signerad</span>`
+            :canEdit?`<button class="btn-primary" style="font-size:12px;padding:7px 12px" onclick="signeraRond('${r.id}')"><i class="ti ti-pen"></i> Signera</button>`
+            :`<span style="font-size:11px;color:var(--amber)">Väntar signering</span>`}
+          </div>
+        </div>
+      </div>`;
+    }).join(''):`<div class="empty"><i class="ti ti-checklist"></i>Inga ronder genomförda ännu</div>`}`;
+}
+
+function openRondModal() {
+  _rondState = {};
+  const camp = _isLokal && _myCamp ? _myCamp : CAMPINGAR[0];
+  document.getElementById('rond-title').textContent='Brandskyddsrond';
+  document.getElementById('rond-body').innerHTML = `
+    <div class="fg" style="margin-top:8px">
+      <div class="ff"><label>Camping *</label><select id="r-camping">
+        ${(_isLokal&&_myCamp?[_myCamp]:CAMPINGAR).map(c=>`<option>${c}</option>`).join('')}
+      </select></div>
+      <div class="ff"><label>Datum *</label><input type="date" id="r-datum" value="${today()}"></div>
+    </div>
+    <div class="fg full"><div class="ff"><label>Genomförd av *</label><input type="text" id="r-av" placeholder="Ditt namn"></div></div>
+    <div class="fsect">Checklistpunkter</div>
+    ${CHECKLISTOR.map((sek,si)=>`
+      <div class="check-section">
+        <div class="check-section-title"><i class="ti ${sek.i}"></i>${sek.s}</div>
+        ${sek.p.map((punkt,pi)=>`
+          <div class="check-item">
+            <div class="check-label">${punkt}</div>
+            <div class="check-options">
+              <button type="button" class="check-opt ok"  id="ck-${si}-${pi}-ok"  onclick="setCheck(${si},${pi},'OK')"><i class="ti ti-check"></i> OK</button>
+              <button type="button" class="check-opt avv" id="ck-${si}-${pi}-avv" onclick="setCheck(${si},${pi},'Avvikelse')"><i class="ti ti-alert-triangle"></i> Avvik.</button>
+              <button type="button" class="check-opt ej"  id="ck-${si}-${pi}-ej"  onclick="setCheck(${si},${pi},'Ej tillämpligt')">Ej tillämp.</button>
+            </div>
+            <textarea class="check-note" id="cn-${si}-${pi}" placeholder="Beskriv avvikelsen…" style="display:none" rows="2"></textarea>
+          </div>`).join('')}
+      </div>`).join('')}
+    <div class="sign-box">
+      <div class="sign-box-title"><i class="ti ti-pen"></i>Digital signering</div>
+      <div class="fg full"><div class="ff"><label>Signeras av (brandskyddsansvarig)</label><input type="text" id="r-sign" placeholder="Lämna tom för att signera senare"></div></div>
+    </div>`;
+  openModal('modal-rond');
+}
+
+function setCheck(si, pi, status) {
+  const key = si+'-'+pi;
+  _rondState[key] = status;
+  ['ok','avv','ej'].forEach(t => document.getElementById('ck-'+si+'-'+pi+'-'+t)?.classList.remove('active'));
+  const map={'OK':'ok','Avvikelse':'avv','Ej tillämpligt':'ej'};
+  document.getElementById('ck-'+si+'-'+pi+'-'+map[status])?.classList.add('active');
+  const note=document.getElementById('cn-'+si+'-'+pi);
+  if(note) note.style.display=status==='Avvikelse'?'':'none';
+}
+
+async function saveRond() {
+  const camping = document.getElementById('r-camping')?.value;
+  const datum   = document.getElementById('r-datum')?.value;
+  const av      = document.getElementById('r-av')?.value.trim();
+  const sign    = document.getElementById('r-sign')?.value.trim();
+  if(!datum||!av){toast('Ange datum och genomförare','warn');return;}
+
+  const punkter=[];
+  CHECKLISTOR.forEach((sek,si)=>sek.p.forEach((punkt,pi)=>{
+    const st=_rondState[si+'-'+pi]||'Ej kontrollerad';
+    const note=document.getElementById('cn-'+si+'-'+pi)?.value.trim()||'';
+    punkter.push({sektion:sek.s,punkt,status:st,anteckning:note});
+  }));
+
+  const avvikelser=punkter.filter(p=>p.status==='Avvikelse');
+  const id='SR-SBA-'+Date.now();
+  const rond={id,camping,datum,genomfordAv:av,punkter,
+    signerad:!!sign,signeradAv:sign||null,signeradTs:sign?nowISO():null,skapad:nowISO()};
+  if(!_data.ronder) _data.ronder={ronder:[]};
+  _data.ronder.ronder.push(rond);
+
+  if(avvikelser.length){
+    if(!_data.atg)_data.atg={atgarder:[]};
+    avvikelser.forEach(a=>{
+      _data.atg.atgarder.push({
+        id:'SBA-AT-'+Date.now()+'-'+Math.random().toString(36).slice(2,5),
+        kalla:'Brandskyddsrond',kallaId:id,
+        titel:'Rondavvikelse: '+a.punkt.slice(0,55),
+        beskrivning:a.anteckning||a.punkt,
+        camping,ansvarig:'',deadline:null,status:'Öppen',skapad:nowISO()
+      });
+    });
+    await saveData('atg','Åtgärder från brandskyddsrond '+datum);
+    // Sync to SAM
+    await syncToSAM(avvikelser,camping,id);
+  }
+  const ok=await saveData('ronder','Brandskyddsrond '+datum+' '+camping);
+  if(ok){toast(`Rond sparad${avvikelser.length?' – '+avvikelser.length+' åtgärder skapade':''}','ok`,'ok');closeModal('modal-rond');renderRond();}
+}
+
+async function signeraRond(id){
+  const sign=prompt('Signeras av (brandskyddsansvarig):');
+  if(!sign)return;
+  const i=_data.ronder.ronder.findIndex(r=>r.id===id);if(i<0)return;
+  _data.ronder.ronder[i].signerad=true;
+  _data.ronder.ronder[i].signeradAv=sign;
+  _data.ronder.ronder[i].signeradTs=nowISO();
+  const ok=await saveData('ronder','Signerad rond av '+sign);
+  if(ok){toast('Signerad av '+sign,'ok');renderRond();}
+}
+
+// ── UTRUSTNING ─────────────────────────────────────────────────────────────
+function renderUtrust(){
+  const canEdit=_isAdmin||_isLokal;
+  document.getElementById('main-content').innerHTML=`
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+      <div class="filter-bar" style="margin:0">
+        <select id="f-camp" onchange="renderUtrustTable()">
+          <option value="">Alla campingar</option>
+          ${CAMPINGAR.map(c=>`<option>${c}</option>`).join('')}
+        </select>
+        <select id="f-typ" onchange="renderUtrustTable()">
+          <option value="">Alla typer</option>
+          ${['Brandsläckare','Brandfiltar','Brandvarnare','Elcentral','Hjärtstartare','Förstahjälpen','Nödbelysning','Riskområde'].map(t=>`<option>${t}</option>`).join('')}
+        </select>
+      </div>
+      ${canEdit?`<button class="btn-primary" onclick="openUtrustModal()"><i class="ti ti-plus"></i> Lägg till</button>`:''}
+    </div>
+    <div id="utrust-list"></div>`;
+  if(_isLokal&&_myCamp){const el=document.getElementById('f-camp');if(el)el.value=_myCamp;}
+  renderUtrustTable();
+}
+
+function renderUtrustTable(){
+  const fc=document.getElementById('f-camp')?.value||'';
+  const ft=document.getElementById('f-typ')?.value||'';
+  let list=getUtrustning();
+  if(fc)list=list.filter(u=>u.camping===fc);
+  if(ft)list=list.filter(u=>u.typ===ft);
+  list.sort((a,b)=>utrstStatus(a).localeCompare(utrstStatus(b))||a.camping.localeCompare(b.camping));
+  const canEdit=_isAdmin||_isLokal;
+  const wrap=document.getElementById('utrust-list');if(!wrap)return;
+  if(!list.length){wrap.innerHTML='<div class="empty"><i class="ti ti-fire-extinguisher"></i>Ingen utrustning registrerad</div>';return;}
+
+  // Mobile cards
+  const mobileHTML='<div class="mobile-list">'+list.map(u=>`
+    <div class="mobile-card" onclick="${canEdit?`openUtrustModal('${u.id}')`:''}" style="${canEdit?'cursor:pointer':''}">
+      <div class="mobile-card-top">
+        <div><div class="mobile-card-title">${u.typ} — ${u.plats}</div></div>
+        ${utrstBadge(u)}
+      </div>
+      <div class="mobile-card-meta">
+        <span><i class="ti ti-tent" style="font-size:10px"></i> ${u.camping}</span>
+        ${u.nastaKontroll?`<span><i class="ti ti-calendar" style="font-size:10px"></i> Nästa ${fmtDate(u.nastaKontroll)}</span>`:''}
+        ${u.link?`<a href="${u.link}" target="_blank" onclick="event.stopPropagation()" style="color:var(--accent);font-size:11px"><i class="ti ti-link"></i> Ritning</a>`:''}
+      </div>
+    </div>`).join('')+'</div>';
+
+  // Desktop table
+  const tableHTML=`<div class="card desktop-only"><div class="table-wrap"><table>
+    <thead><tr><th>Typ</th><th>Plats</th><th>Camping</th><th>Märke/Modell</th><th>Senast kontroll</th><th>Nästa kontroll</th><th>Status</th><th>Ritning</th>${canEdit?'<th></th>':''}</tr></thead>
+    <tbody>${list.map(u=>`<tr>
+      <td style="font-weight:500">${u.typ}</td>
+      <td style="font-size:12px">${u.plats||'–'}</td>
+      <td style="font-size:12px;color:var(--text2)">${u.camping||'–'}</td>
+      <td style="font-size:12px;color:var(--text2)">${[u.marke,u.modell].filter(Boolean).join(' ')||'–'}</td>
+      <td style="font-size:12px">${u.senastKontroll?fmtDate(u.senastKontroll):'–'}</td>
+      <td style="font-size:12px;${isOverdue(u.nastaKontroll)?'color:var(--red);font-weight:600':daysLeft(u.nastaKontroll)<=90&&daysLeft(u.nastaKontroll)>=0?'color:var(--amber);font-weight:600':''}">${u.nastaKontroll?fmtDate(u.nastaKontroll):'–'}</td>
+      <td>${utrstBadge(u)}</td>
+      <td>${u.link?`<a href="${u.link}" target="_blank" style="color:var(--accent);font-size:12px"><i class="ti ti-link"></i> Öppna</a>`:'–'}</td>
+      ${canEdit?`<td style="white-space:nowrap"><span onclick="openUtrustModal('${u.id}')" style="cursor:pointer;color:var(--accent);font-size:12px;font-weight:500;margin-right:8px">Redigera</span><span onclick="deleteUtrust('${u.id}')" style="cursor:pointer;color:var(--red);font-size:12px">Ta bort</span></td>`:''}
+    </tr>`).join('')}
+    </tbody></table></div></div>`;
+
+  wrap.innerHTML=mobileHTML+tableHTML;
+}
+
+function openUtrustModal(id){
+  const u=id?getUtrustning().find(x=>x.id===id):null;
+  document.getElementById('utrust-title').textContent=u?'Redigera utrustning':'Ny utrustning';
+  document.getElementById('u-id').value=u?.id||'';
+  document.getElementById('u-typ').value=u?.typ||'Brandsläckare';
+  document.getElementById('u-camping').value=u?.camping||(_isLokal&&_myCamp?_myCamp:'');
+  document.getElementById('u-plats').value=u?.plats||'';
+  document.getElementById('u-marke').value=u?.marke||'';
+  document.getElementById('u-modell').value=u?.modell||'';
+  document.getElementById('u-serienr').value=u?.serienr||'';
+  document.getElementById('u-senast').value=u?.senastKontroll||'';
+  document.getElementById('u-nasta').value=u?.nastaKontroll||'';
+  document.getElementById('u-ansvarig').value=u?.ansvarig||'';
+  document.getElementById('u-status').value=u?.status||'OK';
+  document.getElementById('u-link').value=u?.link||'';
+  document.getElementById('u-not').value=u?.anteckningar||'';
+  openModal('modal-utrust');
+}
+
+async function saveUtrust(){
+  const plats=document.getElementById('u-plats').value.trim();
+  if(!plats){toast('Ange plats','warn');return;}
+  const id=document.getElementById('u-id').value;
+  const obj={
+    id:id||'U-'+Date.now(),
+    typ:document.getElementById('u-typ').value,
+    camping:document.getElementById('u-camping').value,
+    plats,
+    marke:document.getElementById('u-marke').value.trim(),
+    modell:document.getElementById('u-modell').value.trim(),
+    serienr:document.getElementById('u-serienr').value.trim(),
+    senastKontroll:document.getElementById('u-senast').value||null,
+    nastaKontroll:document.getElementById('u-nasta').value||null,
+    ansvarig:document.getElementById('u-ansvarig').value.trim(),
+    status:document.getElementById('u-status').value,
+    link:document.getElementById('u-link').value.trim()||null,
+    anteckningar:document.getElementById('u-not').value.trim(),
+  };
+  if(!_data.utrust)_data.utrust={utrustning:[]};
+  if(id){const i=_data.utrust.utrustning.findIndex(x=>x.id===id);if(i>=0)_data.utrust.utrustning[i]=obj;}
+  else _data.utrust.utrustning.push(obj);
+  const ok=await saveData('utrust','Utrustning: '+obj.typ+' '+obj.plats);
+  if(ok){toast('Sparat','ok');closeModal('modal-utrust');renderUtrustTable();}
+}
+
+async function deleteUtrust(id){
+  if(!confirm('Ta bort utrustningen?'))return;
+  _data.utrust.utrustning=_data.utrust.utrustning.filter(x=>x.id!==id);
+  const ok=await saveData('utrust','Tog bort utrustning');
+  if(ok){toast('Borttagen','ok');renderUtrustTable();}
+}
+
+// ── ÅTGÄRDER ───────────────────────────────────────────────────────────────
+function renderAtg(){
+  syncAvvToAtg();
+  document.getElementById('main-content').innerHTML=`
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+      <div class="filter-bar" style="margin:0">
+        <select id="f-atg-status" onchange="renderAtgTable()"><option value="">Alla statusar</option><option>Öppen</option><option>Pågående</option><option>Klar</option></select>
+        <select id="f-atg-kalla" onchange="renderAtgTable()"><option value="">Alla källor</option><option>Brandskyddsrond</option><option>Avvikelse</option><option>Manuell</option></select>
+      </div>
+      <div style="display:flex;gap:7px">
+        <button class="btn-secondary" onclick="exportAtg()"><i class="ti ti-table-export"></i><span class="desktop-only"> Excel</span></button>
+        ${_isAdmin||_isLokal?`<button class="btn-primary" onclick="openAtgModal()"><i class="ti ti-plus"></i> Ny åtgärd</button>`:''}
+      </div>
+    </div>
+    <div id="atg-list"></div>`;
+  renderAtgTable();
+}
+
+function renderAtgTable(){
+  const fs=document.getElementById('f-atg-status')?.value||'';
+  const fk=document.getElementById('f-atg-kalla')?.value||'';
+  let list=getAtgarder();
+  if(fs)list=list.filter(a=>a.status===fs);
+  if(fk)list=list.filter(a=>a.kalla===fk);
+  list.sort((a,b)=>(isOverdue(a.deadline)?0:1)-(isOverdue(b.deadline)?0:1)||a.deadline?.localeCompare(b.deadline||'')||0);
+  const canEdit=_isAdmin||_isLokal;
+  const wrap=document.getElementById('atg-list');if(!wrap)return;
+  if(!list.length){wrap.innerHTML='<div class="empty"><i class="ti ti-list-check"></i>Inga åtgärder matchar filtret</div>';return;}
+
+  const mobileHTML='<div class="mobile-list">'+list.map(a=>`
+    <div class="mobile-card" onclick="${canEdit?`openAtgModal('${a.id}')`:''}" style="${canEdit?'cursor:pointer':''}">
+      <div class="mobile-card-top">
+        <div class="mobile-card-title">${a.titel}</div>
+        ${statusBadge(a.status)}
+      </div>
+      <div class="mobile-card-meta">
+        <span class="src-badge ${a.kalla==='Brandskyddsrond'?'src-rond':a.kalla==='Avvikelse'?'src-avv':'src-utrust'}">${a.kalla||'–'}</span>
+        ${a.camping?`<span>${a.camping}</span>`:''}
+        ${a.deadline?`<span style="${isOverdue(a.deadline)&&a.status!=='Klar'?'color:var(--red);font-weight:600':''}"><i class="ti ti-calendar" style="font-size:10px"></i> ${fmtDate(a.deadline)}</span>`:''}
+      </div>
+    </div>`).join('')+'</div>';
+
+  wrap.innerHTML=mobileHTML+`<div class="card desktop-only"><div class="table-wrap"><table>
+    <thead><tr><th>Åtgärd</th><th>Källa</th><th>Camping</th><th>Ansvarig</th><th>Deadline</th><th>Status</th>${canEdit?'<th></th>':''}</tr></thead>
+    <tbody>${list.map(a=>`<tr>
+      <td style="max-width:200px"><div style="font-weight:500;font-size:13px">${a.titel}</div>${a.beskrivning?`<div style="font-size:11px;color:var(--text3);margin-top:1px">${a.beskrivning.slice(0,55)}${a.beskrivning.length>55?'…':''}</div>`:''}</td>
+      <td><span class="src-badge ${a.kalla==='Brandskyddsrond'?'src-rond':a.kalla==='Avvikelse'?'src-avv':'src-utrust'}">${a.kalla||'–'}</span></td>
+      <td style="font-size:12px;color:var(--text2)">${a.camping||'–'}</td>
+      <td style="font-size:12px">${a.ansvarig||'–'}</td>
+      <td style="font-size:12px;${isOverdue(a.deadline)&&a.status!=='Klar'?'color:var(--red);font-weight:600':''}">${a.deadline?fmtDate(a.deadline):'–'}</td>
+      <td>${statusBadge(a.status)}</td>
+      ${canEdit?`<td><span onclick="openAtgModal('${a.id}')" style="cursor:pointer;color:var(--accent);font-size:12px;font-weight:500;margin-right:8px">Redigera</span><span onclick="deleteAtg('${a.id}')" style="cursor:pointer;color:var(--red);font-size:12px">Ta bort</span></td>`:''}
+    </tr>`).join('')}
+    </tbody></table></div></div>`;
+}
+
+function openAtgModal(id){
+  const a=id?getAtgarder().find(x=>x.id===id):null;
+  document.getElementById('atg-title').textContent=a?'Redigera åtgärd':'Ny åtgärd';
+  document.getElementById('a-id').value=a?.id||'';
+  document.getElementById('a-titel').value=a?.titel||'';
+  document.getElementById('a-beskr').value=a?.beskrivning||'';
+  document.getElementById('a-camping').value=a?.camping||(_isLokal&&_myCamp?_myCamp:'');
+  document.getElementById('a-ansvarig').value=a?.ansvarig||'';
+  document.getElementById('a-deadline').value=a?.deadline||'';
+  document.getElementById('a-status').value=a?.status||'Öppen';
+  openModal('modal-atg');
+}
+
+async function saveAtg(){
+  const titel=document.getElementById('a-titel').value.trim();
+  if(!titel){toast('Ange titel','warn');return;}
+  const id=document.getElementById('a-id').value;
+  const obj={
+    id:id||'SBA-AT-'+Date.now(),
+    kalla:id?getAtgarder().find(x=>x.id===id)?.kalla:'Manuell',
+    kallaId:id?getAtgarder().find(x=>x.id===id)?.kallaId:null,
+    titel,
+    beskrivning:document.getElementById('a-beskr').value.trim(),
+    camping:document.getElementById('a-camping').value||null,
+    ansvarig:document.getElementById('a-ansvarig').value.trim(),
+    deadline:document.getElementById('a-deadline').value||null,
+    status:document.getElementById('a-status').value,
+    skapad:id?getAtgarder().find(x=>x.id===id)?.skapad:nowISO()
+  };
+  if(!_data.atg)_data.atg={atgarder:[]};
+  if(id){const i=_data.atg.atgarder.findIndex(x=>x.id===id);if(i>=0)_data.atg.atgarder[i]=obj;}
+  else _data.atg.atgarder.push(obj);
+  await syncToSAM([],null,null,obj);
+  const ok=await saveData('atg','Åtgärd: '+titel.slice(0,40));
+  if(ok){toast('Sparat','ok');closeModal('modal-atg');renderAtgTable();}
+}
+
+async function deleteAtg(id){
+  if(!confirm('Ta bort åtgärden?'))return;
+  _data.atg.atgarder=_data.atg.atgarder.filter(x=>x.id!==id);
+  const ok=await saveData('atg','Tog bort åtgärd');
+  if(ok){toast('Borttagen','ok');renderAtgTable();}
+}
+
+function exportAtg(){
+  try{
+    const wb=XLSX.utils.book_new();
+    const rows=[['ÅTGÄRDSPLAN – SBA, CCSthlm'],['Exporterad:',new Date().toLocaleString('sv-SE')],[],
+      ['Åtgärd','Källa','Camping','Ansvarig','Deadline','Status','Beskrivning'],
+      ...getAtgarder().map(a=>[a.titel,a.kalla||'',a.camping||'',a.ansvarig||'',a.deadline||'',a.status,a.beskrivning||''])];
+    const ws=XLSX.utils.aoa_to_sheet(rows);
+    ws['!cols']=[{wch:36},{wch:18},{wch:24},{wch:18},{wch:12},{wch:12},{wch:40}];
+    XLSX.utils.book_append_sheet(wb,ws,'SBA Åtgärder');
+    XLSX.writeFile(wb,'SBA_Atgarder_'+new Date().toISOString().slice(0,10)+'.xlsx');
+    toast('Excel exporterad','ok');
+  }catch(e){toast('Fel: '+e.message,'err');}
+}
+
+// ── AVVIKELSEKOPPLING ──────────────────────────────────────────────────────
+function syncAvvToAtg(){
+  const avv=getAvvSBA();
+  if(!_data.atg)_data.atg={atgarder:[]};
+  avv.forEach(a=>{
+    const avvId=a.id||'';if(!avvId)return;
+    const exists=_data.atg.atgarder.some(x=>x.kallaId===avvId&&x.kalla==='Avvikelse');
+    if(!exists){
+      _data.atg.atgarder.push({
+        id:'SBA-AVV-'+avvId,kalla:'Avvikelse',kallaId:avvId,
+        titel:'Brandincident: '+(a.kategori||'').slice(0,55),
+        beskrivning:a.beskrivning||'',
+        camping:a.anläggning||a.camping||null,
+        ansvarig:a.ansvarig||'',deadline:a.deadline||null,
+        status:a.status==='Klar'?'Klar':'Öppen',skapad:a.skapad||nowISO()
+      });
+    }
+  });
+}
+
+// ── SAM-SYNK ───────────────────────────────────────────────────────────────
+async function syncToSAM(avvikelser, camping, rondeId, manuellatg) {
+  const token=localStorage.getItem('gh_token')||'';if(!token)return;
+  const samPath='sam/handlingsplan.json';
+  try{
+    const res=await fetch(`https://api.github.com/repos/${GH_REPO}/contents/${samPath}`,{headers:{'Authorization':'token '+token}});
+    let samData={atgarder:[]},samSha=null;
+    if(res.ok){const gh=await res.json();samSha=gh.sha;const bytes=Uint8Array.from(atob(gh.content.replace(/\n/g,'')),c=>c.charCodeAt(0));samData=JSON.parse(new TextDecoder('utf-8').decode(bytes));}
+    if(!samData.atgarder)samData.atgarder=[];
+
+    if(manuellatg){
+      const exists=samData.atgarder.some(x=>x.kallaId===manuellatg.id&&x.kalla==='SBA');
+      if(!exists) samData.atgarder.push({id:'SAM-SBA-'+manuellatg.id,kalla:'SBA',kallaId:manuellatg.id,titel:'[SBA] '+manuellatg.titel,beskrivning:manuellatg.beskrivning,camping:manuellatg.camping,ansvarig:manuellatg.ansvarig,deadline:manuellatg.deadline,status:manuellatg.status,skapad:manuellatg.skapad});
+    }
+    avvikelser.forEach(a=>{
+      const id=rondeId+'-'+a.punkt.slice(0,20);
+      const exists=samData.atgarder.some(x=>x.kallaId===id);
+      if(!exists) samData.atgarder.push({id:'SAM-SBA-'+Date.now(),kalla:'SBA',kallaId:id,titel:'[SBA Rondavvikelse] '+a.punkt.slice(0,55),beskrivning:a.anteckning||a.punkt,camping,ansvarig:'',deadline:null,status:'Öppen',skapad:nowISO()});
+    });
+
+    samData.uppdaterad=new Date().toISOString();
+    const json=JSON.stringify(samData,null,2);
+    const enc=new TextEncoder().encode(json);let b64='';
+    for(let i=0;i<enc.length;i+=8192)b64+=String.fromCharCode(...enc.slice(i,i+8192));
+    const payload={message:'SBA-synk',content:btoa(b64),branch:'main'};
+    if(samSha)payload.sha=samSha;
+    await fetch(`https://api.github.com/repos/${GH_REPO}/contents/${samPath}`,{method:'PUT',headers:{'Authorization':'token '+token,'Content-Type':'application/json'},body:JSON.stringify(payload)});
+  }catch(e){console.warn('SAM-synk:',e.message);}
+}
+
+// ── RAPPORT ────────────────────────────────────────────────────────────────
+function renderRapport(){
+  const year=new Date().getFullYear();
+  const camps=_isLokal&&_myCamp?[_myCamp]:CAMPINGAR;
+  document.getElementById('main-content').innerHTML=`
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+      <div>
+        <div style="font-size:16px;font-weight:700">SBA-rapport ${year}</div>
+        <div style="font-size:12px;color:var(--text2)">Systematiskt brandskyddsarbete – sammanfattning</div>
+      </div>
+      <div style="display:flex;gap:7px">
+        <button class="btn-secondary" onclick="window.print()"><i class="ti ti-printer"></i> Skriv ut</button>
+        <button class="btn-secondary" onclick="exportRapport()"><i class="ti ti-file-type-doc"></i> Word</button>
+      </div>
+    </div>
+    <div id="rapport-content">
+    ${camps.map(c=>{
+      const utrust=(_data.utrust?.utrustning||[]).filter(u=>u.camping===c);
+      const ronder=(_data.ronder?.ronder||[]).filter(r=>r.camping===c);
+      const atg=(_data.atg?.atgarder||[]).filter(a=>a.camping===c);
+      const senRond=ronder.sort((a,b)=>b.datum?.localeCompare(a.datum||''))[0];
+      const oppna=atg.filter(a=>a.status!=='Klar').length;
+      const klarade=atg.filter(a=>a.status==='Klar').length;
+      const utgangen=utrust.filter(u=>utrstStatus(u)==='expired').length;
+      const col=campingColor(c);
+      return`<div class="rapport-section card" style="margin-bottom:14px">
+        <div class="card-header">
+          <span class="card-title"><div class="traffic-dot ${col}" style="width:12px;height:12px"></div>${c}</span>
+        </div>
+        <div class="card-body">
+          <div class="grid-3" style="margin-bottom:14px">
+            <div style="text-align:center"><div style="font-size:22px;font-weight:700">${ronder.length}</div><div style="font-size:11px;color:var(--text3)">Ronder genomförda</div></div>
+            <div style="text-align:center"><div style="font-size:22px;font-weight:700;color:${utgangen?'var(--red)':'var(--green-text)'}">${utgangen}</div><div style="font-size:11px;color:var(--text3)">Utgången utrustning</div></div>
+            <div style="text-align:center"><div style="font-size:22px;font-weight:700;color:${oppna?'var(--amber)':'var(--green-text)'}">${oppna}</div><div style="font-size:11px;color:var(--text3)">Öppna åtgärder</div></div>
+          </div>
+          <div style="font-size:12px;color:var(--text2);margin-bottom:6px"><strong>Senaste rond:</strong> ${senRond?fmtDate(senRond.datum)+' av '+senRond.genomfordAv:'Ingen rond genomförd'}</div>
+          <div style="font-size:12px;color:var(--text2);margin-bottom:6px"><strong>Utrustning registrerad:</strong> ${utrust.length} enheter</div>
+          <div style="font-size:12px;color:var(--text2)"><strong>Åtgärder:</strong> ${klarade} klarade, ${oppna} öppna</div>
+        </div>
+      </div>`;
+    }).join('')}
+    </div>`;
+}
+
+async function exportRapport(){
+  // Simplified Word export via docx would require the docx library
+  // Instead open print dialog which allows Save as PDF
+  toast('Använd Skriv ut och välj Spara som PDF','ok');
+  window.print();
+}
+
+// ── UTILS ──────────────────────────────────────────────────────────────────
+function openModal(id){document.getElementById(id).classList.add('show');}
+function closeModal(id){document.getElementById(id).classList.remove('show');}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.modal-overlay.show').forEach(m=>m.classList.remove('show'));});
+function toast(msg,type='ok'){
+  const t=document.getElementById('toast');
+  t.style.background=type==='err'?'var(--red)':type==='warn'?'var(--amber)':'#27500A';
+  t.innerHTML=(type==='ok'?'<i class="ti ti-check"></i>':type==='warn'?'<i class="ti ti-alert-triangle"></i>':'<i class="ti ti-x"></i>')+' '+msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2800);
+}
+</script>
+</body>
+</html>
