@@ -36,6 +36,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
 .topnav-right{display:flex;align-items:center;gap:7px;padding:0 12px;border-left:1px solid var(--border);}
 .btn-portal{padding:6px 12px;background:var(--bg3);color:var(--text2);border:1px solid var(--border2);border-radius:var(--radius);font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:5px;text-decoration:none;transition:background .15s;white-space:nowrap;}
 .btn-portal:hover{background:var(--bg4);}
+.active-view{background:var(--accent)!important;color:#fff!important;border-color:var(--accent)!important;}
 
 /* USER BAR */
 .user-bar{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;padding:8px 16px;font-size:12px;display:flex;align-items:center;gap:8px;}
@@ -162,7 +163,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
   </div>
   <div class="nav-tabs">
     <button class="nav-tab active" id="tab-ny"      onclick="showView('ny')"><i class="ti ti-plus"></i> Ny kontroll</button>
-    <button class="nav-tab"        id="tab-hist"    onclick="showView('hist')"><i class="ti ti-list"></i> Historik</button>
+    <button class="nav-tab"        id="tab-hist"    onclick="showView('hist')"><i class="ti ti-list"></i> Lista kontroller</button>
   </div>
   <div class="topnav-right">
     <a href="index.html" class="btn-portal"><i class="ti ti-arrow-left"></i></a>
@@ -192,6 +193,48 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
     <div class="modal-footer">
       <button class="btn-portal" style="flex:1;justify-content:center" onclick="closeModal('modal-fordon')">Stäng</button>
       <button class="btn-portal" style="flex:1;justify-content:center" onclick="printFordon()"><i class="ti ti-printer"></i> Skriv ut senaste</button>
+    </div>
+  </div>
+</div>
+
+<!-- REDIGERA MODAL -->
+<div class="modal-overlay" id="modal-edit" onclick="if(event.target===this)closeModal('modal-edit')">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <div class="modal-title">Redigera kontroll</div>
+      <button class="modal-close" onclick="closeModal('modal-edit')"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="e-id">
+      <div class="ff"><label>Camping</label><select id="e-camping">${CAMPINGAR.map(c=>`<option>${c}</option>`).join('')}</select></div>
+      <div class="fg">
+        <div class="ff"><label>RegNr</label><input type="text" id="e-regnr" style="text-transform:uppercase" oninput="this.value=this.value.toUpperCase()"></div>
+        <div class="ff"><label>Plats</label><input type="text" id="e-plats"></div>
+      </div>
+      <div class="ff"><label>Fordonstyp</label>
+        <div class="toggle-group">
+          <div class="toggle-opt" id="eft-husbil"  onclick="setEFordonstyp('husbil')"><i class="ti ti-car"></i> Husbil</div>
+          <div class="toggle-opt" id="eft-husvagn" onclick="setEFordonstyp('husvagn')"><i class="ti ti-train-profile"></i> Husvagn</div>
+        </div>
+      </div>
+      <div class="ff"><label>Datum kontroll</label><input type="date" id="e-datum"></div>
+      <div class="ff"><label>Resultat</label><select id="e-resultat">
+        <option value="godkand">Godkänd</option>
+        <option value="packningar">Godkänd – packningar</option>
+        <option value="extern">Godkänd – extern</option>
+        <option value="ej">Ej godkänd</option>
+      </select></div>
+      <div class="ff" id="e-extern-wrap" style="display:none"><label>Datum extern kontroll</label><input type="date" id="e-extern-datum"></div>
+      <div class="fg">
+        <div class="ff"><label>Senaste bilbesiktning</label><input type="date" id="e-besikt-datum" onchange="updateEBesiktNext()"></div>
+        <div class="ff"><label>Nästa bilbesiktning</label><input type="date" id="e-besikt-nasta" readonly></div>
+      </div>
+      <div class="ff"><label>Anteckning</label><textarea id="e-anteck" rows="2" style="font-size:14px"></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-portal" style="flex:1;justify-content:center" onclick="closeModal('modal-edit')">Avbryt</button>
+      <button class="btn-save" style="flex:1" onclick="sparaRedigering()"><i class="ti ti-check"></i> Spara</button>
     </div>
   </div>
 </div>
@@ -457,57 +500,203 @@ async function sparaKontroll() {
   }
 }
 
-// ── HISTORIK ───────────────────────────────────────────────────────────────
+// ── LISTA KONTROLLER ──────────────────────────────────────────────────────
+let _histView = 'kort'; // 'kort' or 'lista'
+
 function renderHist() {
-  const kontroller = _data.kontroller.slice().sort((a,b)=>b.datum.localeCompare(a.datum));
   document.getElementById('main-content').innerHTML = `
-    <div class="filter-bar">
-      <select id="f-hist-camp" onchange="renderHistList()">
-        <option value="">Alla campingar</option>
-        ${CAMPINGAR.map(c=>`<option>${c}</option>`).join('')}
-      </select>
-      <select id="f-hist-res" onchange="renderHistList()">
-        <option value="">Alla resultat</option>
-        <option value="godkand">Godkänd</option>
-        <option value="packningar">Godkänd – packningar</option>
-        <option value="extern">Godkänd – extern</option>
-        <option value="ej">Ej godkänd</option>
-      </select>
+    <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:center">
+      <div class="filter-bar" style="margin:0;flex:1">
+        <select id="f-hist-camp" onchange="renderHistList()">
+          <option value="">Alla campingar</option>
+          ${CAMPINGAR.map(c=>'<option>'+c+'</option>').join('')}
+        </select>
+        <select id="f-hist-res" onchange="renderHistList()">
+          <option value="">Alla resultat</option>
+          <option value="godkand">Godkänd</option>
+          <option value="packningar">Godkänd – packningar</option>
+          <option value="extern">Godkänd – extern</option>
+          <option value="ej">Ej godkänd</option>
+        </select>
+      </div>
+      <div style="display:flex;gap:6px;flex-shrink:0">
+        <button class="btn-portal" id="view-kort"  onclick="setHistView('kort')"  style="font-size:12px"><i class="ti ti-layout-cards"></i></button>
+        <button class="btn-portal" id="view-lista" onclick="setHistView('lista')" style="font-size:12px"><i class="ti ti-table"></i></button>
+        <button class="btn-portal" onclick="exportExcel()" style="font-size:12px"><i class="ti ti-table-export"></i> Excel</button>
+      </div>
     </div>
     <div id="hist-list"></div>`;
+  setHistView(_histView);
+}
+
+function setHistView(v) {
+  _histView = v;
+  document.getElementById('view-kort') ?.classList.toggle('active-view', v==='kort');
+  document.getElementById('view-lista')?.classList.toggle('active-view', v==='lista');
   renderHistList();
 }
 
+function getLatestPerRegnr(list) {
+  const map = {};
+  list.forEach(k => {
+    if (!map[k.regnr] || k.datum > map[k.regnr].datum) map[k.regnr] = k;
+  });
+  return Object.values(map).sort((a,b)=>b.datum.localeCompare(a.datum));
+}
+
 function renderHistList() {
-  const fc = document.getElementById('f-hist-camp')?.value || '';
-  const fr = document.getElementById('f-hist-res')?.value  || '';
-  let list = _data.kontroller.slice().sort((a,b)=>b.datum.localeCompare(a.datum));
-  if (fc) list = list.filter(k=>k.camping===fc);
-  if (fr) list = list.filter(k=>k.resultat===fr);
+  const fc   = document.getElementById('f-hist-camp')?.value || '';
+  const fr   = document.getElementById('f-hist-res')?.value  || '';
+  let all    = _data.kontroller.slice();
+  if (fc) all = all.filter(k=>k.camping===fc);
+  if (fr) all = all.filter(k=>k.resultat===fr);
+  const list = getLatestPerRegnr(all);
   const wrap = document.getElementById('hist-list');
   if (!wrap) return;
   if (!list.length) { wrap.innerHTML='<div class="empty"><i class="ti ti-list"></i>Inga kontroller matchar filtret</div>'; return; }
-  wrap.innerHTML = list.map(k => {
-    const ri   = RESULTAT_INFO[k.resultat] || RESULTAT_INFO.godkand;
-    const dl   = k.nastaKontroll ? daysLeft(k.nastaKontroll) : null;
-    const ncls = dl===null?'':dl<0?'hn-exp':dl<=90?'hn-warn':'hn-ok';
-    const nlab = dl===null?'':dl<0?'Förfallen':'Nästa '+fmtDate(k.nastaKontroll);
-    return `<div class="hist-card" onclick="openFordonModal('${k.regnr}')">
-      <div class="hist-card-top">
-        <div>
-          <div class="hist-regnr">${k.regnr}</div>
-          <div style="font-size:12px;color:var(--text2);margin-top:2px">${k.fordonstyp==='husvagn'?'Husvagn':'Husbil'}${k.plats?' · Plats '+k.plats:''}</div>
-        </div>
-        <span class="rbadge ${ri.badge}"><i class="ti ${ri.icon}" style="font-size:11px"></i>${ri.label}</span>
-      </div>
-      <div class="hist-meta">
-        <span><i class="ti ti-calendar" style="font-size:11px"></i>${fmtDate(k.datum)}</span>
-        <span><i class="ti ti-tent" style="font-size:11px"></i>${k.camping}</span>
-        <span><i class="ti ti-user" style="font-size:11px"></i>${k.utfordAv||'–'}</span>
-      </div>
-      ${nlab?`<span class="hist-next ${ncls}"><i class="ti ti-calendar-due" style="font-size:10px"></i>${nlab}</span>`:''}
-    </div>`;
-  }).join('');
+
+  if (_histView === 'kort') {
+    wrap.innerHTML = list.map(k => {
+      const ri   = RESULTAT_INFO[k.resultat] || RESULTAT_INFO.godkand;
+      const dl   = k.nastaKontroll ? daysLeft(k.nastaKontroll) : null;
+      const ncls = dl===null?'':dl<0?'hn-exp':dl<=90?'hn-warn':'hn-ok';
+      const nlab = dl===null?'':dl<0?'Förfallen':'Nästa '+fmtDate(k.nastaKontroll);
+      const cnt  = _data.kontroller.filter(x=>x.regnr===k.regnr).length;
+      return '<div class="hist-card">'
+        + '<div class="hist-card-top">'
+        + '<div>'
+        + '<div class="hist-regnr">' + k.regnr + (cnt>1?' <span style="font-size:11px;color:var(--text3);font-weight:400">('+cnt+' kontroller)</span>':'') + '</div>'
+        + '<div style="font-size:12px;color:var(--text2);margin-top:2px">' + (k.fordonstyp==='husvagn'?'Husvagn':'Husbil') + (k.plats?' · Plats '+k.plats:'') + '</div>'
+        + '</div>'
+        + '<span class="rbadge ' + ri.badge + '"><i class="ti ' + ri.icon + '" style="font-size:11px"></i>' + ri.label + '</span>'
+        + '</div>'
+        + '<div class="hist-meta">'
+        + '<span><i class="ti ti-calendar" style="font-size:11px"></i>' + fmtDate(k.datum) + '</span>'
+        + '<span><i class="ti ti-tent" style="font-size:11px"></i>' + k.camping + '</span>'
+        + '<span><i class="ti ti-user" style="font-size:11px"></i>' + (k.utfordAv||'–') + '</span>'
+        + '</div>'
+        + (nlab?'<span class="hist-next '+ncls+'"><i class="ti ti-calendar-due" style="font-size:10px"></i>'+nlab+'</span>':'')
+        + '<div style="display:flex;gap:8px;margin-top:10px">'
+        + '<button class="btn-portal" style="flex:1;justify-content:center;font-size:12px" onclick="openRedigera(&quot;'+k.id+'&quot;)"><i class="ti ti-edit"></i> Redigera</button>'
+        + (cnt>1?'<button class="btn-portal" style="flex:1;justify-content:center;font-size:12px" onclick="openFordonModal(&quot;'+k.regnr+'&quot;)"><i class="ti ti-history"></i> Historik ('+cnt+')</button>':'')
+        + '</div>'
+        + '</div>';
+    }).join('');
+  } else {
+    // Table view
+    const rows = list.map(k => {
+      const ri = RESULTAT_INFO[k.resultat] || RESULTAT_INFO.godkand;
+      const dl = k.nastaKontroll ? daysLeft(k.nastaKontroll) : null;
+      const cnt = _data.kontroller.filter(x=>x.regnr===k.regnr).length;
+      return '<tr>'
+        + '<td><strong>' + k.regnr + '</strong></td>'
+        + '<td style="font-size:12px">' + (k.fordonstyp==='husvagn'?'Husvagn':'Husbil') + '</td>'
+        + '<td style="font-size:12px">' + (k.plats||'–') + '</td>'
+        + '<td style="font-size:12px;color:var(--text2)">' + k.camping.replace('CC ','').replace(' Camping','') + '</td>'
+        + '<td style="font-size:12px">' + fmtDate(k.datum) + '</td>'
+        + '<td><span class="rbadge ' + ri.badge + '" style="font-size:10px">' + ri.label + '</span></td>'
+        + '<td style="font-size:12px;'+(dl!==null&&dl<0?'color:var(--red);font-weight:600':dl!==null&&dl<=90?'color:var(--amber);font-weight:600':'')+'">' + (k.nastaKontroll?fmtDate(k.nastaKontroll):'–') + '</td>'
+        + '<td style="font-size:12px;color:var(--text2)">' + (k.utfordAv||'–') + '</td>'
+        + '<td style="white-space:nowrap">'
+        + '<span onclick="openRedigera(&quot;'+k.id+'&quot;)" style="cursor:pointer;color:var(--accent);font-size:12px;font-weight:500;margin-right:8px">Redigera</span>'
+        + (cnt>1?'<span onclick="openFordonModal(&quot;'+k.regnr+'&quot;)" style="cursor:pointer;color:var(--blue);font-size:12px;font-weight:500">Historik</span>':'')
+        + '</td></tr>';
+    }).join('');
+    wrap.innerHTML = '<div class="card"><div style="overflow-x:auto"><table>'
+      + '<thead><tr><th>RegNr</th><th>Typ</th><th>Plats</th><th>Camping</th><th>Datum</th><th>Resultat</th><th>Nästa kontroll</th><th>Utförd av</th><th></th></tr></thead>'
+      + '<tbody>' + rows + '</tbody></table></div></div>';
+  }
+}
+
+function exportExcel() {
+  try {
+    const XLSX = window.XLSX;
+    if (!XLSX) { toast('Excel-bibliotek saknas','err'); return; }
+    const fc = document.getElementById('f-hist-camp')?.value||'';
+    const fr = document.getElementById('f-hist-res')?.value||'';
+    let list = _data.kontroller.slice().sort((a,b)=>b.datum.localeCompare(a.datum));
+    if (fc) list = list.filter(k=>k.camping===fc);
+    if (fr) list = list.filter(k=>k.resultat===fr);
+    const wb  = XLSX.utils.book_new();
+    const rows = [
+      ['GASOL TÄTHETSKONTROLLER – CCSthlm'],
+      ['Exporterad:', new Date().toLocaleString('sv-SE')],
+      [],
+      ['RegNr','Fordonstyp','Plats','Camping','Datum','Resultat','Extern datum','Nästa kontroll','Bilbesiktning','Nästa bilbesiktning','Utförd av','Anteckning'],
+      ...list.map(k=>[ k.regnr, k.fordonstyp==='husvagn'?'Husvagn':'Husbil', k.plats||'', k.camping,
+        k.datum, RESULTAT_INFO[k.resultat]?.label||k.resultat, k.externDatum||'',
+        k.nastaKontroll||'', k.besiktDatum||'', k.besiktNasta||'', k.utfordAv||'', k.anteckning||'' ])
+    ];
+    const ws = XLSX.utils.aoa_to_sheet(rows);
+    ws['!cols'] = [{wch:10},{wch:12},{wch:8},{wch:26},{wch:12},{wch:22},{wch:14},{wch:16},{wch:14},{wch:16},{wch:20},{wch:30}];
+    XLSX.utils.book_append_sheet(wb, ws, 'Gasol kontroller');
+    XLSX.writeFile(wb, 'Gasol_kontroller_'+new Date().toISOString().slice(0,10)+'.xlsx');
+    toast('Excel exporterad','ok');
+  } catch(e) { toast('Fel: '+e.message,'err'); }
+}
+
+// ── REDIGERA KONTROLL ─────────────────────────────────────────────────────
+let _eFordonstyp = 'husbil';
+
+function openRedigera(id) {
+  const k = _data.kontroller.find(x=>x.id===id);
+  if (!k) return;
+  _eFordonstyp = k.fordonstyp || 'husbil';
+  document.getElementById('e-id').value           = k.id;
+  document.getElementById('e-camping').value       = k.camping||'';
+  document.getElementById('e-regnr').value         = k.regnr||'';
+  document.getElementById('e-plats').value         = k.plats||'';
+  document.getElementById('e-datum').value         = k.datum||'';
+  document.getElementById('e-resultat').value      = k.resultat||'godkand';
+  document.getElementById('e-extern-datum').value  = k.externDatum||'';
+  document.getElementById('e-besikt-datum').value  = k.besiktDatum||'';
+  document.getElementById('e-besikt-nasta').value  = k.besiktNasta||'';
+  document.getElementById('e-anteck').value        = k.anteckning||'';
+  document.getElementById('eft-husbil') .classList.toggle('active', _eFordonstyp==='husbil');
+  document.getElementById('eft-husvagn').classList.toggle('active', _eFordonstyp==='husvagn');
+  document.getElementById('e-extern-wrap').style.display = k.resultat==='extern' ? '' : 'none';
+  document.getElementById('e-resultat').addEventListener('change', function() {
+    document.getElementById('e-extern-wrap').style.display = this.value==='extern' ? '' : 'none';
+  });
+  openModal('modal-edit');
+}
+
+function setEFordonstyp(typ) {
+  _eFordonstyp = typ;
+  document.getElementById('eft-husbil') .classList.toggle('active', typ==='husbil');
+  document.getElementById('eft-husvagn').classList.toggle('active', typ==='husvagn');
+}
+
+function updateEBesiktNext() {
+  const d = document.getElementById('e-besikt-datum').value;
+  document.getElementById('e-besikt-nasta').value = d ? addYears(d,1) : '';
+}
+
+async function sparaRedigering() {
+  const id = document.getElementById('e-id').value;
+  const i  = _data.kontroller.findIndex(k=>k.id===id);
+  if (i<0) return;
+  const orig = _data.kontroller[i];
+  const datum   = document.getElementById('e-datum').value;
+  const resultat = document.getElementById('e-resultat').value;
+  const besiktD  = document.getElementById('e-besikt-datum').value;
+  _data.kontroller[i] = {
+    ...orig,
+    camping:      document.getElementById('e-camping').value,
+    regnr:        document.getElementById('e-regnr').value.trim().toUpperCase(),
+    plats:        document.getElementById('e-plats').value.trim()||null,
+    fordonstyp:   _eFordonstyp,
+    datum,
+    resultat,
+    externDatum:  document.getElementById('e-extern-datum').value||null,
+    besiktDatum:  besiktD||null,
+    besiktNasta:  besiktD ? addYears(besiktD,1) : null,
+    nastaKontroll:resultat!=='ej' ? addYears(datum,1) : null,
+    anteckning:   document.getElementById('e-anteck').value.trim()||null,
+  };
+  const ok = await save('Redigerade kontroll '+_data.kontroller[i].regnr);
+  if (ok) { toast('Sparat','ok'); closeModal('modal-edit'); renderHistList(); }
+  else _data.kontroller[i] = orig;
 }
 
 // ── FORDON HISTORIK MODAL ───────────────────────────────────────────────────
