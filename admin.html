@@ -492,6 +492,10 @@ tr:hover td{background:var(--bg3);}
             <label class="checkbox-item"><input type="checkbox" id="role-avvikelse-brand"> <i class="ti ti-flame" style="font-size:14px;color:#c2410c"></i> <span><strong>Brandskyddsansvarig</strong> – brand/SBA-ärenden</span></label>
           </div>
           <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin:10px 0 6px;padding-top:8px;border-top:1px solid var(--border)">Nyheter & driftstörningar</div>
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin:10px 0 6px;padding-top:8px;border-top:1px solid var(--border)">Gasol</div>
+          <div class="role-section" style="padding:9px 12px;border-left:3px solid #854F0B;">
+            <label class="checkbox-item"><input type="checkbox" id="role-gasol-kontrollant"> <i class="ti ti-gas-station" style="font-size:14px;color:#854F0B"></i> <span><strong>Gasol-kontrollant</strong> – registrera och se gasol täthetskontroller</span></label>
+          </div>
           <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin:10px 0 6px;padding-top:8px;border-top:1px solid var(--border)">SBA – Brandskydd</div>
           <div class="role-section" style="padding:9px 12px;border-left:3px solid #A32D2D;">
             <label class="checkbox-item"><input type="checkbox" id="role-sba-ansvarig"> <i class="ti ti-flame" style="font-size:14px;color:#A32D2D"></i> <span><strong>SBA-ansvarig</strong> – se och redigera allt i SBA</span></label>
@@ -680,6 +684,7 @@ const ADMIN_ROLES = {
   'avvikelse-anlaggning':{ key:'avvikelse-anlaggning', label:'Anläggningsansvarig', icon:'ti-tent',           color:'#3B6D11', badge:'badge-besiktnings' },
   'avvikelse-brand':    { key:'avvikelse-brand',    label:'Brandskyddsansvarig',   icon:'ti-flame',          color:'#c2410c', badge:'badge-personal' },
   'nyhetsadmin':        { key:'nyhetsadmin',        label:'Nyhetsadmin',           icon:'ti-speakerphone',   color:'#7c3aed', badge:'badge-global' },
+  'gasol-kontrollant':  { key:'gasol-kontrollant', label:'Gasol-kontrollant',         icon:'ti-gas-station',   color:'#854F0B', badge:'badge-personal' },
   'sba-ansvarig':       { key:'sba-ansvarig', label:'SBA-ansvarig',            icon:'ti-flame',          color:'#A32D2D', badge:'badge-global' },
   'sba-lokal':          { key:'sba-lokal',     label:'Lokal SBA-ansvarig',        icon:'ti-flame',          color:'#c2560a', badge:'badge-personal' },
   'sam-ansvarig':       { key:'sam-ansvarig', label:'SAM-ansvarig', icon:'ti-shield-check', color:'#1a4f7a', badge:'badge-global' },
@@ -1244,7 +1249,7 @@ function openAddUser() {
   document.getElementById('user-pin').value = '';
   document.getElementById('user-pnr').value = '';
   document.getElementById('user-active').value = 'true';
-  ['global','sektions','besiktnings','personal','avvikelse-admin','avvikelse-ledning','avvikelse-anlaggning','avvikelse-brand','nyhetsadmin','störningsadmin','kontoadmin','inventarieadmin','sba-ansvarig','sba-lokal','sam-ansvarig','arshjul-admin','reserakning-admin','reserakning-godkannare','reserakning-utbetalare'].forEach(r => { const el=document.getElementById('role-'+r); if(el) el.checked=false; });
+  ['global','sektions','besiktnings','personal','avvikelse-admin','avvikelse-ledning','avvikelse-anlaggning','avvikelse-brand','nyhetsadmin','störningsadmin','kontoadmin','inventarieadmin','gasol-kontrollant','sba-ansvarig','sba-lokal','sam-ansvarig','arshjul-admin','reserakning-admin','reserakning-godkannare','reserakning-utbetalare'].forEach(r => { const el=document.getElementById('role-'+r); if(el) el.checked=false; });
   buildAppCheckboxes([]);
   populatePLCampingSelect('');
   toggleGodkannarcamping();
@@ -1264,7 +1269,7 @@ function openEditUser(id) {
   document.getElementById('user-active').value = u.active===false?'false':'true';
   // Set admin role checkboxes
   const roles = u.adminRoles || (u.role==='Admin'?['global']:[]);
-  ['global','sektions','besiktnings','personal','avvikelse-admin','avvikelse-ledning','avvikelse-anlaggning','avvikelse-brand','nyhetsadmin','störningsadmin','kontoadmin','inventarieadmin','sba-ansvarig','sba-lokal','sam-ansvarig','arshjul-admin','reserakning-admin','reserakning-godkannare','reserakning-utbetalare'].forEach(r => {
+  ['global','sektions','besiktnings','personal','avvikelse-admin','avvikelse-ledning','avvikelse-anlaggning','avvikelse-brand','nyhetsadmin','störningsadmin','kontoadmin','inventarieadmin','gasol-kontrollant','sba-ansvarig','sba-lokal','sam-ansvarig','arshjul-admin','reserakning-admin','reserakning-godkannare','reserakning-utbetalare'].forEach(r => {
     const el=document.getElementById('role-'+r);
     if(el) el.checked = roles.includes(r);
   });
@@ -1315,7 +1320,7 @@ function saveUser() {
   const pin = document.getElementById('user-pin').value.trim();
   if (!name) { alert('Namn krävs.'); return; }
   if (!pin || !/^\d{4}$/.test(pin)) { alert('PIN-kod måste vara 4 siffror.'); return; }
-  const adminRoles = ['global','sektions','besiktnings','personal','avvikelse-admin','avvikelse-ledning','avvikelse-anlaggning','avvikelse-brand','nyhetsadmin','störningsadmin','kontoadmin','inventarieadmin','sba-ansvarig','sba-lokal','sam-ansvarig','arshjul-admin','reserakning-admin','reserakning-godkannare','reserakning-utbetalare'].filter(r => document.getElementById('role-'+r)?.checked);
+  const adminRoles = ['global','sektions','besiktnings','personal','avvikelse-admin','avvikelse-ledning','avvikelse-anlaggning','avvikelse-brand','nyhetsadmin','störningsadmin','kontoadmin','inventarieadmin','gasol-kontrollant','sba-ansvarig','sba-lokal','sam-ansvarig','arshjul-admin','reserakning-admin','reserakning-godkannare','reserakning-utbetalare'].filter(r => document.getElementById('role-'+r)?.checked);
   const apps = Array.from(document.querySelectorAll('#user-apps-check input:checked')).map(e=>e.value);
   const editId = document.getElementById('user-edit-id').value;
   const godkannarcamping = adminRoles.includes('reserakning-godkannare')
