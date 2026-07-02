@@ -136,11 +136,14 @@
           "ts": "2026-06-27T15:06:53.165Z"
         }
       ],
-      "status": "inskickad",
+      "status": "godkand",
       "skapad": "2026-06-27T15:06:17.516Z",
       "skapadAv": "Malin Liljedahl Björkö Örn",
       "signeradAv": "Malin Liljedahl Björkö Örn",
-      "signeradTs": "2026-06-27T15:07:01.095Z"
+      "signeradTs": "2026-06-27T15:07:01.095Z",
+      "statusKommentar": "OK",
+      "statusTs": "2026-07-02T13:49:21.610Z",
+      "statusAv": "Massimo Johansson"
     }
   ]
 }
