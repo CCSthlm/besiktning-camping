@@ -1,0 +1,20 @@
+{
+  "utrustning": [
+    {
+      "id": "U-1782981036371",
+      "typ": "Brandsläckare",
+      "camping": "Gräddös Pärla Kök & Bar",
+      "plats": "Serveringen",
+      "marke": "Presto",
+      "modell": "9kg",
+      "serienr": "1234567",
+      "senastKontroll": "2025-04-03",
+      "nastaKontroll": null,
+      "ansvarig": "CA",
+      "status": "Kontroll behövs",
+      "link": null,
+      "anteckningar": ""
+    }
+  ],
+  "uppdaterad": "2026-07-02T08:30:36.569Z"
+}
