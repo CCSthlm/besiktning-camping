@@ -323,10 +323,23 @@ const PATHS = {
   ronde:  'sam/skyddsronder.json',
   hp:     'sam/handlingsplan.json',
   utb:    'sam/utbildningar.json',
-  avv:    'avvikelse/storningsrapporter.json',
+  avv:    'avvikelse/data.json',
 };
 const CAMPINGAR = ['CC Björkö Örns Camping','CC Östnora Camping','CC Kapellskärs Camping','CC Mista Camping','CC Storsveds Camping','CC Örstigs Camping','Gräddös Pärla Kök & Bar','Östnora Kök & Bar'];
-const AVV_TYPER_SAM = ['Brand','El','Personskada','Fallolycka','Tillbud','Gasol'];
+// Avvikelsekategorier som är SAM-relevanta (matchar CAT_NAMES i avvikelse.html)
+const AVV_TYPER_SAM = [
+  'Brandtillbud',       // "Brandtillbud / SBA"
+  'Arbetsmiljö',        // "Arbetsmiljö / tillbud"
+  'Säkerhet',           // "Säkerhet / ordning"
+  'Sjukdom',            // "Sjukdom / gästincident"
+  'Miljö',              // "Miljö / kemikalier"
+];
+
+function avvArSAMRelevant(r) {
+  // Matchar på kategori-fältet som sparas från avvikelse.html
+  const kat = (r.kategori || r.typ || '').toLowerCase();
+  return AVV_TYPER_SAM.some(t => kat.includes(t.toLowerCase()));
+}
 
 const CHECKLISTOR = [
   { sektion:'Brand', icon:'ti-flame', punkter:[
@@ -402,7 +415,7 @@ async function loadJSON(key, path) {
   try {
     const res = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/${path}`, {headers:{'Authorization':'token '+token}});
     if (res.status === 404) {
-      _data[key] = key === 'avv' ? { rapporter: [] } : { [dataKey(key)]: [] };
+      _data[key] = key === 'avv' ? { ärenden: [] } : { [dataKey(key)]: [] };
       return;
     }
     if (!res.ok) return;
@@ -413,7 +426,7 @@ async function loadJSON(key, path) {
   } catch(e) { console.warn(key, e.message); }
 }
 
-function dataKey(key) { return {risk:'riskbedomningar',ronde:'skyddsronder',hp:'atgarder',utb:'utbildningar',avv:'rapporter'}[key]; }
+function dataKey(key) { return {risk:'riskbedomningar',ronde:'skyddsronder',hp:'atgarder',utb:'utbildningar',avv:'ärenden'}[key]; }
 
 async function saveJSON(key, msg) {
   const token = localStorage.getItem('gh_token') || '';
@@ -459,7 +472,7 @@ function getRisks()   { return (_data.risk?.riskbedomningar||[]); }
 function getRonder()  { return (_data.ronde?.skyddsronder||[]); }
 function getAtgarder(){ return (_data.hp?.atgarder||[]); }
 function getUtb()     { return (_data.utb?.utbildningar||[]); }
-function getAvv()     { return (_data.avv?.rapporter||[]).filter(r=>AVV_TYPER_SAM.some(t=>r.typ?.includes(t)||r.kategori?.includes(t))); }
+function getAvv()     { return (_data.avv?.rapporter || _data.avv?.ärenden || []).filter(r => avvArSAMRelevant(r)); }
 
 // ── DASHBOARD ──────────────────────────────────────────────────────────────
 function renderDashboard() {
@@ -528,8 +541,8 @@ function renderDashboard() {
           <div style="padding:8px 0">
             ${avvSAM.length ? avvSAM.map(a=>`<div style="padding:9px 18px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center">
               <div>
-                <div style="font-size:12px;font-weight:500">${a.titel||a.typ||'Avvikelse'}</div>
-                <div style="font-size:11px;color:var(--text3)">${fmtDate(a.skapad||a.datum)} · ${a.plats||a.camping||''}</div>
+                <div style="font-size:12px;font-weight:500">${a.kategori || a.typ || 'Avvikelse'}</div>
+                <div style="font-size:11px;color:var(--text3)">${fmtDate(a.skapad||a.datum)} · ${a.anläggning||a.camping||''}</div>
               </div>
               <span style="font-size:10px;background:var(--blue-bg);color:var(--blue);padding:2px 7px;border-radius:8px;font-weight:600">${a.typ||a.kategori||'–'}</span>
             </div>`).join('') : '<div style="padding:14px 18px;font-size:12px;color:var(--text3)">Inga SAM-relevanta avvikelser.</div>'}
@@ -823,19 +836,24 @@ function renderHPTable() {
 
 function syncAvvToHP() {
   const avv = getAvv();
-  if (!_data.hp) _data.hp={atgarder:[]};
-  let added=0;
-  avv.forEach(a=>{
-    const exists=_data.hp.atgarder.some(x=>x.kallaId===a.id&&x.kalla==='Avvikelse');
+  if (!_data.hp) _data.hp = { atgarder: [] };
+  avv.forEach(a => {
+    const avvId = a.id || a.ärendeId || '';
+    if (!avvId) return;
+    const exists = _data.hp.atgarder.some(x => x.kallaId === avvId && x.kalla === 'Avvikelse');
     if (!exists) {
       _data.hp.atgarder.push({
-        id:'AT-AVV-'+a.id, kalla:'Avvikelse', kallaId:a.id,
-        titel:`Avvikelse: ${(a.titel||a.typ||'').slice(0,60)}`,
-        beskrivning:a.beskrivning||a.atgard||'',
-        camping:a.camping||a.plats||null, ansvarig:'',
-        deadline:null, status:'Öppen', skapad:a.skapad||nowISO()
+        id:          'AT-AVV-' + avvId,
+        kalla:       'Avvikelse',
+        kallaId:     avvId,
+        titel:       'Avvikelse: ' + (a.kategori || a.typ || 'Okänd').slice(0, 60),
+        beskrivning: a.beskrivning || a.omedelbar || '',
+        camping:     a.anläggning || a.camping || null,
+        ansvarig:    a.ansvarig || '',
+        deadline:    a.deadline || null,
+        status:      'Öppen',
+        skapad:      a.skapad || a.datum || nowISO(),
       });
-      added++;
     }
   });
 }
