@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Gasol Täthetskontroll – CCSthlm</title>
+<link rel="icon" href="https://raw.githubusercontent.com/CCSthlm/besiktning-camping/main/Images/CC-Logga.png" type="image/png">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/tabler-icons.min.css">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f5f5f3;--bg2:#fff;--bg3:#eeede8;--bg4:#e5e4de;
+  --text:#1a1a18;--text2:#5a5a57;--text3:#909088;
+  --accent:#3B6D11;--accent2:#27500A;--accent-glow:rgba(59,109,17,.1);
+  --red:#A32D2D;--red-bg:#FCEBEB;--red-light:rgba(163,45,45,.08);
+  --amber:#854F0B;--amber-bg:#FAEEDA;
+  --green-bg:#EAF3DE;--green-text:#27500A;
+  --blue:#1a4f7a;--blue-bg:#e0f0ff;
+  --orange:#c2560a;--orange-bg:#fef0e6;
+  --border:rgba(0,0,0,.09);--border2:rgba(0,0,0,.15);
+  --radius:10px;--radius-lg:16px;--shadow:0 2px 12px rgba(0,0,0,.07);
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:var(--bg3);color:var(--text);min-height:100vh;display:flex;flex-direction:column;}
+
+/* TOPNAV */
+.topnav{background:var(--bg2);border-bottom:1px solid var(--border2);display:flex;align-items:stretch;position:sticky;top:0;z-index:30;box-shadow:0 2px 8px rgba(0,0,0,.06);}
+.topnav-brand{display:flex;align-items:center;gap:9px;padding:10px 16px 10px 14px;border-right:1px solid var(--border);flex-shrink:0;}
+.topnav-brand img{width:30px;height:30px;object-fit:contain;}
+.topnav-brand-text{font-size:14px;font-weight:700;}
+.topnav-brand-sub{font-size:10px;color:var(--text3);}
+.nav-tabs{display:flex;flex:1;overflow-x:auto;-webkit-overflow-scrolling:touch;}
+.nav-tabs::-webkit-scrollbar{display:none;}
+.nav-tab{padding:0 16px;font-size:13px;font-weight:500;color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;display:flex;align-items:center;gap:6px;background:none;border-top:none;border-left:none;border-right:none;font-family:inherit;min-height:50px;transition:all .15s;-webkit-tap-highlight-color:transparent;}
+.nav-tab:hover{color:var(--text);}
+.nav-tab.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:600;}
+.topnav-right{display:flex;align-items:center;gap:7px;padding:0 12px;border-left:1px solid var(--border);}
+.btn-portal{padding:6px 12px;background:var(--bg3);color:var(--text2);border:1px solid var(--border2);border-radius:var(--radius);font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:5px;text-decoration:none;transition:background .15s;white-space:nowrap;}
+.btn-portal:hover{background:var(--bg4);}
+
+/* USER BAR */
+.user-bar{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;padding:8px 16px;font-size:12px;display:flex;align-items:center;gap:8px;}
+.user-avatar{width:24px;height:24px;border-radius:50%;background:rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;}
+
+/* CONTENT */
+.content{flex:1;padding:16px;max-width:640px;margin:0 auto;width:100%;padding-bottom:40px;}
+
+/* FORM CARD */
+.form-card{background:var(--bg2);border-radius:var(--radius-lg);box-shadow:var(--shadow);overflow:hidden;margin-bottom:14px;}
+.form-section{padding:16px 18px;border-bottom:1px solid var(--border);}
+.form-section:last-child{border-bottom:none;}
+.form-section-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin-bottom:12px;display:flex;align-items:center;gap:6px;}
+.ff{display:flex;flex-direction:column;gap:5px;margin-bottom:12px;}
+.ff:last-child{margin-bottom:0;}
+.ff label{font-size:12px;font-weight:600;color:var(--text2);}
+.ff input,.ff select,.ff textarea{padding:12px 13px;background:var(--bg3);border:1.5px solid var(--border2);border-radius:var(--radius);font-size:15px;font-family:inherit;color:var(--text);-webkit-appearance:none;transition:border-color .15s;}
+.ff input:focus,.ff select:focus,.ff textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow);}
+.ff input[readonly]{background:var(--bg4);color:var(--text2);}
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+
+/* RADIO RESULT */
+.result-options{display:flex;flex-direction:column;gap:8px;}
+.result-opt{display:flex;align-items:flex-start;gap:12px;padding:13px 15px;background:var(--bg3);border:2px solid transparent;border-radius:var(--radius);cursor:pointer;transition:all .15s;-webkit-tap-highlight-color:transparent;}
+.result-opt.selected-godkand{background:var(--green-bg);border-color:var(--accent);}
+.result-opt.selected-packningar{background:#e8f4fe;border-color:var(--blue);}
+.result-opt.selected-extern{background:var(--orange-bg);border-color:var(--orange);}
+.result-opt.selected-ej{background:var(--red-bg);border-color:var(--red);}
+.result-opt-icon{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.roi-green{background:var(--green-bg);}
+.roi-blue{background:#e8f4fe;}
+.roi-orange{background:var(--orange-bg);}
+.roi-red{background:var(--red-bg);}
+.result-opt-label{font-size:14px;font-weight:600;color:var(--text);}
+.result-opt-sub{font-size:12px;color:var(--text3);margin-top:2px;}
+.result-radio{width:20px;height:20px;border-radius:50%;border:2px solid var(--border2);flex-shrink:0;display:flex;align-items:center;justify-content:center;margin-top:8px;transition:all .15s;}
+.result-radio.checked{border-color:var(--accent);background:var(--accent);}
+.result-radio.checked-blue{border-color:var(--blue);background:var(--blue);}
+.result-radio.checked-orange{border-color:var(--orange);background:var(--orange);}
+.result-radio.checked-red{border-color:var(--red);background:var(--red);}
+.result-radio::after{content:'';width:8px;height:8px;border-radius:50%;background:#fff;display:none;}
+.result-radio.checked::after,.result-radio.checked-blue::after,.result-radio.checked-orange::after,.result-radio.checked-red::after{display:block;}
+
+/* NEXT DATE PREVIEW */
+.next-date-box{background:var(--green-bg);border:1px solid rgba(59,109,17,.2);border-radius:var(--radius);padding:12px 14px;display:flex;align-items:center;gap:10px;margin-top:8px;}
+.next-date-box.warn{background:var(--amber-bg);border-color:rgba(133,79,11,.2);}
+.next-date-label{font-size:12px;color:var(--green-text);font-weight:600;}
+.next-date-val{font-size:15px;font-weight:700;color:var(--green-text);}
+
+/* SAVE BUTTON */
+.btn-save{width:100%;padding:16px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius);font-size:16px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px;transition:background .15s;-webkit-tap-highlight-color:transparent;touch-action:manipulation;}
+.btn-save:hover{background:var(--accent2);}
+.btn-save:disabled{background:var(--bg4);color:var(--text3);cursor:not-allowed;}
+.btn-save:active{transform:scale(.98);}
+
+/* FORDONSTYP TOGGLE */
+.toggle-group{display:flex;gap:8px;}
+.toggle-opt{flex:1;padding:10px;background:var(--bg3);border:2px solid var(--border2);border-radius:var(--radius);text-align:center;font-size:14px;font-weight:600;cursor:pointer;color:var(--text2);transition:all .15s;-webkit-tap-highlight-color:transparent;}
+.toggle-opt.active{background:var(--blue-bg);border-color:var(--blue);color:var(--blue);}
+
+/* HISTORIK */
+.filter-bar{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;}
+.filter-bar select{padding:9px 12px;background:var(--bg2);border:1.5px solid var(--border2);border-radius:var(--radius);font-size:13px;font-family:inherit;-webkit-appearance:none;flex:1;}
+.hist-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px 16px;margin-bottom:10px;cursor:pointer;transition:border-color .15s;box-shadow:var(--shadow);}
+.hist-card:hover{border-color:var(--accent);}
+.hist-card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:6px;}
+.hist-regnr{font-size:17px;font-weight:700;letter-spacing:.03em;}
+.hist-meta{font-size:12px;color:var(--text2);display:flex;gap:10px;flex-wrap:wrap;margin-bottom:4px;}
+.hist-next{font-size:11px;font-weight:600;padding:2px 8px;border-radius:8px;display:inline-flex;align-items:center;gap:4px;}
+.hn-ok{background:var(--green-bg);color:var(--green-text);}
+.hn-warn{background:var(--amber-bg);color:var(--amber);}
+.hn-exp{background:var(--red-bg);color:var(--red);}
+
+/* RESULT BADGES */
+.rbadge{display:inline-flex;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;align-items:center;gap:4px;}
+.rb-godkand{background:var(--green-bg);color:var(--green-text);}
+.rb-packningar{background:#e8f4fe;color:var(--blue);}
+.rb-extern{background:var(--orange-bg);color:var(--orange);}
+.rb-ej{background:var(--red-bg);color:var(--red);}
+
+/* FORDON HISTORIK MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;align-items:flex-end;justify-content:center;}
+.modal-overlay.show{display:flex;}
+.modal{background:var(--bg2);border-radius:var(--radius-lg) var(--radius-lg) 0 0;width:100%;max-width:640px;max-height:90vh;display:flex;flex-direction:column;box-shadow:0 -8px 40px rgba(0,0,0,.2);}
+.modal-handle{width:40px;height:4px;background:var(--border2);border-radius:2px;margin:10px auto 0;}
+.modal-header{padding:12px 18px 10px;display:flex;justify-content:space-between;align-items:center;flex-shrink:0;border-bottom:1px solid var(--border);}
+.modal-title{font-size:16px;font-weight:700;}
+.modal-close{background:none;border:none;cursor:pointer;color:var(--text3);font-size:22px;padding:4px;}
+.modal-body{padding:16px 18px;overflow-y:auto;flex:1;-webkit-overflow-scrolling:touch;}
+.modal-footer{padding:12px 18px;border-top:1px solid var(--border);display:flex;gap:8px;flex-shrink:0;}
+
+/* PRINT STYLES */
+@media print{
+  .topnav,.user-bar,.filter-bar,.btn-portal,#toast,.modal-overlay,.nav-tabs,.topnav-right{display:none!important;}
+  body{background:#fff;}
+  .content{padding:0;max-width:100%;}
+  .print-intyg{display:block!important;}
+}
+.print-intyg{display:none;}
+
+/* TOAST */
+#toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(40px);background:var(--text);color:#fff;border-radius:var(--radius);padding:11px 20px;font-size:14px;z-index:999;box-shadow:var(--shadow);opacity:0;transition:all .25s;pointer-events:none;display:flex;align-items:center;gap:7px;white-space:nowrap;}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* EMPTY */
+.empty{text-align:center;padding:48px 20px;color:var(--text3);}
+.empty i{font-size:40px;display:block;margin-bottom:10px;}
+
+@media(max-width:480px){
+  .content{padding:12px 12px 40px;}
+  .fg{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <div class="topnav-brand">
+    <img src="https://raw.githubusercontent.com/CCSthlm/besiktning-camping/main/Images/CC-Logga.png" alt="CC">
+    <div>
+      <div class="topnav-brand-text">Gasol</div>
+      <div class="topnav-brand-sub">Täthetskontroll</div>
+    </div>
+  </div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" id="tab-ny"      onclick="showView('ny')"><i class="ti ti-plus"></i> Ny kontroll</button>
+    <button class="nav-tab"        id="tab-hist"    onclick="showView('hist')"><i class="ti ti-list"></i> Historik</button>
+  </div>
+  <div class="topnav-right">
+    <a href="index.html" class="btn-portal"><i class="ti ti-arrow-left"></i></a>
+  </div>
+</nav>
+
+<div class="user-bar" id="user-bar">
+  <div class="user-avatar" id="ub-initials">?</div>
+  <span id="ub-name">Laddar…</span>
+  <span style="opacity:.6;margin-left:auto;font-size:11px" id="ub-role">Gasol-kontrollant</span>
+</div>
+
+<div class="content" id="main-content"></div>
+
+<!-- FORDON HISTORIK MODAL -->
+<div class="modal-overlay" id="modal-fordon" onclick="if(event.target===this)closeModal('modal-fordon')">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <div>
+        <div class="modal-title" id="mf-regnr">–</div>
+        <div style="font-size:12px;color:var(--text3)" id="mf-sub">Fordonshistorik</div>
+      </div>
+      <button class="modal-close" onclick="closeModal('modal-fordon')"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="modal-body" id="mf-body"></div>
+    <div class="modal-footer">
+      <button class="btn-portal" style="flex:1;justify-content:center" onclick="closeModal('modal-fordon')">Stäng</button>
+      <button class="btn-portal" style="flex:1;justify-content:center" onclick="printFordon()"><i class="ti ti-printer"></i> Skriv ut senaste</button>
+    </div>
+  </div>
+</div>
+
+<!-- PRINT INTYG (hidden, shown on print) -->
+<div class="print-intyg" id="print-intyg"></div>
+
+<div id="toast"></div>
+
+<script>
+const GH_REPO = 'CCSthlm/besiktning-camping';
+const PATH    = 'gasol/kontroller.json';
+const CAMPINGAR = ['CC Björkö Örns Camping','CC Östnora Camping','CC Kapellskärs Camping','CC Mista Camping','CC Storsveds Camping','CC Örstigs Camping','Gräddös Pärla Kök & Bar','Östnora Kök & Bar'];
+
+const RESULTAT_INFO = {
+  godkand:    {label:'Godkänd',           sub:'Täthetsprov godkänt',                    icon:'ti-circle-check',  ic:'roi-green',  badge:'rb-godkand',    sel:'selected-godkand'},
+  packningar: {label:'Godkänd – packningar',sub:'Godkänd efter byte av packningar',      icon:'ti-tool',          ic:'roi-blue',   badge:'rb-packningar', sel:'selected-packningar'},
+  extern:     {label:'Godkänd – extern',  sub:'Godkänd via extern besiktning',           icon:'ti-certificate',   ic:'roi-orange', badge:'rb-extern',     sel:'selected-extern'},
+  ej:         {label:'Ej godkänd',        sub:'Fordonet ej godkänt – åtgärd krävs',     icon:'ti-circle-x',      ic:'roi-red',    badge:'rb-ej',         sel:'selected-ej'},
+};
+
+let _user    = null;
+let _data    = { kontroller: [] };
+let _sha     = null;
+let _view    = 'ny';
+let _resultat = null;
+let _fordonstyp = 'husbil';
+let _printRegnr = null;
+
+// ── INIT ───────────────────────────────────────────────────────────────────
+(async function init() {
+  const sess = sessionStorage.getItem('ccs_session') || sessionStorage.getItem('ccs_portal_user');
+  if (!sess) { window.location.replace('index.html'); return; }
+  _user = JSON.parse(sess);
+  if (!_user.id) _user.id = _user.email || _user.name;
+  const initials = _user.name.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase();
+  document.getElementById('ub-initials').textContent = initials;
+  document.getElementById('ub-name').textContent     = _user.name;
+  await load();
+  showView('ny');
+})();
+
+async function load() {
+  const token = localStorage.getItem('gh_token') || '';
+  if (!token) return;
+  try {
+    const res = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/${PATH}`, {headers:{'Authorization':'token '+token}});
+    if (res.status === 404) return;
+    if (!res.ok) return;
+    const gh    = await res.json(); _sha = gh.sha;
+    const bytes = Uint8Array.from(atob(gh.content.replace(/\n/g,'')), c=>c.charCodeAt(0));
+    _data = JSON.parse(new TextDecoder('utf-8').decode(bytes));
+    if (!_data.kontroller) _data.kontroller = [];
+  } catch(e) { console.warn(e); }
+}
+
+async function save(msg) {
+  const token = localStorage.getItem('gh_token') || '';
+  if (!token) { toast('GitHub-token saknas','warn'); return false; }
+  const url = `https://api.github.com/repos/${GH_REPO}/contents/${PATH}`;
+  try {
+    if (!_sha) { const c=await fetch(url,{headers:{'Authorization':'token '+token}}); if(c.ok) _sha=(await c.json()).sha; }
+    _data.uppdaterad = new Date().toISOString();
+    const json = JSON.stringify(_data, null, 2);
+    const enc  = new TextEncoder().encode(json);
+    let b64=''; for(let i=0;i<enc.length;i+=8192) b64+=String.fromCharCode(...enc.slice(i,i+8192));
+    const payload={message:msg,content:btoa(b64),branch:'main'};
+    if(_sha) payload.sha=_sha;
+    const res=await fetch(url,{method:'PUT',headers:{'Authorization':'token '+token,'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    const d=await res.json(); if(!res.ok) throw new Error(d.message);
+    _sha=d.content?.sha||_sha; return true;
+  } catch(e) { toast('Fel: '+e.message,'err'); return false; }
+}
+
+// ── VIEWS ──────────────────────────────────────────────────────────────────
+function showView(v) {
+  _view = v;
+  document.getElementById('tab-ny')  .classList.toggle('active', v==='ny');
+  document.getElementById('tab-hist').classList.toggle('active', v==='hist');
+  v === 'ny' ? renderNy() : renderHist();
+}
+
+// ── NY KONTROLL ────────────────────────────────────────────────────────────
+function renderNy() {
+  _resultat   = null;
+  _fordonstyp = 'husbil';
+  document.getElementById('main-content').innerHTML = `
+    <!-- FORDON -->
+    <div class="form-card">
+      <div class="form-section">
+        <div class="form-section-title"><i class="ti ti-car"></i> Fordon</div>
+        <div class="ff">
+          <label>Camping *</label>
+          <select id="f-camping">
+            <option value="">– Välj camping –</option>
+            ${CAMPINGAR.map(c=>`<option>${c}</option>`).join('')}
+          </select>
+        </div>
+        <div class="fg">
+          <div class="ff">
+            <label>RegNr *</label>
+            <input type="text" id="f-regnr" placeholder="ABC123" style="text-transform:uppercase" oninput="this.value=this.value.toUpperCase()">
+          </div>
+          <div class="ff">
+            <label>Plats (säsong)</label>
+            <input type="text" id="f-plats" placeholder="A12">
+          </div>
+        </div>
+        <div class="ff">
+          <label>Fordonstyp *</label>
+          <div class="toggle-group">
+            <div class="toggle-opt active" id="ft-husbil"   onclick="setFordonstyp('husbil')"><i class="ti ti-car"></i> Husbil</div>
+            <div class="toggle-opt"        id="ft-husvagn"  onclick="setFordonstyp('husvagn')"><i class="ti ti-train-profile"></i> Husvagn</div>
+          </div>
+        </div>
+        <div class="ff">
+          <label>Datum kontroll *</label>
+          <input type="date" id="f-datum" value="${today()}">
+        </div>
+      </div>
+
+      <!-- RESULTAT -->
+      <div class="form-section">
+        <div class="form-section-title"><i class="ti ti-gas-station"></i> Kontrolresultat</div>
+        <div class="result-options">
+          ${Object.entries(RESULTAT_INFO).map(([key,r])=>`
+            <div class="result-opt" id="ro-${key}" onclick="setResultat('${key}')">
+              <div class="result-opt-icon ${r.ic}"><i class="ti ${r.icon}" style="font-size:18px;color:${key==='godkand'?'var(--accent)':key==='packningar'?'var(--blue)':key==='extern'?'var(--orange)':'var(--red)'}"></i></div>
+              <div style="flex:1">
+                <div class="result-opt-label">${r.label}</div>
+                <div class="result-opt-sub">${r.sub}</div>
+              </div>
+              <div class="result-radio" id="rr-${key}"></div>
+            </div>`).join('')}
+        </div>
+        <div id="extern-wrap" style="display:none;margin-top:10px">
+          <div class="ff">
+            <label>Datum extern kontroll *</label>
+            <input type="date" id="f-extern-datum">
+          </div>
+        </div>
+      </div>
+
+      <!-- BESIKTNING & NÄSTA -->
+      <div class="form-section">
+        <div class="form-section-title"><i class="ti ti-calendar-check"></i> Besiktning & uppföljning</div>
+        <div class="fg">
+          <div class="ff">
+            <label>Senaste bilbesiktning</label>
+            <input type="date" id="f-besikt-datum" onchange="updateBesiktNext()">
+          </div>
+          <div class="ff">
+            <label>Nästa bilbesiktning</label>
+            <input type="date" id="f-besikt-nasta" readonly>
+          </div>
+        </div>
+        <div class="ff">
+          <label>Anteckning</label>
+          <textarea id="f-anteck" rows="2" placeholder="Valfri anteckning…" style="font-size:14px"></textarea>
+        </div>
+        <div id="next-date-preview" style="display:none" class="next-date-box">
+          <i class="ti ti-calendar-event" style="font-size:20px;color:var(--green-text)"></i>
+          <div>
+            <div class="next-date-label">Nästa täthetskontroll</div>
+            <div class="next-date-val" id="next-date-val">–</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn-save" id="btn-save" onclick="sparaKontroll()" disabled>
+      <i class="ti ti-device-floppy"></i> Spara kontroll
+    </button>`;
+}
+
+function setFordonstyp(typ) {
+  _fordonstyp = typ;
+  document.getElementById('ft-husbil') .classList.toggle('active', typ==='husbil');
+  document.getElementById('ft-husvagn').classList.toggle('active', typ==='husvagn');
+}
+
+function setResultat(key) {
+  _resultat = key;
+  Object.keys(RESULTAT_INFO).forEach(k => {
+    const opt = document.getElementById('ro-'+k);
+    const rr  = document.getElementById('rr-'+k);
+    opt.className = 'result-opt' + (k===key ? ' '+RESULTAT_INFO[k].sel : '');
+    rr.className  = 'result-radio' + (k===key ? (k==='godkand'?' checked':k==='packningar'?' checked-blue':k==='extern'?' checked-orange':' checked-red') : '');
+  });
+  document.getElementById('extern-wrap').style.display = key==='extern' ? '' : 'none';
+  updateNextDate();
+  checkSaveEnabled();
+}
+
+function updateNextDate() {
+  if (!_resultat || _resultat === 'ej') {
+    document.getElementById('next-date-preview').style.display = 'none';
+    return;
+  }
+  const datum = document.getElementById('f-datum').value;
+  if (!datum) return;
+  const next = addYears(datum, 1);
+  const preview = document.getElementById('next-date-preview');
+  document.getElementById('next-date-val').textContent = fmtDate(next);
+  preview.style.display = '';
+  const dl = daysLeft(next);
+  preview.className = 'next-date-box' + (dl < 0 ? ' warn' : '');
+}
+
+function updateBesiktNext() {
+  const d = document.getElementById('f-besikt-datum').value;
+  document.getElementById('f-besikt-nasta').value = d ? addYears(d, 1) : '';
+}
+
+function checkSaveEnabled() {
+  const camping = document.getElementById('f-camping')?.value;
+  const regnr   = document.getElementById('f-regnr')?.value.trim();
+  const datum   = document.getElementById('f-datum')?.value;
+  const ok = camping && regnr && datum && _resultat;
+  document.getElementById('btn-save').disabled = !ok;
+}
+
+document.addEventListener('input', e => {
+  if (['f-camping','f-regnr','f-datum'].includes(e.target.id)) {
+    updateNextDate();
+    checkSaveEnabled();
+  }
+});
+
+async function sparaKontroll() {
+  const camping   = document.getElementById('f-camping').value;
+  const regnr     = document.getElementById('f-regnr').value.trim().toUpperCase();
+  const plats     = document.getElementById('f-plats').value.trim();
+  const datum     = document.getElementById('f-datum').value;
+  const externD   = document.getElementById('f-extern-datum').value;
+  const besiktD   = document.getElementById('f-besikt-datum').value;
+  const anteck    = document.getElementById('f-anteck').value.trim();
+
+  if (!camping || !regnr || !datum || !_resultat) { toast('Fyll i alla obligatoriska fält','warn'); return; }
+  if (_resultat === 'extern' && !externD) { toast('Ange datum för extern kontroll','warn'); return; }
+
+  const nastaKontroll = (_resultat !== 'ej') ? addYears(datum, 1) : null;
+  const k = {
+    id:            'GK-'+Date.now(),
+    camping, regnr, fordonstyp:_fordonstyp, plats:plats||null, datum,
+    resultat:      _resultat,
+    externDatum:   externD||null,
+    besiktDatum:   besiktD||null,
+    besiktNasta:   besiktD ? addYears(besiktD,1) : null,
+    nastaKontroll,
+    anteckning:    anteck||null,
+    utfordAv:      _user.name,
+    utfordAvId:    _user.id,
+    skapad:        new Date().toISOString(),
+  };
+  _data.kontroller.push(k);
+  const ok = await save('Gasol täthetskontroll ' + regnr + ' ' + datum);
+  if (ok) {
+    toast('Kontroll sparad ✓','ok');
+    setTimeout(()=>{ renderNy(); }, 400);
+  } else {
+    _data.kontroller.pop();
+  }
+}
+
+// ── HISTORIK ───────────────────────────────────────────────────────────────
+function renderHist() {
+  const kontroller = _data.kontroller.slice().sort((a,b)=>b.datum.localeCompare(a.datum));
+  document.getElementById('main-content').innerHTML = `
+    <div class="filter-bar">
+      <select id="f-hist-camp" onchange="renderHistList()">
+        <option value="">Alla campingar</option>
+        ${CAMPINGAR.map(c=>`<option>${c}</option>`).join('')}
+      </select>
+      <select id="f-hist-res" onchange="renderHistList()">
+        <option value="">Alla resultat</option>
+        <option value="godkand">Godkänd</option>
+        <option value="packningar">Godkänd – packningar</option>
+        <option value="extern">Godkänd – extern</option>
+        <option value="ej">Ej godkänd</option>
+      </select>
+    </div>
+    <div id="hist-list"></div>`;
+  renderHistList();
+}
+
+function renderHistList() {
+  const fc = document.getElementById('f-hist-camp')?.value || '';
+  const fr = document.getElementById('f-hist-res')?.value  || '';
+  let list = _data.kontroller.slice().sort((a,b)=>b.datum.localeCompare(a.datum));
+  if (fc) list = list.filter(k=>k.camping===fc);
+  if (fr) list = list.filter(k=>k.resultat===fr);
+  const wrap = document.getElementById('hist-list');
+  if (!wrap) return;
+  if (!list.length) { wrap.innerHTML='<div class="empty"><i class="ti ti-list"></i>Inga kontroller matchar filtret</div>'; return; }
+  wrap.innerHTML = list.map(k => {
+    const ri   = RESULTAT_INFO[k.resultat] || RESULTAT_INFO.godkand;
+    const dl   = k.nastaKontroll ? daysLeft(k.nastaKontroll) : null;
+    const ncls = dl===null?'':dl<0?'hn-exp':dl<=90?'hn-warn':'hn-ok';
+    const nlab = dl===null?'':dl<0?'Förfallen':'Nästa '+fmtDate(k.nastaKontroll);
+    return `<div class="hist-card" onclick="openFordonModal('${k.regnr}')">
+      <div class="hist-card-top">
+        <div>
+          <div class="hist-regnr">${k.regnr}</div>
+          <div style="font-size:12px;color:var(--text2);margin-top:2px">${k.fordonstyp==='husvagn'?'Husvagn':'Husbil'}${k.plats?' · Plats '+k.plats:''}</div>
+        </div>
+        <span class="rbadge ${ri.badge}"><i class="ti ${ri.icon}" style="font-size:11px"></i>${ri.label}</span>
+      </div>
+      <div class="hist-meta">
+        <span><i class="ti ti-calendar" style="font-size:11px"></i>${fmtDate(k.datum)}</span>
+        <span><i class="ti ti-tent" style="font-size:11px"></i>${k.camping}</span>
+        <span><i class="ti ti-user" style="font-size:11px"></i>${k.utfordAv||'–'}</span>
+      </div>
+      ${nlab?`<span class="hist-next ${ncls}"><i class="ti ti-calendar-due" style="font-size:10px"></i>${nlab}</span>`:''}
+    </div>`;
+  }).join('');
+}
+
+// ── FORDON HISTORIK MODAL ───────────────────────────────────────────────────
+function openFordonModal(regnr) {
+  _printRegnr = regnr;
+  const hist = _data.kontroller.filter(k=>k.regnr===regnr).sort((a,b)=>b.datum.localeCompare(a.datum));
+  document.getElementById('mf-regnr').textContent = regnr;
+  document.getElementById('mf-sub').textContent   = hist.length + ' kontroll' + (hist.length!==1?'er':'') + ' registrerade';
+  document.getElementById('mf-body').innerHTML = hist.map((k,i) => {
+    const ri = RESULTAT_INFO[k.resultat] || RESULTAT_INFO.godkand;
+    const dl = k.nastaKontroll ? daysLeft(k.nastaKontroll) : null;
+    return `<div style="padding:14px 0;border-bottom:${i<hist.length-1?'1px solid var(--border)':'none'}">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:8px">
+        <div>
+          <div style="font-size:14px;font-weight:600">${fmtDate(k.datum)}</div>
+          <div style="font-size:12px;color:var(--text2);margin-top:2px">${k.camping}${k.plats?' · Plats '+k.plats:''}</div>
+        </div>
+        <span class="rbadge ${ri.badge}"><i class="ti ${ri.icon}" style="font-size:11px"></i>${ri.label}</span>
+      </div>
+      <div style="display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--text3);margin-bottom:6px">
+        <span><i class="ti ti-car" style="font-size:11px"></i> ${k.fordonstyp==='husvagn'?'Husvagn':'Husbil'}</span>
+        <span><i class="ti ti-user" style="font-size:11px"></i> ${k.utfordAv||'–'}</span>
+        ${k.externDatum?`<span><i class="ti ti-certificate" style="font-size:11px"></i> Extern ${fmtDate(k.externDatum)}</span>`:''}
+        ${k.besiktDatum?`<span><i class="ti ti-calendar-check" style="font-size:11px"></i> Besikt. ${fmtDate(k.besiktDatum)}</span>`:''}
+      </div>
+      ${k.nastaKontroll?`<div style="font-size:12px;font-weight:600;color:${dl<0?'var(--red)':dl<=90?'var(--amber)':'var(--green-text)'}"><i class="ti ti-calendar-due" style="font-size:11px"></i> Nästa kontroll: ${fmtDate(k.nastaKontroll)}${dl<0?' (FÖRFALLEN)':dl<=90?' ('+dl+' dagar)':''}</div>`:''}
+      ${k.anteckning?`<div style="font-size:12px;color:var(--text2);margin-top:6px;padding:8px 10px;background:var(--bg3);border-radius:var(--radius)">${k.anteckning}</div>`:''}
+    </div>`;
+  }).join('');
+  // Prep print intyg for most recent
+  buildPrintIntyg(hist[0]);
+  openModal('modal-fordon');
+}
+
+function buildPrintIntyg(k) {
+  if (!k) return;
+  const ri = RESULTAT_INFO[k.resultat] || RESULTAT_INFO.godkand;
+  document.getElementById('print-intyg').innerHTML = `
+    <div style="max-width:500px;margin:40px auto;font-family:Arial,sans-serif;padding:20px;border:2px solid #A32D2D;border-radius:12px">
+      <div style="text-align:center;margin-bottom:20px">
+        <div style="font-size:22px;font-weight:700;color:#A32D2D">Caravan Club of Sweden</div>
+        <div style="font-size:14px;color:#5a5a57">Stockholmssektionen</div>
+        <div style="font-size:18px;font-weight:700;margin-top:10px;border-top:2px solid #A32D2D;padding-top:10px">GASOL TÄTHETSKONTROLL – INTYG</div>
+      </div>
+      <table style="width:100%;border-collapse:collapse;font-size:13px">
+        ${[
+          ['Fordon (RegNr)', k.regnr],
+          ['Fordonstyp', k.fordonstyp==='husvagn'?'Husvagn':'Husbil'],
+          ['Camping', k.camping],
+          ['Plats', k.plats||'–'],
+          ['Datum kontroll', fmtDate(k.datum)],
+          ['Resultat', ri.label],
+          ['Extern kontrolldatum', k.externDatum?fmtDate(k.externDatum):'–'],
+          ['Nästa täthetskontroll', k.nastaKontroll?fmtDate(k.nastaKontroll):'–'],
+          ['Senaste bilbesiktning', k.besiktDatum?fmtDate(k.besiktDatum):'–'],
+          ['Nästa bilbesiktning', k.besiktNasta?fmtDate(k.besiktNasta):'–'],
+          ['Utförd av', k.utfordAv||'–'],
+        ].map(([l,v])=>`<tr>
+          <td style="padding:7px 10px;border:1px solid #ddd;font-weight:600;background:#f5f5f3;width:45%">${l}</td>
+          <td style="padding:7px 10px;border:1px solid #ddd">${v}</td>
+        </tr>`).join('')}
+      </table>
+      ${k.anteckning?`<div style="margin-top:14px;padding:10px;background:#f5f5f3;border-radius:6px;font-size:12px"><strong>Anteckning:</strong> ${k.anteckning}</div>`:''}
+      <div style="margin-top:20px;border-top:1px solid #ddd;padding-top:14px;display:flex;justify-content:space-between">
+        <div>
+          <div style="font-size:11px;color:#909088">Signatur / Kontrollant</div>
+          <div style="margin-top:20px;border-bottom:1px solid #333;width:180px"></div>
+          <div style="font-size:11px;color:#909088;margin-top:4px">${k.utfordAv||''}</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:11px;color:#909088">Datum</div>
+          <div style="font-size:14px;font-weight:600;margin-top:4px">${fmtDate(k.datum)}</div>
+          <div style="font-size:10px;color:#909088;margin-top:10px">cc-camping.se</div>
+        </div>
+      </div>
+    </div>`;
+}
+
+function printFordon() { window.print(); }
+
+// ── HELPERS ─────────────────────────────────────────────────────────────────
+function today()       { return new Date().toISOString().slice(0,10); }
+function addYears(d,y) { const dt=new Date(d); dt.setFullYear(dt.getFullYear()+y); return dt.toISOString().slice(0,10); }
+function fmtDate(d)    { try{return new Date(d).toLocaleDateString('sv-SE');}catch(e){return d||'–';} }
+function daysLeft(d)   { return Math.round((new Date(d)-new Date())/86400000); }
+function openModal(id) { document.getElementById(id).classList.add('show'); }
+function closeModal(id){ document.getElementById(id).classList.remove('show'); }
+document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.modal-overlay.show').forEach(m=>m.classList.remove('show'));});
+function toast(msg,type='ok'){
+  const t=document.getElementById('toast');
+  t.style.background=type==='err'?'var(--red)':type==='warn'?'var(--amber)':'#27500A';
+  t.innerHTML=(type==='ok'?'<i class="ti ti-check"></i>':type==='warn'?'<i class="ti ti-alert-triangle"></i>':'<i class="ti ti-x"></i>')+' '+msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2800);
+}
+</script>
+</body>
+</html>
