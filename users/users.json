@@ -70,6 +70,27 @@
       "godkannarcamping": "CC Björkö Örns Camping",
       "created": "2026-06-26",
       "sbaCamping": "CC Björkö Örns Camping"
+    },
+    {
+      "id": "umr39tsqhqx74",
+      "name": "Morten Hagebö",
+      "email": "morten.hagebo@cc-camping.se",
+      "pin": "9898",
+      "pnr": "",
+      "adminRoles": [
+        "avvikelse-admin",
+        "avvikelse-brand",
+        "sba-ansvarig"
+      ],
+      "role": "Användare",
+      "active": true,
+      "apps": [
+        "besiktning"
+      ],
+      "plCampingId": "",
+      "godkannarcamping": "",
+      "sbaCamping": "",
+      "created": "2026-07-02"
     }
   ],
   "campings": [
