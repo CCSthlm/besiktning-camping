@@ -60,6 +60,7 @@
       "pin": "1212",
       "pnr": "",
       "adminRoles": [
+        "gasol-kontrollant",
         "sba-lokal",
         "reserakning-godkannare"
       ],
