@@ -750,8 +750,8 @@ function openUtrustModal(id){
   document.getElementById('u-modell').value=u?.modell||'';
   document.getElementById('u-serienr').value=u?.serienr||'';
   document.getElementById('u-senast').value=u?.senastKontroll||'';
-  document.getElementById('u-nasta').value=u?.nastaKontroll||'';
-  document.getElementById('u-ansvarig').value=u?.ansvarig||'';
+  document.getElementById('u-nasta').value=u?.nastaKontroll||calcNastaKontroll(u?.typ||'Brandsläckare', u?.senastKontroll||'');
+  document.getElementById('u-ansvarig').value=u?.ansvarig||'Campingansvarig';
   document.getElementById('u-status').value=u?.status||'OK';
   document.getElementById('u-link').value=u?.link||'';
   document.getElementById('u-not').value=u?.anteckningar||'';
@@ -1006,7 +1006,29 @@ async function exportRapport(){
   window.print();
 }
 
-// ── UTILS ──────────────────────────────────────────────────────────────────
+function calcNastaKontroll(typ, senast) {
+  if (!senast) return '';
+  const manader = { 'Brandsläckare':12,'Brandfiltar':36,'Brandvarnare':12,'Elcentral':60,'Hjärtstartare':12,'Förstahjälpen':12,'Nödbelysning':12,'Riskområde':null };
+  const m = manader[typ];
+  if (!m) return '';
+  const d = new Date(senast);
+  d.setMonth(d.getMonth() + m);
+  return d.toISOString().slice(0, 10);
+}
+
+// Auto-calculate next control when senast or typ changes
+function onSenastChange() {
+  const senast = document.getElementById('u-senast').value;
+  const typ    = document.getElementById('u-typ').value;
+  if (senast) document.getElementById('u-nasta').value = calcNastaKontroll(typ, senast);
+}
+function onTypChange() {
+  const senast = document.getElementById('u-senast').value;
+  const typ    = document.getElementById('u-typ').value;
+  if (senast) document.getElementById('u-nasta').value = calcNastaKontroll(typ, senast);
+}
+document.getElementById('u-senast').addEventListener('change', onSenastChange);
+document.getElementById('u-typ').addEventListener('change', onTypChange);
 function openModal(id){document.getElementById(id).classList.add('show');}
 function closeModal(id){document.getElementById(id).classList.remove('show');}
 document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.modal-overlay.show').forEach(m=>m.classList.remove('show'));});
