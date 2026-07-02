@@ -1,4 +1,22 @@
 {
-  "kontroller":[],
-  "uppdaterad":"2026-07-01T00:00:00Z"
+  "kontroller": [
+    {
+      "id": "GK-1783004437172",
+      "camping": "CC Björkö Örns Camping",
+      "regnr": "RAL881",
+      "fordonstyp": "husbil",
+      "plats": "39",
+      "datum": "2026-06-30",
+      "resultat": "godkand",
+      "externDatum": null,
+      "besiktDatum": "2026-06-30",
+      "besiktNasta": "2027-06-30",
+      "nastaKontroll": "2027-06-30",
+      "anteckning": null,
+      "utfordAv": "Massimo Johansson",
+      "utfordAvId": "admin1",
+      "skapad": "2026-07-02T15:00:37.172Z"
+    }
+  ],
+  "uppdaterad": "2026-07-02T15:00:37.172Z"
 }
