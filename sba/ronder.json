@@ -1,0 +1,179 @@
+{
+  "ronder": [
+    {
+      "id": "SR-SBA-1782981585792",
+      "camping": "CC Björkö Örns Camping",
+      "datum": "2026-07-02",
+      "genomfordAv": "Massimo Johansson",
+      "punkter": [
+        {
+          "sektion": "Brandvarnare & detektorer",
+          "punkt": "Alla brandvarnare testade och fungerar",
+          "status": "OK",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Brandvarnare & detektorer",
+          "punkt": "Batterier OK / anslutna till elnät",
+          "status": "OK",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Brandvarnare & detektorer",
+          "punkt": "Inga brandvarnare blockerade eller övertäckta",
+          "status": "OK",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Brandvarnare & detektorer",
+          "punkt": "Larmsignal hörbar i hela byggnaden",
+          "status": "OK",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Brandsläckare & filtar",
+          "punkt": "Brandsläckare på angiven plats och monterade",
+          "status": "OK",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Brandsläckare & filtar",
+          "punkt": "Kontrollmärke ej utgånget",
+          "status": "OK",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Brandsläckare & filtar",
+          "punkt": "Brandfiltar på plats och i godkänt skick",
+          "status": "OK",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Brandsläckare & filtar",
+          "punkt": "Personal vet hur utrustningen används",
+          "status": "OK",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Utrymningsvägar & skyltar",
+          "punkt": "Utrymningsvägar fria från hinder",
+          "status": "OK",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Utrymningsvägar & skyltar",
+          "punkt": "Nödutgångsskyltar belysta och synliga",
+          "status": "OK",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Utrymningsvägar & skyltar",
+          "punkt": "Utrymningsplan uppsatt och läsbar",
+          "status": "OK",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Utrymningsvägar & skyltar",
+          "punkt": "Samlingspunkt tydligt markerad",
+          "status": "Ej tillämpligt",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Elcentraler & elanläggning",
+          "punkt": "Elcentral fri från brandfarligt material",
+          "status": "OK",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Elcentraler & elanläggning",
+          "punkt": "Inga synliga skador på kablar eller uttag",
+          "status": "OK",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Elcentraler & elanläggning",
+          "punkt": "Inga lösa anslutningar",
+          "status": "OK",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Elcentraler & elanläggning",
+          "punkt": "Utomhuselanläggning i godkänt skick",
+          "status": "OK",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Gasol",
+          "punkt": "Gasolanläggning besiktigad inom giltig period",
+          "status": "Ej tillämpligt",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Gasol",
+          "punkt": "Slangar och kopplingar utan synliga skador",
+          "status": "Ej tillämpligt",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Gasol",
+          "punkt": "Ventilation i gasolförvaringsutrymme OK",
+          "status": "Ej tillämpligt",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Gasol",
+          "punkt": "Varningsskylt för gasol uppsatt",
+          "status": "Ej tillämpligt",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Gästinformation & kommunikation",
+          "punkt": "Brandregler synliga på campingen",
+          "status": "OK",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Gästinformation & kommunikation",
+          "punkt": "Gästerna informeras om brandrisker vid incheckning",
+          "status": "OK",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Gästinformation & kommunikation",
+          "punkt": "Telefonnummer till nödnummer (112) synligt",
+          "status": "OK",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Personalutrymmen & kök",
+          "punkt": "Köket fritt från brandrisker vid slutet av arbetsdag",
+          "status": "OK",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Personalutrymmen & kök",
+          "punkt": "Fläktar och ventilation rena (ingen fettansamling)",
+          "status": "OK",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Personalutrymmen & kök",
+          "punkt": "Eluttag inte överlastade",
+          "status": "OK",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Personalutrymmen & kök",
+          "punkt": "Brandsläckare i eller vid kök",
+          "status": "OK",
+          "anteckning": ""
+        }
+      ],
+      "signerad": false,
+      "signeradAv": null,
+      "signeradTs": null,
+      "skapad": "2026-07-02T08:39:45.792Z"
+    }
+  ],
+  "uppdaterad": "2026-07-02T08:39:46.047Z"
+}
