@@ -1,6 +1,52 @@
 {
   "ärenden": [
     {
+      "id": "AV-2607-V29H",
+      "ts": "2026-07-02T07:02:02.587Z",
+      "kategori": "Brandtillbud / SBA",
+      "kategoriIndex": 2,
+      "risk": "Medel",
+      "riskNivå": 2,
+      "anläggning": "CC Björkö Örns Camping",
+      "plats": "Campingtomt",
+      "datum": "2026-07-01",
+      "tid": "",
+      "rapportör": "Massimo Johansson",
+      "rapportörEmail": "massimo.johansson@cc-camping.se",
+      "beskrivning": "Gasolgrill som tog eld.",
+      "omedelbar": "Släckte",
+      "ansvarig": "Massimo Johansson",
+      "deadline": "",
+      "kommentar": "Vi har åtgärdat det som behövs.",
+      "status": "stängd",
+      "eskalerad": true,
+      "bilder": [],
+      "dynamicFields": {
+        "d-brandtyp": "Grill-/eldningsincident",
+        "d-orsak": "Gasolslang bristfällig",
+        "d-raddning": false,
+        "d-utrymning": false,
+        "d-brandlarm": false,
+        "d-utrustning": "Brandsläckare",
+        "d-sba": ""
+      },
+      "historik": [
+        {
+          "ts": "2026-07-02T07:02:02.587Z",
+          "av": "Massimo Johansson",
+          "händelse": "Skapades",
+          "status": "ny"
+        },
+        {
+          "ts": "2026-07-02T08:41:10.705Z",
+          "av": "Massimo Johansson",
+          "händelse": "Status: Eskalerad → Stängd",
+          "kommentar": "Vi har åtgärdat det som behövs.",
+          "status": "stängd"
+        }
+      ]
+    },
+    {
       "id": "AV-2606-G77J",
       "ts": "2026-06-20T07:40:00.997Z",
       "kategori": "Sjukdom / gästincident",
@@ -155,45 +201,6 @@
           "händelse": "Status: Pågående → Stängd",
           "kommentar": "",
           "status": "stängd"
-        }
-      ]
-    },
-    {
-      "id": "AV-2607-V29H",
-      "ts": "2026-07-02T07:02:02.587Z",
-      "kategori": "Brandtillbud / SBA",
-      "kategoriIndex": 2,
-      "risk": "Medel",
-      "riskNivå": 2,
-      "anläggning": "CC Björkö Örns Camping",
-      "plats": "Campingtomt",
-      "datum": "2026-07-01",
-      "tid": "",
-      "rapportör": "Massimo Johansson",
-      "rapportörEmail": "massimo.johansson@cc-camping.se",
-      "beskrivning": "Gasolgrill som tog eld.",
-      "omedelbar": "Släckte",
-      "ansvarig": "Massimo Johansson",
-      "deadline": "",
-      "kommentar": "",
-      "status": "eskalerad",
-      "eskalerad": true,
-      "bilder": [],
-      "dynamicFields": {
-        "d-brandtyp": "Grill-/eldningsincident",
-        "d-orsak": "Gasolslang bristfällig",
-        "d-raddning": false,
-        "d-utrymning": false,
-        "d-brandlarm": false,
-        "d-utrustning": "Brandsläckare",
-        "d-sba": ""
-      },
-      "historik": [
-        {
-          "ts": "2026-07-02T07:02:02.587Z",
-          "av": "Massimo Johansson",
-          "händelse": "Skapades",
-          "status": "ny"
         }
       ]
     }
