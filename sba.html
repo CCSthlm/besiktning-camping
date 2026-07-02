@@ -387,6 +387,7 @@ let _rondState = {};
 
   await loadAll();
   showView('dash');
+  loadGasolWidget();
 })();
 
 // ── DATA ───────────────────────────────────────────────────────────────────
@@ -532,6 +533,13 @@ function renderDash() {
       </div>
 
       <div>
+        <div class="card">
+          <div class="card-header"><span class="card-title"><i class="ti ti-gas-station" style="color:var(--amber)"></i> Gasol – förfallande kontroller</span><a href="gasol.html" class="btn-portal" style="font-size:11px;padding:5px 9px">Öppna</a></div>
+          <div id="gasol-widget-content">
+            <div style="padding:14px 18px;font-size:12px;color:var(--text3)">Laddar…</div>
+          </div>
+        </div>
+
         <div class="card">
           <div class="card-header"><span class="card-title"><i class="ti ti-checklist"></i> Senaste brandskyddsrond</span><button class="btn-portal" onclick="showView('rond')" style="font-size:11px;padding:5px 9px">Alla</button></div>
           <div class="card-body">
@@ -1030,6 +1038,33 @@ function onTypChange() {
 }
 document.getElementById('u-senast').addEventListener('change', onSenastChange);
 document.getElementById('u-typ').addEventListener('change', onTypChange);
+// ── GASOL WIDGET ───────────────────────────────────────────────────────────
+async function loadGasolWidget() {
+  const token = localStorage.getItem('gh_token') || '';
+  if (!token) return;
+  const wrap = document.getElementById('gasol-widget-content');
+  if (!wrap) return;
+  try {
+    const res = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/gasol/kontroller.json`, {headers:{'Authorization':'token '+token}});
+    if (!res.ok) { wrap.innerHTML='<div style="padding:12px 18px;font-size:12px;color:var(--text3)">Inga kontroller registrerade.</div>'; return; }
+    const gh    = await res.json();
+    const bytes = Uint8Array.from(atob(gh.content.replace(/\n/g,'')), c=>c.charCodeAt(0));
+    const data  = JSON.parse(new TextDecoder('utf-8').decode(bytes));
+    const soon  = (data.kontroller||[]).filter(k=>k.nastaKontroll).filter(k=>{
+      const dl=Math.round((new Date(k.nastaKontroll)-new Date())/86400000); return dl<=90;
+    }).sort((a,b)=>a.nastaKontroll.localeCompare(b.nastaKontroll));
+    if (!soon.length) { wrap.innerHTML='<div style="padding:12px 18px;font-size:12px;color:var(--green-text)"><i class="ti ti-check"></i> Inga kontroller förfaller inom 90 dagar.</div>'; return; }
+    wrap.innerHTML='<div style="padding:6px 0">'+soon.slice(0,5).map(k=>{
+      const dl=Math.round((new Date(k.nastaKontroll)-new Date())/86400000);
+      const col=dl<0?'var(--red)':dl<=30?'var(--amber)':'var(--text2)';
+      return`<div style="padding:9px 18px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center">
+        <div><div style="font-size:13px;font-weight:600">${k.regnr}</div><div style="font-size:11px;color:var(--text3)">${k.camping}</div></div>
+        <div style="text-align:right"><div style="font-size:12px;font-weight:600;color:${col}">${dl<0?'Förfallen':dl+' dagar'}</div><div style="font-size:11px;color:var(--text3)">${new Date(k.nastaKontroll).toLocaleDateString('sv-SE')}</div></div>
+      </div>`;
+    }).join('')+'</div>';
+  } catch(e) { console.warn('gasol widget:', e.message); }
+}
+
 function openModal(id){document.getElementById(id).classList.add('show');}
 function closeModal(id){document.getElementById(id).classList.remove('show');}
 document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.modal-overlay.show').forEach(m=>m.classList.remove('show'));});
