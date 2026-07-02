@@ -1,0 +1,6 @@
+{"utrustning":[
+  {"id":"U-001","typ":"Brandsläckare","camping":"CC Björkö Örns Camping","plats":"Servicebyggnad entré","marke":"Dafo","modell":"6kg ABC","serienr":"BS-2024-001","senastKontroll":"2024-04-15","nastaKontroll":"2025-04-15","ansvarig":"Campingansvarig","status":"OK","anteckningar":""},
+  {"id":"U-002","typ":"Hjärtstartare","camping":"CC Björkö Örns Camping","plats":"Reception","marke":"Lifepak","modell":"CR2","serienr":"LP-2023-001","senastKontroll":"2024-01-10","nastaKontroll":"2025-01-10","ansvarig":"Campingansvarig","status":"OK","anteckningar":"Batteri bytt 2024-01"},
+  {"id":"U-003","typ":"Förstahjälpen","camping":"CC Björkö Örns Camping","plats":"Köksutrymme","marke":"","modell":"","serienr":"","senastKontroll":"2024-03-01","nastaKontroll":"2025-03-01","ansvarig":"Restaurangansvarig","status":"OK","anteckningar":""},
+  {"id":"U-004","typ":"Brandfiltar","camping":"CC Östnora Camping","plats":"Kök","marke":"","modell":"","serienr":"","senastKontroll":"2022-05-01","nastaKontroll":"2025-05-01","ansvarig":"Campingansvarig","status":"OK","anteckningar":""}
+],"uppdaterad":"2026-07-01T00:00:00Z"}
