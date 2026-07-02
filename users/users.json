@@ -60,6 +60,7 @@
       "pin": "1212",
       "pnr": "",
       "adminRoles": [
+        "sba-lokal",
         "reserakning-godkannare"
       ],
       "role": "Användare",
@@ -67,7 +68,8 @@
       "apps": [],
       "plCampingId": "",
       "godkannarcamping": "CC Björkö Örns Camping",
-      "created": "2026-06-26"
+      "created": "2026-06-26",
+      "sbaCamping": "CC Björkö Örns Camping"
     }
   ],
   "campings": [
