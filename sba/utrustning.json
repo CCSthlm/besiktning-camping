@@ -9,12 +9,12 @@
       "modell": "9kg",
       "serienr": "1234567",
       "senastKontroll": "2025-04-03",
-      "nastaKontroll": null,
+      "nastaKontroll": "2026-04-03",
       "ansvarig": "CA",
       "status": "Kontroll behövs",
       "link": null,
       "anteckningar": ""
     }
   ],
-  "uppdaterad": "2026-07-02T08:30:36.569Z"
+  "uppdaterad": "2026-07-02T08:36:55.213Z"
 }
