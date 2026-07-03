@@ -208,9 +208,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
     </div>
     <div class="modal-body">
       <input type="hidden" id="e-id">
-      <div class="ff"><label>Camping</label><select id="e-camping">
-        ${CAMPINGAR.map(function(c){return '<option>'+c+'</option>';}).join('')}
-      </select></div>
+      <div class="ff"><label>Camping</label><select id="e-camping"></select></div>
       <div class="fg">
         <div class="ff"><label>RegNr</label><input type="text" id="e-regnr" style="text-transform:uppercase" oninput="this.value=this.value.toUpperCase()"></div>
         <div class="ff"><label>Plats</label><input type="text" id="e-plats"></div>
@@ -682,8 +680,12 @@ function openRedigera(id) {
   const k = _data.kontroller.find(x=>x.id===id);
   if (!k) return;
   _eFordonstyp = k.fordonstyp || 'husbil';
+
+  // Populate camping dropdown dynamically
+  const campSel = document.getElementById('e-camping');
+  campSel.innerHTML = CAMPINGAR.map(c=>`<option${c===k.camping?' selected':''}>${c}</option>`).join('');
+
   document.getElementById('e-id').value           = k.id;
-  document.getElementById('e-camping').value       = k.camping||'';
   document.getElementById('e-regnr').value         = k.regnr||'';
   document.getElementById('e-plats').value         = k.plats||'';
   document.getElementById('e-datum').value         = k.datum||'';
@@ -695,9 +697,9 @@ function openRedigera(id) {
   document.getElementById('eft-husbil') .classList.toggle('active', _eFordonstyp==='husbil');
   document.getElementById('eft-husvagn').classList.toggle('active', _eFordonstyp==='husvagn');
   document.getElementById('e-extern-wrap').style.display = k.resultat==='extern' ? '' : 'none';
-  document.getElementById('e-resultat').addEventListener('change', function() {
+  document.getElementById('e-resultat').onchange = function() {
     document.getElementById('e-extern-wrap').style.display = this.value==='extern' ? '' : 'none';
-  });
+  };
   openModal('modal-edit');
 }
 
