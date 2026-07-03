@@ -66,7 +66,11 @@
       "anteckning": null,
       "utfordAv": "Massimo Johansson",
       "utfordAvId": "admin1",
-      "skapad": "2026-07-03T08:24:55.543Z"
+      "skapad": "2026-07-03T08:24:55.543Z",
+      "agarNamn": "Massimo Johansson",
+      "agarCCNr": "92738",
+      "agarTel": "0766-319996",
+      "agarEpost": "massimo.johansson@cgm.com"
     },
     {
       "id": "GK-1783067774065",
@@ -86,5 +90,5 @@
       "skapad": "2026-07-03T08:36:14.065Z"
     }
   ],
-  "uppdaterad": "2026-07-03T08:47:24.742Z"
+  "uppdaterad": "2026-07-03T09:01:22.375Z"
 }
