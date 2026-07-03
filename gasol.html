@@ -239,6 +239,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
       <div class="ff"><label>Anteckning</label><textarea id="e-anteck" rows="2" style="font-size:14px"></textarea></div>
     </div>
     <div class="modal-footer">
+      <button class="btn-portal" style="flex:1;justify-content:center;background:var(--red-bg);color:var(--red);border-color:rgba(163,45,45,.2)" onclick="raderaKontroll()"><i class="ti ti-trash"></i> Ta bort</button>
       <button class="btn-portal" style="flex:1;justify-content:center" onclick="closeModal('modal-edit')">Avbryt</button>
       <button class="btn-save" style="flex:1" onclick="sparaRedigering()"><i class="ti ti-check"></i> Spara</button>
     </div>
@@ -776,6 +777,22 @@ function setEFordonstyp(typ) {
 function updateEBesiktNext() {
   const d = document.getElementById('e-besikt-datum').value;
   document.getElementById('e-besikt-nasta').value = d ? addYears(d,1) : '';
+}
+
+async function raderaKontroll() {
+  const id = document.getElementById('e-id').value;
+  const k  = _data.kontroller.find(x=>x.id===id);
+  if (!k) return;
+  if (!confirm('Ta bort kontrollen för ' + k.regnr + ' (' + fmtDate(k.datum) + ')?\n\nÅtgärden kan inte ångras.')) return;
+  _data.kontroller = _data.kontroller.filter(x=>x.id!==id);
+  const ok = await save('Raderade kontroll ' + k.regnr + ' ' + k.datum);
+  if (ok) {
+    toast('Kontrollen borttagen','ok');
+    closeModal('modal-edit');
+    renderHistList();
+  } else {
+    _data.kontroller.push(k); // restore if save failed
+  }
 }
 
 async function sparaRedigering() {
