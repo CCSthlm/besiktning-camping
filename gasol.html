@@ -146,7 +146,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
 .empty{text-align:center;padding:48px 20px;color:var(--text3);}
 .empty i{font-size:40px;display:block;margin-bottom:10px;}
 
+.desktop-only{display:inline;}
 @media(max-width:480px){
+  .desktop-only{display:none!important;}
   .content{padding:12px 12px 40px;}
   .fg{grid-template-columns:1fr;}
 }
@@ -167,7 +169,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
     <button class="nav-tab"        id="tab-hist"    onclick="showView('hist')"><i class="ti ti-list"></i> Lista kontroller</button>
   </div>
   <div class="topnav-right">
-    <a href="index.html" class="btn-portal"><i class="ti ti-arrow-left"></i></a>
+    <a href="index.html" class="btn-portal"><i class="ti ti-arrow-left"></i><span class="desktop-only"> Portal</span></a>
   </div>
 </nav>
 
@@ -995,8 +997,8 @@ function printFordon() { window.print(); }
 function skrivUtIntyg(id) {
   const k = _data.kontroller.find(x=>x.id===id);
   if (!k) return;
-  if (k.resultat === 'extern') {
-    toast('Intyg kan inte skrivas ut för extern kontroll','warn');
+  if (k.resultat === 'extern' || k.resultat === 'ej') {
+    toast('Intyg kan inte skrivas ut för ' + (k.resultat === 'ej' ? 'ej godkänd' : 'extern') + ' kontroll','warn');
     return;
   }
   // If missing owner info, show modal first
