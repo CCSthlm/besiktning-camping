@@ -44,7 +44,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
 .user-avatar{width:24px;height:24px;border-radius:50%;background:rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;}
 
 /* CONTENT */
-.content{flex:1;padding:16px;max-width:640px;margin:0 auto;width:100%;padding-bottom:40px;}
+.content{flex:1;padding:20px 24px;width:100%;padding-bottom:40px;}
 
 /* FORM CARD */
 .form-card{background:var(--bg2);border-radius:var(--radius-lg);box-shadow:var(--shadow);overflow:hidden;margin-bottom:14px;}
@@ -322,7 +322,7 @@ function showView(v) {
 function renderNy() {
   _resultat   = null;
   _fordonstyp = 'husbil';
-  document.getElementById('main-content').innerHTML = `
+  document.getElementById('main-content').innerHTML = `<div style="max-width:680px;margin:0 auto">
     <!-- FORDON -->
     <div class="form-card">
       <div class="form-section">
@@ -408,7 +408,8 @@ function renderNy() {
 
     <button class="btn-save" id="btn-save" onclick="sparaKontroll()" disabled>
       <i class="ti ti-device-floppy"></i> Spara kontroll
-    </button>`;
+    </button>
+  </div>`;
 }
 
 function setFordonstyp(typ) {
@@ -506,20 +507,20 @@ let _histView = 'kort'; // 'kort' or 'lista'
 
 function renderHist() {
   document.getElementById('main-content').innerHTML = `
-    <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:center">
-      <div class="filter-bar" style="margin:0;flex:1">
-        <select id="f-hist-camp" onchange="renderHistList()">
+    <div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;align-items:center">
+      <div class="filter-bar" style="margin:0;flex:1;min-width:0">
+        <select id="f-hist-camp" onchange="renderHistList()" style="flex:0 0 auto;min-width:180px">
           <option value="">Alla campingar</option>
           ${CAMPINGAR.map(c=>'<option>'+c+'</option>').join('')}
         </select>
-        <select id="f-hist-res" onchange="renderHistList()">
+        <select id="f-hist-res" onchange="renderHistList()" style="flex:0 0 auto;min-width:160px">
           <option value="">Alla resultat</option>
           <option value="godkand">Godkänd</option>
           <option value="packningar">Godkänd – packningar</option>
           <option value="extern">Godkänd – extern</option>
           <option value="ej">Ej godkänd</option>
         </select>
-        <input type="search" id="f-hist-sok" placeholder="🔍 Sök RegNr, plats, camping…" oninput="renderHistList()" style="flex:1;min-width:160px">
+        <input type="search" id="f-hist-sok" placeholder="🔍 Sök RegNr, plats, camping…" oninput="renderHistList()" style="flex:1;min-width:200px">
       </div>
       <div style="display:flex;gap:6px;flex-shrink:0">
         <div style="display:flex;background:var(--bg3);border:1.5px solid var(--border2);border-radius:var(--radius);overflow:hidden">
