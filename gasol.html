@@ -301,15 +301,23 @@ let _printRegnr = null;
 
 // ── INIT ───────────────────────────────────────────────────────────────────
 (async function init() {
-  const sess = sessionStorage.getItem('ccs_session') || sessionStorage.getItem('ccs_portal_user');
-  if (!sess) { window.location.replace('index.html'); return; }
-  _user = JSON.parse(sess);
-  if (!_user.id) _user.id = _user.email || _user.name;
-  const initials = _user.name.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase();
-  document.getElementById('ub-initials').textContent = initials;
-  document.getElementById('ub-name').textContent     = _user.name;
-  await load();
-  showView('ny');
+  try {
+    const sess = sessionStorage.getItem('ccs_session') || sessionStorage.getItem('ccs_portal_user');
+    if (!sess) { window.location.replace('index.html'); return; }
+    _user = JSON.parse(sess);
+    if (!_user.id) _user.id = _user.email || _user.name;
+    const initials = (_user.name||'?').split(' ').map(function(n){return n[0]||'';}).join('').slice(0,2).toUpperCase();
+    document.getElementById('ub-initials').textContent = initials;
+    document.getElementById('ub-name').textContent     = _user.name;
+    await load();
+    showView('ny');
+  } catch(e) {
+    document.getElementById('main-content').innerHTML =
+      '<div style="padding:24px;color:#A32D2D;font-family:Arial,sans-serif">'
+      +'<strong>Fel vid laddning:</strong> '+e.message
+      +'<br><br><a href="index.html">Tillbaka till portalen</a></div>';
+    console.error('Init error:', e);
+  }
 })();
 
 async function load() {
@@ -349,7 +357,14 @@ function showView(v) {
   _view = v;
   document.getElementById('tab-ny')  .classList.toggle('active', v==='ny');
   document.getElementById('tab-hist').classList.toggle('active', v==='hist');
-  v === 'ny' ? renderNy() : renderHist();
+  try {
+    v === 'ny' ? renderNy() : renderHist();
+  } catch(e) {
+    document.getElementById('main-content').innerHTML =
+      '<div style="padding:24px;color:#A32D2D;font-family:Arial,sans-serif">'
+      +'<strong>Fel i vy '+v+':</strong> '+e.message+'</div>';
+    console.error('showView error:', e);
+  }
 }
 
 // ── NY KONTROLL ────────────────────────────────────────────────────────────
