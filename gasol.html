@@ -519,6 +519,7 @@ function renderHist() {
           <option value="extern">Godkänd – extern</option>
           <option value="ej">Ej godkänd</option>
         </select>
+        <input type="search" id="f-hist-sok" placeholder="🔍 Sök RegNr, plats, camping…" oninput="renderHistList()" style="flex:1;min-width:160px">
       </div>
       <div style="display:flex;gap:6px;flex-shrink:0">
         <div style="display:flex;background:var(--bg3);border:1.5px solid var(--border2);border-radius:var(--radius);overflow:hidden">
@@ -552,9 +553,17 @@ function getLatestPerRegnr(list) {
 function renderHistList() {
   const fc   = document.getElementById('f-hist-camp')?.value || '';
   const fr   = document.getElementById('f-hist-res')?.value  || '';
+  const sok  = (document.getElementById('f-hist-sok')?.value || '').toLowerCase().trim();
   let all    = _data.kontroller.slice();
-  if (fc) all = all.filter(k=>k.camping===fc);
-  if (fr) all = all.filter(k=>k.resultat===fr);
+  if (fc)  all = all.filter(k=>k.camping===fc);
+  if (fr)  all = all.filter(k=>k.resultat===fr);
+  if (sok) all = all.filter(k=>
+    (k.regnr||'').toLowerCase().includes(sok) ||
+    (k.plats||'').toLowerCase().includes(sok) ||
+    (k.camping||'').toLowerCase().includes(sok) ||
+    (k.utfordAv||'').toLowerCase().includes(sok) ||
+    (k.anteckning||'').toLowerCase().includes(sok)
+  );
   const list = getLatestPerRegnr(all);
   const wrap = document.getElementById('hist-list');
   if (!wrap) return;
@@ -580,6 +589,7 @@ function renderHistList() {
         + '<span><i class="ti ti-tent" style="font-size:11px"></i>' + k.camping + '</span>'
         + '<span><i class="ti ti-user" style="font-size:11px"></i>' + (k.utfordAv||'–') + '</span>'
         + '</div>'
+        + (k.besiktDatum ? '<div style="font-size:11px;color:var(--text3);margin-top:4px"><i class="ti ti-calendar-check" style="font-size:10px"></i> Besiktning: ' + fmtDate(k.besiktDatum) + (k.besiktNasta ? ' · Nästa: ' + fmtDate(k.besiktNasta) : '') + '</div>' : '')
         + (nlab?'<span class="hist-next '+ncls+'"><i class="ti ti-calendar-due" style="font-size:10px"></i>'+nlab+'</span>':'')
         + '<div style="display:flex;gap:8px;margin-top:10px">'
         + '<button class="btn-portal" style="flex:1;justify-content:center;font-size:12px" onclick="openRedigera(&quot;'+k.id+'&quot;)"><i class="ti ti-edit"></i> Redigera</button>'
@@ -601,6 +611,7 @@ function renderHistList() {
         + '<td style="font-size:12px">' + fmtDate(k.datum) + '</td>'
         + '<td><span class="rbadge ' + ri.badge + '" style="font-size:10px">' + ri.label + '</span></td>'
         + '<td style="font-size:12px;'+(dl!==null&&dl<0?'color:var(--red);font-weight:600':dl!==null&&dl<=90?'color:var(--amber);font-weight:600':'')+'">' + (k.nastaKontroll?fmtDate(k.nastaKontroll):'–') + '</td>'
+        + '<td style="font-size:12px;color:var(--text2)">' + (k.besiktDatum?fmtDate(k.besiktDatum):'–') + '</td>'
         + '<td style="font-size:12px;color:var(--text2)">' + (k.utfordAv||'–') + '</td>'
         + '<td style="white-space:nowrap">'
         + '<span onclick="openRedigera(&quot;'+k.id+'&quot;)" style="cursor:pointer;color:var(--accent);font-size:12px;font-weight:500;margin-right:8px">Redigera</span>'
@@ -608,7 +619,7 @@ function renderHistList() {
         + '</td></tr>';
     }).join('');
     wrap.innerHTML = '<div class="card"><div style="overflow-x:auto"><table>'
-      + '<thead><tr><th>RegNr</th><th>Plats</th><th>Typ</th><th>Camping</th><th>Datum</th><th>Resultat</th><th>Nästa kontroll</th><th>Utförd av</th><th></th></tr></thead>'
+      + '<thead><tr><th>RegNr</th><th>Plats</th><th>Typ</th><th>Camping</th><th>Datum</th><th>Resultat</th><th>Nästa kontroll</th><th>Sen. besiktning</th><th>Utförd av</th><th></th></tr></thead>'
       + '<tbody>' + rows + '</tbody></table></div></div>';
   }
 }
