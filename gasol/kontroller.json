@@ -16,32 +16,7 @@
       "utfordAv": "Massimo Johansson",
       "utfordAvId": "admin1",
       "skapad": "2026-07-02T15:06:15.019Z"
-    },
-    {
-      "id": "GK-1783067095543",
-      "camping": "CC Björkö Örns Camping",
-      "regnr": "ABC321",
-      "fordonstyp": "husbil",
-      "plats": "11",
-      "datum": "2026-07-03",
-      "resultat": "godkand",
-      "externDatum": null,
-      "besiktDatum": null,
-      "besiktNasta": null,
-      "nastaKontroll": "2027-07-03",
-      "anteckning": "Gick bra",
-      "utfordAv": "Massimo Johansson",
-      "utfordAvId": "admin1",
-      "skapad": "2026-07-03T08:24:55.543Z",
-      "agarNamn": "Massimo Johansson",
-      "agarCCNr": "92738",
-      "agarTel": "0766-319996",
-      "agarEpost": "massimo.johansson@cgm.com",
-      "intygsNr": "GAS-2026-5543",
-      "fabrikat": "Niesmann",
-      "modell": "Flair 920",
-      "arsmodell": "2020"
     }
   ],
-  "uppdaterad": "2026-07-03T10:52:56.779Z"
+  "uppdaterad": "2026-07-03T10:53:29.209Z"
 }
