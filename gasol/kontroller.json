@@ -96,7 +96,28 @@
       "agarCCNr": "92738",
       "agarTel": "0766-319996",
       "agarEpost": "massimo.johansson@cgm.com"
+    },
+    {
+      "id": "GK-1783074484555",
+      "intygsNr": "GAS-2026-0006",
+      "camping": "CC Mista Camping",
+      "regnr": "DHJ41A",
+      "fordonstyp": "husbil",
+      "plats": "12",
+      "datum": "2026-07-03",
+      "resultat": "extern",
+      "externDatum": "2026-06-29",
+      "besiktDatum": "2026-06-29",
+      "besiktNasta": "2027-06-29",
+      "nastaKontroll": "2027-07-03",
+      "fabrikat": "Frankia",
+      "modell": "Platin 840 PLUS",
+      "arsmodell": "2021",
+      "anteckning": null,
+      "utfordAv": "Massimo Johansson",
+      "utfordAvId": "admin1",
+      "skapad": "2026-07-03T10:28:04.555Z"
     }
   ],
-  "uppdaterad": "2026-07-03T10:11:24.416Z"
+  "uppdaterad": "2026-07-03T10:28:04.555Z"
 }
