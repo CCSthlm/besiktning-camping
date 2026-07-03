@@ -70,15 +70,15 @@
     },
     {
       "id": "GK-1783067774065",
-      "camping": "CC Östnora Camping",
+      "camping": "",
       "regnr": "AAA333",
       "fordonstyp": "husbil",
       "plats": "66",
       "datum": "2026-07-03",
       "resultat": "godkand",
       "externDatum": null,
-      "besiktDatum": null,
-      "besiktNasta": null,
+      "besiktDatum": "2026-07-02",
+      "besiktNasta": "2027-07-02",
       "nastaKontroll": "2027-07-03",
       "anteckning": null,
       "utfordAv": "Massimo Johansson",
@@ -86,5 +86,5 @@
       "skapad": "2026-07-03T08:36:14.065Z"
     }
   ],
-  "uppdaterad": "2026-07-03T08:36:14.065Z"
+  "uppdaterad": "2026-07-03T08:40:57.416Z"
 }
