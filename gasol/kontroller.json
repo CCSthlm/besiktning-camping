@@ -35,23 +35,6 @@
       "skapad": "2026-07-02T15:06:15.019Z"
     },
     {
-      "id": "GK-1783004856949",
-      "camping": "CC Östnora Camping",
-      "regnr": "RAL881",
-      "fordonstyp": "husbil",
-      "plats": "39",
-      "datum": "2026-07-01",
-      "resultat": "godkand",
-      "externDatum": null,
-      "besiktDatum": null,
-      "besiktNasta": null,
-      "nastaKontroll": "2027-07-01",
-      "anteckning": "Vart ser man denna",
-      "utfordAv": "Massimo Johansson",
-      "utfordAvId": "admin1",
-      "skapad": "2026-07-02T15:07:36.949Z"
-    },
-    {
       "id": "GK-1783067095543",
       "camping": "CC Björkö Örns Camping",
       "regnr": "ABC321",
@@ -98,5 +81,5 @@
       "agarEpost": "massimo.johansson@cgm.com"
     }
   ],
-  "uppdaterad": "2026-07-03T10:47:21.844Z"
+  "uppdaterad": "2026-07-03T10:47:27.595Z"
 }
