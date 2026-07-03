@@ -926,10 +926,6 @@ function buildPrintIntyg(k) {
         <td style="padding:5px 8px;border:1px solid #aaa;border-top:none;background:#f5f5f5;font-weight:600">Kontrollutrustning</td>
         <td style="padding:5px 8px;border:1px solid #aaa;border-top:none;border-left:none"></td>
       </tr>
-      <tr>
-        <td style="padding:5px 8px;border:1px solid #aaa;border-top:none;background:#f5f5f5;font-weight:600">Övrigt</td>
-        <td style="padding:5px 8px;border:1px solid #aaa;border-top:none;border-left:none;font-size:11px">&#9744; Slangar kontrollerade &nbsp; &#9744; Regulator kontrollerad &nbsp; &#9744; Flaskutrymme kontrollerat</td>
-      </tr>
     </table>
 
     <!-- RESULTAT -->
@@ -970,13 +966,6 @@ function buildPrintIntyg(k) {
       <tr>
         <td style="padding:5px 8px;border:1px solid #aaa;border-top:none;background:#f5f5f5;font-weight:600">Nästa kontroll</td>
         <td style="padding:5px 8px;border:1px solid #aaa;border-top:none;border-left:none">${k.nastaKontroll?fmtDate(k.nastaKontroll):'–'}</td>
-      </tr>
-      <tr>
-        <td style="padding:40px 8px 8px;border:1px solid #aaa;border-top:none;background:#f5f5f5;font-weight:600;vertical-align:bottom">Signatur kontrollant</td>
-        <td style="padding:8px;border:1px solid #aaa;border-top:none;border-left:none;vertical-align:bottom">
-          <div style="border-bottom:1px solid #333;width:200px;margin-bottom:4px"></div>
-          <div style="font-size:11px;color:#666">${k.utfordAv||''}</div>
-        </td>
       </tr>
     </table>
 
