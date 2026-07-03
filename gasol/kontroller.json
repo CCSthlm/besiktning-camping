@@ -63,14 +63,18 @@
       "besiktDatum": null,
       "besiktNasta": null,
       "nastaKontroll": "2027-07-03",
-      "anteckning": null,
+      "anteckning": "Gick bra",
       "utfordAv": "Massimo Johansson",
       "utfordAvId": "admin1",
       "skapad": "2026-07-03T08:24:55.543Z",
       "agarNamn": "Massimo Johansson",
       "agarCCNr": "92738",
       "agarTel": "0766-319996",
-      "agarEpost": "massimo.johansson@cgm.com"
+      "agarEpost": "massimo.johansson@cgm.com",
+      "intygsNr": "GAS-2026-5543",
+      "fabrikat": "Niesmann",
+      "modell": "Flair 920",
+      "arsmodell": "2020"
     },
     {
       "id": "GK-1783067774065",
@@ -94,5 +98,5 @@
       "agarEpost": "massimo.johansson@cgm.com"
     }
   ],
-  "uppdaterad": "2026-07-03T09:19:36.113Z"
+  "uppdaterad": "2026-07-03T10:11:24.416Z"
 }
