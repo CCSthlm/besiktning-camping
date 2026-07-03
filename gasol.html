@@ -683,7 +683,7 @@ function openRedigera(id) {
 
   // Populate camping dropdown dynamically
   const campSel = document.getElementById('e-camping');
-  campSel.innerHTML = CAMPINGAR.map(c=>`<option${c===k.camping?' selected':''}>${c}</option>`).join('');
+  campSel.innerHTML = CAMPINGAR.map(function(c){ return '<option'+(c===k.camping?' selected':'')+'>'+c+'</option>'; }).join('');
 
   document.getElementById('e-id').value           = k.id;
   document.getElementById('e-regnr').value         = k.regnr||'';
