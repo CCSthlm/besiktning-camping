@@ -6,6 +6,7 @@
 <title>Gasol Täthetskontroll – CCSthlm</title>
 <link rel="icon" href="https://raw.githubusercontent.com/CCSthlm/besiktning-camping/main/Images/CC-Logga.png" type="image/png">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/tabler-icons.min.css">
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -520,9 +521,11 @@ function renderHist() {
         </select>
       </div>
       <div style="display:flex;gap:6px;flex-shrink:0">
-        <button class="btn-portal" id="view-kort"  onclick="setHistView('kort')"  style="font-size:12px"><i class="ti ti-layout-cards"></i></button>
-        <button class="btn-portal" id="view-lista" onclick="setHistView('lista')" style="font-size:12px"><i class="ti ti-table"></i></button>
-        <button class="btn-portal" onclick="exportExcel()" style="font-size:12px"><i class="ti ti-table-export"></i> Excel</button>
+        <div style="display:flex;background:var(--bg3);border:1.5px solid var(--border2);border-radius:var(--radius);overflow:hidden">
+          <button id="view-kort"  onclick="setHistView('kort')"  style="padding:8px 14px;font-size:12px;font-weight:600;border:none;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:5px;background:transparent;color:var(--text2);transition:all .15s"><i class="ti ti-layout-cards"></i> Kort</button>
+          <button id="view-lista" onclick="setHistView('lista')" style="padding:8px 14px;font-size:12px;font-weight:600;border:none;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:5px;background:transparent;color:var(--text2);transition:all .15s;border-left:1.5px solid var(--border2)"><i class="ti ti-table"></i> Lista</button>
+        </div>
+        <button class="btn-portal" onclick="exportExcel()" style="font-size:12px;padding:8px 12px"><i class="ti ti-table-export"></i> Excel</button>
       </div>
     </div>
     <div id="hist-list"></div>`;
@@ -531,8 +534,10 @@ function renderHist() {
 
 function setHistView(v) {
   _histView = v;
-  document.getElementById('view-kort') ?.classList.toggle('active-view', v==='kort');
-  document.getElementById('view-lista')?.classList.toggle('active-view', v==='lista');
+  const kortBtn  = document.getElementById('view-kort');
+  const listaBtn = document.getElementById('view-lista');
+  if (kortBtn)  { kortBtn.style.background  = v==='kort'  ? 'var(--accent)' : 'transparent'; kortBtn.style.color  = v==='kort'  ? '#fff' : 'var(--text2)'; }
+  if (listaBtn) { listaBtn.style.background = v==='lista' ? 'var(--accent)' : 'transparent'; listaBtn.style.color = v==='lista' ? '#fff' : 'var(--text2)'; }
   renderHistList();
 }
 
@@ -590,8 +595,8 @@ function renderHistList() {
       const cnt = _data.kontroller.filter(x=>x.regnr===k.regnr).length;
       return '<tr>'
         + '<td><strong>' + k.regnr + '</strong></td>'
-        + '<td style="font-size:12px">' + (k.fordonstyp==='husvagn'?'Husvagn':'Husbil') + '</td>'
         + '<td style="font-size:12px">' + (k.plats||'–') + '</td>'
+        + '<td style="font-size:12px">' + (k.fordonstyp==='husvagn'?'Husvagn':'Husbil') + '</td>'
         + '<td style="font-size:12px;color:var(--text2)">' + k.camping.replace('CC ','').replace(' Camping','') + '</td>'
         + '<td style="font-size:12px">' + fmtDate(k.datum) + '</td>'
         + '<td><span class="rbadge ' + ri.badge + '" style="font-size:10px">' + ri.label + '</span></td>'
@@ -603,21 +608,19 @@ function renderHistList() {
         + '</td></tr>';
     }).join('');
     wrap.innerHTML = '<div class="card"><div style="overflow-x:auto"><table>'
-      + '<thead><tr><th>RegNr</th><th>Typ</th><th>Plats</th><th>Camping</th><th>Datum</th><th>Resultat</th><th>Nästa kontroll</th><th>Utförd av</th><th></th></tr></thead>'
+      + '<thead><tr><th>RegNr</th><th>Plats</th><th>Typ</th><th>Camping</th><th>Datum</th><th>Resultat</th><th>Nästa kontroll</th><th>Utförd av</th><th></th></tr></thead>'
       + '<tbody>' + rows + '</tbody></table></div></div>';
   }
 }
 
 function exportExcel() {
   try {
-    const XLSX = window.XLSX;
-    if (!XLSX) { toast('Excel-bibliotek saknas','err'); return; }
+    const wb  = XLSX.utils.book_new();
     const fc = document.getElementById('f-hist-camp')?.value||'';
     const fr = document.getElementById('f-hist-res')?.value||'';
     let list = _data.kontroller.slice().sort((a,b)=>b.datum.localeCompare(a.datum));
     if (fc) list = list.filter(k=>k.camping===fc);
     if (fr) list = list.filter(k=>k.resultat===fr);
-    const wb  = XLSX.utils.book_new();
     const rows = [
       ['GASOL TÄTHETSKONTROLLER – CCSthlm'],
       ['Exporterad:', new Date().toLocaleString('sv-SE')],
