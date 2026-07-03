@@ -231,11 +231,45 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
         <div class="ff"><label>Senaste bilbesiktning</label><input type="date" id="e-besikt-datum" onchange="updateEBesiktNext()"></div>
         <div class="ff"><label>Nästa bilbesiktning</label><input type="date" id="e-besikt-nasta" readonly></div>
       </div>
+      <div class="fg">
+        <div class="ff"><label>Fabrikat</label><input type="text" id="e-fabrikat" placeholder="T.ex. Hobby"></div>
+        <div class="ff"><label>Modell</label><input type="text" id="e-modell" placeholder="T.ex. Prestige 650"></div>
+        <div class="ff"><label>Årsmodell</label><input type="text" id="e-arsmodell" placeholder="T.ex. 2019"></div>
+      </div>
       <div class="ff"><label>Anteckning</label><textarea id="e-anteck" rows="2" style="font-size:14px"></textarea></div>
     </div>
     <div class="modal-footer">
       <button class="btn-portal" style="flex:1;justify-content:center" onclick="closeModal('modal-edit')">Avbryt</button>
       <button class="btn-save" style="flex:1" onclick="sparaRedigering()"><i class="ti ti-check"></i> Spara</button>
+    </div>
+  </div>
+</div>
+
+<!-- ÄGARUPPGIFTER MODAL -->
+<div class="modal-overlay" id="modal-agare" onclick="if(event.target===this)closeModal('modal-agare')">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <div>
+        <div class="modal-title">Ägaruppgifter för intyg</div>
+        <div style="font-size:12px;color:var(--text3);margin-top:2px">Uppgifterna sparas på kontrollen</div>
+      </div>
+      <button class="modal-close" onclick="closeModal('modal-agare')"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="ag-kontroll-id">
+      <div class="fg">
+        <div class="ff"><label>Namn *</label><input type="text" id="ag-namn" placeholder="För- och efternamn"></div>
+        <div class="ff"><label>CC-nummer</label><input type="text" id="ag-ccnr" placeholder="Valfritt"></div>
+      </div>
+      <div class="fg">
+        <div class="ff"><label>Telefon</label><input type="tel" id="ag-tel" placeholder="070-000 00 00"></div>
+        <div class="ff"><label>E-post</label><input type="email" id="ag-epost" placeholder="namn@exempel.se"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-portal" style="flex:1;justify-content:center" onclick="closeModal('modal-agare')">Avbryt</button>
+      <button class="btn-save" style="flex:1" onclick="sparaAgarOchSkriv()"><i class="ti ti-printer"></i> Spara & skriv ut</button>
     </div>
   </div>
 </div>
@@ -350,6 +384,11 @@ function renderNy() {
             <div class="toggle-opt active" id="ft-husbil"   onclick="setFordonstyp('husbil')"><i class="ti ti-car"></i> Husbil</div>
             <div class="toggle-opt"        id="ft-husvagn"  onclick="setFordonstyp('husvagn')"><i class="ti ti-train-profile"></i> Husvagn</div>
           </div>
+        </div>
+        <div class="fg">
+          <div class="ff"><label>Fabrikat</label><input type="text" id="f-fabrikat" placeholder="T.ex. Hobby, Bürstner"></div>
+          <div class="ff"><label>Modell</label><input type="text" id="f-modell" placeholder="T.ex. Prestige 650"></div>
+          <div class="ff"><label>Årsmodell</label><input type="text" id="f-arsmodell" placeholder="T.ex. 2019"></div>
         </div>
         <div class="ff">
           <label>Datum kontroll *</label>
@@ -479,14 +518,19 @@ async function sparaKontroll() {
   if (_resultat === 'extern' && !externD) { toast('Ange datum för extern kontroll','warn'); return; }
 
   const nastaKontroll = (_resultat !== 'ej') ? addYears(datum, 1) : null;
+  const intygsNr = 'GAS-' + new Date().getFullYear() + '-' + String((_data.kontroller.length+1)).padStart(4,'0');
   const k = {
     id:            'GK-'+Date.now(),
+    intygsNr,
     camping, regnr, fordonstyp:_fordonstyp, plats:plats||null, datum,
     resultat:      _resultat,
     externDatum:   externD||null,
     besiktDatum:   besiktD||null,
     besiktNasta:   besiktD ? addYears(besiktD,1) : null,
     nastaKontroll,
+    fabrikat:      document.getElementById('f-fabrikat')?.value.trim()||null,
+    modell:        document.getElementById('f-modell')?.value.trim()||null,
+    arsmodell:     document.getElementById('f-arsmodell')?.value.trim()||null,
     anteckning:    anteck||null,
     utfordAv:      _user.name,
     utfordAvId:    _user.id,
@@ -594,6 +638,7 @@ function renderHistList() {
         + (nlab?'<span class="hist-next '+ncls+'"><i class="ti ti-calendar-due" style="font-size:10px"></i>'+nlab+'</span>':'')
         + '<div style="display:flex;gap:8px;margin-top:10px">'
         + '<button class="btn-portal" style="flex:1;justify-content:center;font-size:12px" onclick="openRedigera(&quot;'+k.id+'&quot;)"><i class="ti ti-edit"></i> Redigera</button>'
+        + '<button class="btn-portal" style="flex:1;justify-content:center;font-size:12px" onclick="skrivUtIntyg(&quot;'+k.id+'&quot;)"><i class="ti ti-printer"></i> Intyg</button>'
         + (cnt>1?'<button class="btn-portal" style="flex:1;justify-content:center;font-size:12px" onclick="openFordonModal(&quot;'+k.regnr+'&quot;)"><i class="ti ti-history"></i> Historik ('+cnt+')</button>':'')
         + '</div>'
         + '</div>';
@@ -605,7 +650,7 @@ function renderHistList() {
       const dl = k.nastaKontroll ? daysLeft(k.nastaKontroll) : null;
       const cnt = _data.kontroller.filter(x=>x.regnr===k.regnr).length;
       return '<tr>'
-        + '<td style="padding:10px 14px"><strong>' + k.regnr + '</strong></td>'
+        + '<td style="padding:10px 14px"><strong>' + k.regnr + '</strong><div style="font-size:10px;color:var(--text3);margin-top:1px">' + (k.intygsNr||'') + '</div></td>'
         + '<td style="padding:10px 14px;font-size:12px">' + (k.plats||'–') + '</td>'
         + '<td style="padding:10px 14px;font-size:12px">' + (k.fordonstyp==='husvagn'?'Husvagn':'Husbil') + '</td>'
         + '<td style="padding:10px 14px;font-size:12px;color:var(--text2)">' + k.camping + '</td>'
@@ -616,6 +661,7 @@ function renderHistList() {
         + '<td style="padding:10px 14px;font-size:12px;color:var(--text2)">' + (k.utfordAv||'–') + '</td>'
         + '<td style="padding:10px 14px;white-space:nowrap">'
         + '<span onclick="openRedigera(&quot;'+k.id+'&quot;)" style="cursor:pointer;color:var(--accent);font-size:12px;font-weight:600;margin-right:12px">Redigera</span>'
+        + '<span onclick="skrivUtIntyg(&quot;'+k.id+'&quot;)" style="cursor:pointer;color:var(--text2);font-size:12px;font-weight:600;margin-right:12px"><i class=\"ti ti-printer\" style=\"font-size:11px\"></i> Intyg</span>'
         + (cnt>1?'<span onclick="openFordonModal(&quot;'+k.regnr+'&quot;)" style="cursor:pointer;color:var(--blue);font-size:12px;font-weight:600">Historik</span>':'')
         + '</td></tr>';
     }).join('');
@@ -693,6 +739,9 @@ function openRedigera(id) {
   document.getElementById('e-extern-datum').value  = k.externDatum||'';
   document.getElementById('e-besikt-datum').value  = k.besiktDatum||'';
   document.getElementById('e-besikt-nasta').value  = k.besiktNasta||'';
+  document.getElementById('e-fabrikat').value      = k.fabrikat||'';
+  document.getElementById('e-modell').value        = k.modell||'';
+  document.getElementById('e-arsmodell').value     = k.arsmodell||'';
   document.getElementById('e-anteck').value        = k.anteckning||'';
   document.getElementById('eft-husbil') .classList.toggle('active', _eFordonstyp==='husbil');
   document.getElementById('eft-husvagn').classList.toggle('active', _eFordonstyp==='husvagn');
@@ -724,6 +773,7 @@ async function sparaRedigering() {
   const besiktD  = document.getElementById('e-besikt-datum').value;
   _data.kontroller[i] = {
     ...orig,
+    intygsNr:     orig.intygsNr || ('GAS-' + new Date().getFullYear() + '-' + String(orig.id).slice(-4)),
     camping:      document.getElementById('e-camping').value,
     regnr:        document.getElementById('e-regnr').value.trim().toUpperCase(),
     plats:        document.getElementById('e-plats').value.trim()||null,
@@ -734,6 +784,9 @@ async function sparaRedigering() {
     besiktDatum:  besiktD||null,
     besiktNasta:  besiktD ? addYears(besiktD,1) : null,
     nastaKontroll:resultat!=='ej' ? addYears(datum,1) : null,
+    fabrikat:     document.getElementById('e-fabrikat').value.trim()||null,
+    modell:       document.getElementById('e-modell').value.trim()||null,
+    arsmodell:    document.getElementById('e-arsmodell').value.trim()||null,
     anteckning:   document.getElementById('e-anteck').value.trim()||null,
   };
   const ok = await save('Redigerade kontroll '+_data.kontroller[i].regnr);
@@ -776,48 +829,121 @@ function openFordonModal(regnr) {
 function buildPrintIntyg(k) {
   if (!k) return;
   const ri = RESULTAT_INFO[k.resultat] || RESULTAT_INFO.godkand;
+  const isGodkand = k.resultat !== 'ej';
+  const godkandColor = isGodkand ? '#27500A' : '#A32D2D';
+  const godkandBg    = isGodkand ? '#EAF3DE' : '#FCEBEB';
   document.getElementById('print-intyg').innerHTML = `
-    <div style="max-width:500px;margin:40px auto;font-family:Arial,sans-serif;padding:20px;border:2px solid #A32D2D;border-radius:12px">
-      <div style="text-align:center;margin-bottom:20px">
-        <div style="font-size:22px;font-weight:700;color:#A32D2D">Caravan Club of Sweden</div>
-        <div style="font-size:14px;color:#5a5a57">Stockholmssektionen</div>
-        <div style="font-size:18px;font-weight:700;margin-top:10px;border-top:2px solid #A32D2D;padding-top:10px">GASOL TÄTHETSKONTROLL – INTYG</div>
+    <div style="max-width:560px;margin:40px auto;font-family:Arial,sans-serif;padding:24px;border:2px solid #A32D2D;border-radius:12px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px">
+        <div>
+          <div style="font-size:20px;font-weight:700;color:#A32D2D">Caravan Club of Sweden</div>
+          <div style="font-size:13px;color:#5a5a57">Stockholmssektionen</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:11px;color:#909088">Intygnummer</div>
+          <div style="font-size:14px;font-weight:700;color:#1a1a18">${k.intygsNr||'–'}</div>
+        </div>
       </div>
-      <table style="width:100%;border-collapse:collapse;font-size:13px">
+      <div style="text-align:center;border-top:2px solid #A32D2D;border-bottom:2px solid #A32D2D;padding:10px 0;margin-bottom:18px">
+        <div style="font-size:17px;font-weight:700">GASOL TÄTHETSKONTROLL – INTYG</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+        <div>
+          <div style="font-size:11px;font-weight:600;text-transform:uppercase;color:#909088;margin-bottom:6px">Fordon</div>
+          <table style="width:100%;border-collapse:collapse;font-size:13px">
+            ${[
+              ['RegNr', k.regnr],
+              ['Typ', k.fordonstyp==='husvagn'?'Husvagn':'Husbil'],
+              ['Fabrikat', k.fabrikat||'–'],
+              ['Modell', k.modell||'–'],
+              ['Årsmodell', k.arsmodell||'–'],
+              ['Plats', k.plats||'–'],
+            ].map(([l,v])=>`<tr><td style="padding:4px 8px 4px 0;color:#5a5a57;white-space:nowrap">${l}</td><td style="padding:4px 0;font-weight:500">${v}</td></tr>`).join('')}
+          </table>
+        </div>
+        <div>
+          <div style="font-size:11px;font-weight:600;text-transform:uppercase;color:#909088;margin-bottom:6px">Ägare</div>
+          <table style="width:100%;border-collapse:collapse;font-size:13px">
+            ${[
+              ['Namn', k.agarNamn||'–'],
+              ['CC-nr', k.agarCCNr||'–'],
+              ['Telefon', k.agarTel||'–'],
+              ['E-post', k.agarEpost||'–'],
+            ].map(([l,v])=>`<tr><td style="padding:4px 8px 4px 0;color:#5a5a57;white-space:nowrap">${l}</td><td style="padding:4px 0;font-weight:500">${v}</td></tr>`).join('')}
+          </table>
+        </div>
+      </div>
+      <div style="background:${godkandBg};border-radius:8px;padding:14px 16px;margin-bottom:16px;display:flex;align-items:center;gap:12px">
+        <div style="font-size:28px">${isGodkand?'✅':'❌'}</div>
+        <div>
+          <div style="font-size:16px;font-weight:700;color:${godkandColor}">${ri.label}</div>
+          <div style="font-size:12px;color:${godkandColor};margin-top:2px">${ri.sub}</div>
+        </div>
+      </div>
+      <table style="width:100%;border-collapse:collapse;font-size:13px;margin-bottom:16px">
         ${[
-          ['Fordon (RegNr)', k.regnr],
-          ['Fordonstyp', k.fordonstyp==='husvagn'?'Husvagn':'Husbil'],
           ['Camping', k.camping],
-          ['Plats', k.plats||'–'],
           ['Datum kontroll', fmtDate(k.datum)],
-          ['Resultat', ri.label],
           ['Extern kontrolldatum', k.externDatum?fmtDate(k.externDatum):'–'],
           ['Nästa täthetskontroll', k.nastaKontroll?fmtDate(k.nastaKontroll):'–'],
           ['Senaste bilbesiktning', k.besiktDatum?fmtDate(k.besiktDatum):'–'],
           ['Nästa bilbesiktning', k.besiktNasta?fmtDate(k.besiktNasta):'–'],
           ['Utförd av', k.utfordAv||'–'],
-        ].map(([l,v])=>`<tr>
-          <td style="padding:7px 10px;border:1px solid #ddd;font-weight:600;background:#f5f5f3;width:45%">${l}</td>
-          <td style="padding:7px 10px;border:1px solid #ddd">${v}</td>
-        </tr>`).join('')}
+        ].map(([l,v])=>`<tr><td style="padding:6px 10px;border:1px solid #e0e0e0;background:#f5f5f3;font-weight:600;width:45%;font-size:12px">${l}</td><td style="padding:6px 10px;border:1px solid #e0e0e0">${v}</td></tr>`).join('')}
       </table>
-      ${k.anteckning?`<div style="margin-top:14px;padding:10px;background:#f5f5f3;border-radius:6px;font-size:12px"><strong>Anteckning:</strong> ${k.anteckning}</div>`:''}
-      <div style="margin-top:20px;border-top:1px solid #ddd;padding-top:14px;display:flex;justify-content:space-between">
+      ${k.anteckning?`<div style="margin-bottom:16px;padding:10px;background:#f5f5f3;border-radius:6px;font-size:12px"><strong>Anteckning:</strong> ${k.anteckning}</div>`:''}
+      <div style="border-top:1px solid #ddd;padding-top:14px;display:flex;justify-content:space-between;align-items:flex-end">
         <div>
-          <div style="font-size:11px;color:#909088">Signatur / Kontrollant</div>
-          <div style="margin-top:20px;border-bottom:1px solid #333;width:180px"></div>
-          <div style="font-size:11px;color:#909088;margin-top:4px">${k.utfordAv||''}</div>
+          <div style="font-size:11px;color:#909088;margin-bottom:16px">Kontrollantens signatur</div>
+          <div style="border-bottom:1px solid #333;width:200px;margin-bottom:4px"></div>
+          <div style="font-size:11px;color:#5a5a57">${k.utfordAv||''}</div>
         </div>
         <div style="text-align:right">
           <div style="font-size:11px;color:#909088">Datum</div>
-          <div style="font-size:14px;font-weight:600;margin-top:4px">${fmtDate(k.datum)}</div>
-          <div style="font-size:10px;color:#909088;margin-top:10px">cc-camping.se</div>
+          <div style="font-size:14px;font-weight:600;margin-top:2px">${fmtDate(k.datum)}</div>
+          <div style="font-size:10px;color:#909088;margin-top:8px">cc-camping.se</div>
         </div>
       </div>
     </div>`;
 }
 
 function printFordon() { window.print(); }
+
+// ── SKRIV UT INTYG ─────────────────────────────────────────────────────────
+function skrivUtIntyg(id) {
+  const k = _data.kontroller.find(x=>x.id===id);
+  if (!k) return;
+  // If missing owner info, show modal first
+  if (!k.agarNamn) {
+    document.getElementById('ag-kontroll-id').value = id;
+    document.getElementById('ag-namn').value  = k.agarNamn||'';
+    document.getElementById('ag-ccnr').value  = k.agarCCNr||'';
+    document.getElementById('ag-tel').value   = k.agarTel||'';
+    document.getElementById('ag-epost').value = k.agarEpost||'';
+    openModal('modal-agare');
+  } else {
+    buildPrintIntyg(k);
+    setTimeout(()=>window.print(), 100);
+  }
+}
+
+async function sparaAgarOchSkriv() {
+  const id   = document.getElementById('ag-kontroll-id').value;
+  const namn = document.getElementById('ag-namn').value.trim();
+  if (!namn) { toast('Ange namn','warn'); return; }
+  const i = _data.kontroller.findIndex(k=>k.id===id);
+  if (i<0) return;
+  _data.kontroller[i].agarNamn  = namn;
+  _data.kontroller[i].agarCCNr  = document.getElementById('ag-ccnr').value.trim()||null;
+  _data.kontroller[i].agarTel   = document.getElementById('ag-tel').value.trim()||null;
+  _data.kontroller[i].agarEpost = document.getElementById('ag-epost').value.trim()||null;
+  const ok = await save('Agaruppgifter sparade '+_data.kontroller[i].regnr);
+  if (ok) {
+    closeModal('modal-agare');
+    buildPrintIntyg(_data.kontroller[i]);
+    setTimeout(()=>window.print(), 150);
+  }
+}
 
 // ── HELPERS ─────────────────────────────────────────────────────────────────
 function today()       { return new Date().toISOString().slice(0,10); }
