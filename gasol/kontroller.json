@@ -50,7 +50,24 @@
       "utfordAv": "Massimo Johansson",
       "utfordAvId": "admin1",
       "skapad": "2026-07-02T15:07:36.949Z"
+    },
+    {
+      "id": "GK-1783067095543",
+      "camping": "CC Björkö Örns Camping",
+      "regnr": "ABC321",
+      "fordonstyp": "husbil",
+      "plats": "39",
+      "datum": "2026-07-03",
+      "resultat": "godkand",
+      "externDatum": null,
+      "besiktDatum": null,
+      "besiktNasta": null,
+      "nastaKontroll": "2027-07-03",
+      "anteckning": null,
+      "utfordAv": "Massimo Johansson",
+      "utfordAvId": "admin1",
+      "skapad": "2026-07-03T08:24:55.543Z"
     }
   ],
-  "uppdaterad": "2026-07-03T07:00:08.062Z"
+  "uppdaterad": "2026-07-03T08:24:55.543Z"
 }
