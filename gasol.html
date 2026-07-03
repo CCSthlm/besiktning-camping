@@ -400,15 +400,15 @@ function renderNy() {
       <div class="form-section">
         <div class="form-section-title"><i class="ti ti-gas-station"></i> Kontrolresultat</div>
         <div class="result-options">
-          ${Object.entries(RESULTAT_INFO).map(([key,r])=>`
-            <div class="result-opt" id="ro-${key}" onclick="setResultat('${key}')">
-              <div class="result-opt-icon ${r.ic}"><i class="ti ${r.icon}" style="font-size:18px;color:${key==='godkand'?'var(--accent)':key==='packningar'?'var(--blue)':key==='extern'?'var(--orange)':'var(--red)'}"></i></div>
-              <div style="flex:1">
-                <div class="result-opt-label">${r.label}</div>
-                <div class="result-opt-sub">${r.sub}</div>
-              </div>
-              <div class="result-radio" id="rr-${key}"></div>
-            </div>`).join('')}
+          ${Object.entries(RESULTAT_INFO).map(function(e){
+            var key=e[0],r=e[1];
+            var ic=key==='godkand'?'var(--accent)':key==='packningar'?'var(--blue)':key==='extern'?'var(--orange)':'var(--red)';
+            return '<div class="result-opt" id="ro-'+key+'" data-rkey="'+key+'" onclick="setResultat(this.dataset.rkey)">'
+              +'<div class="result-opt-icon '+r.ic+'"><i class="ti '+r.icon+'" style="font-size:18px;color:'+ic+'"></i></div>'
+              +'<div style="flex:1"><div class="result-opt-label">'+r.label+'</div><div class="result-opt-sub">'+r.sub+'</div></div>'
+              +'<div class="result-radio" id="rr-'+key+'"></div>'
+              +'</div>';
+          }).join('')}
         </div>
         <div id="extern-wrap" style="display:none;margin-top:10px">
           <div class="ff">
@@ -433,7 +433,7 @@ function renderNy() {
         </div>
         <div class="ff">
           <label>Anteckning</label>
-          <textarea id="f-anteck" rows="2" placeholder="Valfri anteckning…" style="font-size:14px"></textarea>
+          <textarea id="f-anteck" rows="2" placeholder="Valfri anteckning..." style="font-size:14px"></textarea>
         </div>
         <div id="next-date-preview" style="display:none" class="next-date-box">
           <i class="ti ti-calendar-event" style="font-size:20px;color:var(--green-text)"></i>
@@ -537,9 +537,9 @@ async function sparaKontroll() {
     skapad:        new Date().toISOString(),
   };
   _data.kontroller.push(k);
-  const ok = await save('Gasol täthetskontroll ' + regnr + ' ' + datum);
+  const ok = await save('Gasol tathetskontroll ' + regnr + ' ' + datum);
   if (ok) {
-    toast('Kontroll sparad ✓','ok');
+    toast('Kontroll sparad','ok');
     setTimeout(()=>{ renderNy(); }, 400);
   } else {
     _data.kontroller.pop();
@@ -634,7 +634,7 @@ function renderHistList() {
         + '<span><i class="ti ti-tent" style="font-size:11px"></i>' + k.camping + '</span>'
         + '<span><i class="ti ti-user" style="font-size:11px"></i>' + (k.utfordAv||'–') + '</span>'
         + '</div>'
-        + (k.besiktDatum ? '<div style="font-size:11px;color:var(--text3);margin-top:4px"><i class="ti ti-calendar-check" style="font-size:10px"></i> Besiktning: ' + fmtDate(k.besiktDatum) + (k.besiktNasta ? ' · Nästa: ' + fmtDate(k.besiktNasta) : '') + '</div>' : '')
+        + (k.besiktDatum ? '<div style="font-size:11px;color:var(--text3);margin-top:4px"><i class="ti ti-calendar-check" style="font-size:10px"></i> Besiktning: ' + fmtDate(k.besiktDatum) + (k.besiktNasta ? ' - Nästa: ' + fmtDate(k.besiktNasta) : '') + '</div>' : '')
         + (nlab?'<span class="hist-next '+ncls+'"><i class="ti ti-calendar-due" style="font-size:10px"></i>'+nlab+'</span>':'')
         + '<div style="display:flex;gap:8px;margin-top:10px">'
         + '<button class="btn-portal" style="flex:1;justify-content:center;font-size:12px" onclick="openRedigera(&quot;'+k.id+'&quot;)"><i class="ti ti-edit"></i> Redigera</button>'
@@ -969,7 +969,7 @@ function buildPrintIntyg(k) {
       Caravan Club of Sweden – Stockholmssektionen &nbsp;|&nbsp; cc-camping.se &nbsp;|&nbsp; ${k.intygsNr||''}
     </div>
   </div>`;
-}}
+}
 
 function printFordon() { window.print(); }
 
