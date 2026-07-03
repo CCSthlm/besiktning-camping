@@ -1,4 +1,26 @@
 {
-  "kontroller": [],
-  "uppdaterad": "2026-07-03T10:53:41.321Z"
+  "kontroller": [
+    {
+      "id": "GK-1783090349672",
+      "intygsNr": "GAS-2026-0001",
+      "camping": "CC Björkö Örns Camping",
+      "regnr": "ABC123",
+      "fordonstyp": "husbil",
+      "plats": "12",
+      "datum": "2026-07-03",
+      "resultat": "godkand",
+      "externDatum": null,
+      "besiktDatum": null,
+      "besiktNasta": null,
+      "nastaKontroll": "2027-07-03",
+      "fabrikat": "Kabe",
+      "modell": "880",
+      "arsmodell": "2024",
+      "anteckning": null,
+      "utfordAv": "Massimo Johansson",
+      "utfordAvId": "admin1",
+      "skapad": "2026-07-03T14:52:29.672Z"
+    }
+  ],
+  "uppdaterad": "2026-07-03T14:52:29.672Z"
 }
