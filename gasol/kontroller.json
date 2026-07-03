@@ -67,7 +67,24 @@
       "utfordAv": "Massimo Johansson",
       "utfordAvId": "admin1",
       "skapad": "2026-07-03T08:24:55.543Z"
+    },
+    {
+      "id": "GK-1783067774065",
+      "camping": "CC Östnora Camping",
+      "regnr": "AAA333",
+      "fordonstyp": "husbil",
+      "plats": "66",
+      "datum": "2026-07-03",
+      "resultat": "godkand",
+      "externDatum": null,
+      "besiktDatum": null,
+      "besiktNasta": null,
+      "nastaKontroll": "2027-07-03",
+      "anteckning": null,
+      "utfordAv": "Massimo Johansson",
+      "utfordAvId": "admin1",
+      "skapad": "2026-07-03T08:36:14.065Z"
     }
   ],
-  "uppdaterad": "2026-07-03T08:25:16.428Z"
+  "uppdaterad": "2026-07-03T08:36:14.065Z"
 }
