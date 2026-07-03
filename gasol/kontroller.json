@@ -53,10 +53,10 @@
     },
     {
       "id": "GK-1783067095543",
-      "camping": "CC Björkö Örns Camping",
+      "camping": "",
       "regnr": "ABC321",
       "fordonstyp": "husbil",
-      "plats": "39",
+      "plats": "11",
       "datum": "2026-07-03",
       "resultat": "godkand",
       "externDatum": null,
@@ -69,5 +69,5 @@
       "skapad": "2026-07-03T08:24:55.543Z"
     }
   ],
-  "uppdaterad": "2026-07-03T08:24:55.543Z"
+  "uppdaterad": "2026-07-03T08:25:16.428Z"
 }
