@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NETS Transaktionsuppslag</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/tabler-icons.min.css">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0f1117;--bg2:#1a1d27;--bg3:#222536;--bg4:#2a2e42;
+  --text:#f0f2ff;--text2:#9ba3c4;--text3:#5c6488;
+  --accent:#4f8ef7;--accent2:#2563eb;--accent-glow:rgba(79,142,247,.15);
+  --green:#22c55e;--green-bg:rgba(34,197,94,.1);
+  --red:#ef4444;--red-bg:rgba(239,68,68,.1);
+  --amber:#f59e0b;--amber-bg:rgba(245,158,11,.1);
+  --border:rgba(255,255,255,.07);--border2:rgba(255,255,255,.12);
+  --radius:10px;--radius-lg:16px;
+  --shadow:0 8px 32px rgba(0,0,0,.4);
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:32px 16px 64px;}
+
+/* HEADER */
+.header{text-align:center;margin-bottom:40px;}
+.header-logo{width:56px;height:56px;background:var(--accent);border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:26px;box-shadow:0 0 40px var(--accent-glow);}
+.header h1{font-size:26px;font-weight:700;letter-spacing:-.02em;margin-bottom:6px;}
+.header p{font-size:14px;color:var(--text2);}
+
+/* SEARCH CARD */
+.search-card{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:24px;width:100%;max-width:640px;margin-bottom:20px;box-shadow:var(--shadow);}
+.env-toggle{display:flex;gap:8px;margin-bottom:18px;}
+.env-btn{flex:1;padding:9px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);font-size:13px;font-weight:500;cursor:pointer;font-family:inherit;color:var(--text2);transition:all .15s;text-align:center;}
+.env-btn.active{background:var(--accent-glow);border-color:var(--accent);color:var(--accent);}
+.field-label{font-size:12px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;}
+.field{margin-bottom:14px;}
+.input-wrap{position:relative;}
+.input-wrap input{width:100%;padding:12px 14px;background:var(--bg3);border:1.5px solid var(--border2);border-radius:var(--radius);font-size:14px;font-family:inherit;color:var(--text);transition:border-color .15s;}
+.input-wrap input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow);}
+.input-wrap input::placeholder{color:var(--text3);}
+.input-key{padding-right:44px;}
+.toggle-key{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text3);font-size:16px;transition:color .15s;}
+.toggle-key:hover{color:var(--text);}
+.btn-search{width:100%;padding:13px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius);font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px;transition:background .15s;}
+.btn-search:hover{background:var(--accent2);}
+.btn-search:disabled{background:var(--bg4);color:var(--text3);cursor:not-allowed;}
+
+/* RESULT */
+.result-wrap{width:100%;max-width:640px;}
+.result-card{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow);margin-bottom:12px;animation:fadeUp .3s ease both;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.result-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.result-header-left{display:flex;align-items:center;gap:10px;}
+.result-section-title{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);}
+
+/* STATUS BADGE */
+.status-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:700;letter-spacing:.03em;}
+.st-reserved{background:var(--amber-bg);color:var(--amber);}
+.st-charged{background:var(--green-bg);color:var(--green);}
+.st-refunded{background:rgba(79,142,247,.12);color:var(--accent);}
+.st-cancelled{background:var(--red-bg);color:var(--red);}
+.st-default{background:var(--bg4);color:var(--text2);}
+.st-dot{width:6px;height:6px;border-radius:50%;background:currentColor;}
+
+/* DATA ROWS */
+.data-grid{padding:16px 20px;display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.data-grid.full{grid-template-columns:1fr;}
+.data-item{display:flex;flex-direction:column;gap:3px;}
+.data-label{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.04em;}
+.data-val{font-size:14px;color:var(--text);word-break:break-all;}
+.data-val.mono{font-family:'SF Mono','Courier New',monospace;font-size:12px;color:var(--text2);}
+.data-val.amount{font-size:18px;font-weight:700;color:var(--green);}
+.data-val.id{font-size:11px;font-family:monospace;color:var(--text2);}
+.data-divider{height:1px;background:var(--border);margin:0 20px;}
+
+/* ERROR / EMPTY */
+.msg-box{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:24px;text-align:center;width:100%;max-width:640px;box-shadow:var(--shadow);}
+.msg-box.error{border-color:rgba(239,68,68,.3);background:rgba(239,68,68,.05);}
+.msg-icon{font-size:32px;margin-bottom:10px;display:block;}
+.msg-title{font-size:15px;font-weight:600;margin-bottom:4px;}
+.msg-sub{font-size:13px;color:var(--text2);}
+
+/* LOADING */
+.spinner{width:20px;height:20px;border:2px solid rgba(255,255,255,.2);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* COPY BUTTON */
+.copy-btn{background:none;border:none;cursor:pointer;color:var(--text3);font-size:13px;padding:2px 6px;border-radius:4px;transition:all .15s;display:inline-flex;align-items:center;gap:3px;}
+.copy-btn:hover{color:var(--accent);background:var(--accent-glow);}
+
+@media(max-width:520px){.data-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-logo"><i class="ti ti-credit-card" style="color:#fff"></i></div>
+  <h1>NETS Transaktionsuppslag</h1>
+  <p>Hämta betalningsinformation via transaktions-ID</p>
+</div>
+
+<div class="search-card">
+  <!-- MILJÖ -->
+  <div class="field-label">Miljö</div>
+  <div class="env-toggle" style="margin-bottom:18px">
+    <button class="env-btn" id="btn-test" onclick="setEnv('test')"><i class="ti ti-flask"></i> Test</button>
+    <button class="env-btn active" id="btn-live" onclick="setEnv('live')"><i class="ti ti-world"></i> Live</button>
+  </div>
+
+  <!-- API-NYCKEL -->
+  <div class="field">
+    <div class="field-label">API-nyckel (Secret Key)</div>
+    <div class="input-wrap">
+      <input type="password" id="api-key" class="input-key" placeholder="live-secret-key-…" autocomplete="off">
+      <button class="toggle-key" onclick="toggleKey()" title="Visa/dölj"><i class="ti ti-eye" id="key-icon"></i></button>
+    </div>
+  </div>
+
+  <!-- TRANSAKTIONS-ID -->
+  <div class="field">
+    <div class="field-label">Transaktions-ID (Payment ID)</div>
+    <div class="input-wrap">
+      <input type="text" id="txn-id" placeholder="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" autocomplete="off"
+        onkeydown="if(event.key==='Enter')doLookup()">
+    </div>
+  </div>
+
+  <button class="btn-search" id="btn-search" onclick="doLookup()">
+    <i class="ti ti-search"></i> Hämta transaktion
+  </button>
+</div>
+
+<div id="result-area"></div>
+
+<script>
+let _env = 'live';
+
+function setEnv(e) {
+  _env = e;
+  document.getElementById('btn-test').classList.toggle('active', e==='test');
+  document.getElementById('btn-live').classList.toggle('active', e==='live');
+  const keyInput = document.getElementById('api-key');
+  keyInput.placeholder = e==='test' ? 'test-secret-key-…' : 'live-secret-key-…';
+}
+
+function toggleKey() {
+  const inp = document.getElementById('api-key');
+  const icon = document.getElementById('key-icon');
+  const show = inp.type === 'password';
+  inp.type  = show ? 'text' : 'password';
+  icon.className = show ? 'ti ti-eye-off' : 'ti ti-eye';
+}
+
+async function doLookup() {
+  const apiKey = document.getElementById('api-key').value.trim();
+  const txnId  = document.getElementById('txn-id').value.trim();
+  const area   = document.getElementById('result-area');
+
+  if (!apiKey) { showError('API-nyckel saknas', 'Ange din secret key från NETS-portalen.'); return; }
+  if (!txnId)  { showError('Transaktions-ID saknas', 'Ange det ID du vill söka upp.'); return; }
+
+  const btn = document.getElementById('btn-search');
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spinner"></div> Hämtar…';
+  area.innerHTML = '';
+
+  const base = _env === 'test'
+    ? 'https://test.api.dibspayment.eu'
+    : 'https://api.dibspayment.eu';
+
+  try {
+    const res = await fetch(`${base}/v1/payments/${txnId}`, {
+      headers: { 'Authorization': apiKey, 'Content-Type': 'application/json' }
+    });
+
+    if (!res.ok) {
+      const err = await res.json().catch(()=>({}));
+      const msg = err.message || err.errors?.[0]?.message || res.statusText;
+      showError(`HTTP ${res.status} – ${msg}`, getStatusHelp(res.status));
+      return;
+    }
+
+    const data = await res.json();
+    renderResult(data);
+
+  } catch(e) {
+    // CORS error likely
+    showError('Anslutningsfel', 'NETS API blockerar direkta anrop från webbläsaren (CORS). Prova att köra via en server/proxy, eller använd ett verktyg som Postman för att testa direkt.');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<i class="ti ti-search"></i> Hämta transaktion';
+  }
+}
+
+function getStatusHelp(code) {
+  const map = {
+    401: 'API-nyckeln är ogiltig eller saknar behörighet.',
+    402: 'Betalning krävs – kontrollera kontostatus.',
+    404: 'Transaktions-ID hittades inte. Kontrollera att du använder rätt miljö (Test/Live).',
+    429: 'För många förfrågningar – vänta en stund och försök igen.',
+    500: 'Fel på NETS server – försök igen senare.',
+  };
+  return map[code] || 'Kontrollera dina uppgifter och försök igen.';
+}
+
+function renderResult(d) {
+  const p = d.payment || d;
+  const area = document.getElementById('result-area');
+
+  // ── STATUS ────────────────────────────────────────────────────────────
+  const summary = p.summary || {};
+  const orderDetails = p.orderDetails || {};
+  const consumer = p.consumer || {};
+  const paymentDetails = p.paymentDetails || {};
+  const charges = p.charges || [];
+  const refunds  = p.refunds || [];
+
+  // Determine status
+  let status = 'Okänd', statusCls = 'st-default';
+  if (summary.cancelledAmount > 0)         { status='Makulerad';  statusCls='st-cancelled'; }
+  else if (summary.refundedAmount > 0)     { status='Återbetald'; statusCls='st-refunded';  }
+  else if (summary.chargedAmount > 0)      { status='Debiterad';  statusCls='st-charged';   }
+  else if (summary.reservedAmount > 0)     { status='Reserverad'; statusCls='st-reserved';  }
+
+  // Amount formatting
+  const currency = orderDetails.currency || '';
+  function fmtAmt(a) {
+    if (!a && a!==0) return '–';
+    return (a/100).toLocaleString('sv-SE',{minimumFractionDigits:2,maximumFractionDigits:2})+' '+currency;
+  }
+  function fmtDate(iso) {
+    if (!iso) return '–';
+    try { return new Date(iso).toLocaleString('sv-SE'); } catch(e){ return iso; }
+  }
+
+  let html = '';
+
+  // ── KORT SAMMANFATTNING ───────────────────────────────────────────────
+  html += `<div class="result-card">
+    <div class="result-header">
+      <div class="result-header-left">
+        <span class="result-section-title">Betalningsöversikt</span>
+      </div>
+      <span class="status-badge ${statusCls}"><span class="st-dot"></span>${status}</span>
+    </div>
+    <div class="data-grid">
+      <div class="data-item">
+        <span class="data-label">Belopp (totalt)</span>
+        <span class="data-val amount">${fmtAmt(orderDetails.amount)}</span>
+      </div>
+      <div class="data-item">
+        <span class="data-label">Valuta</span>
+        <span class="data-val">${currency||'–'}</span>
+      </div>
+      <div class="data-item">
+        <span class="data-label">Reserverat</span>
+        <span class="data-val">${fmtAmt(summary.reservedAmount)}</span>
+      </div>
+      <div class="data-item">
+        <span class="data-label">Debiterat</span>
+        <span class="data-val">${fmtAmt(summary.chargedAmount)}</span>
+      </div>
+      <div class="data-item">
+        <span class="data-label">Återbetalt</span>
+        <span class="data-val">${fmtAmt(summary.refundedAmount)}</span>
+      </div>
+      <div class="data-item">
+        <span class="data-label">Makulerat</span>
+        <span class="data-val">${fmtAmt(summary.cancelledAmount)}</span>
+      </div>
+    </div>
+  </div>`;
+
+  // ── ORDERINFO ─────────────────────────────────────────────────────────
+  html += `<div class="result-card">
+    <div class="result-header">
+      <span class="result-section-title"><i class="ti ti-receipt" style="font-size:14px"></i> Orderinformation</span>
+    </div>
+    <div class="data-grid">
+      <div class="data-item">
+        <span class="data-label">Payment ID</span>
+        <span class="data-val id">${p.paymentId||'–'} <button class="copy-btn" onclick="copyText('${p.paymentId||''}')"><i class="ti ti-copy" style="font-size:11px"></i></button></span>
+      </div>
+      <div class="data-item">
+        <span class="data-label">Order Reference</span>
+        <span class="data-val">${orderDetails.reference||'–'}</span>
+      </div>
+      <div class="data-item">
+        <span class="data-label">Skapad</span>
+        <span class="data-val">${fmtDate(p.created)}</span>
+      </div>
+      <div class="data-item">
+        <span class="data-label">Uppdaterad</span>
+        <span class="data-val">${fmtDate(p.updated||p.modified)}</span>
+      </div>
+    </div>
+  </div>`;
+
+  // ── BETALNINGSMETOD ───────────────────────────────────────────────────
+  const card = paymentDetails.cardDetails || {};
+  const pm   = paymentDetails.paymentMethod||'';
+  const pt   = paymentDetails.paymentType||'';
+  html += `<div class="result-card">
+    <div class="result-header">
+      <span class="result-section-title"><i class="ti ti-credit-card" style="font-size:14px"></i> Betalningsmetod</span>
+    </div>
+    <div class="data-grid">
+      <div class="data-item">
+        <span class="data-label">Metod</span>
+        <span class="data-val">${pm||'–'}</span>
+      </div>
+      <div class="data-item">
+        <span class="data-label">Typ</span>
+        <span class="data-val">${pt||'–'}</span>
+      </div>
+      ${card.maskedPan?`<div class="data-item">
+        <span class="data-label">Kortnummer (maskerat)</span>
+        <span class="data-val mono">${card.maskedPan}</span>
+      </div>`:''}
+      ${card.expiryDate?`<div class="data-item">
+        <span class="data-label">Kortets utgångsdatum</span>
+        <span class="data-val">${card.expiryDate}</span>
+      </div>`:''}
+      ${card.cardHolderName?`<div class="data-item">
+        <span class="data-label">Kortinnehavare</span>
+        <span class="data-val">${card.cardHolderName}</span>
+      </div>`:''}
+      ${card.issuingCountry?`<div class="data-item">
+        <span class="data-label">Utfärdande land</span>
+        <span class="data-val">${card.issuingCountry}</span>
+      </div>`:''}
+    </div>
+  </div>`;
+
+  // ── KONSUMENT ─────────────────────────────────────────────────────────
+  const name    = consumer.privatePerson || consumer.company || {};
+  const addr    = consumer.shippingAddress || consumer.billingAddress || {};
+  const contact = consumer.phoneNumber || {};
+  if (consumer && Object.keys(consumer).length > 0) {
+    html += `<div class="result-card">
+      <div class="result-header">
+        <span class="result-section-title"><i class="ti ti-user" style="font-size:14px"></i> Kunduppgifter</span>
+      </div>
+      <div class="data-grid">
+        ${name.firstName||name.name?`<div class="data-item">
+          <span class="data-label">Namn</span>
+          <span class="data-val">${[name.firstName,name.lastName].filter(Boolean).join(' ')||name.name||'–'}</span>
+        </div>`:''}
+        ${consumer.email?`<div class="data-item">
+          <span class="data-label">E-post</span>
+          <span class="data-val">${consumer.email}</span>
+        </div>`:''}
+        ${contact.number?`<div class="data-item">
+          <span class="data-label">Telefon</span>
+          <span class="data-val">+${contact.prefix||''} ${contact.number}</span>
+        </div>`:''}
+        ${addr.city?`<div class="data-item">
+          <span class="data-label">Ort</span>
+          <span class="data-val">${addr.city}, ${addr.country||''}</span>
+        </div>`:''}
+      </div>
+    </div>`;
+  }
+
+  // ── DEBITERINGAR ──────────────────────────────────────────────────────
+  if (charges.length) {
+    html += `<div class="result-card">
+      <div class="result-header">
+        <span class="result-section-title"><i class="ti ti-circle-check" style="font-size:14px;color:var(--green)"></i> Debiteringar (${charges.length})</span>
+      </div>`;
+    charges.forEach((c,i) => {
+      if (i>0) html += '<div class="data-divider"></div>';
+      html += `<div class="data-grid">
+        <div class="data-item"><span class="data-label">Charge ID</span><span class="data-val id">${c.chargeId||'–'}</span></div>
+        <div class="data-item"><span class="data-label">Belopp</span><span class="data-val">${fmtAmt(c.amount)}</span></div>
+        <div class="data-item"><span class="data-label">Datum</span><span class="data-val">${fmtDate(c.created)}</span></div>
+      </div>`;
+    });
+    html += '</div>';
+  }
+
+  // ── ÅTERBETALNINGAR ───────────────────────────────────────────────────
+  if (refunds.length) {
+    html += `<div class="result-card">
+      <div class="result-header">
+        <span class="result-section-title"><i class="ti ti-arrow-back-up" style="font-size:14px;color:var(--accent)"></i> Återbetalningar (${refunds.length})</span>
+      </div>`;
+    refunds.forEach((r,i) => {
+      if (i>0) html += '<div class="data-divider"></div>';
+      html += `<div class="data-grid">
+        <div class="data-item"><span class="data-label">Refund ID</span><span class="data-val id">${r.refundId||'–'}</span></div>
+        <div class="data-item"><span class="data-label">Belopp</span><span class="data-val">${fmtAmt(r.amount)}</span></div>
+        <div class="data-item"><span class="data-label">Status</span><span class="data-val">${r.state||'–'}</span></div>
+        <div class="data-item"><span class="data-label">Datum</span><span class="data-val">${fmtDate(r.created)}</span></div>
+      </div>`;
+    });
+    html += '</div>';
+  }
+
+  // ── RAW JSON ──────────────────────────────────────────────────────────
+  html += `<div class="result-card">
+    <div class="result-header" style="cursor:pointer" onclick="toggleRaw()">
+      <span class="result-section-title"><i class="ti ti-code" style="font-size:14px"></i> Rådata (JSON)</span>
+      <button style="background:none;border:none;cursor:pointer;color:var(--text3);font-size:13px;display:flex;align-items:center;gap:4px">
+        <i class="ti ti-chevron-down" id="raw-chevron"></i> Visa
+      </button>
+    </div>
+    <div id="raw-json" style="display:none;padding:16px 20px;overflow-x:auto">
+      <pre style="font-family:monospace;font-size:11px;color:var(--text2);white-space:pre-wrap;word-break:break-all">${JSON.stringify(d, null, 2)}</pre>
+    </div>
+  </div>`;
+
+  area.innerHTML = html;
+}
+
+function toggleRaw() {
+  const el  = document.getElementById('raw-json');
+  const chev = document.getElementById('raw-chevron');
+  const show = el.style.display === 'none';
+  el.style.display = show ? '' : 'none';
+  chev.className   = show ? 'ti ti-chevron-up' : 'ti ti-chevron-down';
+}
+
+function showError(title, sub) {
+  document.getElementById('result-area').innerHTML = `
+    <div class="msg-box error">
+      <span class="msg-icon"><i class="ti ti-alert-circle" style="color:var(--red)"></i></span>
+      <div class="msg-title">${title}</div>
+      <div class="msg-sub">${sub}</div>
+    </div>`;
+}
+
+function copyText(txt) {
+  navigator.clipboard.writeText(txt).then(()=>{
+    const btn = event.target.closest('button');
+    if (btn) { btn.innerHTML='<i class="ti ti-check" style="font-size:11px;color:var(--green)"></i>'; setTimeout(()=>btn.innerHTML='<i class="ti ti-copy" style="font-size:11px"></i>',1500); }
+  });
+}
+</script>
+</body>
+</html>
