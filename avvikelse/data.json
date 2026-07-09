@@ -203,6 +203,37 @@
           "status": "stängd"
         }
       ]
+    },
+    {
+      "id": "AV-2607-EZ95",
+      "ts": "2026-07-09T20:45:39.880Z",
+      "kategori": "Säkerhet / ordning",
+      "kategoriIndex": 6,
+      "risk": "Låg",
+      "riskNivå": 1,
+      "anläggning": "CC Björkö Örns Camping",
+      "plats": "Campingtomt",
+      "datum": "2026-07-09",
+      "tid": "",
+      "rapportör": "Receptionen Björkö Örn",
+      "rapportörEmail": "info.bjorko@cc-camping.se",
+      "beskrivning": "Gäst ringde och rapporterade till oss campingvärdar om att en gäst från grannen hade kommit och knackat på och bett om att få komma in och sova. Hon hade även berättat att hennes man misshandlat henne.",
+      "omedelbar": "Vi hörde oss för med grannar om de hade sett eller hört något uppseendeväckande beteende och flera hade reagerat på att paret betet sig annorlunda. Vi beslöt oss för att ringa polisen.",
+      "ansvarig": "Carolina Eek",
+      "deadline": "2026-07-09",
+      "kommentar": "Polisen kom till platsen för fortsatt hantering. Totalt tre patruller kom till plats. ",
+      "status": "ny",
+      "eskalerad": false,
+      "bilder": [],
+      "dynamicFields": {},
+      "historik": [
+        {
+          "ts": "2026-07-09T20:45:39.880Z",
+          "av": "Receptionen Björkö Örn",
+          "händelse": "Skapades",
+          "status": "ny"
+        }
+      ]
     }
   ],
   "inställningar": {
