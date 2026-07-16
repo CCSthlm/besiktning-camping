@@ -234,6 +234,46 @@
           "status": "ny"
         }
       ]
+    },
+    {
+      "id": "AV-2607-EZ9T",
+      "ts": "2026-07-16T10:29:44.145Z",
+      "kategori": "Sjukdom / gästincident",
+      "kategoriIndex": 1,
+      "risk": "Låg",
+      "riskNivå": 1,
+      "anläggning": "CC Storsveds Camping",
+      "plats": "Servicehus",
+      "datum": "2026-07-16",
+      "tid": "09:00",
+      "rapportör": "Massimo Johansson",
+      "rapportörEmail": "massimo.johansson@cc-camping.se",
+      "beskrivning": "Christer B kom in i toaletten och såg då en säsongscampare sittande i duschen. Christer tog kontakt men gästen var in kontaktbar och svimmade direkt. Patienten blev helt blå och man ringde 112. Ambulans var 20 min bort men de skickade helikopter. Christer hämtade campingvärd. ",
+      "omedelbar": "Lade patient på golvet med fria luftvägar.\nRIngde 112. ",
+      "ansvarig": "Christer Bäckman",
+      "deadline": "2026-07-16",
+      "kommentar": "Campingvärd sa att detta inte skulle rapporteras. ",
+      "status": "pågående",
+      "eskalerad": false,
+      "bilder": [],
+      "dynamicFields": {
+        "d-typ": "Sjukdom/magsjuka",
+        "d-person": "Gäst",
+        "d-foerstahjälp": true,
+        "d-ambulans": true,
+        "d-polis": false,
+        "d-anhörig": true,
+        "d-vittnen": "Christer Bäckman",
+        "d-ansvar": ""
+      },
+      "historik": [
+        {
+          "ts": "2026-07-16T10:29:44.145Z",
+          "av": "Massimo Johansson",
+          "händelse": "Skapades",
+          "status": "ny"
+        }
+      ]
     }
   ],
   "inställningar": {
