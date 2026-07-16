@@ -438,7 +438,7 @@ const EJS_TEMPLATE_ID = 'DIN_TEMPLATE_ID';     // Email Templates → Template I
 const NOTIFY_EMAIL    = 'massimo.johansson@cc-camping.se';
 
 // ── STATIC DATA ───────────────────────────────────────────────────────────
-const CAT_NAMES = ['Driftavvikelse','Sjukdom / gästincident','Brandtillbud / SBA','Arbetsmiljö / tillbud','Livsmedel / restaurang','Alkohol / servering','Säkerhet / ordning','Miljö / kemikalier','Störningsrapport'];
+const CAT_NAMES = ['Driftavvikelse','Sjukdomsfall','Brandtillbud / SBA','Arbetsmiljö / tillbud','Livsmedel / restaurang','Alkohol / servering','Säkerhet / ordning','Miljö / kemikalier','Störningsrapport'];
 const CAT_ICONS = ['ti-tool','ti-user-exclamation','ti-flame','ti-shield-exclamation','ti-soup','ti-glass-full','ti-lock-exclamation','ti-leaf'];
 const RISK_LABELS = ['','Låg','Medel','Hög','Akut'];
 const RISK_COLORS = ['','#27500A','#854F0B','#c2410c','#A32D2D'];
@@ -572,9 +572,9 @@ function section(cls, icon, title, content) {
 }
 
 function buildFieldsSjuk(c) {
-  c.innerHTML = section('sjuk','ti-user-exclamation','Sjukdomsfall / gästincident',`
+  c.innerHTML = section('sjuk','ti-user-exclamation','Sjukdomsfall',`
     <div class="form-row">
-      ${field('d-typ','Typ av händelse','select','',false,['Sjukdom/magsjuka','Fallolycka','Skada','Allergisk reaktion','Misstänkt matförgiftning','Ambulans tillkallad','Annan'])}
+      ${field('d-typ','Typ av händelse','select','',false,['Sjukdom','Fallolycka','Skada','Allergisk reaktion','Misstänkt matförgiftning','Ambulans tillkallad','Annan'])}
       ${field('d-person','Drabbad','select','',false,['Gäst','Personal','Annan'])}
     </div>
     <div class="form-row">
