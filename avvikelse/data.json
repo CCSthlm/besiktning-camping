@@ -72,7 +72,7 @@
       "ansvarig": "Carolina Eek",
       "deadline": "2026-07-09",
       "kommentar": "Polisen kom till platsen för fortsatt hantering. Totalt tre patruller kom till plats. ",
-      "status": "ny",
+      "status": "stängd",
       "eskalerad": false,
       "bilder": [],
       "dynamicFields": {},
@@ -82,6 +82,13 @@
           "av": "Receptionen Björkö Örn",
           "händelse": "Skapades",
           "status": "ny"
+        },
+        {
+          "ts": "2026-07-16T10:31:23.640Z",
+          "av": "Massimo Johansson",
+          "händelse": "Status: Ny → Stängd",
+          "kommentar": "",
+          "status": "stängd"
         }
       ]
     },
