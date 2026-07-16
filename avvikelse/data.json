@@ -1,6 +1,84 @@
 {
   "ärenden": [
     {
+      "id": "AV-2607-EZ9T",
+      "ts": "2026-07-16T10:29:44.145Z",
+      "kategori": "Sjukdom / gästincident",
+      "kategoriIndex": 1,
+      "risk": "Låg",
+      "riskNivå": 1,
+      "anläggning": "CC Storsveds Camping",
+      "plats": "Servicehus",
+      "datum": "2026-07-16",
+      "tid": "09:00",
+      "rapportör": "Massimo Johansson",
+      "rapportörEmail": "massimo.johansson@cc-camping.se",
+      "beskrivning": "Christer B kom in i toaletten och såg då en säsongscampare sittande i duschen. Christer tog kontakt men gästen var in kontaktbar och svimmade direkt. Patienten blev helt blå och man ringde 112. Ambulans var 20 min bort men de skickade helikopter. Christer hämtade campingvärd. ",
+      "omedelbar": "Lade patient på golvet med fria luftvägar.\nRIngde 112. ",
+      "ansvarig": "Christer Bäckman",
+      "deadline": "2026-07-16",
+      "kommentar": "Campingvärd sa att detta inte skulle rapporteras. \nchristerbgudo@telia.com",
+      "status": "pågående",
+      "eskalerad": false,
+      "bilder": [],
+      "dynamicFields": {
+        "d-typ": "Sjukdom/magsjuka",
+        "d-person": "Gäst",
+        "d-foerstahjälp": true,
+        "d-ambulans": true,
+        "d-polis": false,
+        "d-anhörig": true,
+        "d-vittnen": "Christer Bäckman",
+        "d-ansvar": ""
+      },
+      "historik": [
+        {
+          "ts": "2026-07-16T10:29:44.145Z",
+          "av": "Massimo Johansson",
+          "händelse": "Skapades",
+          "status": "ny"
+        },
+        {
+          "ts": "2026-07-16T10:30:42.880Z",
+          "av": "Massimo Johansson",
+          "händelse": "Uppdaterades",
+          "kommentar": "christerbgudo@telia.com",
+          "status": "pågående"
+        }
+      ]
+    },
+    {
+      "id": "AV-2607-EZ95",
+      "ts": "2026-07-09T20:45:39.880Z",
+      "kategori": "Säkerhet / ordning",
+      "kategoriIndex": 6,
+      "risk": "Låg",
+      "riskNivå": 1,
+      "anläggning": "CC Björkö Örns Camping",
+      "plats": "Campingtomt",
+      "datum": "2026-07-09",
+      "tid": "",
+      "rapportör": "Receptionen Björkö Örn",
+      "rapportörEmail": "info.bjorko@cc-camping.se",
+      "beskrivning": "Gäst ringde och rapporterade till oss campingvärdar om att en gäst från grannen hade kommit och knackat på och bett om att få komma in och sova. Hon hade även berättat att hennes man misshandlat henne.",
+      "omedelbar": "Vi hörde oss för med grannar om de hade sett eller hört något uppseendeväckande beteende och flera hade reagerat på att paret betet sig annorlunda. Vi beslöt oss för att ringa polisen.",
+      "ansvarig": "Carolina Eek",
+      "deadline": "2026-07-09",
+      "kommentar": "Polisen kom till platsen för fortsatt hantering. Totalt tre patruller kom till plats. ",
+      "status": "ny",
+      "eskalerad": false,
+      "bilder": [],
+      "dynamicFields": {},
+      "historik": [
+        {
+          "ts": "2026-07-09T20:45:39.880Z",
+          "av": "Receptionen Björkö Örn",
+          "händelse": "Skapades",
+          "status": "ny"
+        }
+      ]
+    },
+    {
       "id": "AV-2607-V29H",
       "ts": "2026-07-02T07:02:02.587Z",
       "kategori": "Brandtillbud / SBA",
@@ -201,77 +279,6 @@
           "händelse": "Status: Pågående → Stängd",
           "kommentar": "",
           "status": "stängd"
-        }
-      ]
-    },
-    {
-      "id": "AV-2607-EZ95",
-      "ts": "2026-07-09T20:45:39.880Z",
-      "kategori": "Säkerhet / ordning",
-      "kategoriIndex": 6,
-      "risk": "Låg",
-      "riskNivå": 1,
-      "anläggning": "CC Björkö Örns Camping",
-      "plats": "Campingtomt",
-      "datum": "2026-07-09",
-      "tid": "",
-      "rapportör": "Receptionen Björkö Örn",
-      "rapportörEmail": "info.bjorko@cc-camping.se",
-      "beskrivning": "Gäst ringde och rapporterade till oss campingvärdar om att en gäst från grannen hade kommit och knackat på och bett om att få komma in och sova. Hon hade även berättat att hennes man misshandlat henne.",
-      "omedelbar": "Vi hörde oss för med grannar om de hade sett eller hört något uppseendeväckande beteende och flera hade reagerat på att paret betet sig annorlunda. Vi beslöt oss för att ringa polisen.",
-      "ansvarig": "Carolina Eek",
-      "deadline": "2026-07-09",
-      "kommentar": "Polisen kom till platsen för fortsatt hantering. Totalt tre patruller kom till plats. ",
-      "status": "ny",
-      "eskalerad": false,
-      "bilder": [],
-      "dynamicFields": {},
-      "historik": [
-        {
-          "ts": "2026-07-09T20:45:39.880Z",
-          "av": "Receptionen Björkö Örn",
-          "händelse": "Skapades",
-          "status": "ny"
-        }
-      ]
-    },
-    {
-      "id": "AV-2607-EZ9T",
-      "ts": "2026-07-16T10:29:44.145Z",
-      "kategori": "Sjukdom / gästincident",
-      "kategoriIndex": 1,
-      "risk": "Låg",
-      "riskNivå": 1,
-      "anläggning": "CC Storsveds Camping",
-      "plats": "Servicehus",
-      "datum": "2026-07-16",
-      "tid": "09:00",
-      "rapportör": "Massimo Johansson",
-      "rapportörEmail": "massimo.johansson@cc-camping.se",
-      "beskrivning": "Christer B kom in i toaletten och såg då en säsongscampare sittande i duschen. Christer tog kontakt men gästen var in kontaktbar och svimmade direkt. Patienten blev helt blå och man ringde 112. Ambulans var 20 min bort men de skickade helikopter. Christer hämtade campingvärd. ",
-      "omedelbar": "Lade patient på golvet med fria luftvägar.\nRIngde 112. ",
-      "ansvarig": "Christer Bäckman",
-      "deadline": "2026-07-16",
-      "kommentar": "Campingvärd sa att detta inte skulle rapporteras. ",
-      "status": "pågående",
-      "eskalerad": false,
-      "bilder": [],
-      "dynamicFields": {
-        "d-typ": "Sjukdom/magsjuka",
-        "d-person": "Gäst",
-        "d-foerstahjälp": true,
-        "d-ambulans": true,
-        "d-polis": false,
-        "d-anhörig": true,
-        "d-vittnen": "Christer Bäckman",
-        "d-ansvar": ""
-      },
-      "historik": [
-        {
-          "ts": "2026-07-16T10:29:44.145Z",
-          "av": "Massimo Johansson",
-          "händelse": "Skapades",
-          "status": "ny"
         }
       ]
     }
