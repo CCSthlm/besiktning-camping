@@ -1149,7 +1149,7 @@ function renderMina() {
     var datum  = ts ? new Date(ts).toLocaleDateString('sv-SE') : '–';
     var anl    = a.anläggning || '–';
     var aid    = a.id || '';
-    return '<div class="mina-card" style="cursor:pointer" onclick="oppnaAvvikelse(' + JSON.stringify(aid) + ')">'
+    return '<div class="mina-card" style="cursor:pointer" data-avid="' + aid.replace(/"/g,'&quot;') + '" onclick="oppnaAvvikelse(this.dataset.avid)">'
       + '<div class="mina-card-top">'
       + '<div class="mina-card-kat"><i class="ti ti-alert-triangle" style="font-size:13px;color:var(--amber)"></i> ' + (a.kategori||'Avvikelse') + '</div>'
       + '<div style="display:flex;align-items:center;gap:8px">'
