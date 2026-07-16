@@ -18,7 +18,7 @@
       "ansvarig": "Christer Bäckman",
       "deadline": "2026-07-16",
       "kommentar": "Campingvärd sa att detta inte skulle rapporteras. \nchristerbgudo@telia.com",
-      "status": "pågående",
+      "status": "stängd",
       "eskalerad": false,
       "bilder": [],
       "dynamicFields": {
@@ -44,6 +44,13 @@
           "händelse": "Uppdaterades",
           "kommentar": "christerbgudo@telia.com",
           "status": "pågående"
+        },
+        {
+          "ts": "2026-07-16T10:31:10.298Z",
+          "av": "Massimo Johansson",
+          "händelse": "Status: Pågående → Stängd",
+          "kommentar": "",
+          "status": "stängd"
         }
       ]
     },
