@@ -27,6 +27,15 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
 .pb-name{font-weight:600;color:var(--text);white-space:nowrap;}
 .pb-sep{width:1px;height:22px;background:var(--border2);margin:0 12px;flex-shrink:0;}
 .pb-btn{display:flex;align-items:center;gap:5px;padding:6px 12px;border-radius:7px;border:1px solid var(--border2);background:none;color:var(--text2);font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;white-space:nowrap;transition:background .15s;text-decoration:none;flex-shrink:0;margin-left:6px;}
+.pb-btn-mina-active{background:var(--amber-bg)!important;color:var(--amber)!important;border-color:rgba(133,79,11,.25)!important;}
+.mina-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px 16px;margin-bottom:10px;border-left:3px solid var(--amber);}
+.mina-card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:6px;}
+.mina-card-kat{font-size:13px;font-weight:600;}
+.mina-card-meta{font-size:11px;color:var(--text3);display:flex;gap:10px;flex-wrap:wrap;}
+.mina-status{display:inline-flex;font-size:11px;font-weight:600;padding:2px 8px;border-radius:10px;}
+.ms-ny{background:var(--amber-bg);color:var(--amber);}
+.ms-pagar{background:rgba(79,142,247,.12);color:#1a4f7a;}
+.ms-klar{background:var(--green-bg);color:var(--green-text);}
 .pb-btn:hover{background:var(--bg3);color:var(--text);}
 .pb-btn-logout{background:var(--red-bg);color:var(--red);border-color:rgba(163,45,45,.25);}
 .pb-btn-logout:hover{background:var(--red);color:#fff;}
@@ -159,11 +168,26 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
     <span class="pb-name" id="pb-name">–</span>
   </div>
   <div class="pb-sep"></div>
+  <button class="pb-btn" id="btn-mina" onclick="toggleMina()"><i class="ti ti-list-check"></i> Mina avvikelser</button>
   <a href="index.html" class="pb-btn"><i class="ti ti-arrow-left"></i> Portal</a>
   <button class="pb-btn pb-btn-logout" onclick="portalLogout()"><i class="ti ti-logout"></i> Logga ut</button>
 </div>
 
 <div class="overlay" id="overlay"><div class="spinner"></div><div style="font-size:14px;font-weight:500;color:var(--text2)">Sparar avvikelse…</div></div>
+
+<!-- MINA AVVIKELSER -->
+<div id="view-mina" style="display:none;position:fixed;inset:0;z-index:50;background:var(--bg3);overflow-y:auto">
+  <div style="max-width:720px;margin:0 auto;padding:16px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px">
+      <div>
+        <h2 style="font-size:18px;font-weight:700;display:flex;align-items:center;gap:8px"><i class="ti ti-list-check" style="color:var(--amber)"></i> Mina avvikelser</h2>
+        <p style="font-size:12px;color:var(--text2);margin-top:2px">Avvikelser du har rapporterat</p>
+      </div>
+      <button class="pb-btn" onclick="toggleMina()"><i class="ti ti-x"></i> Stäng</button>
+    </div>
+    <div id="mina-list"></div>
+  </div>
+</div>
 
 <div class="page-wrap">
 
@@ -1068,6 +1092,58 @@ function toast(msg,type='ok'){
   setTimeout(()=>{t.style.opacity='0';t.style.transform='translateY(6px)';},2800);
 }
 function portalLogout(){sessionStorage.setItem('ccs_logged_out','1');sessionStorage.removeItem('ccs_session');sessionStorage.removeItem('ccs_portal_user');window.location.replace('index.html');}
+
+// ── MINA AVVIKELSER ────────────────────────────────────────────────────────
+let _minaOpen = false;
+
+function toggleMina() {
+  _minaOpen = !_minaOpen;
+  const view = document.getElementById('view-mina');
+  const btn  = document.getElementById('btn-mina');
+  view.style.display = _minaOpen ? '' : 'none';
+  btn.classList.toggle('pb-btn-mina-active', _minaOpen);
+  if (_minaOpen) renderMina();
+}
+
+function renderMina() {
+  const wrap = document.getElementById('mina-list');
+  const userName  = _user?.name  || '';
+  const userEmail = _user?.email || '';
+  const alla = _avData.ärenden || [];
+
+  // Match on rapportör name or email
+  const mina = alla.filter(a =>
+    (a.rapportör && a.rapportör === userName) ||
+    (a.rapportörEmail && userEmail && a.rapportörEmail === userEmail)
+  ).slice().sort((a,b) => (b.skapad||'').localeCompare(a.skapad||''));
+
+  if (!mina.length) {
+    wrap.innerHTML = '<div style="text-align:center;padding:40px 20px;color:var(--text3)"><i class="ti ti-list-check" style="font-size:36px;display:block;margin-bottom:10px"></i>Du har inte rapporterat några avvikelser ännu.</div>';
+    return;
+  }
+
+  wrap.innerHTML = mina.map(function(a) {
+    var status = a.status || 'ny';
+    var scls   = status === 'klar' ? 'ms-klar' : status === 'pågår' ? 'ms-pagar' : 'ms-ny';
+    var slbl   = status === 'klar' ? 'Klar' : status === 'pågår' ? 'Pågår' : 'Ny';
+    var datum  = a.skapad ? new Date(a.skapad).toLocaleDateString('sv-SE') : '–';
+    var anl    = a.anläggning || '–';
+    var atg    = a.omedelbar || a.åtgärd || '';
+    return '<div class="mina-card">'
+      + '<div class="mina-card-top">'
+      + '<div class="mina-card-kat"><i class="ti ti-alert-triangle" style="font-size:13px;color:var(--amber)"></i> ' + (a.kategori||'Avvikelse') + '</div>'
+      + '<span class="mina-status ' + scls + '">' + slbl + '</span>'
+      + '</div>'
+      + '<div style="font-size:12px;color:var(--text2);margin-bottom:6px">' + (a.beskrivning||'').slice(0,120) + (a.beskrivning&&a.beskrivning.length>120?'…':'') + '</div>'
+      + '<div class="mina-card-meta">'
+      + '<span><i class="ti ti-calendar" style="font-size:10px"></i> ' + datum + '</span>'
+      + '<span><i class="ti ti-tent" style="font-size:10px"></i> ' + anl + '</span>'
+      + (a.ärendeId ? '<span style="font-family:monospace;font-size:10px;color:var(--text3)">' + a.ärendeId + '</span>' : '')
+      + '</div>'
+      + (atg ? '<div style="font-size:11px;color:var(--text2);margin-top:6px;padding:6px 8px;background:var(--bg3);border-radius:6px"><strong>Åtgärd:</strong> ' + atg.slice(0,100) + (atg.length>100?'…':'') + '</div>' : '')
+      + '</div>';
+  }).join('');
+}
 </script>
 </body>
 </html>
