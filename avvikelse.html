@@ -189,6 +189,23 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
   </div>
 </div>
 
+<!-- AVVIKELSE DETALJ MODAL -->
+<div id="modal-avvikelse" style="display:none;position:fixed;inset:0;z-index:60;background:rgba(0,0,0,.45);overflow-y:auto">
+  <div style="max-width:680px;margin:24px auto;background:var(--bg2);border-radius:var(--radius-lg);box-shadow:0 8px 40px rgba(0,0,0,.2);overflow:hidden">
+    <div style="padding:16px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--bg2);z-index:2">
+      <div>
+        <div style="font-size:15px;font-weight:700" id="modal-av-titel">–</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:2px" id="modal-av-id">–</div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button onclick="pdfAvvikelse()" style="padding:7px 13px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:5px"><i class="ti ti-file-type-pdf"></i> PDF</button>
+        <button onclick="stangModal()" style="padding:7px 12px;background:var(--bg3);color:var(--text2);border:1px solid var(--border2);border-radius:var(--radius);font-size:12px;cursor:pointer;font-family:inherit"><i class="ti ti-x"></i></button>
+      </div>
+    </div>
+    <div id="modal-av-body" style="padding:20px;font-size:14px;line-height:1.7;color:var(--text2)"></div>
+  </div>
+</div>
+
 <div class="page-wrap">
 
   <div style="margin-bottom:20px;">
@@ -1094,28 +1111,30 @@ function toast(msg,type='ok'){
 function portalLogout(){sessionStorage.setItem('ccs_logged_out','1');sessionStorage.removeItem('ccs_session');sessionStorage.removeItem('ccs_portal_user');window.location.replace('index.html');}
 
 // ── MINA AVVIKELSER ────────────────────────────────────────────────────────
-let _minaOpen = false;
+var _minaOpen = false;
+var _visadAvvikelse = null;
 
 function toggleMina() {
   _minaOpen = !_minaOpen;
-  const view = document.getElementById('view-mina');
-  const btn  = document.getElementById('btn-mina');
+  var view = document.getElementById('view-mina');
+  var btn  = document.getElementById('btn-mina');
   view.style.display = _minaOpen ? '' : 'none';
   btn.classList.toggle('pb-btn-mina-active', _minaOpen);
   if (_minaOpen) renderMina();
 }
 
 function renderMina() {
-  const wrap = document.getElementById('mina-list');
-  const userName  = _user?.name  || '';
-  const userEmail = _user?.email || '';
-  const alla = _avData.ärenden || [];
+  var wrap      = document.getElementById('mina-list');
+  var userName  = (_user && _user.name)  || '';
+  var userEmail = (_user && _user.email) || '';
+  var alla      = _avData.ärenden || [];
 
-  // Match on rapportör name or email
-  const mina = alla.filter(a =>
-    (a.rapportör && a.rapportör === userName) ||
-    (a.rapportörEmail && userEmail && a.rapportörEmail === userEmail)
-  ).slice().sort((a,b) => (b.skapad||'').localeCompare(a.skapad||''));
+  var mina = alla.filter(function(a) {
+    return (a.rapportör && a.rapportör === userName) ||
+           (a.rapportörEmail && userEmail && a.rapportörEmail === userEmail);
+  }).slice().sort(function(a,b) {
+    return ((b.skapad||b.ts||'')).localeCompare((a.skapad||a.ts||''));
+  });
 
   if (!mina.length) {
     wrap.innerHTML = '<div style="text-align:center;padding:40px 20px;color:var(--text3)"><i class="ti ti-list-check" style="font-size:36px;display:block;margin-bottom:10px"></i>Du har inte rapporterat några avvikelser ännu.</div>';
@@ -1126,24 +1145,147 @@ function renderMina() {
     var status = a.status || 'ny';
     var scls   = status === 'klar' ? 'ms-klar' : status === 'pågår' ? 'ms-pagar' : 'ms-ny';
     var slbl   = status === 'klar' ? 'Klar' : status === 'pågår' ? 'Pågår' : 'Ny';
-    var datum  = a.skapad ? new Date(a.skapad).toLocaleDateString('sv-SE') : '–';
+    var ts     = a.skapad||a.ts||'';
+    var datum  = ts ? new Date(ts).toLocaleDateString('sv-SE') : '–';
     var anl    = a.anläggning || '–';
-    var atg    = a.omedelbar || a.åtgärd || '';
-    return '<div class="mina-card">'
+    var aid    = a.id || '';
+    return '<div class="mina-card" style="cursor:pointer" onclick="oppnaAvvikelse(' + JSON.stringify(aid) + ')">'
       + '<div class="mina-card-top">'
       + '<div class="mina-card-kat"><i class="ti ti-alert-triangle" style="font-size:13px;color:var(--amber)"></i> ' + (a.kategori||'Avvikelse') + '</div>'
+      + '<div style="display:flex;align-items:center;gap:8px">'
       + '<span class="mina-status ' + scls + '">' + slbl + '</span>'
+      + '<i class="ti ti-chevron-right" style="font-size:13px;color:var(--text3)"></i>'
       + '</div>'
-      + '<div style="font-size:12px;color:var(--text2);margin-bottom:6px">' + (a.beskrivning||'').slice(0,120) + (a.beskrivning&&a.beskrivning.length>120?'…':'') + '</div>'
+      + '</div>'
+      + '<div style="font-size:12px;color:var(--text2);margin-bottom:6px">' + (a.beskrivning||'').slice(0,120) + ((a.beskrivning||'').length>120?'…':'') + '</div>'
       + '<div class="mina-card-meta">'
       + '<span><i class="ti ti-calendar" style="font-size:10px"></i> ' + datum + '</span>'
       + '<span><i class="ti ti-tent" style="font-size:10px"></i> ' + anl + '</span>'
-      + (a.ärendeId ? '<span style="font-family:monospace;font-size:10px;color:var(--text3)">' + a.ärendeId + '</span>' : '')
+      + (aid ? '<span style="font-family:monospace;font-size:10px;color:var(--text3)">' + aid + '</span>' : '')
       + '</div>'
-      + (atg ? '<div style="font-size:11px;color:var(--text2);margin-top:6px;padding:6px 8px;background:var(--bg3);border-radius:6px"><strong>Åtgärd:</strong> ' + atg.slice(0,100) + (atg.length>100?'…':'') + '</div>' : '')
       + '</div>';
   }).join('');
 }
+
+function oppnaAvvikelse(id) {
+  var alla = _avData.ärenden || [];
+  var a = null;
+  for (var i=0;i<alla.length;i++) { if (alla[i].id === id) { a = alla[i]; break; } }
+  if (!a) return;
+  _visadAvvikelse = a;
+
+  var ts     = a.skapad||a.ts||'';
+  var datum  = ts ? new Date(ts).toLocaleString('sv-SE') : '–';
+  var status = a.status || 'ny';
+  var slbl   = status === 'klar' ? 'Klar' : status === 'pågår' ? 'Pågår' : 'Ny';
+
+  document.getElementById('modal-av-titel').textContent = a.kategori || 'Avvikelse';
+  document.getElementById('modal-av-id').textContent    = (a.id||'') + (datum ? ' · ' + datum : '');
+
+  function rad(lbl, val) {
+    if (!val) return '';
+    return '<div style="margin-bottom:12px">'
+      + '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--text3);margin-bottom:3px">' + lbl + '</div>'
+      + '<div style="color:var(--text)">' + val + '</div></div>';
+  }
+  function sekt(t) {
+    return '<div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);border-bottom:1px solid var(--border);padding-bottom:5px;margin:20px 0 12px">' + t + '</div>';
+  }
+
+  var df = a.dynamicFields || {};
+  var dfHtml = '';
+  Object.keys(df).forEach(function(k) { if (df[k]) dfHtml += rad(k, df[k]); });
+
+  var html = sekt('Grundinformation')
+    + rad('Ärendenummer', a.id)
+    + rad('Kategori', a.kategori)
+    + rad('Risknivå', a.risk)
+    + rad('Status', slbl)
+    + rad('Datum och tid', (a.datum||'') + (a.tid ? ' kl. ' + a.tid : ''))
+    + rad('Registrerad', datum)
+    + sekt('Plats och rapportör')
+    + rad('Anläggning', a.anläggning)
+    + rad('Plats', a.plats)
+    + rad('Rapporterad av', (a.rapportör||'') + (a.rapportörEmail ? ' (' + a.rapportörEmail + ')' : ''))
+    + (dfHtml ? sekt('Specifika uppgifter') + dfHtml : '')
+    + sekt('Händelsebeskrivning')
+    + '<div style="color:var(--text);white-space:pre-wrap;line-height:1.7">' + (a.beskrivning||'–') + '</div>'
+    + (a.omedelbar ? sekt('Omedelbar åtgärd') + '<div style="color:var(--text);white-space:pre-wrap">' + a.omedelbar + '</div>' : '')
+    + sekt('Uppföljning')
+    + rad('Ansvarig', a.ansvarig)
+    + rad('Deadline', a.deadline)
+    + rad('Kommentar', a.kommentar)
+    + (a.eskalerad ? '<div style="margin-top:12px;padding:10px 13px;background:var(--red-bg);color:var(--red);border-radius:var(--radius);font-size:13px;font-weight:600"><i class="ti ti-alert-triangle"></i> Eskalerad – kräver omedelbar åtgärd</div>' : '');
+
+  document.getElementById('modal-av-body').innerHTML = html;
+  document.getElementById('modal-avvikelse').style.display = '';
+}
+
+function stangModal() {
+  document.getElementById('modal-avvikelse').style.display = 'none';
+  _visadAvvikelse = null;
+}
+
+function pdfAvvikelse() {
+  var a = _visadAvvikelse;
+  if (!a) return;
+  var ts    = a.skapad||a.ts||'';
+  var datum = ts ? new Date(ts).toLocaleString('sv-SE') : '–';
+  var slbl  = a.status === 'klar' ? 'Klar' : a.status === 'pågår' ? 'Pågår' : 'Ny';
+  var df    = a.dynamicFields || {};
+  var dfRows = Object.keys(df).filter(function(k){ return df[k]; }).map(function(k){
+    return '<tr><td class="lbl">' + k + '</td><td>' + df[k] + '</td></tr>';
+  }).join('');
+
+  var html = '<!DOCTYPE html><html lang="sv"><head><meta charset="UTF-8">'
+    + '<title>Avvikelse ' + (a.id||'') + '</title>'
+    + '<style>'
+    + 'body{font-family:Arial,sans-serif;font-size:13px;color:#1a1a18;padding:32px;max-width:740px;margin:0 auto}'
+    + 'h1{font-size:20px;font-weight:700;color:#854F0B;border-bottom:2px solid #854F0B;padding-bottom:8px;margin-bottom:20px}'
+    + 'h2{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#909088;border-bottom:1px solid #eee;padding-bottom:4px;margin:20px 0 10px}'
+    + 'table{width:100%;border-collapse:collapse;margin-bottom:14px}'
+    + 'td{padding:6px 10px;border:1px solid #ddd;vertical-align:top}'
+    + '.lbl{font-weight:600;background:#f5f5f3;width:38%}'
+    + '.desc{white-space:pre-wrap;line-height:1.7;padding:10px;background:#fafafa;border:1px solid #eee;border-radius:4px;margin-bottom:14px}'
+    + '.esc{background:#fcebeb;color:#A32D2D;font-weight:700;padding:8px 12px;border-radius:4px;font-size:13px;margin-top:12px}'
+    + '.footer{margin-top:30px;text-align:center;font-size:11px;color:#aaa;border-top:1px solid #eee;padding-top:10px}'
+    + '@media print{body{padding:16px}}'
+    + '</style></head><body>'
+    + '<h1>Avvikelserapport – Caravan Club of Sweden</h1>'
+    + '<h2>Grundinformation</h2>'
+    + '<table>'
+    + '<tr><td class="lbl">Ärendenummer</td><td>' + (a.id||'–') + '</td></tr>'
+    + '<tr><td class="lbl">Kategori</td><td>' + (a.kategori||'–') + '</td></tr>'
+    + '<tr><td class="lbl">Risknivå</td><td>' + (a.risk||'–') + '</td></tr>'
+    + '<tr><td class="lbl">Status</td><td>' + slbl + '</td></tr>'
+    + '<tr><td class="lbl">Datum och tid</td><td>' + (a.datum||'–') + (a.tid?' kl. '+a.tid:'') + '</td></tr>'
+    + '<tr><td class="lbl">Registrerad</td><td>' + datum + '</td></tr>'
+    + '</table>'
+    + '<h2>Plats och rapportör</h2>'
+    + '<table>'
+    + '<tr><td class="lbl">Anläggning</td><td>' + (a.anläggning||'–') + '</td></tr>'
+    + '<tr><td class="lbl">Plats</td><td>' + (a.plats||'–') + '</td></tr>'
+    + '<tr><td class="lbl">Rapporterad av</td><td>' + (a.rapportör||'–') + (a.rapportörEmail?' ('+a.rapportörEmail+')':'') + '</td></tr>'
+    + '</table>'
+    + (dfRows ? '<h2>Specifika uppgifter</h2><table>' + dfRows + '</table>' : '')
+    + '<h2>Händelsebeskrivning</h2>'
+    + '<div class="desc">' + (a.beskrivning||'–') + '</div>'
+    + (a.omedelbar ? '<h2>Omedelbar åtgärd</h2><div class="desc">' + a.omedelbar + '</div>' : '')
+    + '<h2>Uppföljning</h2>'
+    + '<table>'
+    + '<tr><td class="lbl">Ansvarig</td><td>' + (a.ansvarig||'–') + '</td></tr>'
+    + '<tr><td class="lbl">Deadline</td><td>' + (a.deadline||'–') + '</td></tr>'
+    + '<tr><td class="lbl">Kommentar</td><td>' + (a.kommentar||'–') + '</td></tr>'
+    + '</table>'
+    + (a.eskalerad ? '<div class="esc">&#9888; Eskalerad – kräver omedelbar åtgärd</div>' : '')
+    + '<div class="footer">Caravan Club of Sweden – Stockholmssektionen | cc-camping.se</div>'
+    + '<script>window.onload=function(){window.print();}<\/script>'
+    + '</body></html>';
+
+  var w = window.open('','_blank');
+  if (w) { w.document.write(html); w.document.close(); }
+}
+
 </script>
 </body>
 </html>
