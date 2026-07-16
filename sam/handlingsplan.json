@@ -71,19 +71,7 @@
       "deadline": "2026-07-16",
       "status": "Öppen",
       "skapad": "2026-07-16"
-    },
-    {
-      "id": "AT-AVV-AV-2607-V29H",
-      "kalla": "Avvikelse",
-      "kallaId": "AV-2607-V29H",
-      "titel": "Avvikelse: Brandtillbud / SBA",
-      "beskrivning": "Gasolgrill som tog eld.",
-      "camping": "CC Björkö Örns Camping",
-      "ansvarig": "Massimo Johansson",
-      "deadline": null,
-      "status": "Öppen",
-      "skapad": "2026-07-01"
     }
   ],
-  "uppdaterad": "2026-07-16T18:35:07.237Z"
+  "uppdaterad": "2026-07-16T18:35:15.308Z"
 }
