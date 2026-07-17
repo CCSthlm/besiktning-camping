@@ -302,6 +302,20 @@
           "manualReason": "GLömde stämpla in",
           "edited": false,
           "campingId": "c7"
+        },
+        {
+          "id": "mrpae7zz97qf7",
+          "name": "Massimo Johansson",
+          "pnr": "197511183571",
+          "date": "2026-07-14",
+          "timeIn": "09:15",
+          "timeOut": "12:05",
+          "registeredBy": "Massimo Johansson",
+          "registeredAt": "2026-07-17T18:44:07.295Z",
+          "manual": true,
+          "manualReason": "GLömde stämpla in",
+          "edited": false,
+          "campingId": "c7"
         }
       ],
       "personal": [
@@ -489,6 +503,15 @@
           "detail": "Manuell: Massimo Johansson in 09:00 ut 15:15 (2026-07-13) – GLömde stämpla in",
           "oldVal": "",
           "newVal": "09:00"
+        },
+        {
+          "id": "mrpae7zzy2d89",
+          "ts": "2026-07-17T18:44:07.295Z",
+          "user": "Massimo Johansson",
+          "action": "in",
+          "detail": "Manuell: Massimo Johansson in 09:15 ut 12:05 (2026-07-14) – GLömde stämpla in",
+          "oldVal": "",
+          "newVal": "09:15"
         }
       ]
     },
