@@ -259,6 +259,20 @@
           "manualReason": "GLömde stämpla in",
           "edited": true,
           "campingId": "c7"
+        },
+        {
+          "id": "mrp76376l0iwy",
+          "name": "Massimo Johansson",
+          "pnr": "19751118-3571",
+          "date": "2026-07-17",
+          "timeIn": "19:13",
+          "timeOut": "",
+          "registeredBy": "Massimo Johansson",
+          "registeredAt": "2026-07-17T17:13:48.978Z",
+          "manual": false,
+          "manualReason": "",
+          "edited": false,
+          "campingId": "c7"
         }
       ],
       "personal": [
@@ -337,6 +351,15 @@
           "detail": "Lade till person: Dorry Johansson",
           "oldVal": "",
           "newVal": ""
+        },
+        {
+          "id": "mrp76376hbblj",
+          "ts": "2026-07-17T17:13:48.978Z",
+          "user": "Massimo Johansson",
+          "action": "in",
+          "detail": "Massimo Johansson stämplade in 19:13 (2026-07-17)",
+          "oldVal": "",
+          "newVal": "19:13"
         }
       ]
     },
