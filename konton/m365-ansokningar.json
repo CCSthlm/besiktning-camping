@@ -162,6 +162,24 @@
         "kommentar": "M365-konto skapat: dorry.johansson@cc-camping.se · Licens tilldelad · Grupper: Caravan Club of Sweden - Stockholmssektionen",
         "ts": "2026-06-26T07:42:00.223Z"
       }
+    },
+    {
+      "id": "M365-2607-JTBL",
+      "ts": "2026-07-17T16:04:53.495Z",
+      "status": "ny",
+      "fname": "Massimo",
+      "lname": "Admin",
+      "pnr": "197511183571",
+      "mobil": "0766319996",
+      "email": "massimo.johansson@cc-camping.se",
+      "adress": "",
+      "anläggning": "Sektionen (ej campingspecifik)",
+      "roll": "Styrelse",
+      "ansForm": "Ideell",
+      "startDatum": "2026-07-17",
+      "chef": "Massimo",
+      "övrigt": "",
+      "gdpr": true
     }
   ]
 }
