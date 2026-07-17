@@ -97,10 +97,10 @@
         "personId": "mrpafwoc6r1jk",
         "personName": "Massimo Johansson",
         "pnr": "197511183571",
-        "anstform": "anställd",
-        "timlön": 0,
+        "anstform": "timanställd",
+        "timlön": 115,
         "manlön": 0,
-        "kostnadsst": "",
+        "kostnadsst": "70",
         "timeRows": [
           {
             "id": "mrpafyit0dhpt",
