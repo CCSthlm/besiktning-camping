@@ -43,7 +43,8 @@
       "kostnadsst": "70",
       "start": "2026-06-30",
       "slut": "2026-08-28",
-      "aktiv": true
+      "aktiv": true,
+      "kostnadsbarare": "75"
     }
   ],
   "underlag": {
