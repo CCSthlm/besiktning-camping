@@ -179,6 +179,7 @@ tr:hover td{background:rgba(59,109,17,.03);}
       <option value="11">November</option><option value="12">December</option>
     </select>
     <button class="btn-secondary" onclick="importFromPersonalliggare()"><i class="ti ti-download"></i> Importera från personalliggare</button>
+    <button class="btn-secondary" onclick="raknаOm()" title="Räknar om löner baserat på aktuella löneinställningar"><i class="ti ti-refresh"></i> Räkna om löner</button>
   </div>
 
   <!-- TABS -->
@@ -594,6 +595,27 @@ function updatePeriodLabel() {
 }
 
 // ── IMPORT FROM PERSONALLIGGARE ───────────────────────────────────────────
+function raknаOm() {
+  var key  = periodKey();
+  var rows = _lonData.underlag[key] || [];
+  if (!rows.length) { toast('Inga rader att räkna om','warn'); return; }
+  var updated = 0;
+  rows.forEach(function(r) {
+    // Sync löneuppgifter from personalregister
+    var p = _lonData.personal.find(function(x){ return x.id===r.personId; });
+    if (p) {
+      if (p.timlön  !== undefined) r.timlön  = p.timlön;
+      if (p.manlön  !== undefined) r.manlön  = p.manlön;
+      if (p.anstform)              r.anstform = p.anstform;
+      if (p.kostnadsst !== undefined) r.kostnadsst = p.kostnadsst;
+      updated++;
+    }
+  });
+  renderUnderlag();
+  saveData();
+  toast('Räknade om '+updated+' person'+(updated!==1?'er':''), 'ok');
+}
+
 function importFromPersonalliggare() {
   if (!_plData || !_plData.personalliggare) {
     toast('Personalliggare-data saknas','warn'); return;
@@ -711,6 +733,8 @@ function renderUnderlag() {
       + '<td style="font-weight:600">'+(brutto>0?fmtKr(brutto):'–')+'</td>'
       + '<td style="font-weight:700;color:var(--accent2)">'+fmtKr(total)+'</td>'
       + '<td class="no-print" onclick="event.stopPropagation()"><div style="display:flex;gap:5px;justify-content:flex-end">'
+      + '<button class="btn-icon" data-rid="'+r.id+'" onclick="exportPersonExcel(this.dataset.rid)" title="Excel"><i class="ti ti-table-export"></i> Excel</button>'
+      + '<button class="btn-icon" data-rid="'+r.id+'" onclick="exportPersonBL(this.dataset.rid)" title="BL-export"><i class="ti ti-file-spreadsheet"></i> BL</button>'
       + '<button class="btn-icon" data-rid="'+r.id+'" onclick="openEmployeeModal(this.dataset.rid)"><i class="ti ti-pencil"></i> Redigera</button>'
       + '<button class="btn-icon red" data-rid="'+r.id+'" data-rname="'+r.personName+'" onclick="confirmDeleteUnderlag(this.dataset.rid,this.dataset.rname)"><i class="ti ti-trash"></i> Ta bort</button>'
       + '</div></td>'
@@ -1176,6 +1200,72 @@ function confirmDeleteOb(id, namn) {
 }
 
 // ── EXPORT ────────────────────────────────────────────────────────────────
+function exportPersonExcel(rowId) {
+  try {
+    if (!window.XLSX) { toast('Excel-biblioteket laddas','warn'); return; }
+    var key   = periodKey();
+    var r     = (_lonData.underlag[key]||[]).find(function(x){ return x.id===rowId; });
+    if (!r) return;
+    var company = (_plData && _plData.company) || {};
+    var tl  = parseFloat(r.timlön)||0;
+    var ml  = parseFloat(r.manlön)||0;
+    var rows = (r.timeRows||[]).slice().sort(function(a,b){ return a.date.localeCompare(b.date); });
+    var wb  = XLSX.utils.book_new();
+    var data = [
+      ['LÖNEUNDERLAG – '+r.personName+' – '+periodLabel()],
+      ['Företag:', String(company.name||'–'), '', 'Org.nr:', String(company.orgNr||'–')],
+      ['Personnummer:', String(r.pnr||'–'), '', 'Anst.form:', String(r.anstform||'–')],
+      ['Timlön:', tl>0?tl+' kr/h':'–', '', 'Kostnadsst:', String(r.kostnadsst||'–')],
+      ['Exporterad:', new Date().toLocaleString('sv-SE')],
+      [],
+      ['Datum','Dag','Instämplad','Utstämplad','Timmar','Lön (kr)','Not'],
+    ];
+    rows.forEach(function(t) {
+      var h   = parseFloat(t.hours)||0;
+      var dag = t.date ? new Date(t.date+'T00:00:00').toLocaleDateString('sv-SE',{weekday:'long'}) : '';
+      var lön = tl>0 ? Math.round(h*tl*100)/100 : '';
+      data.push([String(t.date||''), dag, String(t.timeIn||''), String(t.timeOut||''), h, lön, String(t.note||'')]);
+    });
+    var totH   = rows.reduce(function(s,t){return s+(parseFloat(t.hours)||0);},0);
+    var totLön = tl>0 ? Math.round(totH*tl*100)/100 : (ml||'');
+    data.push([]);
+    data.push(['Totalt', '', '', '', Math.round(totH*100)/100, totLön, '']);
+    var ws = XLSX.utils.aoa_to_sheet(data);
+    ws['!cols']=[{wch:12},{wch:12},{wch:12},{wch:12},{wch:10},{wch:12},{wch:30}];
+    var safeName = r.personName.replace(/[:\\\/\?\*\[\]&\s]/g,'_').slice(0,30);
+    XLSX.utils.book_append_sheet(wb, ws, safeName.slice(0,31));
+    XLSX.writeFile(wb, 'Loneunderlag_'+safeName+'_'+key+'.xlsx');
+    toast('Excel exporterad – '+r.personName,'ok');
+  } catch(e) { toast('Export misslyckades: '+e.message,'err'); }
+}
+
+function exportPersonBL(rowId) {
+  try {
+    var key = periodKey();
+    var r   = (_lonData.underlag[key]||[]).find(function(x){ return x.id===rowId; });
+    if (!r) return;
+    var tl  = parseFloat(r.timlön)||0;
+    var ml  = parseFloat(r.manlön)||0;
+    var totH = (r.timeRows||[]).reduce(function(s,t){return s+(parseFloat(t.hours)||0);},0);
+    var lines = ['Personnummer;Namn;Kostnadsst;Löneart;Antal;Belopp'];
+    if (ml > 0) {
+      lines.push([r.pnr||'', r.personName, r.kostnadsst||'', 'Månadslön', '1', ml.toFixed(2)].join(';'));
+    } else if (tl > 0 && totH > 0) {
+      lines.push([r.pnr||'', r.personName, r.kostnadsst||'', 'Tidlön', totH.toFixed(2), (totH*tl).toFixed(2)].join(';'));
+    } else {
+      toast('Ingen lön angiven för '+r.personName,'warn'); return;
+    }
+    var csv  = lines.join('\n');
+    var blob = new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'});
+    var url  = URL.createObjectURL(blob);
+    var a    = document.createElement('a');
+    var safeName = r.personName.replace(/[:\\\/\?\*\[\]&\s]/g,'_').slice(0,30);
+    a.href = url; a.download = 'BL_'+safeName+'_'+key+'.csv'; a.click();
+    URL.revokeObjectURL(url);
+    toast('BL-export klar – '+r.personName,'ok');
+  } catch(e) { toast('Export misslyckades: '+e.message,'err'); }
+}
+
 function exportExcel() {
   try {
     if (!window.XLSX) { toast('Excel-biblioteket laddas','warn'); return; }
