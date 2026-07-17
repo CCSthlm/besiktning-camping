@@ -946,8 +946,8 @@ function renderDagslista() {
       + '<td><span class="duration-badge">' + dur + '</span></td>'
       + '<td style="color:var(--text3);font-size:12px">' + (e.registeredBy||'–') + '</td>'
       + '<td class="no-print"><div style="display:flex;gap:5px;justify-content:flex-end">'
-      + '<button class="btn-icon" onclick="openManualModal(' + JSON.stringify(e).replace(/"/g,'&quot;') + ')" title="Redigera"><i class="ti ti-pencil"></i></button>'
-      + '<button class="btn-icon red" onclick="confirmDeleteEntry(\'' + e.id + '\',\'' + e.name + '\')" title="Ta bort"><i class="ti ti-trash"></i></button>'
+      + '<button class="btn-icon" onclick="openManualModal(' + JSON.stringify(e).replace(/"/g,'&quot;') + ')"><i class="ti ti-pencil"></i> Redigera</button>'
+      + '<button class="btn-icon red" onclick="confirmDeleteEntry(\'' + e.id + '\',\'' + e.name + '\')"><i class="ti ti-trash"></i> Ta bort</button>'
       + '</div></td>'
       + '</tr>';
   }).join('');
@@ -974,8 +974,8 @@ function renderPersonalLista() {
       + '<td style="font-size:12px;color:var(--text2)">' + (p.type||'–') + '</td>'
       + '<td>' + aktiv + '</td>'
       + '<td class="no-print"><div style="display:flex;gap:5px;justify-content:flex-end">'
-      + '<button class="btn-icon" onclick="openPersonalModal(' + JSON.stringify(p).replace(/"/g,'&quot;') + ')" title="Redigera"><i class="ti ti-pencil"></i></button>'
-      + '<button class="btn-icon red" onclick="confirmDeletePerson(\'' + p.id + '\',\'' + p.fname+' '+p.lname + '\')" title="Ta bort"><i class="ti ti-trash"></i></button>'
+      + '<button class="btn-icon" onclick="openPersonalModal(' + JSON.stringify(p).replace(/"/g,'&quot;') + ')"><i class="ti ti-pencil"></i> Redigera</button>'
+      + '<button class="btn-icon red" onclick="confirmDeletePerson(\'' + p.id + '\',\'' + p.fname+' '+p.lname + '\')"><i class="ti ti-trash"></i> Ta bort</button>'
       + '</div></td>'
       + '</tr>';
   }).join('');
