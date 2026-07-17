@@ -31,57 +31,93 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
 .pb-btn:hover{background:var(--bg3);color:var(--text);}
 .pb-btn-logout{background:var(--red-bg);color:var(--red);border-color:rgba(163,45,45,.25);}
 .pb-btn-logout:hover{background:var(--red);color:#fff;}
-@media(max-width:560px){.pb-sep{display:none;}}
+.desktop-only{display:inline;}
+@media(max-width:480px){.desktop-only{display:none!important;}}
 
 /* LAYOUT */
-.page-wrap{max-width:960px;margin:0 auto;padding:24px 16px 60px;}
+.page-wrap{max-width:1100px;margin:0 auto;padding:20px 16px 60px;}
 
 /* TABS */
-.tab-bar{display:flex;gap:0;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:5px;margin-bottom:20px;flex-wrap:wrap;gap:4px;}
-.tab-btn{flex:1;min-width:120px;padding:9px 14px;border-radius:10px;border:none;background:none;font-size:13px;font-weight:500;color:var(--text2);cursor:pointer;font-family:inherit;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:6px;}
+.tab-bar{display:flex;gap:4px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:5px;margin-bottom:20px;flex-wrap:wrap;}
+.tab-btn{flex:1;min-width:100px;padding:9px 14px;border-radius:10px;border:none;background:none;font-size:13px;font-weight:500;color:var(--text2);cursor:pointer;font-family:inherit;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:6px;}
 .tab-btn:hover{background:var(--bg3);}
 .tab-btn.active{background:var(--accent);color:#fff;box-shadow:0 2px 8px var(--accent-glow);}
 .tab-btn i{font-size:15px;}
+.active-count{background:#fff;color:var(--accent);font-size:11px;font-weight:700;padding:1px 7px;border-radius:20px;margin-left:4px;}
 
-/* CARDS */
-.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow);margin-bottom:16px;}
-.card-header{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;}
-.card-title{font-size:14px;font-weight:600;display:flex;align-items:center;gap:8px;}
-.card-body{padding:20px;}
+/* STÄMPEL SPLIT LAYOUT */
+.stamp-layout{display:grid;grid-template-columns:300px 1fr;gap:16px;align-items:start;}
+@media(max-width:720px){.stamp-layout{grid-template-columns:1fr;}}
 
-/* STÄMPELKLOCKA */
-.clock-display{text-align:center;padding:32px 20px;}
-.clock-time{font-size:56px;font-weight:700;letter-spacing:.02em;color:var(--text);font-variant-numeric:tabular-nums;}
-.clock-date{font-size:14px;color:var(--text2);margin-top:4px;}
-.clock-status{margin:20px auto;max-width:320px;}
-.status-badge{display:inline-flex;align-items:center;gap:8px;padding:8px 18px;border-radius:20px;font-size:13px;font-weight:600;}
-.status-in{background:var(--green-bg);color:var(--green-text);}
-.status-out{background:var(--bg3);color:var(--text3);}
-.status-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
-.dot-in{background:var(--accent);animation:pulse 2s infinite;}
-.dot-out{background:var(--text3);}
+/* PERSONAL PANEL (left) */
+.person-panel{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow);}
+.person-panel-header{padding:12px 16px;border-bottom:1px solid var(--border);font-size:13px;font-weight:600;display:flex;align-items:center;gap:7px;color:var(--text);}
+.person-list{overflow-y:auto;max-height:520px;}
+@media(max-width:720px){.person-list{max-height:240px;}}
+.person-item{display:flex;align-items:center;gap:10px;padding:11px 16px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .12s;user-select:none;}
+.person-item:last-child{border-bottom:none;}
+.person-item:hover{background:var(--bg3);}
+.person-item.selected{background:var(--green-bg);border-left:3px solid var(--accent);}
+.person-item.selected .pi-name{color:var(--accent2);font-weight:700;}
+.pi-avatar{width:34px;height:34px;border-radius:50%;background:var(--bg3);border:1.5px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--text2);flex-shrink:0;}
+.pi-avatar.in{background:var(--green-bg);border-color:var(--accent);color:var(--accent2);}
+.pi-info{flex:1;min-width:0;}
+.pi-name{font-size:13px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.pi-sub{font-size:11px;color:var(--text3);margin-top:1px;}
+.pi-status{flex-shrink:0;}
+.pi-dot{width:8px;height:8px;border-radius:50%;background:var(--text3);}
+.pi-dot.in{background:var(--accent);animation:pulse 2s infinite;}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.no-personal{padding:32px 16px;text-align:center;color:var(--text3);font-size:13px;}
 
-.stamp-btn{width:100%;max-width:320px;padding:18px;font-size:18px;font-weight:700;border:none;border-radius:var(--radius-lg);cursor:pointer;font-family:inherit;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:10px;margin:16px auto 0;}
-.stamp-in{background:var(--accent);color:#fff;box-shadow:0 4px 16px var(--accent-glow);}
-.stamp-in:hover{background:var(--accent2);}
-.stamp-out{background:var(--red);color:#fff;box-shadow:0 4px 12px rgba(163,45,45,.25);}
-.stamp-out:hover{background:#8a1e1e;}
-.stamp-duration{font-size:12px;color:var(--text3);text-align:center;margin-top:8px;}
+/* CLOCK PANEL (right) */
+.clock-panel{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow);}
+.clock-panel-inner{padding:28px 24px;display:flex;flex-direction:column;align-items:center;text-align:center;}
+.clock-time{font-size:52px;font-weight:700;letter-spacing:.02em;color:var(--text);font-variant-numeric:tabular-nums;line-height:1;}
+.clock-date{font-size:13px;color:var(--text2);margin-top:6px;}
 
-/* DAGENS LISTA */
+/* SELECTED PERSON AREA */
+.selected-person-card{margin-top:20px;width:100%;max-width:380px;background:var(--bg3);border-radius:var(--radius-lg);padding:16px;display:flex;flex-direction:column;align-items:center;gap:10px;}
+.sp-avatar{width:56px;height:56px;border-radius:50%;background:var(--bg2);border:2px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:var(--text2);}
+.sp-avatar.in{background:var(--green-bg);border-color:var(--accent);color:var(--accent2);}
+.sp-name{font-size:17px;font-weight:700;color:var(--text);}
+.sp-type{font-size:11px;color:var(--text3);}
+.sp-status-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 14px;border-radius:20px;font-size:12px;font-weight:600;}
+.sp-status-in{background:var(--green-bg);color:var(--green-text);}
+.sp-status-out{background:var(--bg4);color:var(--text3);}
+.sp-time-info{font-size:12px;color:var(--text2);}
+.sp-duration{font-size:13px;font-weight:600;color:var(--accent);}
+
+/* STAMP BUTTON */
+.stamp-btn{width:100%;max-width:280px;padding:16px;font-size:16px;font-weight:700;border:none;border-radius:var(--radius-lg);cursor:pointer;font-family:inherit;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:10px;margin-top:6px;}
+.stamp-btn-in{background:var(--accent);color:#fff;box-shadow:0 4px 16px var(--accent-glow);}
+.stamp-btn-in:hover{background:var(--accent2);}
+.stamp-btn-out{background:var(--red);color:#fff;box-shadow:0 4px 12px rgba(163,45,45,.25);}
+.stamp-btn-out:hover{background:#8a1e1e;}
+.stamp-btn:disabled{background:var(--bg4);color:var(--text3);cursor:not-allowed;box-shadow:none;}
+
+/* NO SELECTION STATE */
+.no-selection{padding:40px 20px;color:var(--text3);display:flex;flex-direction:column;align-items:center;gap:10px;}
+.no-selection i{font-size:40px;color:var(--bg4);}
+.no-selection p{font-size:14px;}
+
+/* TODAY LIST (below stamp panel) */
+.today-section{margin-top:16px;}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow);margin-bottom:16px;}
+.card-header{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+.card-title{font-size:13px;font-weight:600;display:flex;align-items:center;gap:7px;}
+
+/* TABLES */
 table{width:100%;border-collapse:collapse;}
-th{text-align:left;padding:10px 14px;font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--border2);background:var(--bg3);}
-td{padding:11px 14px;font-size:13px;border-bottom:1px solid var(--border);vertical-align:middle;}
+th{text-align:left;padding:9px 14px;font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--border2);background:var(--bg3);}
+td{padding:10px 14px;font-size:13px;border-bottom:1px solid var(--border);vertical-align:middle;}
 tr:last-child td{border-bottom:none;}
 tr:hover td{background:rgba(59,109,17,.03);}
-.status-cell-in{color:var(--accent);font-weight:600;display:flex;align-items:center;gap:5px;}
-.status-cell-out{color:var(--text3);}
+.no-entries{text-align:center;padding:32px;color:var(--text3);}
+.no-entries i{font-size:28px;display:block;margin-bottom:6px;}
 .duration-badge{background:var(--bg3);color:var(--text2);font-size:11px;padding:2px 8px;border-radius:20px;font-weight:500;}
-.no-entries{text-align:center;padding:40px;color:var(--text3);}
-.no-entries i{font-size:32px;display:block;margin-bottom:8px;}
 
-/* FORM FIELDS */
+/* FORM */
 .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
 .form-grid.full{grid-template-columns:1fr;}
 .form-grid.trio{grid-template-columns:1fr 1fr 1fr;}
@@ -90,6 +126,7 @@ tr:hover td{background:rgba(59,109,17,.03);}
 .form-field input,.form-field select{padding:10px 12px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius);font-size:13px;color:var(--text);font-family:inherit;transition:border-color .2s;}
 .form-field input:focus,.form-field select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow);}
 .req{color:var(--red);}
+.pnr-hint{font-size:11px;color:var(--text3);margin-top:3px;}
 
 /* BUTTONS */
 .btn-primary{padding:10px 20px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px;transition:background .15s;}
@@ -101,6 +138,7 @@ tr:hover td{background:rgba(59,109,17,.03);}
 .btn-icon:hover{border-color:var(--accent);color:var(--accent);}
 .btn-icon.red:hover{border-color:var(--red);color:var(--red);}
 .btn-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+.export-bar{display:flex;gap:8px;flex-wrap:wrap;}
 
 /* MODAL */
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;align-items:center;justify-content:center;padding:16px;}
@@ -112,7 +150,7 @@ tr:hover td{background:rgba(59,109,17,.03);}
 .modal-body{padding:18px 20px;}
 .modal-footer{padding:12px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px;}
 
-/* ÄNDRINGSLOGG */
+/* LOGG */
 .log-entry{padding:10px 14px;border-left:3px solid var(--border2);margin-bottom:8px;background:var(--bg3);border-radius:0 var(--radius) var(--radius) 0;font-size:12px;}
 .log-entry.log-edit{border-left-color:var(--amber);}
 .log-entry.log-in{border-left-color:var(--accent);}
@@ -122,15 +160,6 @@ tr:hover td{background:rgba(59,109,17,.03);}
 /* FILTER ROW */
 .filter-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:16px;}
 .filter-row select,.filter-row input{padding:8px 11px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);font-size:13px;color:var(--text);font-family:inherit;}
-
-/* PERSONNUMMER MASK */
-.pnr-hint{font-size:11px;color:var(--text3);margin-top:3px;}
-
-/* EXPORT BAR */
-.export-bar{display:flex;gap:8px;flex-wrap:wrap;}
-
-/* ACTIVE INDICATOR */
-.active-count{background:var(--accent);color:#fff;font-size:11px;font-weight:700;padding:1px 7px;border-radius:20px;margin-left:6px;}
 
 /* PRINT */
 @media print{
@@ -142,7 +171,7 @@ tr:hover td{background:rgba(59,109,17,.03);}
 @media(max-width:600px){
   .form-grid{grid-template-columns:1fr;}
   .form-grid.trio{grid-template-columns:1fr 1fr;}
-  .clock-time{font-size:40px;}
+  .clock-time{font-size:38px;}
 }
 </style>
 </head>
@@ -156,24 +185,22 @@ tr:hover td{background:rgba(59,109,17,.03);}
     <span class="pb-camping" id="pb-camping-badge">–</span>
   </div>
   <div class="pb-sep"></div>
-  <a href="index.html" class="pb-btn"><i class="ti ti-arrow-left"></i> Portal</a>
-  <button class="pb-btn pb-btn-logout" onclick="portalLogout()"><i class="ti ti-logout"></i> Logga ut</button>
+  <a href="index.html" class="pb-btn"><i class="ti ti-arrow-left"></i><span class="desktop-only"> Portal</span></a>
+  <button class="pb-btn pb-btn-logout" onclick="portalLogout()"><i class="ti ti-logout"></i><span class="desktop-only"> Logga ut</span></button>
 </div>
 
 <div class="page-wrap">
 
   <!-- HEADER -->
-  <div style="margin-bottom:20px;">
-    <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
-      <div style="flex:1;min-width:200px;">
-        <h1 style="font-size:22px;font-weight:700;">Personalliggare</h1>
-        <div id="company-sub" style="font-size:13px;color:var(--text2);margin-top:3px;">Laddar…</div>
-      </div>
-      <div class="export-bar no-print">
-        <button class="btn-secondary" onclick="exportExcel()"><i class="ti ti-table-export"></i> Excel</button>
-        <button class="btn-secondary" onclick="exportPDF()"><i class="ti ti-file-type-pdf"></i> PDF</button>
-        <button class="btn-secondary" onclick="window.print()"><i class="ti ti-printer"></i> Skriv ut</button>
-      </div>
+  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:20px;">
+    <div>
+      <h1 style="font-size:22px;font-weight:700;">Personalliggare</h1>
+      <div id="company-sub" style="font-size:13px;color:var(--text2);margin-top:2px;">Laddar…</div>
+    </div>
+    <div class="export-bar no-print">
+      <button class="btn-secondary" onclick="exportExcel()"><i class="ti ti-table-export"></i> Excel</button>
+      <button class="btn-secondary" onclick="exportPDF()"><i class="ti ti-file-type-pdf"></i> PDF</button>
+      <button class="btn-secondary" onclick="window.print()"><i class="ti ti-printer"></i> Skriv ut</button>
     </div>
   </div>
 
@@ -196,47 +223,79 @@ tr:hover td{background:rgba(59,109,17,.03);}
 
   <!-- ── TAB: STÄMPELKLOCKA ── -->
   <div id="view-stämpel">
-    <div class="card">
-      <div class="card-body">
-        <div class="clock-display">
-          <div class="clock-time" id="clock-time">00:00:00</div>
-          <div class="clock-date" id="clock-date">–</div>
-          <div class="clock-status" id="clock-status-wrap">
-            <span class="status-badge status-out" id="my-status-badge">
-              <span class="status-dot dot-out" id="my-status-dot"></span>
-              <span id="my-status-text">Ej instämplad</span>
-            </span>
-          </div>
-          <button class="stamp-btn stamp-in" id="main-stamp-btn" onclick="handleMainStamp()">
-            <i class="ti ti-clock-play" id="stamp-btn-icon"></i>
-            <span id="stamp-btn-text">Stämpla in</span>
-          </button>
-          <div class="stamp-duration" id="stamp-duration"></div>
+
+    <div class="stamp-layout">
+
+      <!-- VÄNSTER: PERSONALLISTA -->
+      <div class="person-panel">
+        <div class="person-panel-header">
+          <i class="ti ti-users" style="color:var(--accent)"></i>
+          Personal
+          <span id="person-count" style="font-size:11px;color:var(--text3);margin-left:auto;font-weight:400"></span>
+        </div>
+        <div class="person-list" id="person-list">
+          <div class="no-personal">Laddar personal…</div>
         </div>
       </div>
-    </div>
 
-    <!-- Registrera för annan / tillbaka i tid -->
-    <div class="card">
-      <div class="card-header">
-        <span class="card-title"><i class="ti ti-user-plus"></i> Registrera in/ut för annan person</span>
-        <button class="btn-secondary" onclick="openManualModal(null)"><i class="ti ti-plus"></i> Lägg till</button>
-      </div>
-      <div style="overflow-x:auto">
-        <table id="today-table">
-          <thead>
-            <tr>
-              <th>Namn</th>
-              <th>Personnummer</th>
-              <th>Instämplad</th>
-              <th>Utstämplad</th>
-              <th>Tid</th>
-              <th>Status</th>
-              <th style="text-align:right" class="no-print">Åtgärder</th>
-            </tr>
-          </thead>
-          <tbody id="today-tbody"></tbody>
-        </table>
+      <!-- HÖGER: KLOCKA + STÄMPEL -->
+      <div>
+        <div class="clock-panel">
+          <div class="clock-panel-inner">
+            <div class="clock-time" id="clock-time">00:00:00</div>
+            <div class="clock-date" id="clock-date">–</div>
+
+            <!-- VIS: ingen vald -->
+            <div class="no-selection" id="no-selection">
+              <i class="ti ti-user-search"></i>
+              <p>Välj en person i listan till vänster</p>
+            </div>
+
+            <!-- VIS: person vald -->
+            <div class="selected-person-card" id="selected-person-card" style="display:none">
+              <div class="sp-avatar" id="sp-avatar">?</div>
+              <div class="sp-name" id="sp-name">–</div>
+              <div class="sp-type" id="sp-type">–</div>
+              <span class="sp-status-badge sp-status-out" id="sp-status-badge">
+                <span style="width:7px;height:7px;border-radius:50%;background:currentColor;flex-shrink:0" id="sp-dot"></span>
+                <span id="sp-status-text">Ej instämplad</span>
+              </span>
+              <div class="sp-time-info" id="sp-time-info" style="display:none"></div>
+              <div class="sp-duration" id="sp-duration" style="display:none"></div>
+              <button class="stamp-btn stamp-btn-in" id="stamp-btn" onclick="handleStamp()" disabled>
+                <i class="ti ti-clock-play" id="stamp-btn-icon"></i>
+                <span id="stamp-btn-text">Stämpla in</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- DAGENS LISTA under klockan -->
+        <div class="today-section">
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title"><i class="ti ti-list-check"></i> Dagens arbetspass</span>
+              <button class="btn-secondary no-print" style="font-size:12px;padding:6px 12px" onclick="openManualModal(null)">
+                <i class="ti ti-plus"></i> Manuell post
+              </button>
+            </div>
+            <div style="overflow-x:auto">
+              <table id="today-table">
+                <thead>
+                  <tr>
+                    <th>Namn</th>
+                    <th>In</th>
+                    <th>Ut</th>
+                    <th>Tid</th>
+                    <th>Status</th>
+                    <th class="no-print" style="text-align:right">Åtgärder</th>
+                  </tr>
+                </thead>
+                <tbody id="today-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -245,9 +304,7 @@ tr:hover td{background:rgba(59,109,17,.03);}
   <div id="view-dag" style="display:none">
     <div class="filter-row no-print">
       <input type="date" id="dag-filter-date">
-      <select id="dag-filter-camping">
-        <option value="">Alla campingar</option>
-      </select>
+      <select id="dag-filter-camping"><option value="">Alla campingar</option></select>
       <button class="btn-secondary" onclick="renderDagslista()"><i class="ti ti-refresh"></i></button>
     </div>
     <div class="card">
@@ -258,7 +315,7 @@ tr:hover td{background:rgba(59,109,17,.03);}
       <div style="overflow-x:auto">
         <table>
           <thead>
-            <tr><th>Namn</th><th>Personnummer</th><th>In</th><th>Ut</th><th>Tid</th><th>Registrerad av</th><th style="text-align:right" class="no-print">Åtgärder</th></tr>
+            <tr><th>Namn</th><th>Personnummer</th><th>In</th><th>Ut</th><th>Tid</th><th>Registrerad av</th><th class="no-print" style="text-align:right">Åtgärder</th></tr>
           </thead>
           <tbody id="dag-tbody"></tbody>
         </table>
@@ -276,7 +333,7 @@ tr:hover td{background:rgba(59,109,17,.03);}
       <div style="overflow-x:auto">
         <table>
           <thead>
-            <tr><th>Namn</th><th>Personnummer</th><th>Adress</th><th>Telefon</th><th>Typ</th><th>Aktiv</th><th style="text-align:right" class="no-print">Åtgärder</th></tr>
+            <tr><th>Namn</th><th>Personnummer</th><th>Adress</th><th>Telefon</th><th>Typ</th><th>Aktiv</th><th class="no-print" style="text-align:right">Åtgärder</th></tr>
           </thead>
           <tbody id="personal-tbody"></tbody>
         </table>
@@ -299,18 +356,18 @@ tr:hover td{background:rgba(59,109,17,.03);}
     </div>
     <div class="card">
       <div class="card-header"><span class="card-title"><i class="ti ti-history"></i> Ändringslogg</span></div>
-      <div class="card-body" id="logg-body"></div>
+      <div style="padding:16px" id="logg-body"></div>
     </div>
   </div>
 
 </div><!-- end page-wrap -->
 
-<!-- ── MODAL: MANUELL REGISTRERING ── -->
+<!-- MODAL: MANUELL POST -->
 <div class="modal-overlay" id="modal-manual">
   <div class="modal">
     <div class="modal-header">
-      <span class="modal-title" id="modal-manual-title">Registrera arbetspass</span>
-      <button class="modal-close" onclick="closeModal('modal-manual')"><i class="ti ti-x"></i></button>
+      <span class="modal-title" id="modal-manual-title">Manuell registrering</span>
+      <button class="modal-close" onclick="closeModal('modal-manual')">&#x2715;</button>
     </div>
     <div class="modal-body">
       <input type="hidden" id="manual-edit-id">
@@ -318,19 +375,18 @@ tr:hover td{background:rgba(59,109,17,.03);}
         <div class="form-field">
           <label>Person <span class="req">*</span></label>
           <select id="manual-person" onchange="onPersonSelect()">
-            <option value="">– Välj person –</option>
-            <option value="__new__">+ Ny person (ej i listan)</option>
+            <option value="">– Välj –</option>
+            <option value="__new__">+ Ny person</option>
           </select>
         </div>
         <div class="form-field" id="manual-pnr-field">
-          <label>Personnummer <span class="req">*</span></label>
+          <label>Personnummer</label>
           <input type="text" id="manual-pnr" placeholder="YYYYMMDD-XXXX">
-          <div class="pnr-hint">Format: YYYYMMDD-XXXX eller samordningsnr</div>
         </div>
       </div>
       <div id="manual-name-row" style="display:none" class="form-grid full">
         <div class="form-field">
-          <label>För- och efternamn <span class="req">*</span></label>
+          <label>Namn <span class="req">*</span></label>
           <input type="text" id="manual-name" placeholder="Anna Andersson">
         </div>
       </div>
@@ -340,18 +396,18 @@ tr:hover td{background:rgba(59,109,17,.03);}
           <input type="date" id="manual-date">
         </div>
         <div class="form-field">
-          <label>Instämplad <span class="req">*</span></label>
+          <label>In <span class="req">*</span></label>
           <input type="time" id="manual-in">
         </div>
         <div class="form-field">
-          <label>Utstämplad</label>
-          <input type="time" id="manual-out" placeholder="–">
+          <label>Ut</label>
+          <input type="time" id="manual-out">
         </div>
       </div>
       <div class="form-grid full">
         <div class="form-field">
-          <label>Anledning till manuell registrering <span class="req">*</span></label>
-          <input type="text" id="manual-reason" placeholder="Glömde stämpla in, tillbaka i tid, etc.">
+          <label>Anledning <span class="req">*</span></label>
+          <input type="text" id="manual-reason" placeholder="Glömde stämpla in, etc.">
         </div>
       </div>
     </div>
@@ -362,49 +418,33 @@ tr:hover td{background:rgba(59,109,17,.03);}
   </div>
 </div>
 
-<!-- ── MODAL: PERSON ── -->
+<!-- MODAL: PERSON -->
 <div class="modal-overlay" id="modal-personal">
   <div class="modal">
     <div class="modal-header">
       <span class="modal-title" id="modal-personal-title">Lägg till person</span>
-      <button class="modal-close" onclick="closeModal('modal-personal')"><i class="ti ti-x"></i></button>
+      <button class="modal-close" onclick="closeModal('modal-personal')">&#x2715;</button>
     </div>
     <div class="modal-body">
       <input type="hidden" id="personal-edit-id">
       <div class="form-grid">
-        <div class="form-field">
-          <label>Förnamn <span class="req">*</span></label>
-          <input type="text" id="p-fname" placeholder="Anna">
-        </div>
-        <div class="form-field">
-          <label>Efternamn <span class="req">*</span></label>
-          <input type="text" id="p-lname" placeholder="Andersson">
-        </div>
+        <div class="form-field"><label>Förnamn <span class="req">*</span></label><input type="text" id="p-fname" placeholder="Anna"></div>
+        <div class="form-field"><label>Efternamn <span class="req">*</span></label><input type="text" id="p-lname" placeholder="Andersson"></div>
       </div>
       <div class="form-grid full">
-        <div class="form-field">
-          <label>Personnummer / samordningsnummer <span class="req">*</span></label>
-          <input type="text" id="p-pnr" placeholder="YYYYMMDD-XXXX">
-        </div>
+        <div class="form-field"><label>Personnummer <span class="req">*</span></label><input type="text" id="p-pnr" placeholder="YYYYMMDD-XXXX"><div class="pnr-hint">Format: YYYYMMDD-XXXX eller samordningsnr</div></div>
       </div>
       <div class="form-grid full">
-        <div class="form-field">
-          <label>Adress</label>
-          <input type="text" id="p-address" placeholder="Storgatan 1, 123 45 Stockholm">
-        </div>
+        <div class="form-field"><label>Adress</label><input type="text" id="p-address" placeholder="Storgatan 1, 123 45 Stockholm"></div>
       </div>
       <div class="form-grid">
-        <div class="form-field">
-          <label>Telefon</label>
-          <input type="tel" id="p-phone" placeholder="070-xxx xx xx">
-        </div>
-        <div class="form-field">
-          <label>Typ av anställning</label>
+        <div class="form-field"><label>Telefon</label><input type="tel" id="p-phone" placeholder="070-xxx xx xx"></div>
+        <div class="form-field"><label>Typ</label>
           <select id="p-type">
             <option value="anställd">Anställd</option>
             <option value="extrapersonal">Extrapersonal</option>
             <option value="praktikant">Praktikant</option>
-            <option value="inhyrd">Inhyrd personal</option>
+            <option value="inhyrd">Inhyrd</option>
             <option value="oavlönad">Oavlönad</option>
             <option value="släkting">Släkting/anhörig</option>
             <option value="övrigt">Övrigt</option>
@@ -412,12 +452,8 @@ tr:hover td{background:rgba(59,109,17,.03);}
         </div>
       </div>
       <div class="form-grid full">
-        <div class="form-field">
-          <label>Status</label>
-          <select id="p-active">
-            <option value="true">Aktiv</option>
-            <option value="false">Inaktiv</option>
-          </select>
+        <div class="form-field"><label>Status</label>
+          <select id="p-active"><option value="true">Aktiv</option><option value="false">Inaktiv</option></select>
         </div>
       </div>
     </div>
@@ -428,16 +464,16 @@ tr:hover td{background:rgba(59,109,17,.03);}
   </div>
 </div>
 
-<!-- DELETE CONFIRM -->
+<!-- MODAL: DELETE -->
 <div class="modal-overlay" id="modal-delete">
   <div class="modal" style="max-width:380px">
     <div class="modal-header">
-      <span class="modal-title" style="color:var(--red)"><i class="ti ti-alert-triangle"></i> Bekräfta</span>
-      <button class="modal-close" onclick="closeModal('modal-delete')"><i class="ti ti-x"></i></button>
+      <span class="modal-title" style="color:var(--red)"><i class="ti ti-alert-triangle"></i> Bekräfta borttagning</span>
+      <button class="modal-close" onclick="closeModal('modal-delete')">&#x2715;</button>
     </div>
     <div class="modal-body">
       <p style="font-size:13px;color:var(--text2);line-height:1.6" id="delete-text">Är du säker?</p>
-      <div style="font-size:11px;color:var(--amber);margin-top:10px;background:var(--amber-bg);padding:8px 10px;border-radius:var(--radius)"><i class="ti ti-alert-triangle"></i> Borttagningen loggas i ändringsloggen enligt lag.</div>
+      <div style="font-size:11px;color:var(--amber);margin-top:10px;background:var(--amber-bg);padding:8px 10px;border-radius:var(--radius)"><i class="ti ti-alert-triangle"></i> Borttagningen loggas i ändringsloggen.</div>
     </div>
     <div class="modal-footer">
       <button class="btn-secondary" onclick="closeModal('modal-delete')">Avbryt</button>
@@ -450,72 +486,54 @@ tr:hover td{background:rgba(59,109,17,.03);}
 <div id="toast" style="position:fixed;bottom:24px;right:24px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);padding:11px 16px;font-size:13px;z-index:999;box-shadow:var(--shadow);opacity:0;transform:translateY(6px);transition:all .25s;pointer-events:none;display:flex;align-items:center;gap:7px;"></div>
 
 <script>
-// ── CONFIG ────────────────────────────────────────────────────────────────
-const GH_REPO = 'CCSthlm/besiktning-camping';
+var GH_REPO = 'CCSthlm/besiktning-camping';
 
-// ── STATE ─────────────────────────────────────────────────────────────────
-let _user = null;
-let _data = { users:[], campings:[], inspectors:[], company:{}, personalliggare:{} };
-// personalliggare structure:
-// { campingId: { entries:[...], personal:[...], auditlog:[...] } }
-// entry: { id, name, pnr, date, timeIn, timeOut, registeredBy, registeredAt, manual, manualReason, edited }
-// personal: { id, fname, lname, pnr, address, phone, type, active }
-// auditlog: { id, ts, user, action, detail, oldVal, newVal }
-
-let _myCampingId = '';
-let _myCampingName = '';
-let _myEntryId = null;  // current open entry for logged-in user
-let _clockInterval = null;
-let _durationInterval = null;
+var _user = null;
+var _data = { users:[], campings:[], inspectors:[], company:{}, personalliggare:{} };
+var _myCampingId = '';
+var _myCampingName = '';
+var _selectedPersonId = null;  // currently selected person in stamp panel
 
 // ── INIT ──────────────────────────────────────────────────────────────────
 async function init() {
-  const sess = sessionStorage.getItem('ccs_session') || sessionStorage.getItem('ccs_portal_user');
+  var sess = sessionStorage.getItem('ccs_session') || sessionStorage.getItem('ccs_portal_user');
   if (!sess) { window.location.replace('index.html'); return; }
   try { _user = JSON.parse(sess); } catch(e) { window.location.replace('index.html'); return; }
 
-  const initials = _user.name.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase();
+  var initials = (_user.name||'?').split(' ').map(function(n){return n[0]||'';}).join('').slice(0,2).toUpperCase();
   document.getElementById('pb-avatar').textContent = initials;
   document.getElementById('pb-name').textContent = _user.name;
 
   await loadData();
 
-  // Get user's camping assignment for personalliggare
-  const userRecord = _data.users.find(u => u.id === _user.id || u.name === _user.name);
-  _myCampingId = userRecord?.plCampingId || _data.campings[0]?.id || '';
-  _myCampingName = _data.campings.find(c=>c.id===_myCampingId)?.name || _myCampingId;
+  var userRecord = _data.users.find(function(u){ return u.id===_user.id || u.name===_user.name; });
+  _myCampingId   = (userRecord && userRecord.plCampingId) || (_data.campings[0] && _data.campings[0].id) || '';
+  _myCampingName = (_data.campings.find(function(c){return c.id===_myCampingId;})||{}).name || _myCampingId;
 
   document.getElementById('pb-camping-badge').textContent = _myCampingName;
   document.getElementById('personal-camping-name').textContent = _myCampingName;
 
-  const company = _data.company || {};
+  var company = _data.company || {};
   document.getElementById('company-sub').textContent =
     [company.name, company.orgNr ? 'Org.nr: '+company.orgNr : ''].filter(Boolean).join(' · ') || 'Personalliggare';
 
-  // Populate camping filter in dagslista
-  const dagSel = document.getElementById('dag-filter-camping');
-  (_data.campings||[]).forEach(c => {
-    const o = document.createElement('option');
+  var dagSel = document.getElementById('dag-filter-camping');
+  (_data.campings||[]).forEach(function(c) {
+    var o = document.createElement('option');
     o.value = c.id; o.textContent = c.name;
     dagSel.appendChild(o);
   });
   dagSel.value = _myCampingId;
 
-  // Set today's date as default
-  const today = todayStr();
-  document.getElementById('dag-filter-date').value = today;
+  var today = todayStr();
+  document.getElementById('dag-filter-date').value  = today;
   document.getElementById('logg-filter-date').value = today;
-  document.getElementById('manual-date').value = today;
+  document.getElementById('manual-date').value       = today;
 
-  // Check if user has open entry today
   ensureCampingData(_myCampingId);
-  const entries = _data.personalliggare[_myCampingId].entries;
-  const myName = _user.name;
-  const openEntry = entries.find(e => e.date === today && e.name === myName && !e.timeOut);
-  if (openEntry) _myEntryId = openEntry.id;
 
   startClock();
-  updateStampUI();
+  renderPersonList();
   renderTodayTable();
   renderPersonalLista();
   renderLogg();
@@ -524,16 +542,16 @@ async function init() {
 
 // ── DATA ──────────────────────────────────────────────────────────────────
 async function loadData() {
-  const token = localStorage.getItem('gh_token') || '';
+  var token = localStorage.getItem('gh_token') || '';
   if (!token) { loadDefaultData(); return; }
   try {
-    const res = await fetch('https://api.github.com/repos/'+GH_REPO+'/contents/users/users.json',
+    var res = await fetch('https://api.github.com/repos/'+GH_REPO+'/contents/users/users.json',
       {headers:{'Authorization':'token '+token}});
     if (!res.ok) { loadDefaultData(); return; }
-    const gh = await res.json();
-    const bytes = Uint8Array.from(atob(gh.content.replace(/\n/g,'')), c=>c.charCodeAt(0));
-    const parsed = JSON.parse(new TextDecoder('utf-8').decode(bytes));
-    _data = { users:[], campings:[], inspectors:[], company:{}, personalliggare:{}, ...parsed };
+    var gh = await res.json();
+    var bytes = Uint8Array.from(atob(gh.content.replace(/\n/g,'')), function(c){return c.charCodeAt(0);});
+    var parsed = JSON.parse(new TextDecoder('utf-8').decode(bytes));
+    _data = Object.assign({ users:[], campings:[], inspectors:[], company:{}, personalliggare:{} }, parsed);
     if (!_data.personalliggare) _data.personalliggare = {};
     if (!_data.company) _data.company = {};
   } catch(e) { loadDefaultData(); }
@@ -545,447 +563,523 @@ function loadDefaultData() {
 
 function ensureCampingData(cid) {
   if (!_data.personalliggare[cid]) _data.personalliggare[cid] = { entries:[], personal:[], auditlog:[] };
-  if (!_data.personalliggare[cid].entries) _data.personalliggare[cid].entries = [];
+  if (!_data.personalliggare[cid].entries)  _data.personalliggare[cid].entries  = [];
   if (!_data.personalliggare[cid].personal) _data.personalliggare[cid].personal = [];
   if (!_data.personalliggare[cid].auditlog) _data.personalliggare[cid].auditlog = [];
 }
 
 async function saveData() {
-  const token = localStorage.getItem('gh_token') || '';
+  var token = localStorage.getItem('gh_token') || '';
   if (!token) { toast('Sparas bara lokalt (GitHub-token saknas)','warn'); return; }
-  const url = 'https://api.github.com/repos/'+GH_REPO+'/contents/users/users.json';
+  var url = 'https://api.github.com/repos/'+GH_REPO+'/contents/users/users.json';
   try {
-    let sha = null;
-    const chk = await fetch(url,{headers:{'Authorization':'token '+token}});
+    var sha = null;
+    var chk = await fetch(url,{headers:{'Authorization':'token '+token}});
     if (chk.ok) sha = (await chk.json()).sha;
-    const content = btoa(unescape(encodeURIComponent(JSON.stringify(_data,null,2))));
-    const payload = {message:'Personalliggare '+todayStr(), content, branch:'main'};
+    var content = btoa(unescape(encodeURIComponent(JSON.stringify(_data,null,2))));
+    var payload = {message:'Personalliggare '+todayStr(), content, branch:'main'};
     if (sha) payload.sha = sha;
-    const res = await fetch(url,{method:'PUT',headers:{'Authorization':'token '+token,'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    var res = await fetch(url,{method:'PUT',headers:{'Authorization':'token '+token,'Content-Type':'application/json'},body:JSON.stringify(payload)});
     if (!res.ok) throw new Error((await res.json()).message||res.status);
+    toast('Sparat','ok');
   } catch(e) { toast('Fel vid sparande: '+e.message,'err'); }
 }
 
 // ── CLOCK ─────────────────────────────────────────────────────────────────
 function startClock() {
   function tick() {
-    const now = new Date();
+    var now = new Date();
     document.getElementById('clock-time').textContent = now.toLocaleTimeString('sv-SE');
     document.getElementById('clock-date').textContent = now.toLocaleDateString('sv-SE',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
-    if (_myEntryId) updateDuration();
+    updateSelectedDuration();
   }
   tick();
-  _clockInterval = setInterval(tick, 1000);
+  setInterval(tick, 1000);
 }
 
-function updateDuration() {
-  const entry = getMyEntry();
-  if (!entry) return;
-  const diffMs = Date.now() - new Date(entry.date+'T'+entry.timeIn).getTime();
-  const h = Math.floor(diffMs/3600000), m = Math.floor((diffMs%3600000)/60000);
-  document.getElementById('stamp-duration').textContent = 'Instämplad sedan: ' + h + 'h ' + m + 'min';
-}
-
-function getMyEntry() {
-  if (!_myEntryId) return null;
+// ── PERSON LIST (left panel) ──────────────────────────────────────────────
+function renderPersonList() {
   ensureCampingData(_myCampingId);
-  return _data.personalliggare[_myCampingId].entries.find(e=>e.id===_myEntryId)||null;
+  var personal  = _data.personalliggare[_myCampingId].personal.filter(function(p){ return p.active !== false; });
+  var entries   = _data.personalliggare[_myCampingId].entries;
+  var today     = todayStr();
+  var listEl    = document.getElementById('person-list');
+  var countEl   = document.getElementById('person-count');
+
+  countEl.textContent = personal.length + ' person' + (personal.length===1?'':'er');
+
+  if (!personal.length) {
+    listEl.innerHTML = '<div class="no-personal">Lägg till personal under fliken Personallista</div>';
+    return;
+  }
+
+  // Sort: instämplad first, then alphabetically
+  var sorted = personal.slice().sort(function(a,b) {
+    var aIn = isPersonIn(a, entries, today);
+    var bIn = isPersonIn(b, entries, today);
+    if (aIn && !bIn) return -1;
+    if (!aIn && bIn) return 1;
+    return (a.fname+' '+a.lname).localeCompare(b.fname+' '+b.lname, 'sv');
+  });
+
+  listEl.innerHTML = sorted.map(function(p) {
+    var fullName = p.fname + ' ' + p.lname;
+    var initials = (p.fname[0]||'') + (p.lname[0]||'');
+    var inEntry  = getOpenEntry(p, entries, today);
+    var isIn     = !!inEntry;
+    var sel      = _selectedPersonId === p.id;
+    var subTxt   = isIn ? 'Instämplad ' + inEntry.timeIn : (p.type||'');
+    return '<div class="person-item' + (sel?' selected':'') + '" onclick="selectPerson(' + JSON.stringify(p.id) + ')">'
+      + '<div class="pi-avatar' + (isIn?' in':'') + '">' + initials.toUpperCase() + '</div>'
+      + '<div class="pi-info"><div class="pi-name">' + fullName + '</div><div class="pi-sub">' + subTxt + '</div></div>'
+      + '<div class="pi-status"><div class="pi-dot' + (isIn?' in':'') + '"></div></div>'
+      + '</div>';
+  }).join('');
 }
 
-// ── STÄMPELKLOCKA ─────────────────────────────────────────────────────────
-function updateStampUI() {
-  const isIn = !!_myEntryId && !getMyEntry()?.timeOut;
-  const btn = document.getElementById('main-stamp-btn');
-  const icon = document.getElementById('stamp-btn-icon');
-  const text = document.getElementById('stamp-btn-text');
-  const badge = document.getElementById('my-status-badge');
-  const dot = document.getElementById('my-status-dot');
-  const statusText = document.getElementById('my-status-text');
-  const dur = document.getElementById('stamp-duration');
+function isPersonIn(p, entries, today) {
+  return entries.some(function(e){ return e.date===today && e.name===(p.fname+' '+p.lname) && !e.timeOut; });
+}
+
+function getOpenEntry(p, entries, today) {
+  var name = p.fname + ' ' + p.lname;
+  return entries.find(function(e){ return e.date===today && e.name===name && !e.timeOut; }) || null;
+}
+
+function getEntriesToday(p) {
+  ensureCampingData(_myCampingId);
+  var name = p.fname + ' ' + p.lname;
+  return _data.personalliggare[_myCampingId].entries.filter(function(e){ return e.date===todayStr() && e.name===name; });
+}
+
+// ── SELECT PERSON ─────────────────────────────────────────────────────────
+function selectPerson(personId) {
+  _selectedPersonId = personId;
+  renderPersonList();  // re-render to show selection
+  updateStampPanel();
+}
+
+function updateStampPanel() {
+  var noSel  = document.getElementById('no-selection');
+  var selCard = document.getElementById('selected-person-card');
+
+  if (!_selectedPersonId) {
+    noSel.style.display   = '';
+    selCard.style.display = 'none';
+    return;
+  }
+
+  ensureCampingData(_myCampingId);
+  var personal = _data.personalliggare[_myCampingId].personal;
+  var p = personal.find(function(x){ return x.id===_selectedPersonId; });
+  if (!p) { noSel.style.display=''; selCard.style.display='none'; return; }
+
+  noSel.style.display   = 'none';
+  selCard.style.display = '';
+
+  var fullName = p.fname + ' ' + p.lname;
+  var initials = ((p.fname[0]||'') + (p.lname[0]||'')).toUpperCase();
+  var entries  = _data.personalliggare[_myCampingId].entries;
+  var today    = todayStr();
+  var openEntry = getOpenEntry(p, entries, today);
+  var isIn     = !!openEntry;
+
+  document.getElementById('sp-avatar').textContent = initials;
+  document.getElementById('sp-avatar').className   = 'sp-avatar' + (isIn?' in':'');
+  document.getElementById('sp-name').textContent   = fullName;
+  document.getElementById('sp-type').textContent   = p.type || '';
+
+  var badge    = document.getElementById('sp-status-badge');
+  var dot      = document.getElementById('sp-dot');
+  var statusTxt = document.getElementById('sp-status-text');
+  var timeInfo = document.getElementById('sp-time-info');
+  var durEl    = document.getElementById('sp-duration');
+  var btn      = document.getElementById('stamp-btn');
+  var btnIcon  = document.getElementById('stamp-btn-icon');
+  var btnText  = document.getElementById('stamp-btn-text');
 
   if (isIn) {
-    btn.className = 'stamp-btn stamp-out';
-    icon.className = 'ti ti-clock-stop';
-    text.textContent = 'Stämpla ut';
-    badge.className = 'status-badge status-in';
-    dot.className = 'status-dot dot-in';
-    const e = getMyEntry();
-    statusText.textContent = 'Instämplad sedan ' + e.timeIn;
+    badge.className = 'sp-status-badge sp-status-in';
+    statusTxt.textContent = 'Instämplad';
+    timeInfo.style.display = '';
+    timeInfo.textContent   = 'Sedan kl. ' + openEntry.timeIn;
+    durEl.style.display    = '';
+    btn.className  = 'stamp-btn stamp-btn-out';
+    btnIcon.className = 'ti ti-clock-stop';
+    btnText.textContent = 'Stämpla ut';
+    btn.disabled = false;
+    btn.dataset.entryId = openEntry.id;
+    updateSelectedDuration();
   } else {
-    btn.className = 'stamp-btn stamp-in';
-    icon.className = 'ti ti-clock-play';
-    text.textContent = 'Stämpla in';
-    badge.className = 'status-badge status-out';
-    dot.className = 'status-dot dot-out';
-    statusText.textContent = 'Ej instämplad';
-    dur.textContent = '';
+    badge.className = 'sp-status-badge sp-status-out';
+    statusTxt.textContent = 'Ej instämplad';
+    timeInfo.style.display = 'none';
+    durEl.style.display    = 'none';
+    btn.className  = 'stamp-btn stamp-btn-in';
+    btnIcon.className = 'ti ti-clock-play';
+    btnText.textContent = 'Stämpla in';
+    btn.disabled = false;
+    delete btn.dataset.entryId;
   }
 }
 
-function handleMainStamp() {
-  const isIn = !!_myEntryId && !getMyEntry()?.timeOut;
-  if (isIn) {
-    stampOut(_myEntryId, nowTimeStr(), false);
+function updateSelectedDuration() {
+  var durEl = document.getElementById('sp-duration');
+  if (!durEl || !_selectedPersonId) return;
+  ensureCampingData(_myCampingId);
+  var personal = _data.personalliggare[_myCampingId].personal;
+  var p = personal.find(function(x){ return x.id===_selectedPersonId; });
+  if (!p) return;
+  var openEntry = getOpenEntry(p, _data.personalliggare[_myCampingId].entries, todayStr());
+  if (!openEntry) return;
+  var diffMs = Date.now() - new Date(openEntry.date + 'T' + openEntry.timeIn).getTime();
+  var h = Math.floor(diffMs/3600000);
+  var m = Math.floor((diffMs%3600000)/60000);
+  durEl.textContent = h + 'h ' + ('0'+m).slice(-2) + 'min';
+}
+
+// ── STAMP IN / OUT ────────────────────────────────────────────────────────
+function handleStamp() {
+  var btn = document.getElementById('stamp-btn');
+  var isOut = btn.dataset.entryId;
+  if (isOut) {
+    doStampOut(isOut);
   } else {
-    stampIn(_user.name, _user.pnr||'', todayStr(), nowTimeStr(), false, '');
+    doStampIn();
   }
 }
 
-function stampIn(name, pnr, date, time, isManual, reason) {
+function doStampIn() {
+  if (!_selectedPersonId) return;
   ensureCampingData(_myCampingId);
-  const id = uid();
-  const entry = {
-    id, name, pnr, date,
-    timeIn: time, timeOut: '',
-    registeredBy: _user.name,
-    registeredAt: nowISO(),
-    manual: isManual,
-    manualReason: reason || '',
-    edited: false,
-    campingId: _myCampingId,
-  };
-  _data.personalliggare[_myCampingId].entries.push(entry);
-  addAuditLog('in', name + ' stämplade in ' + time + ' (' + date + ')' + (isManual?' [MANUELL: '+reason+']':''), '', time);
-  if (name === _user.name && date === todayStr()) _myEntryId = id;
-  updateStampUI();
-  renderTodayTable();
+  var personal = _data.personalliggare[_myCampingId].personal;
+  var p = personal.find(function(x){ return x.id===_selectedPersonId; });
+  if (!p) return;
+  var fullName = p.fname + ' ' + p.lname;
+  var today    = todayStr();
+  var time     = nowTimeStr();
+  var id       = uid();
+  _data.personalliggare[_myCampingId].entries.push({
+    id, name:fullName, pnr:p.pnr, date:today,
+    timeIn:time, timeOut:'',
+    registeredBy:_user.name, registeredAt:nowISO(),
+    manual:false, manualReason:'', edited:false, campingId:_myCampingId,
+  });
+  addAuditLog('in', fullName + ' stämplade in ' + time, '', time);
   updateActiveCount();
+  renderPersonList();
+  updateStampPanel();
+  renderTodayTable();
   saveData();
-  toast('Instämplad ' + time, 'ok');
+  toast(fullName + ' instämplad ' + time, 'ok');
 }
 
-function stampOut(entryId, time, isEdit) {
+function doStampOut(entryId) {
   ensureCampingData(_myCampingId);
-  const entry = _data.personalliggare[_myCampingId].entries.find(e=>e.id===entryId);
+  var entry = _data.personalliggare[_myCampingId].entries.find(function(e){ return e.id===entryId; });
   if (!entry) return;
-  const oldOut = entry.timeOut;
+  var time = nowTimeStr();
   entry.timeOut = time;
-  if (isEdit) entry.edited = true;
-  addAuditLog('out', entry.name + ' stämplade ut ' + time + (isEdit?' [REDIGERAD]':''), oldOut, time);
-  if (entryId === _myEntryId && !isEdit) { _myEntryId = null; updateStampUI(); }
-  renderTodayTable();
+  addAuditLog('out', entry.name + ' stämplade ut ' + time, '', time);
   updateActiveCount();
+  renderPersonList();
+  updateStampPanel();
+  renderTodayTable();
   saveData();
-  toast('Utstämplad ' + time, 'ok');
+  toast(entry.name + ' utstämplad ' + time, 'ok');
 }
 
-// ── MANUELL REGISTRERING ─────────────────────────────────────────────────
+// ── MANUELL REGISTRERING ──────────────────────────────────────────────────
 function openManualModal(editEntry) {
-  document.getElementById('modal-manual-title').textContent = editEntry ? 'Redigera arbetspass' : 'Registrera arbetspass';
-  document.getElementById('manual-edit-id').value = editEntry?.id || '';
-  document.getElementById('manual-date').value = editEntry?.date || todayStr();
-  document.getElementById('manual-in').value = editEntry?.timeIn || '';
-  document.getElementById('manual-out').value = editEntry?.timeOut || '';
-  document.getElementById('manual-reason').value = editEntry?.manualReason || '';
-  // Populate person select
+  document.getElementById('modal-manual-title').textContent = editEntry ? 'Redigera arbetspass' : 'Manuell registrering';
+  document.getElementById('manual-edit-id').value = editEntry ? editEntry.id : '';
+  document.getElementById('manual-date').value    = editEntry ? editEntry.date : todayStr();
+  document.getElementById('manual-in').value      = editEntry ? editEntry.timeIn : '';
+  document.getElementById('manual-out').value     = editEntry ? editEntry.timeOut : '';
+  document.getElementById('manual-reason').value  = editEntry ? (editEntry.manualReason||'') : '';
+
   ensureCampingData(_myCampingId);
-  const personal = _data.personalliggare[_myCampingId].personal;
-  const sel = document.getElementById('manual-person');
-  sel.innerHTML = '<option value="">– Välj person –</option><option value="__new__">+ Ny person (ej i listan)</option>';
-  personal.filter(p=>p.active!==false).forEach(p => {
-    const o = document.createElement('option');
+  var personal = _data.personalliggare[_myCampingId].personal;
+  var sel = document.getElementById('manual-person');
+  sel.innerHTML = '<option value="">– Välj –</option><option value="__new__">+ Ny person</option>';
+  personal.filter(function(p){ return p.active!==false; }).forEach(function(p) {
+    var o = document.createElement('option');
     o.value = p.id;
     o.textContent = p.fname + ' ' + p.lname;
     o.dataset.pnr = p.pnr;
     sel.appendChild(o);
   });
   if (editEntry) {
-    const match = personal.find(p=>(p.fname+' '+p.lname)===editEntry.name);
-    sel.value = match?.id || '__new__';
+    var match = personal.find(function(p){ return (p.fname+' '+p.lname)===editEntry.name; });
+    sel.value = match ? match.id : '__new__';
     document.getElementById('manual-name').value = editEntry.name;
-    document.getElementById('manual-pnr').value = editEntry.pnr;
+    document.getElementById('manual-pnr').value  = editEntry.pnr;
   } else {
     sel.value = '';
     document.getElementById('manual-name').value = '';
-    document.getElementById('manual-pnr').value = '';
+    document.getElementById('manual-pnr').value  = '';
   }
   onPersonSelect();
   openModal('modal-manual');
 }
 
 function onPersonSelect() {
-  const sel = document.getElementById('manual-person');
-  const val = sel.value;
-  const nameRow = document.getElementById('manual-name-row');
-  const pnrField = document.getElementById('manual-pnr-field');
+  var val = document.getElementById('manual-person').value;
+  var nameRow = document.getElementById('manual-name-row');
+  var pnrField = document.getElementById('manual-pnr-field');
   if (val === '__new__') {
-    nameRow.style.display = '';
+    nameRow.style.display  = '';
     pnrField.style.display = '';
     document.getElementById('manual-pnr').value = '';
   } else if (val) {
-    nameRow.style.display = 'none';
+    nameRow.style.display  = 'none';
     pnrField.style.display = '';
-    const opt = sel.options[sel.selectedIndex];
-    document.getElementById('manual-pnr').value = opt.dataset.pnr || '';
+    var sel = document.getElementById('manual-person');
+    document.getElementById('manual-pnr').value = sel.options[sel.selectedIndex].dataset.pnr || '';
   } else {
-    nameRow.style.display = 'none';
-    pnrField.style.display = '';
+    nameRow.style.display  = 'none';
   }
 }
 
 function saveManualEntry() {
-  const editId = document.getElementById('manual-edit-id').value;
-  const selVal = document.getElementById('manual-person').value;
-  const date = document.getElementById('manual-date').value;
-  const timeIn = document.getElementById('manual-in').value;
-  const timeOut = document.getElementById('manual-out').value;
-  const reason = document.getElementById('manual-reason').value.trim();
+  var editId  = document.getElementById('manual-edit-id').value;
+  var selVal  = document.getElementById('manual-person').value;
+  var date    = document.getElementById('manual-date').value;
+  var timeIn  = document.getElementById('manual-in').value;
+  var timeOut = document.getElementById('manual-out').value;
+  var reason  = document.getElementById('manual-reason').value.trim();
   if (!date||!timeIn||!reason) { alert('Fyll i datum, instämplingstid och anledning.'); return; }
 
-  let name = '', pnr = '';
+  var name = '', pnr = '';
   ensureCampingData(_myCampingId);
   if (selVal === '__new__') {
     name = document.getElementById('manual-name').value.trim();
-    pnr = document.getElementById('manual-pnr').value.trim();
+    pnr  = document.getElementById('manual-pnr').value.trim();
     if (!name) { alert('Ange namn.'); return; }
   } else if (selVal) {
-    const p = _data.personalliggare[_myCampingId].personal.find(p=>p.id===selVal);
+    var p = _data.personalliggare[_myCampingId].personal.find(function(x){ return x.id===selVal; });
     name = p ? p.fname+' '+p.lname : '';
-    pnr = p?.pnr || document.getElementById('manual-pnr').value.trim();
-  } else {
-    alert('Välj person eller "Ny person".'); return;
-  }
+    pnr  = (p && p.pnr) || document.getElementById('manual-pnr').value.trim();
+  } else { alert('Välj person.'); return; }
 
   if (editId) {
-    // Edit existing
-    const entry = _data.personalliggare[_myCampingId].entries.find(e=>e.id===editId);
+    var entry = _data.personalliggare[_myCampingId].entries.find(function(e){ return e.id===editId; });
     if (entry) {
-      const old = {timeIn:entry.timeIn,timeOut:entry.timeOut};
-      entry.timeIn = timeIn; entry.timeOut = timeOut; entry.edited = true;
-      entry.manualReason = reason;
-      addAuditLog('edit', 'Redigerade post för '+name+' ('+date+')', JSON.stringify(old), JSON.stringify({timeIn,timeOut}));
+      var old = {timeIn:entry.timeIn, timeOut:entry.timeOut};
+      entry.timeIn=timeIn; entry.timeOut=timeOut; entry.edited=true; entry.manualReason=reason;
+      addAuditLog('edit','Redigerade pass: '+name+' ('+date+')',JSON.stringify(old),JSON.stringify({timeIn,timeOut}));
     }
   } else {
-    // New entry
-    const id = uid();
     _data.personalliggare[_myCampingId].entries.push({
-      id, name, pnr, date,
-      timeIn, timeOut,
-      registeredBy: _user.name,
-      registeredAt: nowISO(),
-      manual: true, manualReason: reason, edited: false,
-      campingId: _myCampingId,
+      id:uid(), name, pnr, date, timeIn, timeOut,
+      registeredBy:_user.name, registeredAt:nowISO(),
+      manual:true, manualReason:reason, edited:false, campingId:_myCampingId,
     });
-    addAuditLog('in', 'Manuell registrering: '+name+' in '+timeIn+(timeOut?' ut '+timeOut:'')+ ' ('+date+') – '+reason, '', timeIn);
+    addAuditLog('in','Manuell: '+name+' in '+timeIn+(timeOut?' ut '+timeOut:'')+ ' ('+date+') – '+reason,'',timeIn);
   }
-
   closeModal('modal-manual');
   renderTodayTable();
   renderDagslista();
+  renderPersonList();
+  updateStampPanel();
   updateActiveCount();
   saveData();
-  toast(editId ? 'Uppdaterad' : 'Registrerad', 'ok');
+  toast(editId?'Uppdaterad':'Registrerad','ok');
 }
 
-// ── RENDER TODAY TABLE ────────────────────────────────────────────────────
+// ── TODAY TABLE ───────────────────────────────────────────────────────────
 function renderTodayTable() {
   ensureCampingData(_myCampingId);
-  const today = todayStr();
-  const entries = _data.personalliggare[_myCampingId].entries.filter(e=>e.date===today)
-    .sort((a,b)=>a.timeIn.localeCompare(b.timeIn));
-  const tbody = document.getElementById('today-tbody');
+  var today   = todayStr();
+  var entries = _data.personalliggare[_myCampingId].entries.filter(function(e){ return e.date===today; })
+    .sort(function(a,b){ return a.timeIn.localeCompare(b.timeIn); });
+  var tbody = document.getElementById('today-tbody');
   if (!entries.length) {
-    tbody.innerHTML = '<tr><td colspan="7"><div class="no-entries"><i class="ti ti-users"></i>Inga registrerade arbetspass idag</div></td></tr>';
+    tbody.innerHTML = '<tr><td colspan="6"><div class="no-entries"><i class="ti ti-users"></i>Inga registrerade arbetspass idag</div></td></tr>';
     return;
   }
-  tbody.innerHTML = entries.map(e => {
-    const isOpen = !e.timeOut;
-    const dur = e.timeOut ? calcDuration(e.timeIn, e.timeOut) : '–';
-    const statusCell = isOpen
-      ? `<td><span class="status-cell-in"><span class="status-dot dot-in" style="width:7px;height:7px;border-radius:50%;background:var(--accent);flex-shrink:0;animation:pulse 2s infinite"></span> Instämplad</span></td>`
-      : `<td class="status-cell-out">Utcheckad</td>`;
-    const manualBadge = e.manual||e.edited ? `<span style="font-size:10px;background:var(--amber-bg);color:var(--amber-text);padding:1px 6px;border-radius:10px;margin-left:5px" title="${e.manualReason||''}">M</span>` : '';
-    return `<tr>
-      <td style="font-weight:500">${e.name}${manualBadge}</td>
-      <td style="color:var(--text3);font-size:12px">${maskPnr(e.pnr)}</td>
-      <td>${e.timeIn}</td>
-      <td>${e.timeOut||'–'}</td>
-      <td><span class="duration-badge">${dur}</span></td>
-      ${statusCell}
-      <td class="no-print"><div style="display:flex;gap:5px;justify-content:flex-end">
-        ${isOpen ? `<button class="btn-icon" onclick="stampOut('${e.id}','${nowTimeStr()}',true)" title="Stämpla ut nu"><i class="ti ti-clock-stop"></i></button>` : ''}
-        <button class="btn-icon" onclick="openManualModal(${JSON.stringify(e).replace(/"/g,'&quot;')})" title="Redigera"><i class="ti ti-pencil"></i></button>
-        <button class="btn-icon red" onclick="confirmDeleteEntry('${e.id}','${e.name}')" title="Ta bort"><i class="ti ti-trash"></i></button>
-      </div></td>
-    </tr>`;
+  tbody.innerHTML = entries.map(function(e) {
+    var isOpen = !e.timeOut;
+    var dur    = e.timeOut ? calcDuration(e.timeIn, e.timeOut) : '–';
+    var manBadge = (e.manual||e.edited) ? '<span style="font-size:10px;background:var(--amber-bg);color:var(--amber-text);padding:1px 6px;border-radius:10px;margin-left:4px" title="'+( e.manualReason||'')+'">M</span>':'' ;
+    var statusCell = isOpen
+      ? '<td><span style="display:flex;align-items:center;gap:5px;color:var(--accent);font-weight:600;font-size:12px"><span style="width:7px;height:7px;border-radius:50%;background:var(--accent);animation:pulse 2s infinite;flex-shrink:0"></span>Inne</span></td>'
+      : '<td style="color:var(--text3);font-size:12px">Utcheckad</td>';
+    return '<tr>'
+      + '<td style="font-weight:500">' + e.name + manBadge + '</td>'
+      + '<td>' + e.timeIn + '</td>'
+      + '<td>' + (e.timeOut||'–') + '</td>'
+      + '<td><span class="duration-badge">' + dur + '</span></td>'
+      + statusCell
+      + '<td class="no-print"><div style="display:flex;gap:5px;justify-content:flex-end">'
+      + (isOpen ? '<button class="btn-icon" onclick="doStampOut(\'' + e.id + '\')" title="Stämpla ut nu"><i class="ti ti-clock-stop"></i></button>' : '')
+      + '<button class="btn-icon" onclick="openManualModal(' + JSON.stringify(e).replace(/"/g,'&quot;') + ')" title="Redigera"><i class="ti ti-pencil"></i></button>'
+      + '<button class="btn-icon red" onclick="confirmDeleteEntry(\'' + e.id + '\',\'' + e.name + '\')" title="Ta bort"><i class="ti ti-trash"></i></button>'
+      + '</div></td>'
+      + '</tr>';
   }).join('');
 }
 
-// ── RENDER DAGSLISTA ──────────────────────────────────────────────────────
+// ── DAGSLISTA ─────────────────────────────────────────────────────────────
 function renderDagslista() {
-  const date = document.getElementById('dag-filter-date').value || todayStr();
-  const campingId = document.getElementById('dag-filter-camping').value || _myCampingId;
+  var date      = document.getElementById('dag-filter-date').value || todayStr();
+  var campingId = document.getElementById('dag-filter-camping').value || _myCampingId;
   ensureCampingData(campingId);
-  const campingName = _data.campings.find(c=>c.id===campingId)?.name || campingId;
-  document.getElementById('dag-title').innerHTML = `<i class="ti ti-list"></i> ${campingName} – ${date}`;
-  const entries = _data.personalliggare[campingId].entries.filter(e=>e.date===date)
-    .sort((a,b)=>a.timeIn.localeCompare(b.timeIn));
-  document.getElementById('dag-summary').textContent = entries.length + ' person(er), ' + entries.filter(e=>!e.timeOut).length + ' instämplade';
-  const tbody = document.getElementById('dag-tbody');
+  var campingName = ((_data.campings||[]).find(function(c){return c.id===campingId;})||{}).name || campingId;
+  document.getElementById('dag-title').innerHTML = '<i class="ti ti-list"></i> ' + campingName + ' – ' + date;
+  var entries = _data.personalliggare[campingId].entries.filter(function(e){return e.date===date;})
+    .sort(function(a,b){return a.timeIn.localeCompare(b.timeIn);});
+  document.getElementById('dag-summary').textContent = entries.length + ' person(er), ' + entries.filter(function(e){return !e.timeOut;}).length + ' inne';
+  var tbody = document.getElementById('dag-tbody');
   if (!entries.length) {
     tbody.innerHTML = '<tr><td colspan="7"><div class="no-entries"><i class="ti ti-calendar-off"></i>Inga arbetspass denna dag</div></td></tr>';
     return;
   }
-  tbody.innerHTML = entries.map(e => {
-    const dur = e.timeOut ? calcDuration(e.timeIn,e.timeOut) : '–';
-    const manualBadge = e.manual||e.edited ? `<span title="${e.manualReason||''}" style="font-size:10px;background:var(--amber-bg);color:var(--amber-text);padding:1px 6px;border-radius:10px;margin-left:4px">M</span>`:'';
-    return `<tr>
-      <td style="font-weight:500">${e.name}${manualBadge}</td>
-      <td style="color:var(--text3);font-size:12px">${maskPnr(e.pnr)}</td>
-      <td>${e.timeIn}</td>
-      <td>${e.timeOut||'–'}</td>
-      <td><span class="duration-badge">${dur}</span></td>
-      <td style="color:var(--text3);font-size:12px">${e.registeredBy||'–'}</td>
-      <td class="no-print"><div style="display:flex;gap:5px;justify-content:flex-end">
-        <button class="btn-icon" onclick="openManualModalCamping(${JSON.stringify(e).replace(/"/g,'&quot;')},'${campingId}')" title="Redigera"><i class="ti ti-pencil"></i></button>
-        <button class="btn-icon red" onclick="confirmDeleteEntryCamping('${e.id}','${e.name}','${campingId}')" title="Ta bort"><i class="ti ti-trash"></i></button>
-      </div></td>
-    </tr>`;
+  tbody.innerHTML = entries.map(function(e) {
+    var dur = e.timeOut ? calcDuration(e.timeIn,e.timeOut) : '–';
+    var manBadge = (e.manual||e.edited) ? '<span title="'+(e.manualReason||'')+'" style="font-size:10px;background:var(--amber-bg);color:var(--amber-text);padding:1px 6px;border-radius:10px;margin-left:4px">M</span>':'';
+    return '<tr>'
+      + '<td style="font-weight:500">' + e.name + manBadge + '</td>'
+      + '<td style="color:var(--text3);font-size:12px">' + maskPnr(e.pnr) + '</td>'
+      + '<td>' + e.timeIn + '</td>'
+      + '<td>' + (e.timeOut||'–') + '</td>'
+      + '<td><span class="duration-badge">' + dur + '</span></td>'
+      + '<td style="color:var(--text3);font-size:12px">' + (e.registeredBy||'–') + '</td>'
+      + '<td class="no-print"><div style="display:flex;gap:5px;justify-content:flex-end">'
+      + '<button class="btn-icon" onclick="openManualModal(' + JSON.stringify(e).replace(/"/g,'&quot;') + ')" title="Redigera"><i class="ti ti-pencil"></i></button>'
+      + '<button class="btn-icon red" onclick="confirmDeleteEntry(\'' + e.id + '\',\'' + e.name + '\')" title="Ta bort"><i class="ti ti-trash"></i></button>'
+      + '</div></td>'
+      + '</tr>';
   }).join('');
-}
-
-function openManualModalCamping(entry, campingId) {
-  const prev = _myCampingId;
-  _myCampingId = campingId;
-  openManualModal(entry);
-  _myCampingId = prev;
 }
 
 // ── PERSONALLISTA ─────────────────────────────────────────────────────────
 function renderPersonalLista() {
   ensureCampingData(_myCampingId);
-  const personal = _data.personalliggare[_myCampingId].personal || [];
-  const tbody = document.getElementById('personal-tbody');
+  var personal = _data.personalliggare[_myCampingId].personal || [];
+  var tbody = document.getElementById('personal-tbody');
   if (!personal.length) {
     tbody.innerHTML = '<tr><td colspan="7"><div class="no-entries"><i class="ti ti-user-x"></i>Inga personer i listan</div></td></tr>';
     return;
   }
-  tbody.innerHTML = personal.map(p => {
-    const aktiv = p.active!==false ? '<span style="font-size:11px;background:var(--green-bg);color:var(--green-text);padding:2px 8px;border-radius:20px">Aktiv</span>' : '<span style="font-size:11px;background:var(--red-bg);color:var(--red-text);padding:2px 8px;border-radius:20px">Inaktiv</span>';
-    return `<tr>
-      <td style="font-weight:500">${p.fname} ${p.lname}</td>
-      <td style="font-size:12px;color:var(--text3)">${maskPnr(p.pnr)}</td>
-      <td style="font-size:12px;color:var(--text2)">${p.address||'–'}</td>
-      <td style="font-size:12px">${p.phone||'–'}</td>
-      <td style="font-size:12px;color:var(--text2)">${p.type||'–'}</td>
-      <td>${aktiv}</td>
-      <td class="no-print"><div style="display:flex;gap:5px;justify-content:flex-end">
-        <button class="btn-icon" onclick="openPersonalModal(${JSON.stringify(p).replace(/"/g,'&quot;')})" title="Redigera"><i class="ti ti-pencil"></i></button>
-        <button class="btn-icon red" onclick="confirmDeletePerson('${p.id}','${p.fname} ${p.lname}')" title="Ta bort"><i class="ti ti-trash"></i></button>
-      </div></td>
-    </tr>`;
+  tbody.innerHTML = personal.map(function(p) {
+    var aktiv = p.active!==false
+      ? '<span style="font-size:11px;background:var(--green-bg);color:var(--green-text);padding:2px 8px;border-radius:20px">Aktiv</span>'
+      : '<span style="font-size:11px;background:var(--red-bg);color:var(--red-text);padding:2px 8px;border-radius:20px">Inaktiv</span>';
+    return '<tr>'
+      + '<td style="font-weight:500">' + p.fname + ' ' + p.lname + '</td>'
+      + '<td style="font-size:12px;color:var(--text3)">' + maskPnr(p.pnr) + '</td>'
+      + '<td style="font-size:12px;color:var(--text2)">' + (p.address||'–') + '</td>'
+      + '<td style="font-size:12px">' + (p.phone||'–') + '</td>'
+      + '<td style="font-size:12px;color:var(--text2)">' + (p.type||'–') + '</td>'
+      + '<td>' + aktiv + '</td>'
+      + '<td class="no-print"><div style="display:flex;gap:5px;justify-content:flex-end">'
+      + '<button class="btn-icon" onclick="openPersonalModal(' + JSON.stringify(p).replace(/"/g,'&quot;') + ')" title="Redigera"><i class="ti ti-pencil"></i></button>'
+      + '<button class="btn-icon red" onclick="confirmDeletePerson(\'' + p.id + '\',\'' + p.fname+' '+p.lname + '\')" title="Ta bort"><i class="ti ti-trash"></i></button>'
+      + '</div></td>'
+      + '</tr>';
   }).join('');
 }
 
 function openPersonalModal(person) {
   document.getElementById('modal-personal-title').textContent = person ? 'Redigera person' : 'Lägg till person';
-  document.getElementById('personal-edit-id').value = person?.id||'';
-  document.getElementById('p-fname').value = person?.fname||'';
-  document.getElementById('p-lname').value = person?.lname||'';
-  document.getElementById('p-pnr').value = person?.pnr||'';
-  document.getElementById('p-address').value = person?.address||'';
-  document.getElementById('p-phone').value = person?.phone||'';
-  document.getElementById('p-type').value = person?.type||'anställd';
-  document.getElementById('p-active').value = person?.active===false?'false':'true';
+  document.getElementById('personal-edit-id').value = person ? person.id : '';
+  document.getElementById('p-fname').value   = person ? person.fname   : '';
+  document.getElementById('p-lname').value   = person ? person.lname   : '';
+  document.getElementById('p-pnr').value     = person ? person.pnr     : '';
+  document.getElementById('p-address').value = person ? (person.address||'') : '';
+  document.getElementById('p-phone').value   = person ? (person.phone||'')   : '';
+  document.getElementById('p-type').value    = person ? (person.type||'anställd') : 'anställd';
+  document.getElementById('p-active').value  = person && person.active===false ? 'false' : 'true';
   openModal('modal-personal');
 }
 
 function savePerson() {
-  const fname = document.getElementById('p-fname').value.trim();
-  const lname = document.getElementById('p-lname').value.trim();
-  const pnr = document.getElementById('p-pnr').value.trim();
+  var fname = document.getElementById('p-fname').value.trim();
+  var lname = document.getElementById('p-lname').value.trim();
+  var pnr   = document.getElementById('p-pnr').value.trim();
   if (!fname||!lname||!pnr) { alert('Namn och personnummer krävs.'); return; }
   ensureCampingData(_myCampingId);
-  const obj = {
-    fname,lname,pnr,
-    address:document.getElementById('p-address').value.trim(),
-    phone:document.getElementById('p-phone').value.trim(),
-    type:document.getElementById('p-type').value,
-    active:document.getElementById('p-active').value==='true',
+  var obj = {
+    fname, lname, pnr,
+    address: document.getElementById('p-address').value.trim(),
+    phone:   document.getElementById('p-phone').value.trim(),
+    type:    document.getElementById('p-type').value,
+    active:  document.getElementById('p-active').value==='true',
   };
-  const editId = document.getElementById('personal-edit-id').value;
+  var editId = document.getElementById('personal-edit-id').value;
   if (editId) {
-    const i = _data.personalliggare[_myCampingId].personal.findIndex(p=>p.id===editId);
-    if (i>=0) { const old=_data.personalliggare[_myCampingId].personal[i]; _data.personalliggare[_myCampingId].personal[i]={...old,...obj}; addAuditLog('edit','Uppdaterade person: '+fname+' '+lname,'',JSON.stringify(obj)); }
+    var i = _data.personalliggare[_myCampingId].personal.findIndex(function(p){return p.id===editId;});
+    if (i>=0) {
+      _data.personalliggare[_myCampingId].personal[i] = Object.assign({}, _data.personalliggare[_myCampingId].personal[i], obj);
+      addAuditLog('edit','Uppdaterade: '+fname+' '+lname,'','');
+    }
   } else {
-    const id=uid();
-    _data.personalliggare[_myCampingId].personal.push({id,...obj});
-    addAuditLog('in','Lade till person: '+fname+' '+lname,'','');
+    _data.personalliggare[_myCampingId].personal.push(Object.assign({id:uid()}, obj));
+    addAuditLog('in','Lade till: '+fname+' '+lname,'','');
   }
   closeModal('modal-personal');
   renderPersonalLista();
-  // Re-populate manual person select
-  const sel=document.getElementById('manual-person');
-  if(sel) {/* will repopulate when modal opens */}
+  renderPersonList();
   saveData();
   toast('Sparad','ok');
 }
 
-// ── ÄNDRINGSLOGG ──────────────────────────────────────────────────────────
+// ── AUDITLOG ──────────────────────────────────────────────────────────────
 function addAuditLog(action, detail, oldVal, newVal) {
   ensureCampingData(_myCampingId);
   _data.personalliggare[_myCampingId].auditlog.push({
-    id: uid(),
-    ts: nowISO(),
-    user: _user.name,
-    action,   // 'in'|'out'|'edit'|'delete'
-    detail,
-    oldVal: oldVal||'',
-    newVal: newVal||'',
+    id:uid(), ts:nowISO(), user:_user.name, action, detail,
+    oldVal:oldVal||'', newVal:newVal||'',
   });
 }
 
 function renderLogg() {
-  const dateF = document.getElementById('logg-filter-date').value;
-  const typeF = document.getElementById('logg-filter-type').value;
+  var dateF = document.getElementById('logg-filter-date').value;
+  var typeF = document.getElementById('logg-filter-type').value;
   ensureCampingData(_myCampingId);
-  let logs = [...(_data.personalliggare[_myCampingId].auditlog||[])].reverse();
-  if (dateF) logs = logs.filter(l=>l.ts.startsWith(dateF));
-  if (typeF) logs = logs.filter(l=>l.action===typeF);
-  const body = document.getElementById('logg-body');
-  if (!logs.length) { body.innerHTML = '<div class="no-entries"><i class="ti ti-history"></i>Inga loggposter för valt filter</div>'; return; }
-  body.innerHTML = logs.map(l => {
-    const cls = l.action==='edit'?'log-edit':l.action==='in'?'log-in':l.action==='delete'?'log-edit':'log-out';
-    const icon = l.action==='in'?'ti-clock-play':l.action==='out'?'ti-clock-stop':l.action==='edit'?'ti-pencil':'ti-trash';
-    const change = (l.oldVal&&l.newVal) ? `<span style="color:var(--red-text)">${l.oldVal}</span> → <span style="color:var(--green-text)">${l.newVal}</span>` : '';
-    return `<div class="log-entry ${cls}">
-      <div style="display:flex;align-items:center;gap:6px"><i class="ti ${icon}" style="font-size:13px"></i> ${l.detail}</div>
-      ${change ? '<div style="margin-top:3px">'+change+'</div>' : ''}
-      <div class="log-meta"><i class="ti ti-user" style="font-size:10px"></i> ${l.user} &nbsp;·&nbsp; ${new Date(l.ts).toLocaleString('sv-SE')}</div>
-    </div>`;
+  var logs = (_data.personalliggare[_myCampingId].auditlog||[]).slice().reverse();
+  if (dateF) logs = logs.filter(function(l){return l.ts.startsWith(dateF);});
+  if (typeF) logs = logs.filter(function(l){return l.action===typeF;});
+  var body = document.getElementById('logg-body');
+  if (!logs.length) { body.innerHTML='<div class="no-entries"><i class="ti ti-history"></i>Inga loggposter</div>'; return; }
+  body.innerHTML = logs.map(function(l) {
+    var cls  = l.action==='edit'?'log-edit':l.action==='in'?'log-in':'log-out';
+    var icon = l.action==='in'?'ti-clock-play':l.action==='out'?'ti-clock-stop':l.action==='edit'?'ti-pencil':'ti-trash';
+    var change = (l.oldVal&&l.newVal) ? '<div style="margin-top:3px"><span style="color:var(--red-text)">'+l.oldVal+'</span> → <span style="color:var(--green-text)">'+l.newVal+'</span></div>' : '';
+    return '<div class="log-entry '+cls+'">'
+      + '<div style="display:flex;align-items:center;gap:6px"><i class="ti '+icon+'" style="font-size:13px"></i> '+l.detail+'</div>'
+      + change
+      + '<div class="log-meta"><i class="ti ti-user" style="font-size:10px"></i> '+l.user+' &nbsp;·&nbsp; '+new Date(l.ts).toLocaleString('sv-SE')+'</div>'
+      + '</div>';
   }).join('');
 }
 
 // ── DELETE ────────────────────────────────────────────────────────────────
-function confirmDeleteEntry(id, name) { confirmDeleteEntryCamping(id, name, _myCampingId); }
-function confirmDeleteEntryCamping(id, name, campingId) {
-  document.getElementById('delete-text').textContent = 'Ta bort arbetspasset för "'+name+'"? Borttagningen loggas.';
-  document.getElementById('delete-confirm-btn').onclick = () => {
-    ensureCampingData(campingId);
-    const entry = _data.personalliggare[campingId].entries.find(e=>e.id===id);
-    addAuditLog('delete','Tog bort arbetspass: '+(entry?.name||name)+' '+( entry?.date||''), JSON.stringify(entry),'');
-    _data.personalliggare[campingId].entries = _data.personalliggare[campingId].entries.filter(e=>e.id!==id);
-    if (id===_myEntryId) { _myEntryId=null; updateStampUI(); }
+function confirmDeleteEntry(id, name) {
+  document.getElementById('delete-text').textContent = 'Ta bort arbetspasset för "'+name+'"?';
+  document.getElementById('delete-confirm-btn').onclick = function() {
+    ensureCampingData(_myCampingId);
+    var entry = _data.personalliggare[_myCampingId].entries.find(function(e){return e.id===id;});
+    addAuditLog('delete','Tog bort pass: '+(entry&&entry.name||name)+' '+(entry&&entry.date||''),JSON.stringify(entry),'');
+    _data.personalliggare[_myCampingId].entries = _data.personalliggare[_myCampingId].entries.filter(function(e){return e.id!==id;});
     closeModal('modal-delete');
-    renderTodayTable();
-    renderDagslista();
-    updateActiveCount();
-    saveData();
-    toast('Borttaget','ok');
+    renderTodayTable(); renderDagslista(); renderPersonList(); updateStampPanel(); updateActiveCount();
+    saveData(); toast('Borttaget','ok');
   };
   openModal('modal-delete');
 }
 
 function confirmDeletePerson(id, name) {
-  document.getElementById('delete-text').textContent = 'Ta bort "'+name+'" från personallistan? Borttagningen loggas.';
-  document.getElementById('delete-confirm-btn').onclick = () => {
+  document.getElementById('delete-text').textContent = 'Ta bort "'+name+'" från personallistan?';
+  document.getElementById('delete-confirm-btn').onclick = function() {
     ensureCampingData(_myCampingId);
     addAuditLog('delete','Tog bort person: '+name,'','');
-    _data.personalliggare[_myCampingId].personal = _data.personalliggare[_myCampingId].personal.filter(p=>p.id!==id);
+    _data.personalliggare[_myCampingId].personal = _data.personalliggare[_myCampingId].personal.filter(function(p){return p.id!==id;});
+    if (_selectedPersonId===id) { _selectedPersonId=null; updateStampPanel(); }
     closeModal('modal-delete');
-    renderPersonalLista();
-    saveData();
-    toast('Borttaget','ok');
+    renderPersonalLista(); renderPersonList();
+    saveData(); toast('Borttaget','ok');
   };
   openModal('modal-delete');
 }
@@ -993,159 +1087,101 @@ function confirmDeletePerson(id, name) {
 // ── EXPORT ────────────────────────────────────────────────────────────────
 function exportExcel() {
   try {
-    const dateEl = document.getElementById('dag-filter-date');
-    const campingEl = document.getElementById('dag-filter-camping');
-    const date = (dateEl && dateEl.value) ? dateEl.value : todayStr();
-    const campingId = (campingEl && campingEl.value) ? campingEl.value : _myCampingId;
-
+    var date      = document.getElementById('dag-filter-date').value || todayStr();
+    var campingId = document.getElementById('dag-filter-camping').value || _myCampingId;
     ensureCampingData(campingId);
-
-    // Safe campingName — always a string
-    const campingObj = (_data.campings||[]).find(c=>c.id===campingId);
-    const campingName = String(campingObj?.name || campingId || 'Export');
-    const company = _data.company || {};
-
-    const entries = (_data.personalliggare[campingId]?.entries||[])
-      .filter(e=>e.date===date)
-      .sort((a,b)=>String(a.timeIn||'').localeCompare(String(b.timeIn||'')));
-
-    if (!window.XLSX) { toast('Excel-biblioteket laddas – försök igen','warn'); return; }
-
-    const wb = XLSX.utils.book_new();
-
-    const rows = [
+    var campingName = String(((_data.campings||[]).find(function(c){return c.id===campingId;})||{}).name || campingId);
+    var company  = _data.company || {};
+    var entries  = (_data.personalliggare[campingId].entries||[]).filter(function(e){return e.date===date;})
+      .sort(function(a,b){return String(a.timeIn||'').localeCompare(String(b.timeIn||''));});
+    if (!window.XLSX) { toast('Excel-biblioteket laddas','warn'); return; }
+    var wb = XLSX.utils.book_new();
+    var rows = [
       ['PERSONALLIGGARE – '+campingName],
       ['Företag:', String(company.name||'–'), '', 'Org.nr:', String(company.orgNr||'–')],
       ['Datum:', date, '', 'Exporterad:', new Date().toLocaleString('sv-SE')],
       [],
-      ['Namn','Personnummer','Instämplad','Utstämplad','Total tid','Registrerad av','Manuell','Anledning'],
-      ...entries.map(e=>[
-        String(e.name||''),
-        String(e.pnr||''),
-        String(e.timeIn||''),
-        String(e.timeOut||'–'),
-        (e.timeOut && e.timeIn) ? calcDuration(e.timeIn, e.timeOut) : '–',
-        String(e.registeredBy||'–'),
-        e.manual ? 'Ja' : 'Nej',
-        String(e.manualReason||'')
-      ]),
+      ['Namn','Personnummer','In','Ut','Total tid','Registrerad av','Manuell','Anledning'],
+      ...entries.map(function(e){ return [
+        String(e.name||''), String(e.pnr||''), String(e.timeIn||''), String(e.timeOut||'–'),
+        (e.timeOut&&e.timeIn)?calcDuration(e.timeIn,e.timeOut):'–',
+        String(e.registeredBy||'–'), e.manual?'Ja':'Nej', String(e.manualReason||'')
+      ]; }),
     ];
-    const ws = XLSX.utils.aoa_to_sheet(rows);
-    ws['!cols']=[{wch:28},{wch:16},{wch:12},{wch:12},{wch:10},{wch:20},{wch:8},{wch:30}];
+    var ws = XLSX.utils.aoa_to_sheet(rows);
+    ws['!cols']=[{wch:28},{wch:16},{wch:8},{wch:8},{wch:10},{wch:20},{wch:8},{wch:30}];
     XLSX.utils.book_append_sheet(wb, ws, 'Arbetspass');
-
-    const personal = _data.personalliggare[campingId]?.personal || [];
-    const pRows = [
-      ['PERSONALLISTA – '+campingName],
-      [],
-      ['Namn','Personnummer','Adress','Telefon','Typ','Aktiv'],
-      ...personal.map(p=>[
-        String((p.fname||'')+' '+(p.lname||'')).trim(),
-        String(p.pnr||''),
-        String(p.address||''),
-        String(p.phone||''),
-        String(p.type||''),
-        p.active!==false ? 'Ja' : 'Nej'
-      ]),
-    ];
-    const ws2 = XLSX.utils.aoa_to_sheet(pRows);
-    ws2['!cols']=[{wch:28},{wch:16},{wch:32},{wch:16},{wch:14},{wch:8}];
-    XLSX.utils.book_append_sheet(wb, ws2, 'Personallista');
-
-    const safeName = campingName.replace(/[:\\\/\?\*\[\]&]/g,'').replace(/\s+/g,'_').slice(0,40);
-    XLSX.writeFile(wb, 'Personalliggare_'+safeName+'_'+date+'.xlsx');
+    XLSX.writeFile(wb, 'Personalliggare_'+campingName.replace(/[:\\\/\?\*\[\]&\s]/g,'_').slice(0,40)+'_'+date+'.xlsx');
     toast('Excel exporterad','ok');
-  } catch(e) {
-    toast('Export misslyckades: '+e.message,'err');
-    console.error('exportExcel error:', e);
-  }
+  } catch(e) { toast('Export misslyckades: '+e.message,'err'); }
 }
 
 function exportPDF() {
-  const date = document.getElementById('dag-filter-date').value || todayStr();
-  const campingId = document.getElementById('dag-filter-camping').value || _myCampingId;
+  var date      = document.getElementById('dag-filter-date').value || todayStr();
+  var campingId = document.getElementById('dag-filter-camping').value || _myCampingId;
   ensureCampingData(campingId);
-  const campingName = _data.campings.find(c=>c.id===campingId)?.name||campingId;
-  const company = _data.company||{};
-  const entries = _data.personalliggare[campingId].entries.filter(e=>e.date===date).sort((a,b)=>a.timeIn.localeCompare(b.timeIn));
-
-  const rows = entries.map(e=>`<tr>
-    <td>${e.name}</td><td>${e.pnr}</td><td>${e.timeIn}</td>
-    <td>${e.timeOut||'–'}</td><td>${e.timeOut?calcDuration(e.timeIn,e.timeOut):'–'}</td>
-    <td>${e.registeredBy||'–'}</td><td>${e.manual?'Ja':'Nej'}</td>
-  </tr>`).join('');
-
-  const html = `<!DOCTYPE html><html lang="sv"><head><meta charset="UTF-8">
-  <title>Personalliggare ${campingName} ${date}</title>
-  <style>
-    body{font-family:Arial,sans-serif;font-size:12px;margin:24px}
-    h1{font-size:18px;margin-bottom:4px}
-    .meta{color:#666;margin-bottom:16px;font-size:11px}
-    table{width:100%;border-collapse:collapse;margin-top:12px}
-    th{background:#3B6D11;color:#fff;padding:7px 10px;text-align:left;font-size:11px}
-    td{padding:6px 10px;border-bottom:1px solid #eee}
-    tr:nth-child(even) td{background:#f5f5f3}
-    .footer{margin-top:24px;font-size:10px;color:#999;border-top:1px solid #ddd;padding-top:8px}
-  </style></head><body>
-  <h1>Personalliggare – ${campingName}</h1>
-  <div class="meta">Företag: ${company.name||'–'} &nbsp;|&nbsp; Org.nr: ${company.orgNr||'–'} &nbsp;|&nbsp; Datum: ${date}</div>
-  <table><thead><tr><th>Namn</th><th>Personnummer</th><th>In</th><th>Ut</th><th>Tid</th><th>Registrerad av</th><th>Manuell</th></tr></thead>
-  <tbody>${rows||'<tr><td colspan="7">Inga poster</td></tr>'}</tbody></table>
-  <div class="footer">Exporterad: ${new Date().toLocaleString('sv-SE')} &nbsp;·&nbsp; CCSthlm Personalliggare</div>
-  </body></html>`;
-
-  const win = window.open('','_blank');
-  win.document.write(html);
-  win.document.close();
-  setTimeout(()=>win.print(),400);
+  var campingName = ((_data.campings||[]).find(function(c){return c.id===campingId;})||{}).name||campingId;
+  var company  = _data.company||{};
+  var entries  = _data.personalliggare[campingId].entries.filter(function(e){return e.date===date;})
+    .sort(function(a,b){return a.timeIn.localeCompare(b.timeIn);});
+  var rows = entries.map(function(e){
+    return '<tr><td>'+e.name+'</td><td>'+maskPnr(e.pnr)+'</td><td>'+e.timeIn+'</td><td>'+(e.timeOut||'–')+'</td><td>'+(e.timeOut?calcDuration(e.timeIn,e.timeOut):'–')+'</td><td>'+(e.registeredBy||'–')+'</td></tr>';
+  }).join('');
+  var html = '<!DOCTYPE html><html lang="sv"><head><meta charset="UTF-8"><title>Personalliggare '+campingName+' '+date+'</title>'
+    + '<style>body{font-family:Arial,sans-serif;font-size:12px;margin:24px}h1{font-size:18px;margin-bottom:4px}.meta{color:#666;margin-bottom:16px;font-size:11px}table{width:100%;border-collapse:collapse;margin-top:12px}th{background:#3B6D11;color:#fff;padding:7px 10px;text-align:left;font-size:11px}td{padding:6px 10px;border-bottom:1px solid #eee}tr:nth-child(even) td{background:#f5f5f3}.footer{margin-top:24px;font-size:10px;color:#999;border-top:1px solid #ddd;padding-top:8px}@media print{body{margin:12px}}</style></head><body>'
+    + '<h1>Personalliggare – '+campingName+'</h1>'
+    + '<div class="meta">Företag: '+(company.name||'–')+' &nbsp;|&nbsp; Org.nr: '+(company.orgNr||'–')+' &nbsp;|&nbsp; Datum: '+date+'</div>'
+    + '<table><thead><tr><th>Namn</th><th>Personnummer</th><th>In</th><th>Ut</th><th>Tid</th><th>Registrerad av</th></tr></thead>'
+    + '<tbody>'+(rows||'<tr><td colspan="6">Inga poster</td></tr>')+'</tbody></table>'
+    + '<div class="footer">Exporterad: '+new Date().toLocaleString('sv-SE')+' &nbsp;·&nbsp; CCSthlm Personalliggare</div>'
+    + '<script>window.onload=function(){window.print();}<\/script></body></html>';
+  var win = window.open('','_blank');
+  if (win) { win.document.write(html); win.document.close(); }
 }
 
 // ── TABS ──────────────────────────────────────────────────────────────────
 function showTab(tab) {
-  ['stämpel','dag','personal','logg'].forEach(t=>{
+  ['stämpel','dag','personal','logg'].forEach(function(t) {
     document.getElementById('view-'+t).style.display = t===tab?'':'none';
     document.getElementById('tab-'+t).classList.toggle('active',t===tab);
   });
-  if (tab==='dag') renderDagslista();
+  if (tab==='dag')  renderDagslista();
   if (tab==='logg') renderLogg();
 }
 
 // ── HELPERS ───────────────────────────────────────────────────────────────
-function todayStr() { return new Date().toISOString().slice(0,10); }
-function nowTimeStr() { return new Date().toLocaleTimeString('sv-SE',{hour:'2-digit',minute:'2-digit'}); }
-function nowISO() { return new Date().toISOString(); }
-function uid() { return Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
-function maskPnr(pnr) { if(!pnr) return '–'; return pnr.slice(0,8)+'****'; }
+function todayStr()  { return new Date().toISOString().slice(0,10); }
+function nowTimeStr(){ return new Date().toLocaleTimeString('sv-SE',{hour:'2-digit',minute:'2-digit'}); }
+function nowISO()    { return new Date().toISOString(); }
+function uid()       { return Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
+function maskPnr(pnr){ if(!pnr) return '–'; return pnr.slice(0,8)+'****'; }
 function calcDuration(tIn,tOut) {
-  if (!tIn || !tOut) return '–';
-  const inStr  = String(tIn).trim();
-  const outStr = String(tOut).trim();
-  if (!inStr.includes(':') || !outStr.includes(':')) return '–';
-  const [ih,im] = inStr.split(':').map(Number);
-  const [oh,om] = outStr.split(':').map(Number);
-  if (isNaN(ih)||isNaN(im)||isNaN(oh)||isNaN(om)) return '–';
-  let mins = (oh*60+om) - (ih*60+im);
-  if (mins < 0) mins += 1440;
-  return Math.floor(mins/60) + 'h ' + ('0'+mins%60).slice(-2) + 'min';
+  if (!tIn||!tOut) return '–';
+  var a=String(tIn).trim().split(':').map(Number), b=String(tOut).trim().split(':').map(Number);
+  if (a.length<2||b.length<2||isNaN(a[0])||isNaN(b[0])) return '–';
+  var mins=(b[0]*60+b[1])-(a[0]*60+a[1]);
+  if (mins<0) mins+=1440;
+  return Math.floor(mins/60)+'h '+('0'+mins%60).slice(-2)+'min';
 }
 function updateActiveCount() {
   ensureCampingData(_myCampingId);
-  const c = _data.personalliggare[_myCampingId].entries.filter(e=>e.date===todayStr()&&!e.timeOut).length;
-  const el = document.getElementById('active-count');
-  el.textContent = c; el.style.display = c>0?'':'none';
+  var c=_data.personalliggare[_myCampingId].entries.filter(function(e){return e.date===todayStr()&&!e.timeOut;}).length;
+  var el=document.getElementById('active-count');
+  el.textContent=c; el.style.display=c>0?'':'none';
 }
-function openModal(id) { document.getElementById(id).classList.add('show'); }
+function openModal(id)  { document.getElementById(id).classList.add('show'); }
 function closeModal(id) { document.getElementById(id).classList.remove('show'); }
-document.addEventListener('click',e=>{ if(e.target.classList.contains('modal-overlay')) e.target.classList.remove('show'); });
-document.addEventListener('keydown',e=>{ if(e.key==='Escape') document.querySelectorAll('.modal-overlay.show').forEach(m=>m.classList.remove('show')); });
-function toast(msg,type='ok') {
-  const t=document.getElementById('toast');
-  const colors={ok:'var(--green-bg)',err:'var(--red-bg)',warn:'var(--amber-bg)'};
-  const icons={ok:'ti-check',err:'ti-x',warn:'ti-alert-triangle'};
-  t.innerHTML=`<i class="ti ${icons[type]||'ti-info-circle'}" style="font-size:14px"></i> ${msg}`;
+document.addEventListener('click',function(e){ if(e.target.classList.contains('modal-overlay')) e.target.classList.remove('show'); });
+document.addEventListener('keydown',function(e){ if(e.key==='Escape') document.querySelectorAll('.modal-overlay.show').forEach(function(m){m.classList.remove('show');}); });
+function toast(msg,type) {
+  type=type||'ok';
+  var t=document.getElementById('toast');
+  var colors={ok:'var(--green-bg)',err:'var(--red-bg)',warn:'var(--amber-bg)'};
+  var icons={ok:'ti-check',err:'ti-x',warn:'ti-alert-triangle'};
+  t.innerHTML='<i class="ti '+(icons[type]||'ti-info-circle')+'" style="font-size:14px"></i> '+msg;
   t.style.background=colors[type]||colors.ok;
   t.style.opacity='1'; t.style.transform='translateY(0)';
-  setTimeout(()=>{ t.style.opacity='0'; t.style.transform='translateY(6px)'; },2800);
+  setTimeout(function(){ t.style.opacity='0'; t.style.transform='translateY(6px)'; },2800);
 }
 function portalLogout() {
   sessionStorage.setItem('ccs_logged_out','1');
