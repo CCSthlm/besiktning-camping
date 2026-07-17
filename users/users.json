@@ -310,6 +310,16 @@
           "phone": "0766121212",
           "type": "anställd",
           "active": true
+        },
+        {
+          "id": "mrpad3qkmwwoq",
+          "fname": "Massimo",
+          "lname": "Johansson",
+          "pnr": "197511183571",
+          "address": "Svärdsliljevägen 155",
+          "phone": "0766319996",
+          "type": "anställd",
+          "active": true
         }
       ],
       "auditlog": [
@@ -447,6 +457,15 @@
           "detail": "Redigerade pass: Dorry Johansson (2026-07-17)",
           "oldVal": "{\"timeIn\":\"19:29\",\"timeOut\":\"19:32\"}",
           "newVal": "{\"timeIn\":\"17:29\",\"timeOut\":\"19:32\"}"
+        },
+        {
+          "id": "mrpad3qkz9mha",
+          "ts": "2026-07-17T18:43:15.116Z",
+          "user": "Massimo Johansson",
+          "action": "in",
+          "detail": "Lade till: Massimo Johansson",
+          "oldVal": "",
+          "newVal": ""
         }
       ]
     },
