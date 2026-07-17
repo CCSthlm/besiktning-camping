@@ -702,7 +702,7 @@ function renderUnderlag() {
     totTimmar += regH; totOb += obH; totBrutto += brutto; totObKr += obKr;
     var initials = (r.personName||'?').split(' ').map(function(n){return n[0]||'';}).join('').slice(0,2).toUpperCase();
     var dagar = r.timeRows.length;
-    return '<tr style="cursor:pointer" onclick="togglePersonDetail('+JSON.stringify(r.id)+')" id="row-'+r.id+'">'
+    return '<tr style="cursor:pointer" data-rid="'+r.id+'" onclick="togglePersonDetail(this.dataset.rid)" id="row-'+r.id+'">'
       + '<td><div class="emp-row"><div class="emp-avatar">'+initials+'</div><div><div style="font-weight:500">'+r.personName+'</div><div style="font-size:11px;color:var(--text3)">'+maskPnr(r.pnr||'')+' · '+dagar+' dag'+(dagar!==1?'ar':'')+'</div></div></div></td>'
       + '<td><span class="badge badge-blue">'+r.anstform+'</span></td>'
       + '<td style="font-weight:600">'+Math.round(regH*100)/100+' h</td>'
@@ -711,8 +711,8 @@ function renderUnderlag() {
       + '<td style="font-weight:600">'+(brutto>0?fmtKr(brutto):'–')+'</td>'
       + '<td style="font-weight:700;color:var(--accent2)">'+fmtKr(total)+'</td>'
       + '<td class="no-print" onclick="event.stopPropagation()"><div style="display:flex;gap:5px;justify-content:flex-end">'
-      + '<button class="btn-icon" onclick="openEmployeeModal('+JSON.stringify(r.id)+')"><i class="ti ti-pencil"></i> Redigera</button>'
-      + '<button class="btn-icon red" onclick="confirmDeleteUnderlag('+JSON.stringify(r.id)+','+JSON.stringify(r.personName)+')"><i class="ti ti-trash"></i> Ta bort</button>'
+      + '<button class="btn-icon" data-rid="'+r.id+'" onclick="openEmployeeModal(this.dataset.rid)"><i class="ti ti-pencil"></i> Redigera</button>'
+      + '<button class="btn-icon red" data-rid="'+r.id+'" data-rname="'+r.personName+'" onclick="confirmDeleteUnderlag(this.dataset.rid,this.dataset.rname)"><i class="ti ti-trash"></i> Ta bort</button>'
       + '</div></td>'
       + '</tr>'
       + '<tr id="detail-'+r.id+'" style="display:none"><td colspan="8" style="padding:0;border-top:none">'
@@ -1028,8 +1028,8 @@ function renderPersonalRegister() {
       + '<td style="color:var(--text2)">'+(p.befattning||'–')+'</td>'
       + '<td>'+aktiv+'</td>'
       + '<td class="no-print"><div style="display:flex;gap:5px;justify-content:flex-end">'
-      + '<button class="btn-icon" onclick="openPersonModal('+JSON.stringify(p.id)+')"><i class="ti ti-pencil"></i> Redigera</button>'
-      + '<button class="btn-icon red" onclick="confirmDeletePerson('+JSON.stringify(p.id)+','+JSON.stringify(p.fname+' '+p.lname)+')"><i class="ti ti-trash"></i> Ta bort</button>'
+      + '<button class="btn-icon" data-pid="'+p.id+'" onclick="openPersonModal(this.dataset.pid)"><i class="ti ti-pencil"></i> Redigera</button>'
+      + '<button class="btn-icon red" data-pid="'+p.id+'" data-pname="'+(p.fname+' '+p.lname)+'" onclick="confirmDeletePerson(this.dataset.pid,this.dataset.pname)"><i class="ti ti-trash"></i> Ta bort</button>'
       + '</div></td>'
       + '</tr>';
   }).join('');
@@ -1111,8 +1111,8 @@ function renderObRegler() {
       + '<td>'+(r.pct>0?r.pct+'%':'–')+'</td>'
       + '<td>'+(r.kr>0?r.kr+' kr/h':'–')+'</td>'
       + '<td class="no-print"><div style="display:flex;gap:5px">'
-      + '<button class="btn-icon" onclick="openObModal('+JSON.stringify(r.id)+')"><i class="ti ti-pencil"></i> Redigera</button>'
-      + '<button class="btn-icon red" onclick="confirmDeleteOb('+JSON.stringify(r.id)+','+JSON.stringify(r.namn)+')"><i class="ti ti-trash"></i> Ta bort</button>'
+      + '<button class="btn-icon" data-oid="'+r.id+'" onclick="openObModal(this.dataset.oid)"><i class="ti ti-pencil"></i> Redigera</button>'
+      + '<button class="btn-icon red" data-oid="'+r.id+'" data-onamn="'+r.namn+'" onclick="confirmDeleteOb(this.dataset.oid,this.dataset.onamn)"><i class="ti ti-trash"></i> Ta bort</button>'
       + '</div></td>'
       + '</tr>';
   }).join('');
