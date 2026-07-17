@@ -265,13 +265,13 @@
           "name": "Massimo Johansson",
           "pnr": "19751118-3571",
           "date": "2026-07-17",
-          "timeIn": "19:13",
+          "timeIn": "18:13",
           "timeOut": "19:13",
           "registeredBy": "Massimo Johansson",
           "registeredAt": "2026-07-17T17:13:48.978Z",
           "manual": false,
-          "manualReason": "",
-          "edited": false,
+          "manualReason": "GLömde stämpla in",
+          "edited": true,
           "campingId": "c7"
         }
       ],
@@ -369,6 +369,15 @@
           "detail": "Massimo Johansson stämplade ut 19:13",
           "oldVal": "",
           "newVal": "19:13"
+        },
+        {
+          "id": "mrp7p078se4ve",
+          "ts": "2026-07-17T17:28:31.556Z",
+          "user": "Massimo Johansson",
+          "action": "edit",
+          "detail": "Redigerade pass: Molly Johansson (2026-07-17)",
+          "oldVal": "{\"timeIn\":\"19:13\",\"timeOut\":\"19:13\"}",
+          "newVal": "{\"timeIn\":\"18:13\",\"timeOut\":\"19:13\"}"
         }
       ]
     },
