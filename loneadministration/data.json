@@ -1,0 +1,83 @@
+{
+  "personal": [
+    {
+      "id": "mrp94g5cwry6h",
+      "fname": "Molly",
+      "lname": "Johansson",
+      "pnr": "2020121212-1111",
+      "anstform": "anställd",
+      "syssgrad": 100,
+      "timlön": 0,
+      "manlön": 0,
+      "befattning": "",
+      "kostnadsst": "",
+      "start": "",
+      "slut": "",
+      "aktiv": true
+    },
+    {
+      "id": "mrp94g5cnii0h",
+      "fname": "Dorry",
+      "lname": "Johansson",
+      "pnr": "191212121212",
+      "anstform": "anställd",
+      "syssgrad": 100,
+      "timlön": 0,
+      "manlön": 0,
+      "befattning": "",
+      "kostnadsst": "",
+      "start": "",
+      "slut": "",
+      "aktiv": true
+    }
+  ],
+  "underlag": {
+    "2026-07": [
+      {
+        "id": "mrp94vnuh0idi",
+        "personId": "mrp94g5cnii0h",
+        "personName": "Dorry Johansson",
+        "pnr": "191212121212",
+        "anstform": "anställd",
+        "timlön": 0,
+        "manlön": 0,
+        "kostnadsst": "",
+        "timeRows": [
+          {
+            "id": "mrp94vnudzkm5",
+            "date": "2026-07-17",
+            "timeIn": "17:29",
+            "timeOut": "19:32",
+            "hours": 2.05,
+            "obHours": 0,
+            "note": ""
+          }
+        ],
+        "anteckning": ""
+      },
+      {
+        "id": "mrp94vnua462u",
+        "personId": "mrp94g5cwry6h",
+        "personName": "Molly Johansson",
+        "pnr": "2020121212-1111",
+        "anstform": "anställd",
+        "timlön": 0,
+        "manlön": 0,
+        "kostnadsst": "",
+        "timeRows": [
+          {
+            "id": "mrp94vnurkkfl",
+            "date": "2026-07-17",
+            "timeIn": "19:30",
+            "timeOut": "19:32",
+            "hours": 0.03,
+            "obHours": 0,
+            "note": ""
+          }
+        ],
+        "anteckning": ""
+      }
+    ]
+  },
+  "obRegler": []
+}
