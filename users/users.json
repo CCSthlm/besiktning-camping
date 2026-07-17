@@ -273,6 +273,20 @@
           "manualReason": "GLömde stämpla in",
           "edited": true,
           "campingId": "c7"
+        },
+        {
+          "id": "mrp7ptw6oqzc6",
+          "name": "Dorry Johansson",
+          "pnr": "191212121212",
+          "date": "2026-07-17",
+          "timeIn": "19:29",
+          "timeOut": "",
+          "registeredBy": "Massimo Johansson",
+          "registeredAt": "2026-07-17T17:29:10.038Z",
+          "manual": false,
+          "manualReason": "",
+          "edited": false,
+          "campingId": "c7"
         }
       ],
       "personal": [
@@ -378,6 +392,15 @@
           "detail": "Redigerade pass: Molly Johansson (2026-07-17)",
           "oldVal": "{\"timeIn\":\"19:13\",\"timeOut\":\"19:13\"}",
           "newVal": "{\"timeIn\":\"18:13\",\"timeOut\":\"19:13\"}"
+        },
+        {
+          "id": "mrp7ptw64490i",
+          "ts": "2026-07-17T17:29:10.038Z",
+          "user": "Massimo Johansson",
+          "action": "in",
+          "detail": "Dorry Johansson stämplade in 19:29",
+          "oldVal": "",
+          "newVal": "19:29"
         }
       ]
     },
