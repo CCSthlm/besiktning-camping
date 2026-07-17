@@ -266,7 +266,7 @@
           "pnr": "191212121212",
           "date": "2026-07-17",
           "timeIn": "19:29",
-          "timeOut": "",
+          "timeOut": "19:32",
           "registeredBy": "Massimo Johansson",
           "registeredAt": "2026-07-17T17:29:10.038Z",
           "manual": false,
@@ -419,6 +419,15 @@
           "detail": "Tog bort pass: Massimo Johansson 2026-07-17",
           "oldVal": "{\"id\":\"mrp76376l0iwy\",\"name\":\"Massimo Johansson\",\"pnr\":\"19751118-3571\",\"date\":\"2026-07-17\",\"timeIn\":\"18:13\",\"timeOut\":\"19:13\",\"registeredBy\":\"Massimo Johansson\",\"registeredAt\":\"2026-07-17T17:13:48.978Z\",\"manual\":false,\"manualReason\":\"GLömde stämpla in\",\"edited\":true,\"campingId\":\"c7\"}",
           "newVal": ""
+        },
+        {
+          "id": "mrp7u5z9iaw2a",
+          "ts": "2026-07-17T17:32:32.325Z",
+          "user": "Massimo Johansson",
+          "action": "out",
+          "detail": "Dorry Johansson stämplade ut 19:32",
+          "oldVal": "",
+          "newVal": "19:32"
         }
       ]
     },
