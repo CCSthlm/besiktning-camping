@@ -280,7 +280,7 @@
           "pnr": "2020121212-1111",
           "date": "2026-07-17",
           "timeIn": "19:30",
-          "timeOut": "",
+          "timeOut": "19:32",
           "registeredBy": "Massimo Johansson",
           "registeredAt": "2026-07-17T17:30:01.360Z",
           "manual": false,
@@ -426,6 +426,15 @@
           "user": "Massimo Johansson",
           "action": "out",
           "detail": "Dorry Johansson stämplade ut 19:32",
+          "oldVal": "",
+          "newVal": "19:32"
+        },
+        {
+          "id": "mrp7ua6jvfv2f",
+          "ts": "2026-07-17T17:32:37.771Z",
+          "user": "Massimo Johansson",
+          "action": "out",
+          "detail": "Molly Johansson stämplade ut 19:32",
           "oldVal": "",
           "newVal": "19:32"
         }
