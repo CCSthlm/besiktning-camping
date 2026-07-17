@@ -271,6 +271,16 @@
           "phone": "0762275266",
           "type": "anställd",
           "active": true
+        },
+        {
+          "id": "mrp75wysyqm35",
+          "fname": "Dorry",
+          "lname": "Johansson",
+          "pnr": "191212121212",
+          "address": "Hemaavägen 1",
+          "phone": "0766121212",
+          "type": "anställd",
+          "active": true
         }
       ],
       "auditlog": [
@@ -318,6 +328,15 @@
           "detail": "TOlvan Tolvansson stämplade ut 23:16 [REDIGERAD]",
           "oldVal": "",
           "newVal": "23:16"
+        },
+        {
+          "id": "mrp75wys23hpe",
+          "ts": "2026-07-17T17:13:40.901Z",
+          "user": "Massimo Johansson",
+          "action": "in",
+          "detail": "Lade till person: Dorry Johansson",
+          "oldVal": "",
+          "newVal": ""
         }
       ]
     },
