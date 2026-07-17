@@ -528,6 +528,7 @@ tr:hover td{background:var(--bg3);}
           <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin:10px 0 6px;padding-top:8px;border-top:1px solid var(--border)">Reseräkningar</div>
           <div class="role-section" style="padding:9px 12px;border-left:3px solid #3B6D11;">
             <label class="checkbox-item"><input type="checkbox" id="role-reserakning-admin"> <i class="ti ti-car" style="font-size:14px;color:#3B6D11"></i> <span><strong>Reseräkning Admin</strong> – administrera alla räkningar och inställningar</span></label>
+            <label class="checkbox-item"><input type="checkbox" id="role-lon-admin"> <i class="ti ti-cash-register" style="font-size:14px;color:#1a4f7a"></i> <span><strong>Löneadmin</strong> – löneunderlag, personalregister och BL-export</span></label>
           </div>
           <div class="role-section" style="padding:9px 12px;border-left:3px solid #1a4f7a;">
             <label class="checkbox-item"><input type="checkbox" id="role-reserakning-godkannare" onchange="toggleGodkannarcamping()"> <i class="ti ti-check" style="font-size:14px;color:#1a4f7a"></i> <span><strong>Reseräkning Godkännare</strong> – godkänn/neka räkningar för sin camping</span></label>
@@ -690,6 +691,7 @@ const ADMIN_ROLES = {
   'sam-ansvarig':       { key:'sam-ansvarig', label:'SAM-ansvarig', icon:'ti-shield-check', color:'#1a4f7a', badge:'badge-global' },
   'arshjul-admin':      { key:'arshjul-admin',      label:'Årshjul Admin',              icon:'ti-circle-dot',     color:'#3B6D11', badge:'badge-global' },
   'reserakning-admin':      { key:'reserakning-admin',      label:'Reseräkning Admin',          icon:'ti-car',            color:'#3B6D11', badge:'badge-global' },
+  'lon-admin':              { key:'lon-admin',               label:'Löneadmin',                  icon:'ti-cash-register',  color:'#1a4f7a', badge:'badge-global' },
   'reserakning-godkannare': { key:'reserakning-godkannare', label:'Reseräkning Godkännare',     icon:'ti-check',          color:'#1a4f7a', badge:'badge-personal' },
   'reserakning-utbetalare': { key:'reserakning-utbetalare', label:'Reseräkning Utbetalare',     icon:'ti-coin',           color:'#854F0B', badge:'badge-personal' },
   'inventarieadmin':    { key:'inventarieadmin',    label:'Inventarieadmin',       icon:'ti-devices',       color:'#3B6D11', badge:'badge-global' },
