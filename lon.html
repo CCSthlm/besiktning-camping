@@ -319,6 +319,10 @@ tr:hover td{background:rgba(59,109,17,.03);}
           <label>Kostnadsställe</label>
           <input type="text" id="emp-kostnadsst" placeholder="T.ex. Kök, Camping">
         </div>
+        <div class="form-field">
+          <label>Kostnadsbärare</label>
+          <input type="text" id="emp-kostnadsbarare" placeholder="T.ex. Projekt-123">
+        </div>
       </div>
 
       <div class="form-section-title">Tidrapport – <span id="emp-period-label">–</span></div>
@@ -386,6 +390,7 @@ tr:hover td{background:rgba(59,109,17,.03);}
       </div>
       <div class="form-grid">
         <div class="form-field"><label>Kostnadsställe</label><input type="text" id="p-kostnadsst" placeholder="T.ex. Kök"></div>
+        <div class="form-field"><label>Kostnadsbärare</label><input type="text" id="p-kostnadsbarare" placeholder="T.ex. Projekt-123"></div>
         <div class="form-field"><label>Status</label>
           <select id="p-aktiv"><option value="true">Aktiv</option><option value="false">Inaktiv</option></select>
         </div>
@@ -461,8 +466,8 @@ var PL_PATH  = 'users/users.json';
 var _user  = null;
 var _plData = null;   // personalliggare data from users.json
 var _lonData = {      // separate lon data file
-  personal: [],       // [{id, fname, lname, pnr, anstform, syssgrad, timlön, manlön, befattning, kostnadsst, start, slut, aktiv}]
-  underlag: {},       // { 'YYYY-MM': [{id, personId, anstform, timlön, manlön, kostnadsst, timeRows, anteckning}] }
+  personal: [],       // [{id, fname, lname, pnr, anstform, syssgrad, timlön, manlön, befattning, kostnadsst, kostnadsbarare, start, slut, aktiv}]
+  underlag: {},       // { 'YYYY-MM': [{id, personId, anstform, timlön, manlön, kostnadsst, kostnadsbarare, timeRows, anteckning}] }
   obRegler: [],       // [{id, namn, days[], from, to, pct, kr}]
 };
 var _period = { year: new Date().getFullYear(), month: new Date().getMonth()+1 };
@@ -562,7 +567,7 @@ function syncPersonalFromPL() {
           fname: p.fname, lname: p.lname, pnr: p.pnr,
           anstform: p.type || 'timanställd',
           syssgrad: 100, timlön: 0, manlön: 0,
-          befattning: '', kostnadsst: '', start: '', slut: '',
+          befattning: '', kostnadsst: '', kostnadsbarare: '', start: '', slut: '',
           aktiv: p.active !== false,
         });
         seen[p.pnr] = true;
@@ -608,6 +613,7 @@ function raknаOm() {
       if (p.manlön  !== undefined) r.manlön  = p.manlön;
       if (p.anstform)              r.anstform = p.anstform;
       if (p.kostnadsst !== undefined) r.kostnadsst = p.kostnadsst;
+      if (p.kostnadsbarare !== undefined) r.kostnadsbarare = p.kostnadsbarare;
       updated++;
     }
   });
@@ -685,6 +691,7 @@ function importFromPersonalliggare() {
         timlön: personRec ? (personRec.timlön||0) : 0,
         manlön: personRec ? (personRec.manlön||0) : 0,
         kostnadsst: personRec ? (personRec.kostnadsst||'') : '',
+        kostnadsbarare: personRec ? (personRec.kostnadsbarare||'') : '',
         timeRows: timeRows,
         anteckning: '',
       });
@@ -846,6 +853,7 @@ function openEmployeeModal(rowId) {
     document.getElementById('emp-timlön').value    = row.timlön || '';
     document.getElementById('emp-manlön').value    = row.manlön || '';
     document.getElementById('emp-kostnadsst').value = row.kostnadsst || '';
+    document.getElementById('emp-kostnadsbarare').value = row.kostnadsbarare || '';
     document.getElementById('emp-anteckning').value = row.anteckning || '';
     renderTimeRows(row.timeRows || []);
   } else {
@@ -854,6 +862,7 @@ function openEmployeeModal(rowId) {
     document.getElementById('emp-timlön').value     = '';
     document.getElementById('emp-manlön').value     = '';
     document.getElementById('emp-kostnadsst').value = '';
+    document.getElementById('emp-kostnadsbarare').value = '';
     document.getElementById('emp-anteckning').value = '';
     renderTimeRows([]);
   }
@@ -870,6 +879,7 @@ function onEmpPersonSelect() {
     document.getElementById('emp-timlön').value    = p.timlön || '';
     document.getElementById('emp-manlön').value    = p.manlön || '';
     document.getElementById('emp-kostnadsst').value = p.kostnadsst || '';
+    document.getElementById('emp-kostnadsbarare').value = p.kostnadsbarare || '';
   }
 }
 
@@ -1003,6 +1013,7 @@ function saveEmployeeUnderlag() {
     timlön:      parseFloat(document.getElementById('emp-timlön').value)||0,
     manlön:      parseFloat(document.getElementById('emp-manlön').value)||0,
     kostnadsst:  document.getElementById('emp-kostnadsst').value.trim(),
+    kostnadsbarare: document.getElementById('emp-kostnadsbarare').value.trim(),
     timeRows:    timeRows,
     anteckning:  document.getElementById('emp-anteckning').value.trim(),
   };
@@ -1074,6 +1085,7 @@ function openPersonModal(pid) {
   document.getElementById('p-start').value     = p ? (p.start||'') : '';
   document.getElementById('p-slut').value      = p ? (p.slut||'')  : '';
   document.getElementById('p-kostnadsst').value= p ? (p.kostnadsst||'') : '';
+  document.getElementById('p-kostnadsbarare').value= p ? (p.kostnadsbarare||'') : '';
   document.getElementById('p-aktiv').value     = p && p.aktiv===false ? 'false' : 'true';
   openModal('modal-person');
 }
@@ -1093,6 +1105,7 @@ function savePerson() {
     start:       document.getElementById('p-start').value,
     slut:        document.getElementById('p-slut').value,
     kostnadsst:  document.getElementById('p-kostnadsst').value.trim(),
+    kostnadsbarare: document.getElementById('p-kostnadsbarare').value.trim(),
     aktiv:       document.getElementById('p-aktiv').value==='true',
   };
   var editId = document.getElementById('person-edit-id').value;
@@ -1216,6 +1229,7 @@ function exportPersonExcel(rowId) {
       ['Företag:', String(company.name||'–'), '', 'Org.nr:', String(company.orgNr||'–')],
       ['Personnummer:', String(r.pnr||'–'), '', 'Anst.form:', String(r.anstform||'–')],
       ['Timlön:', tl>0?tl+' kr/h':'–', '', 'Kostnadsst:', String(r.kostnadsst||'–')],
+      ['Kostnadsbärare:', String(r.kostnadsbarare||'–')],
       ['Exporterad:', new Date().toLocaleString('sv-SE')],
       [],
       ['Datum','Dag','Instämplad','Utstämplad','Timmar','Lön (kr)','Not'],
@@ -1247,11 +1261,11 @@ function exportPersonBL(rowId) {
     var tl  = parseFloat(r.timlön)||0;
     var ml  = parseFloat(r.manlön)||0;
     var totH = (r.timeRows||[]).reduce(function(s,t){return s+(parseFloat(t.hours)||0);},0);
-    var lines = ['Personnummer;Namn;Kostnadsst;Löneart;Antal;Belopp'];
+    var lines = ['Personnummer;Namn;Kostnadsst;Kostnadsbärare;Löneart;Antal;Belopp'];
     if (ml > 0) {
-      lines.push([r.pnr||'', r.personName, r.kostnadsst||'', 'Månadslön', '1', ml.toFixed(2)].join(';'));
+      lines.push([r.pnr||'', r.personName, r.kostnadsst||'', r.kostnadsbarare||'', 'Månadslön', '1', ml.toFixed(2)].join(';'));
     } else if (tl > 0 && totH > 0) {
-      lines.push([r.pnr||'', r.personName, r.kostnadsst||'', 'Tidlön', totH.toFixed(2), (totH*tl).toFixed(2)].join(';'));
+      lines.push([r.pnr||'', r.personName, r.kostnadsst||'', r.kostnadsbarare||'', 'Tidlön', totH.toFixed(2), (totH*tl).toFixed(2)].join(';'));
     } else {
       toast('Ingen lön angiven för '+r.personName,'warn'); return;
     }
@@ -1278,13 +1292,13 @@ function exportExcel() {
       ['Företag:', company.name||'–', '', 'Org.nr:', company.orgNr||'–'],
       ['Exporterad:', new Date().toLocaleString('sv-SE')],
       [],
-      ['Namn','Personnummer','Anst.form','Reg. timmar','Timlön kr','Månadslön kr','Bruttolön kr','OB-tillägg kr','Totalt kr','Kostnadsst.','Anteckning'],
+      ['Namn','Personnummer','Anst.form','Reg. timmar','Timlön kr','Månadslön kr','Bruttolön kr','OB-tillägg kr','Totalt kr','Kostnadsst.','Kostnadsbärare','Anteckning'],
     ];
     rows.forEach(function(r) {
       var h = r.timeRows.reduce(function(s,t){return s+(parseFloat(t.hours)||0);},0);
       var tl = parseFloat(r.timlön)||0, ml = parseFloat(r.manlön)||0;
       var brutto = ml>0 ? ml : Math.round(h*tl*100)/100;
-      data.push([r.personName, r.pnr||'', r.anstform, Math.round(h*100)/100, tl||'', ml||'', brutto, 0, brutto, r.kostnadsst||'', r.anteckning||'']);
+      data.push([r.personName, r.pnr||'', r.anstform, Math.round(h*100)/100, tl||'', ml||'', brutto, 0, brutto, r.kostnadsst||'', r.kostnadsbarare||'', r.anteckning||'']);
     });
     var ws = XLSX.utils.aoa_to_sheet(data);
     ws['!cols']=[{wch:28},{wch:16},{wch:16},{wch:14},{wch:12},{wch:14},{wch:14},{wch:14},{wch:14},{wch:14},{wch:30}];
@@ -1299,7 +1313,7 @@ function exportBL() {
   try {
     var key  = periodKey();
     var rows = _lonData.underlag[key] || [];
-    var lines = ['Personnummer;Namn;Kostnadsst;Löneart;Antal;Belopp'];
+    var lines = ['Personnummer;Namn;Kostnadsst;Kostnadsbärare;Löneart;Antal;Belopp'];
     rows.forEach(function(r) {
       var h = r.timeRows.reduce(function(s,t){return s+(parseFloat(t.hours)||0);},0);
       var tl = parseFloat(r.timlön)||0, ml = parseFloat(r.manlön)||0;
