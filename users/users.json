@@ -261,20 +261,6 @@
           "campingId": "c7"
         },
         {
-          "id": "mrp76376l0iwy",
-          "name": "Massimo Johansson",
-          "pnr": "19751118-3571",
-          "date": "2026-07-17",
-          "timeIn": "18:13",
-          "timeOut": "19:13",
-          "registeredBy": "Massimo Johansson",
-          "registeredAt": "2026-07-17T17:13:48.978Z",
-          "manual": false,
-          "manualReason": "GLömde stämpla in",
-          "edited": true,
-          "campingId": "c7"
-        },
-        {
           "id": "mrp7ptw6oqzc6",
           "name": "Dorry Johansson",
           "pnr": "191212121212",
@@ -424,6 +410,15 @@
           "detail": "Molly Johansson stämplade in 19:30",
           "oldVal": "",
           "newVal": "19:30"
+        },
+        {
+          "id": "mrp7r6giirp3s",
+          "ts": "2026-07-17T17:30:12.978Z",
+          "user": "Massimo Johansson",
+          "action": "delete",
+          "detail": "Tog bort pass: Massimo Johansson 2026-07-17",
+          "oldVal": "{\"id\":\"mrp76376l0iwy\",\"name\":\"Massimo Johansson\",\"pnr\":\"19751118-3571\",\"date\":\"2026-07-17\",\"timeIn\":\"18:13\",\"timeOut\":\"19:13\",\"registeredBy\":\"Massimo Johansson\",\"registeredAt\":\"2026-07-17T17:13:48.978Z\",\"manual\":false,\"manualReason\":\"GLömde stämpla in\",\"edited\":true,\"campingId\":\"c7\"}",
+          "newVal": ""
         }
       ]
     },
