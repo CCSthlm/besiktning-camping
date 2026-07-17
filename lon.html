@@ -1,0 +1,1213 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Löneadministration – CCSthlm</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/tabler-icons.min.css">
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f5f5f3;--bg2:#ffffff;--bg3:#eeede8;--bg4:#e5e4de;
+  --text:#1a1a18;--text2:#5a5a57;--text3:#909088;
+  --accent:#3B6D11;--accent2:#27500A;--accent-glow:rgba(59,109,17,.1);
+  --blue:#1a4f7a;--blue-bg:rgba(26,79,122,.08);
+  --red:#A32D2D;--red-bg:#FCEBEB;--red-text:#501313;
+  --amber:#854F0B;--amber-bg:#FAEEDA;--amber-text:#412402;
+  --green-bg:#EAF3DE;--green-text:#27500A;
+  --border:rgba(0,0,0,.10);--border2:rgba(0,0,0,.18);
+  --radius:8px;--radius-lg:14px;--shadow:0 2px 16px rgba(0,0,0,.09);
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:var(--bg3);color:var(--text);min-height:100vh;}
+
+/* PORTAL BAR */
+#portal-bar{position:sticky;top:0;z-index:999;background:var(--bg2);border-bottom:1px solid var(--border2);display:flex;align-items:center;padding:0 20px;height:46px;font-size:13px;color:var(--text2);}
+.pb-avatar{width:28px;height:28px;border-radius:50%;background:var(--accent);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-right:10px;}
+.pb-info{flex:1;display:flex;align-items:center;gap:10px;min-width:0;}
+.pb-name{font-weight:600;color:var(--text);white-space:nowrap;}
+.pb-sep{width:1px;height:22px;background:var(--border2);margin:0 12px;flex-shrink:0;}
+.pb-btn{display:flex;align-items:center;gap:5px;padding:6px 12px;border-radius:7px;border:1px solid var(--border2);background:none;color:var(--text2);font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;white-space:nowrap;transition:background .15s;text-decoration:none;flex-shrink:0;margin-left:6px;}
+.pb-btn:hover{background:var(--bg3);color:var(--text);}
+.pb-btn-logout{background:var(--red-bg);color:var(--red);border-color:rgba(163,45,45,.25);}
+.pb-btn-logout:hover{background:var(--red);color:#fff;}
+.desktop-only{display:inline;}
+@media(max-width:480px){.desktop-only{display:none!important;}}
+
+/* LAYOUT */
+.page-wrap{max-width:1100px;margin:0 auto;padding:20px 16px 60px;}
+
+/* TABS */
+.tab-bar{display:flex;gap:4px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:5px;margin-bottom:20px;flex-wrap:wrap;}
+.tab-btn{flex:1;min-width:110px;padding:9px 12px;border-radius:10px;border:none;background:none;font-size:13px;font-weight:500;color:var(--text2);cursor:pointer;font-family:inherit;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:6px;}
+.tab-btn:hover{background:var(--bg3);}
+.tab-btn.active{background:var(--accent);color:#fff;box-shadow:0 2px 8px var(--accent-glow);}
+.tab-btn i{font-size:15px;}
+
+/* CARDS */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow);margin-bottom:16px;}
+.card-header{padding:12px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+.card-title{font-size:13px;font-weight:600;display:flex;align-items:center;gap:7px;}
+.card-body{padding:18px;}
+
+/* TABLES */
+table{width:100%;border-collapse:collapse;}
+th{text-align:left;padding:9px 14px;font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--border2);background:var(--bg3);}
+td{padding:10px 14px;font-size:13px;border-bottom:1px solid var(--border);vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:rgba(59,109,17,.03);}
+.no-entries{text-align:center;padding:32px;color:var(--text3);}
+.no-entries i{font-size:28px;display:block;margin-bottom:6px;}
+
+/* PERIOD SELECTOR */
+.period-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:18px;}
+.period-bar select,.period-bar input{padding:8px 12px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);font-size:13px;color:var(--text);font-family:inherit;}
+.period-label{font-size:14px;font-weight:600;color:var(--text);}
+
+/* SUMMARY STRIP */
+.summary-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:18px;}
+.summary-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px 16px;}
+.summary-card .sc-val{font-size:22px;font-weight:700;color:var(--text);}
+.summary-card .sc-lbl{font-size:11px;color:var(--text3);margin-top:3px;text-transform:uppercase;letter-spacing:.04em;}
+
+/* EMPLOYEE ROW */
+.emp-row{display:flex;align-items:center;gap:10px;}
+.emp-avatar{width:32px;height:32px;border-radius:50%;background:var(--green-bg);color:var(--accent2);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+
+/* FORM */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
+.form-grid.full{grid-template-columns:1fr;}
+.form-grid.trio{grid-template-columns:1fr 1fr 1fr;}
+.form-grid.quad{grid-template-columns:1fr 1fr 1fr 1fr;}
+.form-field{display:flex;flex-direction:column;gap:5px;}
+.form-field label{font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.04em;}
+.form-field input,.form-field select,.form-field textarea{padding:10px 12px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius);font-size:13px;color:var(--text);font-family:inherit;transition:border-color .2s;}
+.form-field input:focus,.form-field select:focus,.form-field textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow);}
+.req{color:var(--red);}
+.form-section-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);border-bottom:1px solid var(--border);padding-bottom:6px;margin:18px 0 12px;}
+
+/* BUTTONS */
+.btn-primary{padding:10px 18px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px;transition:background .15s;}
+.btn-primary:hover{background:var(--accent2);}
+.btn-secondary{padding:9px 14px;background:var(--bg3);color:var(--text2);border:1px solid var(--border2);border-radius:var(--radius);font-size:13px;font-weight:500;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px;transition:background .15s;}
+.btn-secondary:hover{background:var(--bg4);}
+.btn-danger{padding:9px 14px;background:var(--red-bg);color:var(--red);border:1px solid rgba(163,45,45,.25);border-radius:var(--radius);font-size:13px;font-weight:500;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px;}
+.btn-icon{padding:6px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius);cursor:pointer;font-size:12px;color:var(--text2);display:inline-flex;align-items:center;gap:4px;font-family:inherit;transition:all .15s;}
+.btn-icon:hover{border-color:var(--accent);color:var(--accent);}
+.btn-icon.red:hover{border-color:var(--red);color:var(--red);}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600;}
+.badge-green{background:var(--green-bg);color:var(--green-text);}
+.badge-amber{background:var(--amber-bg);color:var(--amber-text);}
+.badge-blue{background:var(--blue-bg);color:var(--blue);}
+.badge-red{background:var(--red-bg);color:var(--red);}
+
+/* OB TABLE */
+.ob-table{width:100%;border-collapse:collapse;font-size:12px;}
+.ob-table th{padding:6px 10px;background:var(--bg3);border:1px solid var(--border);font-size:11px;font-weight:600;color:var(--text3);}
+.ob-table td{padding:6px 10px;border:1px solid var(--border);}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;align-items:flex-start;justify-content:center;padding:24px 16px;overflow-y:auto;}
+.modal-overlay.show{display:flex;}
+.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius-lg);width:100%;max-width:620px;box-shadow:0 8px 40px rgba(0,0,0,.18);margin:auto;}
+.modal-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--bg2);z-index:1;}
+.modal-title{font-size:15px;font-weight:700;}
+.modal-close{background:none;border:none;cursor:pointer;color:var(--text3);font-size:18px;}
+.modal-body{padding:18px 20px;}
+.modal-footer{padding:12px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px;position:sticky;bottom:0;background:var(--bg2);}
+
+/* TIME ENTRIES */
+.time-entry-row{display:grid;grid-template-columns:110px 80px 80px 80px 1fr auto;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);}
+.time-entry-row:last-child{border-bottom:none;}
+.time-entry-row input,.time-entry-row select{padding:7px 9px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius);font-size:12px;font-family:inherit;color:var(--text);}
+
+/* FILTER ROW */
+.filter-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:16px;}
+.filter-row select,.filter-row input{padding:8px 11px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);font-size:13px;color:var(--text);font-family:inherit;}
+
+/* PRINT */
+@media print{
+  #portal-bar,.tab-bar,.no-print{display:none!important;}
+  body{background:#fff;}
+  .card{box-shadow:none;border:1px solid #ccc;}
+  .page-wrap{max-width:none;padding:0;}
+}
+@media(max-width:600px){
+  .form-grid,.form-grid.trio,.form-grid.quad{grid-template-columns:1fr;}
+  .time-entry-row{grid-template-columns:1fr 1fr 1fr auto;}
+}
+</style>
+</head>
+<body>
+
+<div id="portal-bar">
+  <div class="pb-avatar" id="pb-avatar">?</div>
+  <div class="pb-info">
+    <span class="pb-name" id="pb-name">–</span>
+  </div>
+  <div class="pb-sep"></div>
+  <a href="index.html" class="pb-btn"><i class="ti ti-arrow-left"></i><span class="desktop-only"> Portal</span></a>
+  <button class="pb-btn pb-btn-logout" onclick="portalLogout()"><i class="ti ti-logout"></i><span class="desktop-only"> Logga ut</span></button>
+</div>
+
+<div class="page-wrap">
+
+  <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:20px;">
+    <div>
+      <h1 style="font-size:22px;font-weight:700;display:flex;align-items:center;gap:10px"><i class="ti ti-cash-register" style="color:var(--accent)"></i> Löneadministration</h1>
+      <div id="company-sub" style="font-size:13px;color:var(--text2);margin-top:2px;">Laddar…</div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap" class="no-print">
+      <button class="btn-secondary" onclick="exportExcel()"><i class="ti ti-table-export"></i> Excel</button>
+      <button class="btn-secondary" onclick="exportBL()"><i class="ti ti-file-spreadsheet"></i> BL-export</button>
+      <button class="btn-secondary" onclick="window.print()"><i class="ti ti-printer"></i> Skriv ut</button>
+    </div>
+  </div>
+
+  <!-- PERIOD SELECTOR -->
+  <div class="period-bar">
+    <span class="period-label">Löneperiod:</span>
+    <select id="period-year" onchange="onPeriodChange()"></select>
+    <select id="period-month" onchange="onPeriodChange()">
+      <option value="1">Januari</option><option value="2">Februari</option>
+      <option value="3">Mars</option><option value="4">April</option>
+      <option value="5">Maj</option><option value="6">Juni</option>
+      <option value="7">Juli</option><option value="8">Augusti</option>
+      <option value="9">September</option><option value="10">Oktober</option>
+      <option value="11">November</option><option value="12">December</option>
+    </select>
+    <button class="btn-secondary" onclick="importFromPersonalliggare()"><i class="ti ti-download"></i> Importera från personalliggare</button>
+  </div>
+
+  <!-- TABS -->
+  <div class="tab-bar">
+    <button class="tab-btn active" id="tab-underlag" onclick="showTab('underlag')"><i class="ti ti-receipt"></i> Löneunderlag</button>
+    <button class="tab-btn" id="tab-personal" onclick="showTab('personal')"><i class="ti ti-users"></i> Personalregister</button>
+    <button class="tab-btn" id="tab-ob" onclick="showTab('ob')"><i class="ti ti-clock-dollar"></i> OB-regler</button>
+  </div>
+
+  <!-- ── TAB: LÖNEUNDERLAG ── -->
+  <div id="view-underlag">
+    <!-- SUMMARY -->
+    <div class="summary-strip" id="summary-strip">
+      <div class="summary-card"><div class="sc-val" id="sum-personal">0</div><div class="sc-lbl">Anställda</div></div>
+      <div class="summary-card"><div class="sc-val" id="sum-timmar">0h</div><div class="sc-lbl">Totalt timmar</div></div>
+      <div class="summary-card"><div class="sc-val" id="sum-brutto">0 kr</div><div class="sc-lbl">Bruttolön</div></div>
+      <div class="summary-card"><div class="sc-val" id="sum-ob">0 kr</div><div class="sc-lbl">OB-tillägg</div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title"><i class="ti ti-list-details"></i> Löneunderlag – <span id="underlag-period-label">–</span></span>
+        <button class="btn-primary no-print" onclick="openEmployeeModal(null)"><i class="ti ti-plus"></i> Lägg till rad</button>
+      </div>
+      <div style="overflow-x:auto">
+        <table>
+          <thead>
+            <tr>
+              <th>Anställd</th>
+              <th>Anst.form</th>
+              <th>Reg. timmar</th>
+              <th>Just. timmar</th>
+              <th>OB-timmar</th>
+              <th>Timlön</th>
+              <th>Bruttolön</th>
+              <th>OB-tillägg</th>
+              <th>Totalt</th>
+              <th class="no-print" style="text-align:right">Åtgärder</th>
+            </tr>
+          </thead>
+          <tbody id="underlag-tbody"></tbody>
+          <tfoot id="underlag-tfoot"></tfoot>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── TAB: PERSONALREGISTER ── -->
+  <div id="view-personal" style="display:none">
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title"><i class="ti ti-users"></i> Personalregister</span>
+        <button class="btn-primary no-print" onclick="openPersonModal(null)"><i class="ti ti-plus"></i> Lägg till person</button>
+      </div>
+      <div style="overflow-x:auto">
+        <table>
+          <thead>
+            <tr>
+              <th>Namn</th>
+              <th>Personnummer</th>
+              <th>Anst.form</th>
+              <th>Sysselsättningsgrad</th>
+              <th>Timlön</th>
+              <th>Månadslön</th>
+              <th>Befattning</th>
+              <th>Status</th>
+              <th class="no-print" style="text-align:right">Åtgärder</th>
+            </tr>
+          </thead>
+          <tbody id="personal-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── TAB: OB-REGLER ── -->
+  <div id="view-ob" style="display:none">
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title"><i class="ti ti-clock-dollar"></i> OB-regler</span>
+        <button class="btn-primary no-print" onclick="openObModal(null)"><i class="ti ti-plus"></i> Lägg till regel</button>
+      </div>
+      <div class="card-body">
+        <p style="font-size:13px;color:var(--text2);margin-bottom:16px">OB-regler används vid beräkning av löneunderlag. Timmar som faller inom en OB-period läggs till som tillägg på timlönen.</p>
+        <table class="ob-table">
+          <thead>
+            <tr><th>Regelnamn</th><th>Dag(ar)</th><th>Från</th><th>Till</th><th>Tillägg %</th><th>Tillägg kr/h</th><th class="no-print">Åtgärder</th></tr>
+          </thead>
+          <tbody id="ob-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+    <div style="background:var(--amber-bg);border:1px solid rgba(133,79,11,.2);border-radius:var(--radius-lg);padding:14px 16px;font-size:13px;color:var(--amber-text);">
+      <i class="ti ti-info-circle"></i> <strong>OB-beräkning är förberedd men aktiveras när tidsstämpling innehåller exakt klockslag.</strong> Personalliggaren sparar in- och utstämplingstid — OB räknas automatiskt när du importerar till löneunderlaget.
+    </div>
+  </div>
+
+</div>
+
+<!-- MODAL: LÖNEUNDERLAG FÖR EN PERSON -->
+<div class="modal-overlay" id="modal-employee">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="modal-emp-title">Redigera löneunderlag</span>
+      <button class="modal-close" onclick="closeModal('modal-employee')">&#x2715;</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="emp-edit-id">
+
+      <div class="form-section-title">Anställd</div>
+      <div class="form-grid">
+        <div class="form-field">
+          <label>Person <span class="req">*</span></label>
+          <select id="emp-person" onchange="onEmpPersonSelect()">
+            <option value="">– Välj –</option>
+          </select>
+        </div>
+        <div class="form-field">
+          <label>Anställningsform</label>
+          <select id="emp-anstform">
+            <option value="timanställd">Timanställd</option>
+            <option value="deltid">Deltid</option>
+            <option value="heltid">Heltid</option>
+            <option value="säsongsanställd">Säsongsanställd</option>
+            <option value="extrapersonal">Extrapersonal</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-grid trio">
+        <div class="form-field">
+          <label>Timlön (kr)</label>
+          <input type="number" id="emp-timlön" placeholder="0" min="0" step="0.01">
+        </div>
+        <div class="form-field">
+          <label>Månadslön (kr)</label>
+          <input type="number" id="emp-manlön" placeholder="0" min="0" step="1">
+        </div>
+        <div class="form-field">
+          <label>Kostnadsställe</label>
+          <input type="text" id="emp-kostnadsst" placeholder="T.ex. Kök, Camping">
+        </div>
+      </div>
+
+      <div class="form-section-title">Tidrapport – <span id="emp-period-label">–</span></div>
+      <div style="margin-bottom:10px;display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn-secondary" style="font-size:12px" onclick="addTimeRow()"><i class="ti ti-plus"></i> Lägg till rad</button>
+        <button class="btn-secondary" style="font-size:12px" onclick="importRowsFromPL()"><i class="ti ti-download"></i> Importera från personalliggare</button>
+      </div>
+      <div id="time-rows-wrap" style="margin-bottom:10px">
+        <!-- rows injected -->
+      </div>
+      <div id="emp-totals" style="font-size:13px;color:var(--text2);padding:10px;background:var(--bg3);border-radius:var(--radius);display:flex;gap:20px;flex-wrap:wrap"></div>
+
+      <div class="form-section-title">Anteckning</div>
+      <div class="form-grid full">
+        <div class="form-field">
+          <textarea id="emp-anteckning" rows="2" placeholder="Frivillig kommentar till löneperioden"></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeModal('modal-employee')">Avbryt</button>
+      <button class="btn-primary" onclick="saveEmployeeUnderlag()"><i class="ti ti-check"></i> Spara</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: PERSON -->
+<div class="modal-overlay" id="modal-person">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="modal-person-title">Lägg till person</span>
+      <button class="modal-close" onclick="closeModal('modal-person')">&#x2715;</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="person-edit-id">
+      <div class="form-section-title">Personuppgifter</div>
+      <div class="form-grid">
+        <div class="form-field"><label>Förnamn <span class="req">*</span></label><input type="text" id="p-fname" placeholder="Anna"></div>
+        <div class="form-field"><label>Efternamn <span class="req">*</span></label><input type="text" id="p-lname" placeholder="Andersson"></div>
+      </div>
+      <div class="form-grid">
+        <div class="form-field"><label>Personnummer <span class="req">*</span></label><input type="text" id="p-pnr" placeholder="YYYYMMDD-XXXX"></div>
+        <div class="form-field"><label>Befattning</label><input type="text" id="p-befattning" placeholder="T.ex. Campingvärd"></div>
+      </div>
+      <div class="form-section-title">Anställningsvillkor</div>
+      <div class="form-grid">
+        <div class="form-field"><label>Anst.form</label>
+          <select id="p-anstform">
+            <option value="timanställd">Timanställd</option>
+            <option value="deltid">Deltid</option>
+            <option value="heltid">Heltid</option>
+            <option value="säsongsanställd">Säsongsanställd</option>
+            <option value="extrapersonal">Extrapersonal</option>
+          </select>
+        </div>
+        <div class="form-field"><label>Sysselsättningsgrad (%)</label><input type="number" id="p-syssgrad" placeholder="100" min="1" max="100"></div>
+      </div>
+      <div class="form-grid">
+        <div class="form-field"><label>Timlön (kr)</label><input type="number" id="p-timlön" placeholder="0" min="0" step="0.01"></div>
+        <div class="form-field"><label>Månadslön (kr)</label><input type="number" id="p-manlön" placeholder="0" min="0" step="1"></div>
+      </div>
+      <div class="form-grid">
+        <div class="form-field"><label>Startdatum</label><input type="date" id="p-start"></div>
+        <div class="form-field"><label>Slutdatum</label><input type="date" id="p-slut"></div>
+      </div>
+      <div class="form-grid">
+        <div class="form-field"><label>Kostnadsställe</label><input type="text" id="p-kostnadsst" placeholder="T.ex. Kök"></div>
+        <div class="form-field"><label>Status</label>
+          <select id="p-aktiv"><option value="true">Aktiv</option><option value="false">Inaktiv</option></select>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeModal('modal-person')">Avbryt</button>
+      <button class="btn-primary" onclick="savePerson()"><i class="ti ti-check"></i> Spara</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: OB-REGEL -->
+<div class="modal-overlay" id="modal-ob">
+  <div class="modal" style="max-width:480px">
+    <div class="modal-header">
+      <span class="modal-title" id="modal-ob-title">OB-regel</span>
+      <button class="modal-close" onclick="closeModal('modal-ob')">&#x2715;</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="ob-edit-id">
+      <div class="form-grid full">
+        <div class="form-field"><label>Regelnamn <span class="req">*</span></label><input type="text" id="ob-namn" placeholder="T.ex. Helg-OB, Natt-OB"></div>
+      </div>
+      <div class="form-grid full">
+        <div class="form-field">
+          <label>Gäller dagar</label>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px" id="ob-days-wrap">
+            <!-- checkboxes injected -->
+          </div>
+        </div>
+      </div>
+      <div class="form-grid">
+        <div class="form-field"><label>Från kl.</label><input type="time" id="ob-from"></div>
+        <div class="form-field"><label>Till kl.</label><input type="time" id="ob-to"></div>
+      </div>
+      <div class="form-grid">
+        <div class="form-field"><label>Tillägg % på timlön</label><input type="number" id="ob-pct" placeholder="0" min="0" step="1"></div>
+        <div class="form-field"><label>Tillägg kr/h (fast)</label><input type="number" id="ob-kr" placeholder="0" min="0" step="0.01"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeModal('modal-ob')">Avbryt</button>
+      <button class="btn-primary" onclick="saveOb()"><i class="ti ti-check"></i> Spara</button>
+    </div>
+  </div>
+</div>
+
+<!-- DELETE CONFIRM -->
+<div class="modal-overlay" id="modal-delete">
+  <div class="modal" style="max-width:380px">
+    <div class="modal-header">
+      <span class="modal-title" style="color:var(--red)"><i class="ti ti-alert-triangle"></i> Bekräfta</span>
+      <button class="modal-close" onclick="closeModal('modal-delete')">&#x2715;</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:13px;color:var(--text2);line-height:1.6" id="delete-text">Är du säker?</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeModal('modal-delete')">Avbryt</button>
+      <button class="btn-danger" id="delete-confirm-btn">Ta bort</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" style="position:fixed;bottom:24px;right:24px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);padding:11px 16px;font-size:13px;z-index:999;box-shadow:var(--shadow);opacity:0;transform:translateY(6px);transition:all .25s;pointer-events:none;display:flex;align-items:center;gap:7px;"></div>
+
+<script>
+var GH_REPO = 'CCSthlm/besiktning-camping';
+var LON_PATH = 'loneadministration/data.json';
+var PL_PATH  = 'users/users.json';
+
+var _user  = null;
+var _plData = null;   // personalliggare data from users.json
+var _lonData = {      // separate lon data file
+  personal: [],       // [{id, fname, lname, pnr, anstform, syssgrad, timlön, manlön, befattning, kostnadsst, start, slut, aktiv}]
+  underlag: {},       // { 'YYYY-MM': [{id, personId, anstform, timlön, manlön, kostnadsst, timeRows, anteckning}] }
+  obRegler: [],       // [{id, namn, days[], from, to, pct, kr}]
+};
+var _period = { year: new Date().getFullYear(), month: new Date().getMonth()+1 };
+var _obDays = ['Mån','Tis','Ons','Tor','Fre','Lör','Sön'];
+
+// ── INIT ──────────────────────────────────────────────────────────────────
+async function init() {
+  var sess = sessionStorage.getItem('ccs_session') || sessionStorage.getItem('ccs_portal_user');
+  if (!sess) { window.location.replace('index.html'); return; }
+  try { _user = JSON.parse(sess); } catch(e) { window.location.replace('index.html'); return; }
+
+  var initials = (_user.name||'?').split(' ').map(function(n){return n[0]||'';}).join('').slice(0,2).toUpperCase();
+  document.getElementById('pb-avatar').textContent = initials;
+  document.getElementById('pb-name').textContent = _user.name;
+
+  // Populate year selector
+  var ySel = document.getElementById('period-year');
+  var curY = new Date().getFullYear();
+  for (var y = curY-2; y <= curY+1; y++) {
+    var o = document.createElement('option');
+    o.value = y; o.textContent = y;
+    if (y === curY) o.selected = true;
+    ySel.appendChild(o);
+  }
+  document.getElementById('period-month').value = _period.month;
+
+  await loadData();
+
+  var company = (_plData && _plData.company) || {};
+  document.getElementById('company-sub').textContent =
+    [company.name, company.orgNr ? 'Org.nr: '+company.orgNr : ''].filter(Boolean).join(' · ') || 'Löneadministration';
+
+  syncPersonalFromPL();
+  updatePeriodLabel();
+  renderUnderlag();
+  renderPersonalRegister();
+  renderObRegler();
+}
+
+// ── DATA ──────────────────────────────────────────────────────────────────
+async function loadData() {
+  var token = localStorage.getItem('gh_token') || '';
+  if (!token) { toast('GitHub-token saknas – data sparas bara lokalt','warn'); return; }
+
+  // Load personalliggare data (source for import)
+  try {
+    var r1 = await fetch('https://api.github.com/repos/'+GH_REPO+'/contents/'+PL_PATH,
+      {headers:{'Authorization':'token '+token}});
+    if (r1.ok) {
+      var g1 = await r1.json();
+      var b1 = Uint8Array.from(atob(g1.content.replace(/\n/g,'')),function(c){return c.charCodeAt(0);});
+      _plData = JSON.parse(new TextDecoder('utf-8').decode(b1));
+    }
+  } catch(e) { console.warn('PL load failed', e); }
+
+  // Load lon data (separate file)
+  try {
+    var r2 = await fetch('https://api.github.com/repos/'+GH_REPO+'/contents/'+LON_PATH,
+      {headers:{'Authorization':'token '+token}});
+    if (r2.ok) {
+      var g2 = await r2.json();
+      var b2 = Uint8Array.from(atob(g2.content.replace(/\n/g,'')),function(c){return c.charCodeAt(0);});
+      var parsed = JSON.parse(new TextDecoder('utf-8').decode(b2));
+      _lonData = Object.assign({personal:[], underlag:{}, obRegler:[]}, parsed);
+    }
+  } catch(e) { console.log('Lon file not found, starting fresh'); }
+}
+
+async function saveData() {
+  var token = localStorage.getItem('gh_token') || '';
+  if (!token) { toast('GitHub-token saknas','warn'); return; }
+  var url = 'https://api.github.com/repos/'+GH_REPO+'/contents/'+LON_PATH;
+  try {
+    var sha = null;
+    var chk = await fetch(url,{headers:{'Authorization':'token '+token}});
+    if (chk.ok) sha = (await chk.json()).sha;
+    var content = btoa(unescape(encodeURIComponent(JSON.stringify(_lonData,null,2))));
+    var payload = {message:'Löneadministration '+periodKey(), content, branch:'main'};
+    if (sha) payload.sha = sha;
+    var res = await fetch(url,{method:'PUT',headers:{'Authorization':'token '+token,'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    if (!res.ok) throw new Error((await res.json()).message||res.status);
+    toast('Sparat','ok');
+  } catch(e) { toast('Fel vid sparande: '+e.message,'err'); }
+}
+
+// ── SYNC PERSONAL FROM PERSONALLIGGARE ───────────────────────────────────
+function syncPersonalFromPL() {
+  if (!_plData || !_plData.personalliggare) return;
+  // Find all unique persons across all campings in personalliggare
+  var seen = {};
+  _lonData.personal.forEach(function(p){ seen[p.pnr] = true; });
+  Object.values(_plData.personalliggare).forEach(function(camp) {
+    (camp.personal||[]).forEach(function(p) {
+      if (p.pnr && !seen[p.pnr]) {
+        _lonData.personal.push({
+          id: uid(),
+          fname: p.fname, lname: p.lname, pnr: p.pnr,
+          anstform: p.type || 'timanställd',
+          syssgrad: 100, timlön: 0, manlön: 0,
+          befattning: '', kostnadsst: '', start: '', slut: '',
+          aktiv: p.active !== false,
+        });
+        seen[p.pnr] = true;
+      }
+    });
+  });
+}
+
+// ── PERIOD ────────────────────────────────────────────────────────────────
+function onPeriodChange() {
+  _period.year  = parseInt(document.getElementById('period-year').value);
+  _period.month = parseInt(document.getElementById('period-month').value);
+  updatePeriodLabel();
+  renderUnderlag();
+}
+
+function periodKey() {
+  return _period.year + '-' + ('0'+_period.month).slice(-2);
+}
+
+function periodLabel() {
+  var months = ['Januari','Februari','Mars','April','Maj','Juni','Juli','Augusti','September','Oktober','November','December'];
+  return months[_period.month-1] + ' ' + _period.year;
+}
+
+function updatePeriodLabel() {
+  var lbl = periodLabel();
+  document.getElementById('underlag-period-label').textContent = lbl;
+  document.getElementById('emp-period-label').textContent = lbl;
+}
+
+// ── IMPORT FROM PERSONALLIGGARE ───────────────────────────────────────────
+function importFromPersonalliggare() {
+  if (!_plData || !_plData.personalliggare) {
+    toast('Personalliggare-data saknas','warn'); return;
+  }
+  var key   = periodKey();
+  var year  = _period.year.toString();
+  var month = ('0'+_period.month).slice(-2);
+  var prefix = year + '-' + month;
+  var imported = 0;
+
+  if (!_lonData.underlag[key]) _lonData.underlag[key] = [];
+
+  // Collect all entries for this period from all campings
+  var allEntries = [];
+  Object.values(_plData.personalliggare).forEach(function(camp) {
+    (camp.entries||[]).forEach(function(e) {
+      if (e.date && e.date.startsWith(prefix)) allEntries.push(e);
+    });
+  });
+
+  // Group by person name
+  var byPerson = {};
+  allEntries.forEach(function(e) {
+    if (!byPerson[e.name]) byPerson[e.name] = [];
+    byPerson[e.name].push(e);
+  });
+
+  // For each person, find or create underlag row
+  Object.keys(byPerson).forEach(function(name) {
+    var entries = byPerson[name];
+    // Find person in personalregister
+    var personRec = _lonData.personal.find(function(p){ return (p.fname+' '+p.lname) === name; });
+    var personId = personRec ? personRec.id : '';
+
+    // Build time rows from entries
+    var timeRows = entries.map(function(e) {
+      var h = 0;
+      if (e.timeIn && e.timeOut) {
+        var a = e.timeIn.split(':').map(Number);
+        var b = e.timeOut.split(':').map(Number);
+        var mins = (b[0]*60+b[1])-(a[0]*60+a[1]);
+        if (mins < 0) mins += 1440;
+        h = Math.round(mins/60*100)/100;
+      }
+      return { id:uid(), date:e.date, timeIn:e.timeIn||'', timeOut:e.timeOut||'', hours:h, obHours:0, note:'' };
+    });
+
+    // Check if row already exists
+    var existing = _lonData.underlag[key].find(function(r){ return r.personId===personId || r.personName===name; });
+    if (existing) {
+      // Merge new rows (avoid duplicates by date+timeIn)
+      var existDates = existing.timeRows.map(function(r){ return r.date+'|'+r.timeIn; });
+      timeRows.forEach(function(tr) {
+        if (existDates.indexOf(tr.date+'|'+tr.timeIn) === -1) {
+          existing.timeRows.push(tr);
+          imported++;
+        }
+      });
+      existing.timeRows.sort(function(a,b){ return a.date.localeCompare(b.date); });
+    } else {
+      _lonData.underlag[key].push({
+        id: uid(),
+        personId: personId,
+        personName: name,
+        pnr: entries[0].pnr || '',
+        anstform: personRec ? (personRec.anstform||'timanställd') : 'timanställd',
+        timlön: personRec ? (personRec.timlön||0) : 0,
+        manlön: personRec ? (personRec.manlön||0) : 0,
+        kostnadsst: personRec ? (personRec.kostnadsst||'') : '',
+        timeRows: timeRows,
+        anteckning: '',
+      });
+      imported += timeRows.length;
+    }
+  });
+
+  renderUnderlag();
+  saveData();
+  toast('Importerade ' + imported + ' tidsposter','ok');
+}
+
+// ── RENDER LÖNEUNDERLAG ───────────────────────────────────────────────────
+function renderUnderlag() {
+  var key     = periodKey();
+  var rows    = _lonData.underlag[key] || [];
+  var tbody   = document.getElementById('underlag-tbody');
+  var tfoot   = document.getElementById('underlag-tfoot');
+
+  if (!rows.length) {
+    tbody.innerHTML = '<tr><td colspan="10"><div class="no-entries"><i class="ti ti-receipt"></i>Inga lönerader för perioden. Importera från personalliggare eller lägg till manuellt.</div></td></tr>';
+    tfoot.innerHTML = '';
+    updateSummary(0,0,0,0);
+    return;
+  }
+
+  var totTimmar=0, totJust=0, totOb=0, totBrutto=0, totObKr=0;
+
+  tbody.innerHTML = rows.map(function(r) {
+    var regH = r.timeRows.reduce(function(s,t){ return s + (parseFloat(t.hours)||0); }, 0);
+    var obH  = r.timeRows.reduce(function(s,t){ return s + (parseFloat(t.obHours)||0); }, 0);
+    var tl   = parseFloat(r.timlön)||0;
+    var ml   = parseFloat(r.manlön)||0;
+    var brutto = ml > 0 ? ml : Math.round(regH * tl * 100)/100;
+    var obKr   = Math.round(obH * tl * 0.5 * 100)/100;  // placeholder 50% OB
+    var total  = brutto + obKr;
+    totTimmar += regH; totOb += obH; totBrutto += brutto; totObKr += obKr;
+    var initials = (r.personName||'?').split(' ').map(function(n){return n[0]||'';}).join('').slice(0,2).toUpperCase();
+    return '<tr>'
+      + '<td><div class="emp-row"><div class="emp-avatar">'+initials+'</div><div><div style="font-weight:500">'+r.personName+'</div><div style="font-size:11px;color:var(--text3)">'+maskPnr(r.pnr||'')+'</div></div></div></td>'
+      + '<td><span class="badge badge-blue">'+r.anstform+'</span></td>'
+      + '<td>'+Math.round(regH*100)/100+' h</td>'
+      + '<td>'+Math.round(regH*100)/100+' h</td>'
+      + '<td>'+(obH>0?obH+' h':'–')+'</td>'
+      + '<td>'+(tl>0?tl+' kr/h':'–')+'</td>'
+      + '<td style="font-weight:600">'+(brutto>0?fmtKr(brutto):'–')+'</td>'
+      + '<td>'+(obKr>0?fmtKr(obKr):'–')+'</td>'
+      + '<td style="font-weight:700;color:var(--accent2)">'+fmtKr(total)+'</td>'
+      + '<td class="no-print"><div style="display:flex;gap:5px;justify-content:flex-end">'
+      + '<button class="btn-icon" onclick="openEmployeeModal('+JSON.stringify(r.id)+')"><i class="ti ti-pencil"></i> Redigera</button>'
+      + '<button class="btn-icon red" onclick="confirmDeleteUnderlag('+JSON.stringify(r.id)+','+JSON.stringify(r.personName)+')"><i class="ti ti-trash"></i> Ta bort</button>'
+      + '</div></td>'
+      + '</tr>';
+  }).join('');
+
+  tfoot.innerHTML = '<tr style="background:var(--bg3);font-weight:700">'
+    + '<td colspan="2" style="padding:10px 14px">Totalt</td>'
+    + '<td style="padding:10px 14px">'+Math.round(totTimmar*100)/100+' h</td>'
+    + '<td style="padding:10px 14px">'+Math.round(totJust||totTimmar*100)/100+' h</td>'
+    + '<td style="padding:10px 14px">'+(totOb>0?totOb+' h':'–')+'</td>'
+    + '<td></td>'
+    + '<td style="padding:10px 14px">'+fmtKr(totBrutto)+'</td>'
+    + '<td style="padding:10px 14px">'+(totObKr>0?fmtKr(totObKr):'–')+'</td>'
+    + '<td style="padding:10px 14px;color:var(--accent2)">'+fmtKr(totBrutto+totObKr)+'</td>'
+    + '<td></td></tr>';
+
+  updateSummary(rows.length, totTimmar, totBrutto, totObKr);
+}
+
+function updateSummary(antal, timmar, brutto, ob) {
+  document.getElementById('sum-personal').textContent = antal;
+  document.getElementById('sum-timmar').textContent   = Math.round(timmar*100)/100 + 'h';
+  document.getElementById('sum-brutto').textContent   = fmtKr(brutto);
+  document.getElementById('sum-ob').textContent       = fmtKr(ob);
+}
+
+// ── EMPLOYEE MODAL ────────────────────────────────────────────────────────
+function openEmployeeModal(rowId) {
+  var key  = periodKey();
+  var rows = _lonData.underlag[key] || [];
+  var row  = rowId ? rows.find(function(r){return r.id===rowId;}) : null;
+
+  document.getElementById('modal-emp-title').textContent = row ? 'Redigera – ' + row.personName : 'Lägg till löneunderlag';
+  document.getElementById('emp-edit-id').value = row ? row.id : '';
+
+  // Populate person dropdown
+  var sel = document.getElementById('emp-person');
+  sel.innerHTML = '<option value="">– Välj person –</option>';
+  _lonData.personal.filter(function(p){return p.aktiv!==false;}).forEach(function(p) {
+    var o = document.createElement('option');
+    o.value = p.id;
+    o.textContent = p.fname + ' ' + p.lname;
+    sel.appendChild(o);
+  });
+
+  if (row) {
+    sel.value = row.personId || '';
+    document.getElementById('emp-anstform').value  = row.anstform || 'timanställd';
+    document.getElementById('emp-timlön').value    = row.timlön || '';
+    document.getElementById('emp-manlön').value    = row.manlön || '';
+    document.getElementById('emp-kostnadsst').value = row.kostnadsst || '';
+    document.getElementById('emp-anteckning').value = row.anteckning || '';
+    renderTimeRows(row.timeRows || []);
+  } else {
+    sel.value = '';
+    document.getElementById('emp-anstform').value   = 'timanställd';
+    document.getElementById('emp-timlön').value     = '';
+    document.getElementById('emp-manlön').value     = '';
+    document.getElementById('emp-kostnadsst').value = '';
+    document.getElementById('emp-anteckning').value = '';
+    renderTimeRows([]);
+  }
+  updatePeriodLabel();
+  openModal('modal-employee');
+}
+
+function onEmpPersonSelect() {
+  var sel = document.getElementById('emp-person');
+  var pid = sel.value;
+  var p   = _lonData.personal.find(function(x){return x.id===pid;});
+  if (p) {
+    document.getElementById('emp-anstform').value  = p.anstform || 'timanställd';
+    document.getElementById('emp-timlön').value    = p.timlön || '';
+    document.getElementById('emp-manlön').value    = p.manlön || '';
+    document.getElementById('emp-kostnadsst').value = p.kostnadsst || '';
+  }
+}
+
+function renderTimeRows(rows) {
+  var wrap = document.getElementById('time-rows-wrap');
+  wrap.innerHTML = '';
+  if (!rows.length) { calcEmpTotals([]); return; }
+  rows.forEach(function(r, i) {
+    wrap.appendChild(buildTimeRow(r, i));
+  });
+  calcEmpTotals(rows);
+}
+
+function buildTimeRow(r, i) {
+  var div = document.createElement('div');
+  div.className = 'time-entry-row';
+  div.dataset.rowId = r.id;
+  div.innerHTML =
+    '<input type="date" value="'+( r.date||'')+'" onchange="updateTimeRow(this)" data-field="date">'
+    + '<input type="time" value="'+(r.timeIn||'')+'" placeholder="In" onchange="updateTimeRow(this)" data-field="timeIn">'
+    + '<input type="time" value="'+(r.timeOut||'')+'" placeholder="Ut" onchange="updateTimeRow(this)" data-field="timeOut">'
+    + '<input type="number" value="'+(r.hours||'')+'" placeholder="Tim" step="0.25" min="0" onchange="updateTimeRow(this)" data-field="hours" style="width:70px">'
+    + '<input type="text" value="'+(r.note||'')+'" placeholder="Not" onchange="updateTimeRow(this)" data-field="note">'
+    + '<button class="btn-icon red" onclick="removeTimeRow(this)" style="flex-shrink:0"><i class="ti ti-trash"></i> Ta bort</button>';
+  return div;
+}
+
+function updateTimeRow(el) {
+  var row = el.closest('.time-entry-row');
+  var field = el.dataset.field;
+  if (field === 'timeIn' || field === 'timeOut') {
+    var inVal  = row.querySelector('[data-field="timeIn"]').value;
+    var outVal = row.querySelector('[data-field="timeOut"]').value;
+    if (inVal && outVal) {
+      var a = inVal.split(':').map(Number), b = outVal.split(':').map(Number);
+      var mins = (b[0]*60+b[1])-(a[0]*60+a[1]);
+      if (mins < 0) mins += 1440;
+      row.querySelector('[data-field="hours"]').value = Math.round(mins/60*100)/100;
+    }
+  }
+  calcEmpTotals(collectTimeRows());
+}
+
+function collectTimeRows() {
+  var rows = [];
+  document.querySelectorAll('.time-entry-row').forEach(function(div) {
+    rows.push({
+      id:        div.dataset.rowId || uid(),
+      date:      div.querySelector('[data-field="date"]').value,
+      timeIn:    div.querySelector('[data-field="timeIn"]').value,
+      timeOut:   div.querySelector('[data-field="timeOut"]').value,
+      hours:     parseFloat(div.querySelector('[data-field="hours"]').value)||0,
+      obHours:   0,
+      note:      div.querySelector('[data-field="note"]').value,
+    });
+  });
+  return rows;
+}
+
+function addTimeRow() {
+  var wrap = document.getElementById('time-rows-wrap');
+  var r = { id:uid(), date:todayStr(), timeIn:'', timeOut:'', hours:0, obHours:0, note:'' };
+  wrap.appendChild(buildTimeRow(r, wrap.children.length));
+}
+
+function removeTimeRow(btn) {
+  btn.closest('.time-entry-row').remove();
+  calcEmpTotals(collectTimeRows());
+}
+
+function importRowsFromPL() {
+  if (!_plData || !_plData.personalliggare) { toast('PL-data saknas','warn'); return; }
+  var sel  = document.getElementById('emp-person');
+  var pid  = sel.value;
+  var p    = _lonData.personal.find(function(x){return x.id===pid;});
+  if (!p)  { toast('Välj person först','warn'); return; }
+  var name = p.fname + ' ' + p.lname;
+  var prefix = periodKey();
+
+  var found = [];
+  Object.values(_plData.personalliggare).forEach(function(camp) {
+    (camp.entries||[]).forEach(function(e) {
+      if (e.name === name && e.date && e.date.startsWith(prefix)) found.push(e);
+    });
+  });
+
+  var existing = collectTimeRows();
+  var existKeys = existing.map(function(r){ return r.date+'|'+r.timeIn; });
+  var wrap = document.getElementById('time-rows-wrap');
+
+  found.forEach(function(e) {
+    var k = e.date+'|'+(e.timeIn||'');
+    if (existKeys.indexOf(k) === -1) {
+      var h = 0;
+      if (e.timeIn && e.timeOut) {
+        var a=e.timeIn.split(':').map(Number), b=e.timeOut.split(':').map(Number);
+        var mins=(b[0]*60+b[1])-(a[0]*60+a[1]); if(mins<0) mins+=1440;
+        h = Math.round(mins/60*100)/100;
+      }
+      var r = {id:uid(), date:e.date, timeIn:e.timeIn||'', timeOut:e.timeOut||'', hours:h, obHours:0, note:''};
+      wrap.appendChild(buildTimeRow(r, wrap.children.length));
+    }
+  });
+  calcEmpTotals(collectTimeRows());
+  toast('Importerade '+ found.length +' rader','ok');
+}
+
+function calcEmpTotals(rows) {
+  var tot = rows.reduce(function(s,r){ return s+(parseFloat(r.hours)||0); }, 0);
+  var tl  = parseFloat(document.getElementById('emp-timlön').value)||0;
+  var ml  = parseFloat(document.getElementById('emp-manlön').value)||0;
+  var brutto = ml > 0 ? ml : Math.round(tot*tl*100)/100;
+  var el  = document.getElementById('emp-totals');
+  el.innerHTML = '<span><strong>'+Math.round(tot*100)/100+'</strong> timmar</span>'
+    + (tl>0||ml>0 ? '<span><strong>'+fmtKr(brutto)+'</strong> bruttolön</span>' : '');
+}
+
+function saveEmployeeUnderlag() {
+  var key    = periodKey();
+  var editId = document.getElementById('emp-edit-id').value;
+  var pid    = document.getElementById('emp-person').value;
+  if (!pid)  { alert('Välj person.'); return; }
+  var p      = _lonData.personal.find(function(x){return x.id===pid;});
+  if (!_lonData.underlag[key]) _lonData.underlag[key] = [];
+  var timeRows = collectTimeRows();
+  var obj = {
+    personId:    pid,
+    personName:  p ? p.fname+' '+p.lname : '',
+    pnr:         p ? p.pnr : '',
+    anstform:    document.getElementById('emp-anstform').value,
+    timlön:      parseFloat(document.getElementById('emp-timlön').value)||0,
+    manlön:      parseFloat(document.getElementById('emp-manlön').value)||0,
+    kostnadsst:  document.getElementById('emp-kostnadsst').value.trim(),
+    timeRows:    timeRows,
+    anteckning:  document.getElementById('emp-anteckning').value.trim(),
+  };
+  if (editId) {
+    var i = _lonData.underlag[key].findIndex(function(r){return r.id===editId;});
+    if (i>=0) _lonData.underlag[key][i] = Object.assign({}, _lonData.underlag[key][i], obj);
+  } else {
+    _lonData.underlag[key].push(Object.assign({id:uid()}, obj));
+  }
+  closeModal('modal-employee');
+  renderUnderlag();
+  saveData();
+  toast('Sparad','ok');
+}
+
+function confirmDeleteUnderlag(id, name) {
+  document.getElementById('delete-text').textContent = 'Ta bort löneunderlaget för "'+name+'"?';
+  document.getElementById('delete-confirm-btn').onclick = function() {
+    var key = periodKey();
+    _lonData.underlag[key] = (_lonData.underlag[key]||[]).filter(function(r){return r.id!==id;});
+    closeModal('modal-delete');
+    renderUnderlag();
+    saveData();
+    toast('Borttaget','ok');
+  };
+  openModal('modal-delete');
+}
+
+// ── PERSONALREGISTER ──────────────────────────────────────────────────────
+function renderPersonalRegister() {
+  var tbody = document.getElementById('personal-tbody');
+  if (!_lonData.personal.length) {
+    tbody.innerHTML = '<tr><td colspan="9"><div class="no-entries"><i class="ti ti-user-x"></i>Inga personer. Personal importeras automatiskt från personalliggaren, eller lägg till manuellt.</div></td></tr>';
+    return;
+  }
+  tbody.innerHTML = _lonData.personal.map(function(p) {
+    var aktiv = p.aktiv!==false
+      ? '<span class="badge badge-green">Aktiv</span>'
+      : '<span class="badge badge-red">Inaktiv</span>';
+    return '<tr>'
+      + '<td style="font-weight:500">'+p.fname+' '+p.lname+'</td>'
+      + '<td style="font-size:12px;color:var(--text3)">'+maskPnr(p.pnr||'')+'</td>'
+      + '<td><span class="badge badge-blue">'+(p.anstform||'–')+'</span></td>'
+      + '<td>'+(p.syssgrad||'–')+'%</td>'
+      + '<td>'+(p.timlön>0?p.timlön+' kr/h':'–')+'</td>'
+      + '<td>'+(p.manlön>0?fmtKr(p.manlön):'–')+'</td>'
+      + '<td style="color:var(--text2)">'+(p.befattning||'–')+'</td>'
+      + '<td>'+aktiv+'</td>'
+      + '<td class="no-print"><div style="display:flex;gap:5px;justify-content:flex-end">'
+      + '<button class="btn-icon" onclick="openPersonModal('+JSON.stringify(p.id)+')"><i class="ti ti-pencil"></i> Redigera</button>'
+      + '<button class="btn-icon red" onclick="confirmDeletePerson('+JSON.stringify(p.id)+','+JSON.stringify(p.fname+' '+p.lname)+')"><i class="ti ti-trash"></i> Ta bort</button>'
+      + '</div></td>'
+      + '</tr>';
+  }).join('');
+}
+
+function openPersonModal(pid) {
+  var p = pid ? _lonData.personal.find(function(x){return x.id===pid;}) : null;
+  document.getElementById('modal-person-title').textContent = p ? 'Redigera – '+p.fname+' '+p.lname : 'Lägg till person';
+  document.getElementById('person-edit-id').value = p ? p.id : '';
+  document.getElementById('p-fname').value     = p ? p.fname       : '';
+  document.getElementById('p-lname').value     = p ? p.lname       : '';
+  document.getElementById('p-pnr').value       = p ? p.pnr         : '';
+  document.getElementById('p-befattning').value= p ? (p.befattning||'') : '';
+  document.getElementById('p-anstform').value  = p ? (p.anstform||'timanställd') : 'timanställd';
+  document.getElementById('p-syssgrad').value  = p ? (p.syssgrad||100) : 100;
+  document.getElementById('p-timlön').value    = p ? (p.timlön||'') : '';
+  document.getElementById('p-manlön').value    = p ? (p.manlön||'') : '';
+  document.getElementById('p-start').value     = p ? (p.start||'') : '';
+  document.getElementById('p-slut').value      = p ? (p.slut||'')  : '';
+  document.getElementById('p-kostnadsst').value= p ? (p.kostnadsst||'') : '';
+  document.getElementById('p-aktiv').value     = p && p.aktiv===false ? 'false' : 'true';
+  openModal('modal-person');
+}
+
+function savePerson() {
+  var fname = document.getElementById('p-fname').value.trim();
+  var lname = document.getElementById('p-lname').value.trim();
+  var pnr   = document.getElementById('p-pnr').value.trim();
+  if (!fname||!lname||!pnr) { alert('Namn och personnummer krävs.'); return; }
+  var obj = {
+    fname, lname, pnr,
+    befattning:  document.getElementById('p-befattning').value.trim(),
+    anstform:    document.getElementById('p-anstform').value,
+    syssgrad:    parseInt(document.getElementById('p-syssgrad').value)||100,
+    timlön:      parseFloat(document.getElementById('p-timlön').value)||0,
+    manlön:      parseFloat(document.getElementById('p-manlön').value)||0,
+    start:       document.getElementById('p-start').value,
+    slut:        document.getElementById('p-slut').value,
+    kostnadsst:  document.getElementById('p-kostnadsst').value.trim(),
+    aktiv:       document.getElementById('p-aktiv').value==='true',
+  };
+  var editId = document.getElementById('person-edit-id').value;
+  if (editId) {
+    var i = _lonData.personal.findIndex(function(p){return p.id===editId;});
+    if (i>=0) _lonData.personal[i] = Object.assign({}, _lonData.personal[i], obj);
+  } else {
+    _lonData.personal.push(Object.assign({id:uid()}, obj));
+  }
+  closeModal('modal-person');
+  renderPersonalRegister();
+  saveData();
+  toast('Sparad','ok');
+}
+
+function confirmDeletePerson(id, name) {
+  document.getElementById('delete-text').textContent = 'Ta bort "'+name+'" från löneregistret?';
+  document.getElementById('delete-confirm-btn').onclick = function() {
+    _lonData.personal = _lonData.personal.filter(function(p){return p.id!==id;});
+    closeModal('modal-delete');
+    renderPersonalRegister();
+    saveData(); toast('Borttaget','ok');
+  };
+  openModal('modal-delete');
+}
+
+// ── OB-REGLER ─────────────────────────────────────────────────────────────
+function renderObRegler() {
+  var tbody = document.getElementById('ob-tbody');
+  if (!_lonData.obRegler.length) {
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--text3)">Inga OB-regler definierade ännu</td></tr>';
+    return;
+  }
+  tbody.innerHTML = _lonData.obRegler.map(function(r) {
+    return '<tr>'
+      + '<td style="font-weight:500">'+r.namn+'</td>'
+      + '<td>'+(r.days||[]).join(', ')+'</td>'
+      + '<td>'+( r.from||'–')+'</td>'
+      + '<td>'+(r.to||'–')+'</td>'
+      + '<td>'+(r.pct>0?r.pct+'%':'–')+'</td>'
+      + '<td>'+(r.kr>0?r.kr+' kr/h':'–')+'</td>'
+      + '<td class="no-print"><div style="display:flex;gap:5px">'
+      + '<button class="btn-icon" onclick="openObModal('+JSON.stringify(r.id)+')"><i class="ti ti-pencil"></i> Redigera</button>'
+      + '<button class="btn-icon red" onclick="confirmDeleteOb('+JSON.stringify(r.id)+','+JSON.stringify(r.namn)+')"><i class="ti ti-trash"></i> Ta bort</button>'
+      + '</div></td>'
+      + '</tr>';
+  }).join('');
+}
+
+function openObModal(rid) {
+  var r = rid ? _lonData.obRegler.find(function(x){return x.id===rid;}) : null;
+  document.getElementById('modal-ob-title').textContent = r ? 'Redigera OB-regel' : 'Ny OB-regel';
+  document.getElementById('ob-edit-id').value = r ? r.id : '';
+  document.getElementById('ob-namn').value    = r ? r.namn  : '';
+  document.getElementById('ob-from').value    = r ? r.from  : '';
+  document.getElementById('ob-to').value      = r ? r.to    : '';
+  document.getElementById('ob-pct').value     = r ? r.pct   : '';
+  document.getElementById('ob-kr').value      = r ? r.kr    : '';
+  var wrap = document.getElementById('ob-days-wrap');
+  wrap.innerHTML = '';
+  _obDays.forEach(function(d) {
+    var chk = document.createElement('label');
+    chk.style.cssText = 'display:inline-flex;align-items:center;gap:4px;font-size:12px;padding:4px 8px;border-radius:6px;border:1px solid var(--border2);cursor:pointer;background:var(--bg3)';
+    var inp = document.createElement('input');
+    inp.type = 'checkbox'; inp.value = d;
+    if (r && r.days && r.days.indexOf(d)>=0) inp.checked = true;
+    chk.appendChild(inp);
+    chk.appendChild(document.createTextNode(d));
+    wrap.appendChild(chk);
+  });
+  openModal('modal-ob');
+}
+
+function saveOb() {
+  var namn = document.getElementById('ob-namn').value.trim();
+  if (!namn) { alert('Ange regelnamn.'); return; }
+  var days = [];
+  document.querySelectorAll('#ob-days-wrap input[type=checkbox]').forEach(function(c){if(c.checked) days.push(c.value);});
+  var obj = {
+    namn, days,
+    from: document.getElementById('ob-from').value,
+    to:   document.getElementById('ob-to').value,
+    pct:  parseFloat(document.getElementById('ob-pct').value)||0,
+    kr:   parseFloat(document.getElementById('ob-kr').value)||0,
+  };
+  var editId = document.getElementById('ob-edit-id').value;
+  if (editId) {
+    var i = _lonData.obRegler.findIndex(function(r){return r.id===editId;});
+    if (i>=0) _lonData.obRegler[i] = Object.assign({}, _lonData.obRegler[i], obj);
+  } else {
+    _lonData.obRegler.push(Object.assign({id:uid()}, obj));
+  }
+  closeModal('modal-ob');
+  renderObRegler();
+  saveData(); toast('OB-regel sparad','ok');
+}
+
+function confirmDeleteOb(id, namn) {
+  document.getElementById('delete-text').textContent = 'Ta bort OB-regel "'+namn+'"?';
+  document.getElementById('delete-confirm-btn').onclick = function() {
+    _lonData.obRegler = _lonData.obRegler.filter(function(r){return r.id!==id;});
+    closeModal('modal-delete'); renderObRegler(); saveData(); toast('Borttaget','ok');
+  };
+  openModal('modal-delete');
+}
+
+// ── EXPORT ────────────────────────────────────────────────────────────────
+function exportExcel() {
+  try {
+    if (!window.XLSX) { toast('Excel-biblioteket laddas','warn'); return; }
+    var key     = periodKey();
+    var rows    = _lonData.underlag[key] || [];
+    var company = (_plData && _plData.company) || {};
+    var wb = XLSX.utils.book_new();
+    var data = [
+      ['LÖNEUNDERLAG – '+periodLabel()],
+      ['Företag:', company.name||'–', '', 'Org.nr:', company.orgNr||'–'],
+      ['Exporterad:', new Date().toLocaleString('sv-SE')],
+      [],
+      ['Namn','Personnummer','Anst.form','Reg. timmar','Timlön kr','Månadslön kr','Bruttolön kr','OB-tillägg kr','Totalt kr','Kostnadsst.','Anteckning'],
+    ];
+    rows.forEach(function(r) {
+      var h = r.timeRows.reduce(function(s,t){return s+(parseFloat(t.hours)||0);},0);
+      var tl = parseFloat(r.timlön)||0, ml = parseFloat(r.manlön)||0;
+      var brutto = ml>0 ? ml : Math.round(h*tl*100)/100;
+      data.push([r.personName, r.pnr||'', r.anstform, Math.round(h*100)/100, tl||'', ml||'', brutto, 0, brutto, r.kostnadsst||'', r.anteckning||'']);
+    });
+    var ws = XLSX.utils.aoa_to_sheet(data);
+    ws['!cols']=[{wch:28},{wch:16},{wch:16},{wch:14},{wch:12},{wch:14},{wch:14},{wch:14},{wch:14},{wch:14},{wch:30}];
+    XLSX.utils.book_append_sheet(wb, ws, 'Löneunderlag');
+    XLSX.writeFile(wb, 'Loneunderlag_'+key+'.xlsx');
+    toast('Excel exporterad','ok');
+  } catch(e) { toast('Export misslyckades: '+e.message,'err'); }
+}
+
+function exportBL() {
+  // Björn Lundén CSV format: Personnummer;Namn;Löneart;Antal;Belopp
+  try {
+    var key  = periodKey();
+    var rows = _lonData.underlag[key] || [];
+    var lines = ['Personnummer;Namn;Kostnadsst;Löneart;Antal;Belopp'];
+    rows.forEach(function(r) {
+      var h = r.timeRows.reduce(function(s,t){return s+(parseFloat(t.hours)||0);},0);
+      var tl = parseFloat(r.timlön)||0, ml = parseFloat(r.manlön)||0;
+      if (ml > 0) {
+        lines.push([r.pnr||'',r.personName,r.kostnadsst||'','Månadslön','1',ml.toFixed(2)].join(';'));
+      } else if (tl > 0 && h > 0) {
+        lines.push([r.pnr||'',r.personName,r.kostnadsst||'','Tidlön',h.toFixed(2),(h*tl).toFixed(2)].join(';'));
+      }
+    });
+    var csv  = lines.join('\n');
+    var blob = new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'});
+    var url  = URL.createObjectURL(blob);
+    var a    = document.createElement('a');
+    a.href = url; a.download = 'BL_Loneunderlag_'+key+'.csv'; a.click();
+    URL.revokeObjectURL(url);
+    toast('BL-export klar','ok');
+  } catch(e) { toast('Export misslyckades: '+e.message,'err'); }
+}
+
+// ── TABS ──────────────────────────────────────────────────────────────────
+function showTab(tab) {
+  ['underlag','personal','ob'].forEach(function(t) {
+    document.getElementById('view-'+t).style.display = t===tab?'':'none';
+    document.getElementById('tab-'+t).classList.toggle('active',t===tab);
+  });
+}
+
+// ── HELPERS ───────────────────────────────────────────────────────────────
+function todayStr() { return new Date().toISOString().slice(0,10); }
+function uid()      { return Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
+function maskPnr(pnr){ if(!pnr||pnr.length<8) return pnr||'–'; return pnr.slice(0,8)+'****'; }
+function fmtKr(n)   { return Math.round(n).toLocaleString('sv-SE')+' kr'; }
+function openModal(id)  { document.getElementById(id).classList.add('show'); }
+function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+document.addEventListener('click',function(e){ if(e.target.classList.contains('modal-overlay')) e.target.classList.remove('show'); });
+document.addEventListener('keydown',function(e){ if(e.key==='Escape') document.querySelectorAll('.modal-overlay.show').forEach(function(m){m.classList.remove('show');}); });
+function toast(msg,type) {
+  type=type||'ok';
+  var t=document.getElementById('toast');
+  var colors={ok:'var(--green-bg)',err:'var(--red-bg)',warn:'var(--amber-bg)'};
+  var icons={ok:'ti-check',err:'ti-x',warn:'ti-alert-triangle'};
+  t.innerHTML='<i class="ti '+(icons[type]||'ti-info-circle')+'" style="font-size:14px"></i> '+msg;
+  t.style.background=colors[type]||colors.ok;
+  t.style.opacity='1'; t.style.transform='translateY(0)';
+  setTimeout(function(){ t.style.opacity='0'; t.style.transform='translateY(6px)'; },2800);
+}
+function portalLogout() {
+  sessionStorage.setItem('ccs_logged_out','1');
+  sessionStorage.removeItem('ccs_session');
+  sessionStorage.removeItem('ccs_portal_user');
+  window.location.replace('index.html');
+}
+
+init();
+</script>
+</body>
+</html>
