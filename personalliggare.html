@@ -629,7 +629,7 @@ function renderPersonList() {
     var isIn     = !!inEntry;
     var sel      = _selectedPersonId === p.id;
     var subTxt   = isIn ? 'Instämplad ' + inEntry.timeIn : (p.type||'');
-    return '<div class="person-item' + (sel?' selected':'') + '" onclick="selectPerson(' + JSON.stringify(p.id) + ')">'
+    return '<div class="person-item' + (sel?' selected':'') + '" data-pid="' + p.id + '" onclick="selectPerson(this.dataset.pid)">'
       + '<div class="pi-avatar' + (isIn?' in':'') + '">' + initials.toUpperCase() + '</div>'
       + '<div class="pi-info"><div class="pi-name">' + fullName + '</div><div class="pi-sub">' + subTxt + '</div></div>'
       + '<div class="pi-status"><div class="pi-dot' + (isIn?' in':'') + '"></div></div>'
