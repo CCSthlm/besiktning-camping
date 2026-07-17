@@ -912,9 +912,9 @@ function renderTodayTable() {
       + '<td><span class="duration-badge">' + dur + '</span></td>'
       + statusCell
       + '<td class="no-print"><div style="display:flex;gap:5px;justify-content:flex-end">'
-      + (isOpen ? '<button class="btn-icon" onclick="doStampOut(\'' + e.id + '\')" title="Stämpla ut nu"><i class="ti ti-clock-stop"></i></button>' : '')
-      + '<button class="btn-icon" onclick="openManualModal(' + JSON.stringify(e).replace(/"/g,'&quot;') + ')" title="Redigera"><i class="ti ti-pencil"></i></button>'
-      + '<button class="btn-icon red" onclick="confirmDeleteEntry(\'' + e.id + '\',\'' + e.name + '\')" title="Ta bort"><i class="ti ti-trash"></i></button>'
+      + (isOpen ? '<button class="btn-icon" onclick="doStampOut(\'' + e.id + '\')"><i class="ti ti-clock-stop"></i> Stämpla ut</button>' : '')
+      + '<button class="btn-icon" onclick="openManualModal(' + JSON.stringify(e).replace(/"/g,'&quot;') + ')"><i class="ti ti-pencil"></i> Redigera</button>'
+      + '<button class="btn-icon red" onclick="confirmDeleteEntry(\'' + e.id + '\',\'' + e.name + '\')"><i class="ti ti-trash"></i> Ta bort</button>'
       + '</div></td>'
       + '</tr>';
   }).join('');
