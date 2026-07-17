@@ -166,7 +166,7 @@
     {
       "id": "M365-2607-JTBL",
       "ts": "2026-07-17T16:04:53.495Z",
-      "status": "ny",
+      "status": "behandlad",
       "fname": "Massimo",
       "lname": "Admin",
       "pnr": "197511183571",
@@ -179,7 +179,17 @@
       "startDatum": "2026-07-17",
       "chef": "Massimo",
       "övrigt": "",
-      "gdpr": true
+      "gdpr": true,
+      "m365": {
+        "upn": "admin.massimo@cc-camping.se",
+        "skapadTs": "2026-07-17T16:06:32.076Z",
+        "skapadAv": "Massimo Johansson"
+      },
+      "handläggning": {
+        "av": "Massimo Johansson",
+        "kommentar": "M365-konto skapat: admin.massimo@cc-camping.se · Licens tilldelad · Grupper: Caravan Club of Sweden - Stockholmssektionen",
+        "ts": "2026-07-17T16:06:32.076Z"
+      }
     }
   ]
 }
