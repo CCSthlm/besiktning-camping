@@ -266,7 +266,7 @@
           "pnr": "19751118-3571",
           "date": "2026-07-17",
           "timeIn": "19:13",
-          "timeOut": "",
+          "timeOut": "19:13",
           "registeredBy": "Massimo Johansson",
           "registeredAt": "2026-07-17T17:13:48.978Z",
           "manual": false,
@@ -358,6 +358,15 @@
           "user": "Massimo Johansson",
           "action": "in",
           "detail": "Massimo Johansson stämplade in 19:13 (2026-07-17)",
+          "oldVal": "",
+          "newVal": "19:13"
+        },
+        {
+          "id": "mrp767qbg1cfm",
+          "ts": "2026-07-17T17:13:54.851Z",
+          "user": "Massimo Johansson",
+          "action": "out",
+          "detail": "Massimo Johansson stämplade ut 19:13",
           "oldVal": "",
           "newVal": "19:13"
         }
