@@ -287,6 +287,20 @@
           "manualReason": "",
           "edited": false,
           "campingId": "c7"
+        },
+        {
+          "id": "mrp7qxhsc2u2t",
+          "name": "Molly Johansson",
+          "pnr": "2020121212-1111",
+          "date": "2026-07-17",
+          "timeIn": "19:30",
+          "timeOut": "",
+          "registeredBy": "Massimo Johansson",
+          "registeredAt": "2026-07-17T17:30:01.360Z",
+          "manual": false,
+          "manualReason": "",
+          "edited": false,
+          "campingId": "c7"
         }
       ],
       "personal": [
@@ -401,6 +415,15 @@
           "detail": "Dorry Johansson stämplade in 19:29",
           "oldVal": "",
           "newVal": "19:29"
+        },
+        {
+          "id": "mrp7qxhsv2igs",
+          "ts": "2026-07-17T17:30:01.360Z",
+          "user": "Massimo Johansson",
+          "action": "in",
+          "detail": "Molly Johansson stämplade in 19:30",
+          "oldVal": "",
+          "newVal": "19:30"
         }
       ]
     },
