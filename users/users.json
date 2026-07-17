@@ -265,13 +265,13 @@
           "name": "Dorry Johansson",
           "pnr": "191212121212",
           "date": "2026-07-17",
-          "timeIn": "19:29",
+          "timeIn": "17:29",
           "timeOut": "19:32",
           "registeredBy": "Massimo Johansson",
           "registeredAt": "2026-07-17T17:29:10.038Z",
           "manual": false,
-          "manualReason": "",
-          "edited": false,
+          "manualReason": "GLömde stämpla in",
+          "edited": true,
           "campingId": "c7"
         },
         {
@@ -437,6 +437,15 @@
           "detail": "Molly Johansson stämplade ut 19:32",
           "oldVal": "",
           "newVal": "19:32"
+        },
+        {
+          "id": "mrp7xv0cqp5jh",
+          "ts": "2026-07-17T17:35:24.732Z",
+          "user": "Massimo Johansson",
+          "action": "edit",
+          "detail": "Redigerade pass: Dorry Johansson (2026-07-17)",
+          "oldVal": "{\"timeIn\":\"19:29\",\"timeOut\":\"19:32\"}",
+          "newVal": "{\"timeIn\":\"17:29\",\"timeOut\":\"19:32\"}"
         }
       ]
     },
