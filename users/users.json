@@ -40,7 +40,9 @@
       "adminRoles": [
         "global"
       ],
-      "plCampingId": "c8"
+      "plCampingId": "c8",
+      "godkannarcamping": "",
+      "sbaCamping": ""
     },
     {
       "id": "umqc037gewixb",
