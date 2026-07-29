@@ -95,6 +95,23 @@
       "godkannarcamping": "",
       "sbaCamping": "",
       "created": "2026-07-02"
+    },
+    {
+      "id": "ums5ysv2emd8s",
+      "name": "Reception Östnora",
+      "email": "reception.ostnora@cc-camping.se",
+      "pin": "1234",
+      "pnr": "",
+      "adminRoles": [
+        "gasol-kontrollant"
+      ],
+      "role": "Användare",
+      "active": true,
+      "apps": [],
+      "plCampingId": "",
+      "godkannarcamping": "",
+      "sbaCamping": "",
+      "created": "2026-07-29"
     }
   ],
   "campings": [
