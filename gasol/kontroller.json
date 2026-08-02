@@ -24,7 +24,28 @@
       "agarCCNr": "121212",
       "agarTel": "0766319996",
       "agarEpost": "massimo@aaa.se"
+    },
+    {
+      "id": "GK-1785682840888",
+      "intygsNr": "GAS-2026-0002",
+      "camping": "CC Östnora Camping",
+      "regnr": "KOK815",
+      "fordonstyp": "husvagn",
+      "plats": "37",
+      "datum": "2026-05-01",
+      "resultat": "godkand",
+      "externDatum": null,
+      "besiktDatum": "2026-05-31",
+      "besiktNasta": "2027-05-31",
+      "nastaKontroll": "2027-05-01",
+      "fabrikat": "Adria",
+      "modell": "Adora 612LU",
+      "arsmodell": "2018",
+      "anteckning": "är en husvagn så 2028-05-31",
+      "utfordAv": "Reception Östnora",
+      "utfordAvId": "ums5ysv2emd8s",
+      "skapad": "2026-08-02T15:00:40.888Z"
     }
   ],
-  "uppdaterad": "2026-07-03T14:53:06.230Z"
+  "uppdaterad": "2026-08-02T15:00:40.888Z"
 }
