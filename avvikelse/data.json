@@ -385,6 +385,37 @@
           "status": "ny"
         }
       ]
+    },
+    {
+      "id": "AV-2608-LPQF",
+      "ts": "2026-08-02T10:53:10.273Z",
+      "kategori": "Säkerhet / ordning",
+      "kategoriIndex": 6,
+      "risk": "Låg",
+      "riskNivå": 1,
+      "anläggning": "CC Östnora Camping",
+      "plats": "Campingtomt",
+      "datum": "2026-08-01",
+      "tid": "02:30",
+      "rapportör": "Reception Östnora",
+      "rapportörEmail": "reception.ostnora@cc-camping.se",
+      "beskrivning": "En tältgäst från Nederländerna ringer när hon har lämnat campingen och säger att någon har stulit en hammare och ett paket cigaretter. Hon har en tältplats med el och tältar nära stuga 2. Vi uppmärksammar att de som bor i stuga 2 beter sig underligt men tror inte de är inblandade. Sedan ringer gästen en gång till och säger att hon även blivit av med en väska med kläder och presenter och handdukar. Senare samma dag kommer det en tältgäst till och säger att han blivit av med två kikare. Denna gäst har också tältat på plats med el. Även denna gäst är från Nederländerna. Ytterligare en tid senare återkommer den senare gästen och säger att han blivit av med 40 Euro och ett par Raybanglasögon. Han vill boka tid hos polisen men vi ger honom numret till 114 14 så han kan ringa direkt. Det handlar alltså om två tältare från Nederländerna som stått på plats med el. Båda nämner att sakerna tagits från deras bilar. Den första gästen jag nämner säger att bilen har varit olåst och den andra gästen vet inte om den varit låst eller inte.",
+      "omedelbar": "Sagt till gästerna att de kan ringa 114 14 för polisanmälan.",
+      "ansvarig": "Campingvärdar Johan och Anna",
+      "deadline": "",
+      "kommentar": "",
+      "status": "ny",
+      "eskalerad": false,
+      "bilder": [],
+      "dynamicFields": {},
+      "historik": [
+        {
+          "ts": "2026-08-02T10:53:10.273Z",
+          "av": "Reception Östnora",
+          "händelse": "Skapades",
+          "status": "ny"
+        }
+      ]
     }
   ],
   "inställningar": {
