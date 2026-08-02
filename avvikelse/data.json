@@ -345,6 +345,46 @@
           "status": "stängd"
         }
       ]
+    },
+    {
+      "id": "AV-2608-EW0H",
+      "ts": "2026-08-02T10:17:39.599Z",
+      "kategori": "Sjukdomsfall",
+      "kategoriIndex": 1,
+      "risk": "Hög",
+      "riskNivå": 3,
+      "anläggning": "CC Östnora Camping",
+      "plats": "Utomhusområde",
+      "datum": "2026-07-30",
+      "tid": "14:10",
+      "rapportör": "Reception Östnora",
+      "rapportörEmail": "reception.ostnora@cc-camping.se",
+      "beskrivning": "En gäst snubblar utanför servicehuset på gräsmattan. Han slår i huvudet och han bröt lårbenet ",
+      "omedelbar": "Vi säkerställde att det inte var något hål/skada i marken som personen snubblade på",
+      "ansvarig": "Campingvärdar Johan och Anna",
+      "deadline": "",
+      "kommentar": "Det behöves ingen åtgärd, Personen kom säkert till sjukhus ",
+      "status": "ny",
+      "eskalerad": true,
+      "bilder": [],
+      "dynamicFields": {
+        "d-typ": "Fallolycka",
+        "d-person": "Gäst",
+        "d-foerstahjälp": true,
+        "d-ambulans": true,
+        "d-polis": false,
+        "d-anhörig": true,
+        "d-vittnen": "Kompisar med säsongare på plats 15 Polsäter",
+        "d-ansvar": "nej"
+      },
+      "historik": [
+        {
+          "ts": "2026-08-02T10:17:39.600Z",
+          "av": "Reception Östnora",
+          "händelse": "Skapades",
+          "status": "ny"
+        }
+      ]
     }
   ],
   "inställningar": {
