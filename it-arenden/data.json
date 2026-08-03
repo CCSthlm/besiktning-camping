@@ -209,6 +209,34 @@
           "text": "Ärende uppdaterat"
         }
       ]
+    },
+    {
+      "id": "IT-2608-4TC8",
+      "titel": "Trasig dator reception",
+      "beskrivning": "Receptionsdator Östnora trasig. Levererad av CompuSoft som skall skicka en ny",
+      "system": "CompuSuit",
+      "kategori": "Fel",
+      "prioritet": "Normal",
+      "anläggning": "Caravan Club Östnora Camping",
+      "ansvarig": "Joachim Säfqvist",
+      "status": "pågående",
+      "leverantör": "CompuSoft",
+      "leverantörDatum": "2026-07-04",
+      "leverantörNr": "552923",
+      "åtgärd": "Dator kommer. Dock har vi köpt en ny till receptionen. Den nya vi får önskar Mista ta som POS-dator i puben",
+      "lösning": "",
+      "rapportör": "Joachim Säfqvist",
+      "rapportörEmail": "joachim.safqvist@cc-camping.se",
+      "skapad": "2026-08-03T12:52:56.383Z",
+      "uppdaterad": "2026-08-03T12:52:56.383Z",
+      "logg": [
+        {
+          "ts": "2026-08-03T12:52:56.383Z",
+          "av": "Joachim Säfqvist",
+          "typ": "create",
+          "text": "Ärende skapat"
+        }
+      ]
     }
   ],
   "settings": {}
