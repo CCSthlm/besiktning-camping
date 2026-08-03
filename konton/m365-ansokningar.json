@@ -3,7 +3,7 @@
     {
       "id": "M365-2606-TQTD",
       "ts": "2026-06-18T09:02:21.612Z",
-      "status": "pågående",
+      "status": "behandlad",
       "fname": "TOlvan",
       "lname": "Tolvansson",
       "pnr": "19121212-1212",
@@ -18,9 +18,9 @@
       "övrigt": "ddfdfdfd",
       "gdpr": true,
       "handläggning": {
-        "av": "Massimo Johansson",
+        "av": "Joachim Säfqvist",
         "kommentar": "",
-        "ts": "2026-06-18T09:03:36.958Z"
+        "ts": "2026-08-03T13:43:31.011Z"
       }
     },
     {
