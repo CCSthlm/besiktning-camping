@@ -9,7 +9,7 @@
       "prioritet": "Hög",
       "anläggning": "Caravan Club Björkö Örns Camping",
       "ansvarig": "Massimo Johansson",
-      "status": "inväntar",
+      "status": "löst",
       "leverantör": "CompuSoft",
       "leverantörDatum": "2026-06-14",
       "leverantörNr": "551368, 550992",
@@ -18,7 +18,7 @@
       "rapportör": "Massimo Johansson",
       "rapportörEmail": "massimo.johansson@cc-camping.se",
       "skapad": "2026-06-14T20:33:00.992Z",
-      "uppdaterad": "2026-08-03T13:09:59.269Z",
+      "uppdaterad": "2026-08-03T13:10:31.554Z",
       "logg": [
         {
           "ts": "2026-06-14T20:33:00.992Z",
@@ -43,8 +43,15 @@
           "av": "Joachim Säfqvist",
           "typ": "edit",
           "text": "Ärende uppdaterat"
+        },
+        {
+          "ts": "2026-08-03T13:10:31.554Z",
+          "av": "Joachim Säfqvist",
+          "typ": "status",
+          "text": "Status: Inväntar svar → Löst. Löst av Compusoft 2026-06-18"
         }
-      ]
+      ],
+      "stängd": "2026-08-03T13:10:31.554Z"
     },
     {
       "id": "IT-2606-WPMX",
