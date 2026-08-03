@@ -153,7 +153,17 @@
       "camping": "CC Storsveds Camping",
       "period": "maj 2026",
       "syfte": "Resa fram och tillbaka Storsved-Östnora-Storsved för att hämta Snäckis och Skalis",
-      "resor": [],
+      "resor": [
+        {
+          "datum": "2026-05-15",
+          "fordonstyp": "bil",
+          "stracka": "Storsved-Östnora-Storsved",
+          "km": 140,
+          "ersattning": 350,
+          "syfte": "Hämta Snäckis och Skalis till Storsved",
+          "ts": "2026-08-03T12:52:11.725Z"
+        }
+      ],
       "status": "utkast",
       "skapad": "2026-08-03T12:50:30.024Z",
       "skapadAv": "Elinore Kallur Storsved"
