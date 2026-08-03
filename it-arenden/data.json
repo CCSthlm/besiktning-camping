@@ -14,11 +14,11 @@
       "leverantörDatum": "2026-06-14",
       "leverantörNr": "551368, 550992",
       "åtgärd": "",
-      "lösning": "",
+      "lösning": "Hej.\n\nAutomatisk incheckning har nu lagts till och testats med CompuSoft-användaren (kund 1).\n\nDen skapade bokningen var inställd på ankommet.\n\nMed automatisk incheckning får kunden inte vara skyldig pengar. Om detta behöver ändras, skriv det bara här så ändrar jag skriptet så att du får vara skyldig pengar.",
       "rapportör": "Massimo Johansson",
       "rapportörEmail": "massimo.johansson@cc-camping.se",
       "skapad": "2026-06-14T20:33:00.992Z",
-      "uppdaterad": "2026-06-15T08:11:33.987Z",
+      "uppdaterad": "2026-08-03T13:09:59.269Z",
       "logg": [
         {
           "ts": "2026-06-14T20:33:00.992Z",
@@ -35,6 +35,12 @@
         {
           "ts": "2026-06-15T08:11:33.987Z",
           "av": "Massimo Johansson",
+          "typ": "edit",
+          "text": "Ärende uppdaterat"
+        },
+        {
+          "ts": "2026-08-03T13:09:59.269Z",
+          "av": "Joachim Säfqvist",
           "typ": "edit",
           "text": "Ärende uppdaterat"
         }
