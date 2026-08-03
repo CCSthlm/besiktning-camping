@@ -219,7 +219,7 @@
       "prioritet": "Normal",
       "anläggning": "Caravan Club Östnora Camping",
       "ansvarig": "Joachim Säfqvist",
-      "status": "pågående",
+      "status": "leverantör",
       "leverantör": "CompuSoft",
       "leverantörDatum": "2026-07-04",
       "leverantörNr": "552923",
@@ -228,13 +228,19 @@
       "rapportör": "Joachim Säfqvist",
       "rapportörEmail": "joachim.safqvist@cc-camping.se",
       "skapad": "2026-08-03T12:52:56.383Z",
-      "uppdaterad": "2026-08-03T12:52:56.383Z",
+      "uppdaterad": "2026-08-03T12:53:14.217Z",
       "logg": [
         {
           "ts": "2026-08-03T12:52:56.383Z",
           "av": "Joachim Säfqvist",
           "typ": "create",
           "text": "Ärende skapat"
+        },
+        {
+          "ts": "2026-08-03T12:53:14.217Z",
+          "av": "Joachim Säfqvist",
+          "typ": "status",
+          "text": "Status ändrad: Pågående → Hos leverantör"
         }
       ]
     }
