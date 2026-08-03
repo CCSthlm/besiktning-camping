@@ -144,6 +144,19 @@
       "statusKommentar": "OK",
       "statusTs": "2026-07-02T13:49:21.610Z",
       "statusAv": "Massimo Johansson"
+    },
+    {
+      "id": "RR-1785761430024",
+      "userId": "domain_elinore.kallur@cc-camping.se",
+      "namn": "Elinore Kallur Storsved",
+      "konto": "832799131175946",
+      "camping": "CC Storsveds Camping",
+      "period": "maj 2026",
+      "syfte": "Resa fram och tillbaka Storsved-Östnora-Storsved för att hämta Snäckis och Skalis",
+      "resor": [],
+      "status": "utkast",
+      "skapad": "2026-08-03T12:50:30.024Z",
+      "skapadAv": "Elinore Kallur Storsved"
     }
   ]
 }
