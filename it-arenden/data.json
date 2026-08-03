@@ -271,6 +271,34 @@
           "text": "Ärende skapat"
         }
       ]
+    },
+    {
+      "id": "IT-2608-AR14",
+      "titel": "kwh toppas Östnora",
+      "beskrivning": "Det har upptäckts ett avvikande kWh förbrukning hos oss under period 13 juni till 21 juni på flera säsongsgäster. Toppar som sticker ut flera. Några har inte ens varit på plats Några exempel Plats 7 13 juni 15 kWh Plats 18 16 juni 18 kWh Plats 34 13 juni 9 kWh Plats 39 20 juni 11 kWh Plats 38 19 juni 17 kWh Plats 37 14 juni 21 Kwh Plats 60 21 juni 15 kWh Ser konstigt ut med dessa toppar när övrig elförbrukning ser jämn och fin ut. Återkom om ni behöver någonting mer Madelene Eriksson TL campingvärdarna",
+      "system": "CompuMat",
+      "kategori": "Fel",
+      "prioritet": "Normal",
+      "anläggning": "Caravan Club Östnora Camping",
+      "ansvarig": "Joachim Säfqvist",
+      "status": "leverantör",
+      "leverantör": "CompuSoft",
+      "leverantörDatum": "2026-07-01",
+      "leverantörNr": "552461",
+      "åtgärd": "",
+      "lösning": "",
+      "rapportör": "Joachim Säfqvist",
+      "rapportörEmail": "joachim.safqvist@cc-camping.se",
+      "skapad": "2026-08-03T13:05:20.187Z",
+      "uppdaterad": "2026-08-03T13:05:20.187Z",
+      "logg": [
+        {
+          "ts": "2026-08-03T13:05:20.187Z",
+          "av": "Joachim Säfqvist",
+          "typ": "create",
+          "text": "Ärende skapat"
+        }
+      ]
     }
   ],
   "settings": {}
