@@ -105,13 +105,19 @@
       "rapportör": "Massimo Johansson",
       "rapportörEmail": "massimo.johansson@cc-camping.se",
       "skapad": "2026-06-15T08:19:20.664Z",
-      "uppdaterad": "2026-06-15T08:19:20.665Z",
+      "uppdaterad": "2026-08-03T13:32:35.393Z",
       "logg": [
         {
           "ts": "2026-06-15T08:19:20.665Z",
           "av": "Massimo Johansson",
           "typ": "create",
           "text": "Ärende skapat"
+        },
+        {
+          "ts": "2026-08-03T13:32:35.393Z",
+          "av": "Joachim Säfqvist",
+          "typ": "comment",
+          "text": "Fel uppsättning i payment provider. Mer detaljer finns i ärendet"
         }
       ]
     },
