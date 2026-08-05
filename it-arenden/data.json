@@ -336,6 +336,34 @@
           "text": "Ärende uppdaterat"
         }
       ]
+    },
+    {
+      "id": "IT-2608-8JHX",
+      "titel": "Passage Kapellskär",
+      "beskrivning": "Vi skulle vilja så snabbt som möjligt få en offert på CompuMat passage till kapellskär.\n\n1 Bom In och Ut passage (2 knappsatser). Kopplas till befintlig bom precis som den som var på Björkö Örn.\n1 Servicehus, En styck knappsats som skall öppna 2 dörrar.\n1 Pärlan (Pub/Servering), En styck knappsats.\n1 Bastu, En styck knappsats som skall öppna en dörr till relax.\n\nTill detta behövs Mesh nätverk alternativt 4/5G på bommen som ligger längst ifrån. Finns ingen kabelanslutning.\n\nInternet kommer in i Receptionen i mitten av kartan.\n\nAvstånd Rec till bom - Ca 100m\nAvstånd Rec till Pärlan - ca 63 m\nAvstånd Pärlan till Bastu - ca 66 m\nAvstånd Rec till Servicehus - ca 24 m\n\nKan jag få samma upplägg som på Björkö Örn på det financiella.",
+      "system": "CompuSuit",
+      "kategori": "Önskemål",
+      "prioritet": "Normal",
+      "anläggning": "Caravan Club Kapellskärs Camping",
+      "ansvarig": "Joachim Säfqvist",
+      "status": "ny",
+      "leverantör": "CompuSoft",
+      "leverantörDatum": "2026-06-06",
+      "leverantörNr": "553037",
+      "åtgärd": "",
+      "lösning": "",
+      "rapportör": "Joachim Säfqvist",
+      "rapportörEmail": "joachim.safqvist@cc-camping.se",
+      "skapad": "2026-08-05T08:10:27.262Z",
+      "uppdaterad": "2026-08-05T08:10:27.262Z",
+      "logg": [
+        {
+          "ts": "2026-08-05T08:10:27.262Z",
+          "av": "Joachim Säfqvist",
+          "typ": "create",
+          "text": "Ärende skapat"
+        }
+      ]
     }
   ],
   "settings": {}
