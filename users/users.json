@@ -800,6 +800,15 @@
           "detail": "Lade till: Julie Åberg",
           "oldVal": "",
           "newVal": ""
+        },
+        {
+          "id": "msg5eio9dba4q",
+          "ts": "2026-08-05T13:54:09.801Z",
+          "user": "Joachim Säfqvist",
+          "action": "edit",
+          "detail": "Uppdaterade: Saskia Hedenberg Wahlund",
+          "oldVal": "",
+          "newVal": ""
         }
       ]
     }
