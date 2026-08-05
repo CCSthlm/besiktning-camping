@@ -370,6 +370,34 @@
           "text": "Status: Ny → Hos leverantör. Offert godkänd väntar på återkoppling"
         }
       ]
+    },
+    {
+      "id": "IT-2608-K4WA",
+      "titel": "Utökning passage Östnora",
+      "beskrivning": "Vi kompletterande beställning för passage på Östnora med 4 nya enheter före installation. Det ger oss en total om 9 enheter.",
+      "system": "CompuSuit",
+      "kategori": "Önskemål",
+      "prioritet": "Normal",
+      "anläggning": "Caravan Club Östnora Camping",
+      "ansvarig": "Joachim Säfqvist",
+      "status": "leverantör",
+      "leverantör": "CompuSoft",
+      "leverantörDatum": "2026-08-05",
+      "leverantörNr": "555070",
+      "åtgärd": "",
+      "lösning": "",
+      "rapportör": "Joachim Säfqvist",
+      "rapportörEmail": "joachim.safqvist@cc-camping.se",
+      "skapad": "2026-08-05T08:58:01.037Z",
+      "uppdaterad": "2026-08-05T08:58:01.037Z",
+      "logg": [
+        {
+          "ts": "2026-08-05T08:58:01.037Z",
+          "av": "Joachim Säfqvist",
+          "typ": "create",
+          "text": "Ärende skapat"
+        }
+      ]
     }
   ],
   "settings": {}
