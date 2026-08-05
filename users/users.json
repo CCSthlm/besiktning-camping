@@ -700,6 +700,16 @@
           "phone": "",
           "type": "anställd",
           "active": true
+        },
+        {
+          "id": "msg5fbnsd2ddm",
+          "fname": "Melwin",
+          "lname": "Eriksson",
+          "pnr": "20100925-8516",
+          "address": "Vega allé 132, 13657, Vega",
+          "phone": "",
+          "type": "anställd",
+          "active": true
         }
       ],
       "auditlog": [
@@ -826,6 +836,15 @@
           "user": "Joachim Säfqvist",
           "action": "in",
           "detail": "Lade till: Josefine Eriksson",
+          "oldVal": "",
+          "newVal": ""
+        },
+        {
+          "id": "msg5fbns5k6ji",
+          "ts": "2026-08-05T13:54:47.368Z",
+          "user": "Joachim Säfqvist",
+          "action": "in",
+          "detail": "Lade till: Melwin Eriksson",
           "oldVal": "",
           "newVal": ""
         }
