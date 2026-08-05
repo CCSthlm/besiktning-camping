@@ -1,3 +1,28 @@
 {
-  "enheter": []
+  "enheter": [
+    {
+      "id": "INV-2608-91R6",
+      "namn": "Epson TM-88VII",
+      "kategori": "Kvittoskrivare",
+      "funktion": "POS / Kassa",
+      "status": "Aktiv",
+      "marke": "Epson",
+      "modell": "TM-88VII",
+      "serienr": "",
+      "anlaggning": "CC Östnora Camping",
+      "placering": "Reception",
+      "ansvarig": "Madelene Eriksson",
+      "inkopDatum": "",
+      "garantiTill": "",
+      "leverantor": "",
+      "anteckningar": "",
+      "iptyp": "Dynamisk",
+      "ip": "",
+      "mac": "",
+      "skapad": "2026-08-05T09:58:44.322Z",
+      "skapadAv": "Joachim Säfqvist",
+      "andrad": "2026-08-05T09:58:44.322Z",
+      "andradAv": "Joachim Säfqvist"
+    }
+  ]
 }
