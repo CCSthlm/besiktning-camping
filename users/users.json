@@ -626,7 +626,7 @@
           "fname": "Saskia",
           "lname": "Hedenberg Wahlund",
           "pnr": "20090607-3745",
-          "address": "",
+          "address": "Högabergsgatan 45a, 619 30, Trosa",
           "phone": "",
           "type": "anställd",
           "active": true
@@ -666,6 +666,15 @@
           "user": "Joachim Säfqvist",
           "action": "in",
           "detail": "Lade till: Saskia Hedenberg Wahlund",
+          "oldVal": "",
+          "newVal": ""
+        },
+        {
+          "id": "msg5aof10hcpl",
+          "ts": "2026-08-05T13:51:10.621Z",
+          "user": "Joachim Säfqvist",
+          "action": "edit",
+          "detail": "Uppdaterade: Saskia Hedenberg Wahlund",
           "oldVal": "",
           "newVal": ""
         }
