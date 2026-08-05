@@ -49,12 +49,17 @@
       "name": "Receptionen Björkö Örn",
       "email": "info.bjorko@cc-camping.se",
       "pin": "1968",
-      "role": "Granskare",
+      "role": "Användare",
       "active": true,
-      "apps": [
-        "it-support"
+      "apps": [],
+      "created": "2026-06-13",
+      "pnr": "",
+      "adminRoles": [
+        "gasol-kontrollant"
       ],
-      "created": "2026-06-13"
+      "plCampingId": "",
+      "godkannarcamping": "",
+      "sbaCamping": ""
     },
     {
       "id": "umquxld7f6twr",
