@@ -650,6 +650,16 @@
           "phone": "",
           "type": "anställd",
           "active": true
+        },
+        {
+          "id": "msg5cqj0ty572",
+          "fname": "Tinda",
+          "lname": "Andersson",
+          "pnr": "20090418-8307",
+          "address": "Oxhagsvägen 35, 13672, Vendelsö",
+          "phone": "",
+          "type": "anställd",
+          "active": true
         }
       ],
       "auditlog": [
@@ -722,6 +732,15 @@
           "user": "Joachim Säfqvist",
           "action": "edit",
           "detail": "Uppdaterade: Saskia Hedenberg Wahlund",
+          "oldVal": "",
+          "newVal": ""
+        },
+        {
+          "id": "msg5cqj0yomtn",
+          "ts": "2026-08-05T13:52:46.668Z",
+          "user": "Joachim Säfqvist",
+          "action": "in",
+          "detail": "Lade till: Tinda Andersson",
           "oldVal": "",
           "newVal": ""
         }
