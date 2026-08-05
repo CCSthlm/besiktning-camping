@@ -275,19 +275,25 @@
       "status": "inväntar",
       "leverantör": "Annan",
       "leverantörDatum": "2026-07-27",
-      "leverantörNr": "",
+      "leverantörNr": "#177257",
       "åtgärd": "Väntar på respons från Maddison",
       "lösning": "",
       "rapportör": "Joachim Säfqvist",
       "rapportörEmail": "joachim.safqvist@cc-camping.se",
       "skapad": "2026-08-03T13:00:44.308Z",
-      "uppdaterad": "2026-08-03T13:00:44.308Z",
+      "uppdaterad": "2026-08-05T08:02:36.655Z",
       "logg": [
         {
           "ts": "2026-08-03T13:00:44.308Z",
           "av": "Joachim Säfqvist",
           "typ": "create",
           "text": "Ärende skapat"
+        },
+        {
+          "ts": "2026-08-05T08:02:36.655Z",
+          "av": "Joachim Säfqvist",
+          "typ": "edit",
+          "text": "Ärende uppdaterat"
         }
       ]
     },
