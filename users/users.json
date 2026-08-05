@@ -680,6 +680,16 @@
           "phone": "",
           "type": "anställd",
           "active": true
+        },
+        {
+          "id": "msg5eaax6algm",
+          "fname": "Julie",
+          "lname": "Åberg",
+          "pnr": "20101013-7287",
+          "address": "Hammarängsvägen 12, 13755, Tungelsta",
+          "phone": "",
+          "type": "anställd",
+          "active": true
         }
       ],
       "auditlog": [
@@ -779,6 +789,15 @@
           "user": "Joachim Säfqvist",
           "action": "in",
           "detail": "Lade till: Alva Säfqvist",
+          "oldVal": "",
+          "newVal": ""
+        },
+        {
+          "id": "msg5eaaxj9oon",
+          "ts": "2026-08-05T13:53:58.953Z",
+          "user": "Joachim Säfqvist",
+          "action": "in",
+          "detail": "Lade till: Julie Åberg",
           "oldVal": "",
           "newVal": ""
         }
