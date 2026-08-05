@@ -690,6 +690,16 @@
           "phone": "",
           "type": "anställd",
           "active": true
+        },
+        {
+          "id": "msg5f0zl5h88s",
+          "fname": "Josefine",
+          "lname": "Eriksson",
+          "pnr": "20081113-4303",
+          "address": "Vega allé 132, 13657, Vega",
+          "phone": "",
+          "type": "anställd",
+          "active": true
         }
       ],
       "auditlog": [
@@ -807,6 +817,15 @@
           "user": "Joachim Säfqvist",
           "action": "edit",
           "detail": "Uppdaterade: Saskia Hedenberg Wahlund",
+          "oldVal": "",
+          "newVal": ""
+        },
+        {
+          "id": "msg5f0zlxozbh",
+          "ts": "2026-08-05T13:54:33.537Z",
+          "user": "Joachim Säfqvist",
+          "action": "in",
+          "detail": "Lade till: Josefine Eriksson",
           "oldVal": "",
           "newVal": ""
         }
