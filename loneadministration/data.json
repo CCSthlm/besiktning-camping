@@ -387,6 +387,29 @@
           }
         ],
         "anteckning": "Avser arbetad tid juli månad"
+      },
+      {
+        "id": "msg65hbhf8b86",
+        "personId": "msg5fxj1q4hjc",
+        "personName": "Josefine Eriksson",
+        "pnr": "20081113-4303",
+        "anstform": "timanställd",
+        "timlön": 115,
+        "manlön": 0,
+        "kostnadsst": "70",
+        "kostnadsbarare": "",
+        "timeRows": [
+          {
+            "id": "msg65ckhepyjb",
+            "date": "2026-08-05",
+            "timeIn": "",
+            "timeOut": "",
+            "hours": 35,
+            "obHours": 0,
+            "note": ""
+          }
+        ],
+        "anteckning": "Avser arbetad tid juli månad"
       }
     ]
   },
