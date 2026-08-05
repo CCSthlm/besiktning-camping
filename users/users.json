@@ -620,7 +620,18 @@
           "campingId": "c8"
         }
       ],
-      "personal": [],
+      "personal": [
+        {
+          "id": "msg59weacz4iz",
+          "fname": "Saskia",
+          "lname": "Hedenberg Wahlund",
+          "pnr": "20090607-3745",
+          "address": "",
+          "phone": "",
+          "type": "anställd",
+          "active": true
+        }
+      ],
       "auditlog": [
         {
           "id": "mqggj4yz9s302",
@@ -648,6 +659,15 @@
           "detail": "Redigerade post för Joachim Säfqvist (2026-06-16)",
           "oldVal": "{\"timeIn\":\"11:46\",\"timeOut\":\"11:46\"}",
           "newVal": "{\"timeIn\":\"10:40\",\"timeOut\":\"11:45\"}"
+        },
+        {
+          "id": "msg59weaa23o6",
+          "ts": "2026-08-05T13:50:34.306Z",
+          "user": "Joachim Säfqvist",
+          "action": "in",
+          "detail": "Lade till: Saskia Hedenberg Wahlund",
+          "oldVal": "",
+          "newVal": ""
         }
       ]
     }
