@@ -630,6 +630,16 @@
           "phone": "",
           "type": "anställd",
           "active": true
+        },
+        {
+          "id": "msg5bc0o97lqb",
+          "fname": "Robyn",
+          "lname": "Ståhlberg",
+          "pnr": "19970624-1636",
+          "address": "Bokstigen 3, 13734 Västerhaninge",
+          "phone": "",
+          "type": "anställd",
+          "active": true
         }
       ],
       "auditlog": [
@@ -675,6 +685,15 @@
           "user": "Joachim Säfqvist",
           "action": "edit",
           "detail": "Uppdaterade: Saskia Hedenberg Wahlund",
+          "oldVal": "",
+          "newVal": ""
+        },
+        {
+          "id": "msg5bc0o32jlt",
+          "ts": "2026-08-05T13:51:41.208Z",
+          "user": "Joachim Säfqvist",
+          "action": "in",
+          "detail": "Lade till: Robyn Ståhlberg",
           "oldVal": "",
           "newVal": ""
         }
