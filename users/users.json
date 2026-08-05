@@ -640,6 +640,16 @@
           "phone": "",
           "type": "anställd",
           "active": true
+        },
+        {
+          "id": "msg5c0exwultx",
+          "fname": "Emilia",
+          "lname": "Gustafsson",
+          "pnr": "20091124-8367",
+          "address": "Salsavägen 32a, 14943, Nynäshamn",
+          "phone": "",
+          "type": "anställd",
+          "active": true
         }
       ],
       "auditlog": [
@@ -694,6 +704,15 @@
           "user": "Joachim Säfqvist",
           "action": "in",
           "detail": "Lade till: Robyn Ståhlberg",
+          "oldVal": "",
+          "newVal": ""
+        },
+        {
+          "id": "msg5c0exeboqq",
+          "ts": "2026-08-05T13:52:12.825Z",
+          "user": "Joachim Säfqvist",
+          "action": "in",
+          "detail": "Lade till: Emilia Gustafsson",
           "oldVal": "",
           "newVal": ""
         }
