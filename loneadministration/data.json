@@ -410,6 +410,29 @@
           }
         ],
         "anteckning": "Avser arbetad tid juli månad"
+      },
+      {
+        "id": "msg65xfol8fia",
+        "personId": "msg5fxj04ovt3",
+        "personName": "Julie Åberg",
+        "pnr": "20101013-7287",
+        "anstform": "timanställd",
+        "timlön": 115,
+        "manlön": 0,
+        "kostnadsst": "70",
+        "kostnadsbarare": "",
+        "timeRows": [
+          {
+            "id": "msg65okxtpfqv",
+            "date": "2026-07-31",
+            "timeIn": "",
+            "timeOut": "",
+            "hours": 115.15,
+            "obHours": 0,
+            "note": ""
+          }
+        ],
+        "anteckning": "Avser arbetad tid juli månad"
       }
     ]
   },
