@@ -102,9 +102,7 @@
       "email": "reception.ostnora@cc-camping.se",
       "pin": "1234",
       "pnr": "",
-      "adminRoles": [
-        "gasol-kontrollant"
-      ],
+      "adminRoles": [],
       "role": "Användare",
       "active": true,
       "apps": [],
