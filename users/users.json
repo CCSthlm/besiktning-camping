@@ -670,6 +670,16 @@
           "phone": "",
           "type": "anställd",
           "active": true
+        },
+        {
+          "id": "msg5ds2sgkrms",
+          "fname": "Alva",
+          "lname": "Säfqvist",
+          "pnr": "20070108-5409",
+          "address": "Centralvägen 4E, 13240, Saltsjö-Boo",
+          "phone": "",
+          "type": "anställd",
+          "active": true
         }
       ],
       "auditlog": [
@@ -760,6 +770,15 @@
           "user": "Joachim Säfqvist",
           "action": "in",
           "detail": "Lade till: Isa Nyberg",
+          "oldVal": "",
+          "newVal": ""
+        },
+        {
+          "id": "msg5ds2s6kt47",
+          "ts": "2026-08-05T13:53:35.332Z",
+          "user": "Joachim Säfqvist",
+          "action": "in",
+          "detail": "Lade till: Alva Säfqvist",
           "oldVal": "",
           "newVal": ""
         }
