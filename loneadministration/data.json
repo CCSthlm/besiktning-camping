@@ -194,28 +194,6 @@
   "underlag": {
     "2026-07": [
       {
-        "id": "mrp94vnuh0idi",
-        "personId": "mrp94g5cnii0h",
-        "personName": "Dorry Johansson",
-        "pnr": "191212121212",
-        "anstform": "anställd",
-        "timlön": 0,
-        "manlön": 0,
-        "kostnadsst": "",
-        "timeRows": [
-          {
-            "id": "mrp94vnudzkm5",
-            "date": "2026-07-17",
-            "timeIn": "17:29",
-            "timeOut": "19:32",
-            "hours": 2.05,
-            "obHours": 0,
-            "note": ""
-          }
-        ],
-        "anteckning": ""
-      },
-      {
         "id": "mrp94vnua462u",
         "personId": "mrp94g5cwry6h",
         "personName": "Molly Johansson",
