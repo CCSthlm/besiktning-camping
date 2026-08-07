@@ -1,21 +1,6 @@
 {
   "personal": [
     {
-      "id": "mrp94g5cnii0h",
-      "fname": "Dorry",
-      "lname": "Johansson",
-      "pnr": "191212121212",
-      "anstform": "anställd",
-      "syssgrad": 100,
-      "timlön": 0,
-      "manlön": 0,
-      "befattning": "",
-      "kostnadsst": "",
-      "start": "",
-      "slut": "",
-      "aktiv": true
-    },
-    {
       "id": "msg5fxj00911q",
       "fname": "Saskia",
       "lname": "Hedenberg Wahlund",
@@ -157,6 +142,38 @@
       "kostnadsbarare": "",
       "start": "2026-06-01",
       "slut": "2026-08-31",
+      "aktiv": true
+    },
+    {
+      "id": "msipr46l9ixhd",
+      "fname": "Molly",
+      "lname": "Johansson",
+      "pnr": "2020121212-1111",
+      "anstform": "anställd",
+      "syssgrad": 100,
+      "timlön": 0,
+      "manlön": 0,
+      "befattning": "",
+      "kostnadsst": "",
+      "kostnadsbarare": "",
+      "start": "",
+      "slut": "",
+      "aktiv": true
+    },
+    {
+      "id": "msipr46l0irrg",
+      "fname": "Massimo",
+      "lname": "Johansson",
+      "pnr": "197511183571",
+      "anstform": "anställd",
+      "syssgrad": 100,
+      "timlön": 0,
+      "manlön": 0,
+      "befattning": "",
+      "kostnadsst": "",
+      "kostnadsbarare": "",
+      "start": "",
+      "slut": "",
       "aktiv": true
     }
   ],
