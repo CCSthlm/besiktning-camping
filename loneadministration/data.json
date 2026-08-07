@@ -143,22 +143,6 @@
       "start": "2026-06-01",
       "slut": "2026-08-31",
       "aktiv": true
-    },
-    {
-      "id": "msiprfqup2ag8",
-      "fname": "Dorry",
-      "lname": "Johansson",
-      "pnr": "191212121212",
-      "anstform": "anställd",
-      "syssgrad": 100,
-      "timlön": 0,
-      "manlön": 0,
-      "befattning": "",
-      "kostnadsst": "",
-      "kostnadsbarare": "",
-      "start": "",
-      "slut": "",
-      "aktiv": true
     }
   ],
   "underlag": {
