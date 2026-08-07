@@ -16,22 +16,6 @@
       "aktiv": true
     },
     {
-      "id": "mrpafwoc6r1jk",
-      "fname": "Massimo",
-      "lname": "Johansson",
-      "pnr": "197511183571",
-      "anstform": "timanställd",
-      "syssgrad": 100,
-      "timlön": 115,
-      "manlön": 0,
-      "befattning": "",
-      "kostnadsst": "70",
-      "start": "2026-06-30",
-      "slut": "2026-08-28",
-      "aktiv": true,
-      "kostnadsbarare": "75"
-    },
-    {
       "id": "msg5fxj00911q",
       "fname": "Saskia",
       "lname": "Hedenberg Wahlund",
