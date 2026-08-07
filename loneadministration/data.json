@@ -175,6 +175,22 @@
       "start": "",
       "slut": "",
       "aktiv": true
+    },
+    {
+      "id": "msiprfqup2ag8",
+      "fname": "Dorry",
+      "lname": "Johansson",
+      "pnr": "191212121212",
+      "anstform": "anställd",
+      "syssgrad": 100,
+      "timlön": 0,
+      "manlön": 0,
+      "befattning": "",
+      "kostnadsst": "",
+      "kostnadsbarare": "",
+      "start": "",
+      "slut": "",
+      "aktiv": true
     }
   ],
   "underlag": {
@@ -422,7 +438,8 @@
         ],
         "anteckning": "Avser arbetad tid juli månad"
       }
-    ]
+    ],
+    "2026-08": []
   },
   "obRegler": []
 }
