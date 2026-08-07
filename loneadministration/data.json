@@ -330,6 +330,83 @@
           }
         ],
         "anteckning": "Avser arbetad tid juli månad"
+      },
+      {
+        "id": "msipzf5n2vq1g",
+        "personId": "",
+        "personName": "Dorry Johansson",
+        "pnr": "191212121212",
+        "anstform": "timanställd",
+        "timlön": 0,
+        "manlön": 0,
+        "kostnadsst": "",
+        "kostnadsbarare": "",
+        "timeRows": [
+          {
+            "id": "msipzf5nwmuhm",
+            "date": "2026-07-13",
+            "timeIn": "09:00",
+            "timeOut": "15:15",
+            "hours": 6.25,
+            "obHours": 0,
+            "note": ""
+          },
+          {
+            "id": "msipzf5ns8lhj",
+            "date": "2026-07-14",
+            "timeIn": "09:15",
+            "timeOut": "12:05",
+            "hours": 2.83,
+            "obHours": 0,
+            "note": ""
+          },
+          {
+            "id": "msipzf5ngdxf9",
+            "date": "2026-07-15",
+            "timeIn": "09:00",
+            "timeOut": "12:02",
+            "hours": 3.03,
+            "obHours": 0,
+            "note": ""
+          },
+          {
+            "id": "msipzf5nu0bbd",
+            "date": "2026-07-15",
+            "timeIn": "17:00",
+            "timeOut": "21:25",
+            "hours": 4.42,
+            "obHours": 0,
+            "note": ""
+          },
+          {
+            "id": "msipzf5n0rg78",
+            "date": "2026-07-16",
+            "timeIn": "14:00",
+            "timeOut": "22:20",
+            "hours": 8.33,
+            "obHours": 0,
+            "note": ""
+          },
+          {
+            "id": "msipzf5mhhwd2",
+            "date": "2026-07-17",
+            "timeIn": "17:29",
+            "timeOut": "19:32",
+            "hours": 2.05,
+            "obHours": 0,
+            "note": ""
+          },
+          {
+            "id": "msipzf5npy89g",
+            "date": "2026-07-17",
+            "timeIn": "19:30",
+            "timeOut": "19:32",
+            "hours": 0.03,
+            "obHours": 0,
+            "note": ""
+          }
+        ],
+        "anteckning": ""
       }
     ],
     "2026-08": []
