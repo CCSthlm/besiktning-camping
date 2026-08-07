@@ -194,28 +194,6 @@
   "underlag": {
     "2026-07": [
       {
-        "id": "mrp94vnua462u",
-        "personId": "mrp94g5cwry6h",
-        "personName": "Molly Johansson",
-        "pnr": "2020121212-1111",
-        "anstform": "anställd",
-        "timlön": 0,
-        "manlön": 0,
-        "kostnadsst": "",
-        "timeRows": [
-          {
-            "id": "mrp94vnurkkfl",
-            "date": "2026-07-17",
-            "timeIn": "19:30",
-            "timeOut": "19:32",
-            "hours": 0.03,
-            "obHours": 0,
-            "note": ""
-          }
-        ],
-        "anteckning": ""
-      },
-      {
         "id": "mrpafyit4xws5",
         "personId": "mrpafwoc6r1jk",
         "personName": "Massimo Johansson",
