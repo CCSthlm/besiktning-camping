@@ -416,6 +416,37 @@
           "status": "ny"
         }
       ]
+    },
+    {
+      "id": "AV-2608-XSHQ",
+      "ts": "2026-08-09T08:12:50.378Z",
+      "kategori": "Driftavvikelse",
+      "kategoriIndex": 0,
+      "risk": "Medel",
+      "riskNivå": 2,
+      "anläggning": "CC Björkö Örns Camping",
+      "plats": "Campingtomt",
+      "datum": "2026-08-08",
+      "tid": "21:56",
+      "rapportör": "Receptionen Björkö Örn",
+      "rapportörEmail": "info.bjorko@cc-camping.se",
+      "beskrivning": "Fick samtal från plats 59 att det var bråk på gästplats 204, campingvärdarna Liljedahl går direkt till platsen och på träffar 2 män som tjafsar. Båda är kraftigt berusade så vi ber båda att gå in i sina vagnar och meddelar att om detta inte görs kommer vi tillkalla polis. Båda hörsammar vad som sagt och går in, vi kontrollerar båda platserna med jämna mellanrum och allt är lugnt. På morgonen kommer den ena mannen och hans kvinna upp till receptionen och undrar va som hänt och varför jag skickat in honom i husvagnen, och han vill även ta bord det extra dygn han skulle stannat. Han pratade om att han suttit på kåken 1,5 år och att tjejen jobbat på kriminalvården. jag sa bara att jag inte har något intresse i varför dom tjafsat eller vad dom gjort eller jobbat med. ",
+      "omedelbar": "skickade in dom i sina vagnar",
+      "ansvarig": "ingen vidare åtgärd behöver tas",
+      "deadline": "2026-08-09",
+      "kommentar": "",
+      "status": "ny",
+      "eskalerad": false,
+      "bilder": [],
+      "dynamicFields": {},
+      "historik": [
+        {
+          "ts": "2026-08-09T08:12:50.379Z",
+          "av": "Receptionen Björkö Örn",
+          "händelse": "Skapades",
+          "status": "ny"
+        }
+      ]
     }
   ],
   "inställningar": {
