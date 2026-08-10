@@ -403,7 +403,32 @@
         "anteckning": "Avser arbetad tid juli månad"
       }
     ],
-    "2026-08": []
+    "2026-08": [],
+    "2026-06": [
+      {
+        "id": "msnm59sqqvgk8",
+        "personId": "msg5fxj0d4tyy",
+        "personName": "Robyn Ståhlberg",
+        "pnr": "19970624-1636",
+        "anstform": "timanställd",
+        "timlön": 115,
+        "manlön": 0,
+        "kostnadsst": "70",
+        "kostnadsbarare": "75",
+        "timeRows": [
+          {
+            "id": "msnm516ktarql",
+            "date": "2026-06-30",
+            "timeIn": "",
+            "timeOut": "",
+            "hours": 8,
+            "obHours": 0,
+            "note": "Avser arbetad tid juni månad"
+          }
+        ],
+        "anteckning": ""
+      }
+    ]
   },
   "obRegler": []
 }
