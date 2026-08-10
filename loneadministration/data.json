@@ -427,6 +427,29 @@
           }
         ],
         "anteckning": ""
+      },
+      {
+        "id": "msnm60j1gfy72",
+        "personId": "msg5fxj1tifc0",
+        "personName": "Melwin Eriksson",
+        "pnr": "20100925-8516",
+        "anstform": "timanställd",
+        "timlön": 115,
+        "manlön": 0,
+        "kostnadsst": "70",
+        "kostnadsbarare": "75",
+        "timeRows": [
+          {
+            "id": "msnm5lb2wg3zk",
+            "date": "2026-06-30",
+            "timeIn": "",
+            "timeOut": "",
+            "hours": 82,
+            "obHours": 0,
+            "note": "Avser arbetad tid juni månad"
+          }
+        ],
+        "anteckning": ""
       }
     ]
   },
