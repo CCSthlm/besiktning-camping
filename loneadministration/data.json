@@ -565,6 +565,29 @@
           }
         ],
         "anteckning": ""
+      },
+      {
+        "id": "msnmaweo71xpx",
+        "personId": "msg5fxj00911q",
+        "personName": "Saskia Hedenberg Wahlund",
+        "pnr": "20090607-3745",
+        "anstform": "timanställd",
+        "timlön": 115,
+        "manlön": 0,
+        "kostnadsst": "70",
+        "kostnadsbarare": "75",
+        "timeRows": [
+          {
+            "id": "msnmambmgv4ow",
+            "date": "2026-06-30",
+            "timeIn": "",
+            "timeOut": "",
+            "hours": 9,
+            "obHours": 0,
+            "note": "Avser arbetad tid juni månad"
+          }
+        ],
+        "anteckning": ""
       }
     ]
   },
