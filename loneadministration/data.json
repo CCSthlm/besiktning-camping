@@ -588,6 +588,29 @@
           }
         ],
         "anteckning": ""
+      },
+      {
+        "id": "msnmbicvxhyyf",
+        "personId": "msg5fxj0kp1bq",
+        "personName": "Tinda Andersson",
+        "pnr": "20090418-8307",
+        "anstform": "timanställd",
+        "timlön": 115,
+        "manlön": 0,
+        "kostnadsst": "70",
+        "kostnadsbarare": "75",
+        "timeRows": [
+          {
+            "id": "msnmb93uyemqn",
+            "date": "2026-06-30",
+            "timeIn": "",
+            "timeOut": "",
+            "hours": 34,
+            "obHours": 0,
+            "note": "Avser arbetad tid juni månad"
+          }
+        ],
+        "anteckning": ""
       }
     ]
   },
