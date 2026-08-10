@@ -143,6 +143,54 @@
       "start": "2026-06-01",
       "slut": "2026-08-31",
       "aktiv": true
+    },
+    {
+      "id": "msiq26ywczeac",
+      "fname": "Molly",
+      "lname": "Johansson",
+      "pnr": "2020121212-1111",
+      "anstform": "anställd",
+      "syssgrad": 100,
+      "timlön": 0,
+      "manlön": 0,
+      "befattning": "",
+      "kostnadsst": "",
+      "kostnadsbarare": "",
+      "start": "",
+      "slut": "",
+      "aktiv": true
+    },
+    {
+      "id": "msiq26ywog2rx",
+      "fname": "Dorry",
+      "lname": "Johansson",
+      "pnr": "191212121212",
+      "anstform": "anställd",
+      "syssgrad": 100,
+      "timlön": 0,
+      "manlön": 0,
+      "befattning": "",
+      "kostnadsst": "",
+      "kostnadsbarare": "",
+      "start": "",
+      "slut": "",
+      "aktiv": true
+    },
+    {
+      "id": "msiq26ywzbfl4",
+      "fname": "Massimo",
+      "lname": "Johansson",
+      "pnr": "197511183571",
+      "anstform": "anställd",
+      "syssgrad": 100,
+      "timlön": 0,
+      "manlön": 0,
+      "befattning": "",
+      "kostnadsst": "",
+      "kostnadsbarare": "",
+      "start": "",
+      "slut": "",
+      "aktiv": true
     }
   ],
   "underlag": {
@@ -330,6 +378,29 @@
           }
         ],
         "anteckning": "Avser arbetad tid juli månad"
+      },
+      {
+        "id": "msnls632xxj98",
+        "personId": "msg5fxj0d4tyy",
+        "personName": "Robyn Ståhlberg",
+        "pnr": "19970624-1636",
+        "anstform": "timanställd",
+        "timlön": 115,
+        "manlön": 0,
+        "kostnadsst": "70",
+        "kostnadsbarare": "75",
+        "timeRows": [
+          {
+            "id": "msnlrsobu0jpw",
+            "date": "2026-07-31",
+            "timeIn": "",
+            "timeOut": "",
+            "hours": 78.3,
+            "obHours": 0,
+            "note": ""
+          }
+        ],
+        "anteckning": ""
       }
     ],
     "2026-08": []
