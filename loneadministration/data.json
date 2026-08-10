@@ -450,6 +450,29 @@
           }
         ],
         "anteckning": ""
+      },
+      {
+        "id": "msnm7a46gyemg",
+        "personId": "msg5fxj0xsvpn",
+        "personName": "Alva Säfqvist",
+        "pnr": "20070108-5409",
+        "anstform": "timanställd",
+        "timlön": 115,
+        "manlön": 0,
+        "kostnadsst": "70",
+        "kostnadsbarare": "75",
+        "timeRows": [
+          {
+            "id": "msnm6xhnyj18u",
+            "date": "2026-06-30",
+            "timeIn": "",
+            "timeOut": "",
+            "hours": 20.17,
+            "obHours": 0,
+            "note": "Avser arbetad tid juni månad"
+          }
+        ],
+        "anteckning": ""
       }
     ]
   },
