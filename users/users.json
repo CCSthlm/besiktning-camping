@@ -742,6 +742,16 @@
           "phone": "",
           "type": "anställd",
           "active": true
+        },
+        {
+          "id": "msvo8to7rvyod",
+          "fname": "Jan",
+          "lname": "Törnander",
+          "pnr": "19590103-6615",
+          "address": "",
+          "phone": "",
+          "type": "anställd",
+          "active": true
         }
       ],
       "auditlog": [
@@ -886,6 +896,15 @@
           "user": "Joachim Säfqvist",
           "action": "in",
           "detail": "Lade till: Ingalill Nore",
+          "oldVal": "",
+          "newVal": ""
+        },
+        {
+          "id": "msvo8to7bd975",
+          "ts": "2026-08-16T10:38:09.463Z",
+          "user": "Joachim Säfqvist",
+          "action": "in",
+          "detail": "Lade till: Jan Törnander",
           "oldVal": "",
           "newVal": ""
         }
