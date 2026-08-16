@@ -117,6 +117,23 @@
       "godkannarcamping": "",
       "sbaCamping": "",
       "created": "2026-07-29"
+    },
+    {
+      "id": "umsvk6gkgkhbs",
+      "name": "Östnoras Pärla",
+      "email": "restaurang.ostnora@cc-camping.se",
+      "pin": "1234",
+      "pnr": "",
+      "adminRoles": [],
+      "role": "Användare",
+      "active": true,
+      "apps": [
+        "personalliggare"
+      ],
+      "plCampingId": "c8",
+      "godkannarcamping": "",
+      "sbaCamping": "",
+      "created": "2026-08-16"
     }
   ],
   "campings": [
