@@ -589,6 +589,74 @@
           }
         ],
         "anteckning": ""
+      },
+      {
+        "id": "msvnbjk9xxocb",
+        "personId": "msg5fxj0kp1bq",
+        "personName": "Tinda Andersson",
+        "pnr": "20090418-8307",
+        "anstform": "timanställd",
+        "timlön": 115,
+        "manlön": 0,
+        "kostnadsst": "70",
+        "kostnadsbarare": "75",
+        "timeRows": [
+          {
+            "id": "msvn9lc175hsb",
+            "date": "2026-08-01",
+            "timeIn": "11:00",
+            "timeOut": "16:05",
+            "hours": 5.08,
+            "obHours": 0,
+            "note": ""
+          },
+          {
+            "id": "msvna1ovtoy89",
+            "date": "2026-08-02",
+            "timeIn": "12:00",
+            "timeOut": "18:00",
+            "hours": 6,
+            "obHours": 0,
+            "note": ""
+          },
+          {
+            "id": "msvnaci1zhigu",
+            "date": "2026-08-10",
+            "timeIn": "12:00",
+            "timeOut": "20:00",
+            "hours": 8,
+            "obHours": 0,
+            "note": ""
+          },
+          {
+            "id": "msvnalplh5kiy",
+            "date": "2026-08-11",
+            "timeIn": "12:00",
+            "timeOut": "20:00",
+            "hours": 8,
+            "obHours": 0,
+            "note": ""
+          },
+          {
+            "id": "msvnawsg718co",
+            "date": "2026-08-12",
+            "timeIn": "10:00",
+            "timeOut": "18:00",
+            "hours": 8,
+            "obHours": 0,
+            "note": ""
+          },
+          {
+            "id": "msvnb8asahe66",
+            "date": "2026-08-13",
+            "timeIn": "09:50",
+            "timeOut": "18:00",
+            "hours": 8.17,
+            "obHours": 0,
+            "note": ""
+          }
+        ],
+        "anteckning": ""
       }
     ],
     "2026-06": [
