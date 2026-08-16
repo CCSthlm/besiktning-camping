@@ -843,6 +843,92 @@
           }
         ],
         "anteckning": ""
+      },
+      {
+        "id": "msvo3rqygxto5",
+        "personId": "msg5fxj0zeytp",
+        "personName": "Isa Nyberg",
+        "pnr": "20070616-1221",
+        "anstform": "timanställd",
+        "timlön": 115,
+        "manlön": 0,
+        "kostnadsst": "70",
+        "kostnadsbarare": "75",
+        "timeRows": [
+          {
+            "id": "msvnx7fuxe0bp",
+            "date": "2026-08-03",
+            "timeIn": "11:00",
+            "timeOut": "16:00",
+            "hours": 5,
+            "obHours": 0,
+            "note": ""
+          },
+          {
+            "id": "msvnxkvzebg9k",
+            "date": "2026-08-04",
+            "timeIn": "11:00",
+            "timeOut": "16:10",
+            "hours": 5.17,
+            "obHours": 0,
+            "note": ""
+          },
+          {
+            "id": "msvny98xmkvrm",
+            "date": "2026-08-07",
+            "timeIn": "11:00",
+            "timeOut": "16:00",
+            "hours": 5,
+            "obHours": 0,
+            "note": ""
+          },
+          {
+            "id": "msvnys2yujzjr",
+            "date": "2026-08-08",
+            "timeIn": "11:00",
+            "timeOut": "16:20",
+            "hours": 5.33,
+            "obHours": 0,
+            "note": ""
+          },
+          {
+            "id": "msvnz4k25t054",
+            "date": "2026-08-09",
+            "timeIn": "11:00",
+            "timeOut": "18:00",
+            "hours": 7,
+            "obHours": 0,
+            "note": ""
+          },
+          {
+            "id": "msvnzhysgnk0n",
+            "date": "2026-08-10",
+            "timeIn": "11:00",
+            "timeOut": "16:10",
+            "hours": 5.17,
+            "obHours": 0,
+            "note": ""
+          },
+          {
+            "id": "msvnzsa73bh3c",
+            "date": "2026-08-14",
+            "timeIn": "12:00",
+            "timeOut": "20:00",
+            "hours": 8,
+            "obHours": 0,
+            "note": ""
+          },
+          {
+            "id": "msvo2odb15k48",
+            "date": "2026-08-15",
+            "timeIn": "12:00",
+            "timeOut": "20:00",
+            "hours": 8,
+            "obHours": 0,
+            "note": ""
+          }
+        ],
+        "anteckning": ""
       }
     ],
     "2026-06": [
