@@ -530,6 +530,65 @@
           }
         ],
         "anteckning": ""
+      },
+      {
+        "id": "msvn90sj8m0s5",
+        "personId": "msg5fxj04ovt3",
+        "personName": "Julie Åberg",
+        "pnr": "20101013-7287",
+        "anstform": "timanställd",
+        "timlön": 115,
+        "manlön": 0,
+        "kostnadsst": "70",
+        "kostnadsbarare": "75",
+        "timeRows": [
+          {
+            "id": "msvn3ik1vnb5n",
+            "date": "2026-08-01",
+            "timeIn": "09:45",
+            "timeOut": "19:00",
+            "hours": 9.25,
+            "obHours": 0,
+            "note": ""
+          },
+          {
+            "id": "msvn3xg4bdczh",
+            "date": "2026-08-02",
+            "timeIn": "10:00",
+            "timeOut": "16:00",
+            "hours": 6,
+            "obHours": 0,
+            "note": ""
+          },
+          {
+            "id": "msvn6uq40w90n",
+            "date": "2026-08-03",
+            "timeIn": "12:00",
+            "timeOut": "20:30",
+            "hours": 8.5,
+            "obHours": 0,
+            "note": ""
+          },
+          {
+            "id": "msvn78dna97rf",
+            "date": "2026-08-05",
+            "timeIn": "10:00",
+            "timeOut": "18:15",
+            "hours": 8.25,
+            "obHours": 0,
+            "note": ""
+          },
+          {
+            "id": "msvn7kxsqhtks",
+            "date": "2026-08-06",
+            "timeIn": "10:00",
+            "timeOut": "18:10",
+            "hours": 8.17,
+            "obHours": 0,
+            "note": ""
+          }
+        ],
+        "anteckning": ""
       }
     ],
     "2026-06": [
