@@ -761,6 +761,47 @@
           }
         ],
         "anteckning": ""
+      },
+      {
+        "id": "msvnuuyp68x7t",
+        "personId": "msg5fxj0009dv",
+        "personName": "Emilia Gustafsson",
+        "pnr": "20091124-8367",
+        "anstform": "timanställd",
+        "timlön": 115,
+        "manlön": 0,
+        "kostnadsst": "70",
+        "kostnadsbarare": "75",
+        "timeRows": [
+          {
+            "id": "msvnu3q5gvakt",
+            "date": "2026-08-14",
+            "timeIn": "10:00",
+            "timeOut": "16:00",
+            "hours": 6,
+            "obHours": 0,
+            "note": ""
+          },
+          {
+            "id": "msvnudrbb61ka",
+            "date": "2026-08-15",
+            "timeIn": "10:00",
+            "timeOut": "16:00",
+            "hours": 6,
+            "obHours": 0,
+            "note": ""
+          },
+          {
+            "id": "msvnuq5qgjj2f",
+            "date": "2026-08-16",
+            "timeIn": "10:00",
+            "timeOut": "16:00",
+            "hours": 6,
+            "obHours": 0,
+            "note": ""
+          }
+        ],
+        "anteckning": ""
       }
     ],
     "2026-06": [
