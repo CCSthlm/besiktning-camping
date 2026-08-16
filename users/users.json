@@ -792,6 +792,16 @@
           "phone": "",
           "type": "anställd",
           "active": true
+        },
+        {
+          "id": "msvoc3fsdfduw",
+          "fname": "Bo",
+          "lname": "Wahlund",
+          "pnr": "19580412-0250",
+          "address": "",
+          "phone": "",
+          "type": "anställd",
+          "active": true
         }
       ],
       "auditlog": [
@@ -981,6 +991,15 @@
           "user": "Joachim Säfqvist",
           "action": "in",
           "detail": "Lade till: Annica Pettersson",
+          "oldVal": "",
+          "newVal": ""
+        },
+        {
+          "id": "msvoc3fsrtx68",
+          "ts": "2026-08-16T10:40:42.088Z",
+          "user": "Joachim Säfqvist",
+          "action": "in",
+          "detail": "Lade till: Bo Wahlund",
           "oldVal": "",
           "newVal": ""
         }
