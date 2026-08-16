@@ -802,6 +802,16 @@
           "phone": "",
           "type": "anställd",
           "active": true
+        },
+        {
+          "id": "msvocp5wpb45b",
+          "fname": "Linda",
+          "lname": "Wahlund",
+          "pnr": "19750729-0588",
+          "address": "",
+          "phone": "",
+          "type": "anställd",
+          "active": true
         }
       ],
       "auditlog": [
@@ -1000,6 +1010,15 @@
           "user": "Joachim Säfqvist",
           "action": "in",
           "detail": "Lade till: Bo Wahlund",
+          "oldVal": "",
+          "newVal": ""
+        },
+        {
+          "id": "msvocp5wf8ez1",
+          "ts": "2026-08-16T10:41:10.244Z",
+          "user": "Joachim Säfqvist",
+          "action": "in",
+          "detail": "Lade till: Linda Wahlund",
           "oldVal": "",
           "newVal": ""
         }
