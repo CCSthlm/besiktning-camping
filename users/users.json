@@ -772,6 +772,16 @@
           "phone": "",
           "type": "anställd",
           "active": true
+        },
+        {
+          "id": "msvoaz65szdqj",
+          "fname": "Bengt",
+          "lname": "Forslund",
+          "pnr": "19620708-1198",
+          "address": "",
+          "phone": "",
+          "type": "anställd",
+          "active": true
         }
       ],
       "auditlog": [
@@ -943,6 +953,15 @@
           "user": "Joachim Säfqvist",
           "action": "in",
           "detail": "Lade till: Elisabeth Åkerbrink",
+          "oldVal": "",
+          "newVal": ""
+        },
+        {
+          "id": "msvoaz65jqoq6",
+          "ts": "2026-08-16T10:39:49.901Z",
+          "user": "Joachim Säfqvist",
+          "action": "in",
+          "detail": "Lade till: Bengt Forslund",
           "oldVal": "",
           "newVal": ""
         }
