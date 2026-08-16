@@ -782,6 +782,16 @@
           "phone": "",
           "type": "anställd",
           "active": true
+        },
+        {
+          "id": "msvobmfwqwuk6",
+          "fname": "Annica",
+          "lname": "Pettersson",
+          "pnr": "19870126-0328",
+          "address": "",
+          "phone": "",
+          "type": "anställd",
+          "active": true
         }
       ],
       "auditlog": [
@@ -962,6 +972,15 @@
           "user": "Joachim Säfqvist",
           "action": "in",
           "detail": "Lade till: Bengt Forslund",
+          "oldVal": "",
+          "newVal": ""
+        },
+        {
+          "id": "msvobmfxyosmz",
+          "ts": "2026-08-16T10:40:20.061Z",
+          "user": "Joachim Säfqvist",
+          "action": "in",
+          "detail": "Lade till: Annica Pettersson",
           "oldVal": "",
           "newVal": ""
         }
