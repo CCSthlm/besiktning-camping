@@ -471,6 +471,65 @@
           }
         ],
         "anteckning": ""
+      },
+      {
+        "id": "msvn1uzmu84f0",
+        "personId": "msg5fxj1tifc0",
+        "personName": "Melwin Eriksson",
+        "pnr": "20100925-8516",
+        "anstform": "timanställd",
+        "timlön": 115,
+        "manlön": 0,
+        "kostnadsst": "70",
+        "kostnadsbarare": "75",
+        "timeRows": [
+          {
+            "id": "msvmzo933thmt",
+            "date": "2026-08-01",
+            "timeIn": "12:00",
+            "timeOut": "20:00",
+            "hours": 8,
+            "obHours": 0,
+            "note": ""
+          },
+          {
+            "id": "msvn02fh45ic9",
+            "date": "2026-08-05",
+            "timeIn": "11:00",
+            "timeOut": "16:00",
+            "hours": 5,
+            "obHours": 0,
+            "note": ""
+          },
+          {
+            "id": "msvn0jlahiz3w",
+            "date": "2026-08-06",
+            "timeIn": "12:00",
+            "timeOut": "20:00",
+            "hours": 8,
+            "obHours": 0,
+            "note": ""
+          },
+          {
+            "id": "msvn0ytvqp98c",
+            "date": "2026-08-12",
+            "timeIn": "12:00",
+            "timeOut": "20:30",
+            "hours": 8.5,
+            "obHours": 0,
+            "note": ""
+          },
+          {
+            "id": "msvn17wuaa987",
+            "date": "2026-08-13",
+            "timeIn": "12:00",
+            "timeOut": "19:30",
+            "hours": 7.5,
+            "obHours": 0,
+            "note": ""
+          }
+        ],
+        "anteckning": ""
       }
     ],
     "2026-06": [
