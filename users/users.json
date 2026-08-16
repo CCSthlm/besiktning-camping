@@ -762,6 +762,16 @@
           "phone": "",
           "type": "anställd",
           "active": true
+        },
+        {
+          "id": "msvoahb0vjo15",
+          "fname": "Elisabeth",
+          "lname": "Åkerbrink",
+          "pnr": "701005-0545",
+          "address": "",
+          "phone": "",
+          "type": "anställd",
+          "active": true
         }
       ],
       "auditlog": [
@@ -924,6 +934,15 @@
           "user": "Joachim Säfqvist",
           "action": "in",
           "detail": "Lade till: Sussi Törnander",
+          "oldVal": "",
+          "newVal": ""
+        },
+        {
+          "id": "msvoahb0t5194",
+          "ts": "2026-08-16T10:39:26.748Z",
+          "user": "Joachim Säfqvist",
+          "action": "in",
+          "detail": "Lade till: Elisabeth Åkerbrink",
           "oldVal": "",
           "newVal": ""
         }
