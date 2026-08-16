@@ -802,6 +802,47 @@
           }
         ],
         "anteckning": ""
+      },
+      {
+        "id": "msvnwmu26lh7q",
+        "personId": "msg5fxj00911q",
+        "personName": "Saskia Hedenberg Wahlund",
+        "pnr": "20090607-3745",
+        "anstform": "timanställd",
+        "timlön": 115,
+        "manlön": 0,
+        "kostnadsst": "70",
+        "kostnadsbarare": "75",
+        "timeRows": [
+          {
+            "id": "msvnvpjmcjj5c",
+            "date": "2026-08-02",
+            "timeIn": "11:00",
+            "timeOut": "16:00",
+            "hours": 5,
+            "obHours": 0,
+            "note": ""
+          },
+          {
+            "id": "msvnvzegxh9ax",
+            "date": "2026-08-03",
+            "timeIn": "12:00",
+            "timeOut": "19:30",
+            "hours": 7.5,
+            "obHours": 0,
+            "note": ""
+          },
+          {
+            "id": "msvnwc2j1mh67",
+            "date": "2026-08-04",
+            "timeIn": "12:00",
+            "timeOut": "18:30",
+            "hours": 6.5,
+            "obHours": 0,
+            "note": ""
+          }
+        ],
+        "anteckning": ""
       }
     ],
     "2026-06": [
