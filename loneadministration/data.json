@@ -403,7 +403,76 @@
         "anteckning": "Avser arbetad tid juli månad"
       }
     ],
-    "2026-08": [],
+    "2026-08": [
+      {
+        "id": "msvmxqpry6j03",
+        "personId": "msg5fxj1q4hjc",
+        "personName": "Josefine Eriksson",
+        "pnr": "20081113-4303",
+        "anstform": "timanställd",
+        "timlön": 115,
+        "manlön": 0,
+        "kostnadsst": "70",
+        "kostnadsbarare": "75",
+        "timeRows": [
+          {
+            "id": "msvmuvw40jp34",
+            "date": "2026-08-05",
+            "timeIn": "11:50",
+            "timeOut": "20:20",
+            "hours": 8.5,
+            "obHours": 0,
+            "note": ""
+          },
+          {
+            "id": "msvmvdr4lxkd6",
+            "date": "2026-08-06",
+            "timeIn": "11:00",
+            "timeOut": "16:00",
+            "hours": 5,
+            "obHours": 0,
+            "note": ""
+          },
+          {
+            "id": "msvmw0y5wt981",
+            "date": "2026-08-07",
+            "timeIn": "11:50",
+            "timeOut": "20:00",
+            "hours": 8.17,
+            "obHours": 0,
+            "note": ""
+          },
+          {
+            "id": "msvmwjftib0u2",
+            "date": "2026-08-09",
+            "timeIn": "11:50",
+            "timeOut": "21:10",
+            "hours": 9.33,
+            "obHours": 0,
+            "note": ""
+          },
+          {
+            "id": "msvmwwrmswrb4",
+            "date": "2026-08-12",
+            "timeIn": "11:00",
+            "timeOut": "16:00",
+            "hours": 5,
+            "obHours": 0,
+            "note": ""
+          },
+          {
+            "id": "msvmxdjmmf0w3",
+            "date": "2026-08-13",
+            "timeIn": "11:00",
+            "timeOut": "16:00",
+            "hours": 5,
+            "obHours": 0,
+            "note": ""
+          }
+        ],
+        "anteckning": ""
+      }
+    ],
     "2026-06": [
       {
         "id": "msnm59sqqvgk8",
