@@ -758,6 +758,15 @@
             "hours": 10.5,
             "obHours": 0,
             "note": ""
+          },
+          {
+            "id": "msvo4emasxht3",
+            "date": "2026-08-16",
+            "timeIn": "10:00",
+            "timeOut": "18:00",
+            "hours": 8,
+            "obHours": 0,
+            "note": ""
           }
         ],
         "anteckning": ""
