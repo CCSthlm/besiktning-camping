@@ -29,6 +29,16 @@
       "camping": "c2",
       "typ": "Ideell",
       "aktiv": true
+    },
+    {
+      "id": "msxojk8s5nreh",
+      "fname": "Joachim",
+      "lname": "Sävqvist",
+      "email": "joachim.safqvist@cc-camping.se",
+      "tel": "",
+      "camping": "c2",
+      "typ": "Ideell",
+      "aktiv": true
     }
   ],
   "händelser": [
