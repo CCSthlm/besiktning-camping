@@ -107,9 +107,45 @@
       "personNamn": "Joachim Sävqvist",
       "utfordAv": "Massimo Johansson",
       "anteckning": ""
+    },
+    {
+      "id": "msxol5bsn4lc6",
+      "ts": "2026-08-17T20:23:16.792Z",
+      "action": "inv",
+      "detail": "Inventering signerad av Massimo Johansson – 2 nycklar kontrollerade",
+      "nyckelDbId": "",
+      "nyckelId": "",
+      "personId": "",
+      "personNamn": "",
+      "utfordAv": "Massimo Johansson",
+      "anteckning": ""
     }
   ],
-  "inventering": [],
+  "inventering": [
+    {
+      "id": "msxol5bsd6a6z",
+      "ts": "2026-08-17T20:23:16.792Z",
+      "camping": "c2",
+      "signeradAv": "Massimo Johansson",
+      "signerad": true,
+      "rows": [
+        {
+          "nyckelId": "msxnexm3plrgy",
+          "nyckelText": "E11 – Huvudnyckel",
+          "camping": "c2",
+          "status": "ok",
+          "anteckning": ""
+        },
+        {
+          "nyckelId": "msxokn7kk4csm",
+          "nyckelText": "A21 – Larm Restaurang / Reception",
+          "camping": "c2",
+          "status": "ok",
+          "anteckning": ""
+        }
+      ]
+    }
+  ],
   "campingar": [
     {
       "id": "c1",
