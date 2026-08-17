@@ -20,8 +20,8 @@
     },
     {
       "id": "msxokn7kk4csm",
-      "innehavarId": "",
-      "utlamnadTs": "",
+      "innehavarId": "msxojk8s5nreh",
+      "utlamnadTs": "2026-08-17T20:20",
       "lostTs": "",
       "lostAvId": "",
       "nyckelId": "A21",
@@ -32,7 +32,7 @@
       "tillvnr": "",
       "kopior": 1,
       "anteckning": "",
-      "status": "inne",
+      "status": "ute",
       "lostLas": "",
       "lostAtgard": ""
     }
@@ -93,6 +93,18 @@
       "nyckelId": "",
       "personId": "",
       "personNamn": "",
+      "utfordAv": "Massimo Johansson",
+      "anteckning": ""
+    },
+    {
+      "id": "msxokugq385kg",
+      "ts": "2026-08-17T20:23:02.714Z",
+      "action": "ut",
+      "detail": "A21 lämnad ut till Joachim Sävqvist",
+      "nyckelDbId": "msxokn7kk4csm",
+      "nyckelId": "A21",
+      "personId": "msxojk8s5nreh",
+      "personNamn": "Joachim Sävqvist",
       "utfordAv": "Massimo Johansson",
       "anteckning": ""
     }
