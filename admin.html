@@ -529,7 +529,13 @@ tr:hover td{background:var(--bg3);}
           <div class="role-section" style="padding:9px 12px;border-left:3px solid #3B6D11;">
             <label class="checkbox-item"><input type="checkbox" id="role-reserakning-admin"> <i class="ti ti-car" style="font-size:14px;color:#3B6D11"></i> <span><strong>Reseräkning Admin</strong> – administrera alla räkningar och inställningar</span></label>
             <label class="checkbox-item"><input type="checkbox" id="role-lon-admin"> <i class="ti ti-cash-register" style="font-size:14px;color:#1a4f7a"></i> <span><strong>Löneadmin</strong> – löneunderlag, personalregister och BL-export</span></label>
-            <label class="checkbox-item"><input type="checkbox" id="role-nyckel-admin"> <i class="ti ti-key" style="font-size:14px;color:#854F0B"></i> <span><strong>Nyckeladmin</strong> – nyckelregister, utlämning, återlämning och inventering</span></label>
+            <label class="checkbox-item"><input type="checkbox" id="role-nyckel-admin" onchange="toggleNyckelCamping()"> <i class="ti ti-key" style="font-size:14px;color:#854F0B"></i> <span><strong>Nyckeladmin</strong> – nyckelregister, utlämning, återlämning och inventering</span></label>
+            <div id="nyckel-camping-wrap" style="display:none;margin-top:8px;padding-left:22px">
+              <label style="font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.04em;display:block;margin-bottom:4px">Camping (lämna tomt = alla campingar)</label>
+              <select id="nyckel-camping" style="padding:7px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius);font-size:12px;font-family:inherit;width:100%;max-width:300px">
+                <option value="">Alla campingar</option>
+              </select>
+            </div>
           </div>
           <div class="role-section" style="padding:9px 12px;border-left:3px solid #1a4f7a;">
             <label class="checkbox-item"><input type="checkbox" id="role-reserakning-godkannare" onchange="toggleGodkannarcamping()"> <i class="ti ti-check" style="font-size:14px;color:#1a4f7a"></i> <span><strong>Reseräkning Godkännare</strong> – godkänn/neka räkningar för sin camping</span></label>
@@ -1253,11 +1259,12 @@ function openAddUser() {
   document.getElementById('user-pin').value = '';
   document.getElementById('user-pnr').value = '';
   document.getElementById('user-active').value = 'true';
-  ['global','sektions','besiktnings','personal','avvikelse-admin','avvikelse-ledning','avvikelse-anlaggning','avvikelse-brand','nyhetsadmin','störningsadmin','kontoadmin','inventarieadmin','gasol-kontrollant','sba-ansvarig','sba-lokal','sam-ansvarig','arshjul-admin','reserakning-admin','reserakning-godkannare','reserakning-utbetalare'].forEach(r => { const el=document.getElementById('role-'+r); if(el) el.checked=false; });
+  ['global','sektions','besiktnings','personal','avvikelse-admin','avvikelse-ledning','avvikelse-anlaggning','avvikelse-brand','nyhetsadmin','störningsadmin','kontoadmin','inventarieadmin','gasol-kontrollant','sba-ansvarig','sba-lokal','sam-ansvarig','arshjul-admin','reserakning-admin','reserakning-godkannare','reserakning-utbetalare','nyckel-admin','lon-admin'].forEach(r => { const el=document.getElementById('role-'+r); if(el) el.checked=false; });
   buildAppCheckboxes([]);
   populatePLCampingSelect('');
   toggleGodkannarcamping();
   toggleSbaCamping();
+  toggleNyckelCamping();
   openModal('modal-user');
 }
 
@@ -1273,7 +1280,7 @@ function openEditUser(id) {
   document.getElementById('user-active').value = u.active===false?'false':'true';
   // Set admin role checkboxes
   const roles = u.adminRoles || (u.role==='Admin'?['global']:[]);
-  ['global','sektions','besiktnings','personal','avvikelse-admin','avvikelse-ledning','avvikelse-anlaggning','avvikelse-brand','nyhetsadmin','störningsadmin','kontoadmin','inventarieadmin','gasol-kontrollant','sba-ansvarig','sba-lokal','sam-ansvarig','arshjul-admin','reserakning-admin','reserakning-godkannare','reserakning-utbetalare'].forEach(r => {
+  ['global','sektions','besiktnings','personal','avvikelse-admin','avvikelse-ledning','avvikelse-anlaggning','avvikelse-brand','nyhetsadmin','störningsadmin','kontoadmin','inventarieadmin','gasol-kontrollant','sba-ansvarig','sba-lokal','sam-ansvarig','arshjul-admin','reserakning-admin','reserakning-godkannare','reserakning-utbetalare','nyckel-admin','lon-admin'].forEach(r => {
     const el=document.getElementById('role-'+r);
     if(el) el.checked = roles.includes(r);
   });
@@ -1283,8 +1290,11 @@ function openEditUser(id) {
   const gcEl = document.getElementById('godkannare-camping');
   if (gcEl) gcEl.value = u.godkannarcamping || '';
   toggleSbaCamping();
+  toggleNyckelCamping();
   const sbaCampEl = document.getElementById('sba-camping');
   if (sbaCampEl) sbaCampEl.value = u.sbaCamping || '';
+  const nyckelCampEl = document.getElementById('nyckel-camping');
+  if (nyckelCampEl) nyckelCampEl.value = u.nyckelCamping || '';
   openModal('modal-user');
 }
 
@@ -1293,6 +1303,13 @@ function buildAppCheckboxes(selected) {
   c.innerHTML = APP_LIST.map(a =>
     `<label class="checkbox-item"><input type="checkbox" value="${a.id}" ${selected.includes(a.id)?'checked':''}> ${a.name}</label>`
   ).join('');
+}
+
+function toggleNyckelCamping() {
+  var checked = document.getElementById('role-nyckel-admin')?.checked;
+  var wrap    = document.getElementById('nyckel-camping-wrap');
+  if (wrap) wrap.style.display = checked ? '' : 'none';
+  if (!checked) { var sel = document.getElementById('nyckel-camping'); if(sel) sel.value=''; }
 }
 
 function toggleSbaCamping() {
@@ -1317,6 +1334,20 @@ function populatePLCampingSelect(selected) {
   if (!sel) return;
   sel.innerHTML = '<option value="">– Ej tilldelad –</option>' +
     (_data.campings||[]).map(c=>`<option value="${c.id}" ${c.id===selected?'selected':''}>${c.name}</option>`).join('');
+  // Also populate nyckel-camping
+  const nyckelSel = document.getElementById('nyckel-camping');
+  if (nyckelSel) {
+    const curNyckel = nyckelSel.value;
+    nyckelSel.innerHTML = '<option value="">Alla campingar</option>' +
+      (_data.campings||[]).filter(c=>c.active!==false).map(c=>`<option value="${c.id}">${c.name}</option>`).join('');
+    nyckelSel.value = curNyckel;
+  }
+  // Also populate sba-camping
+  const sbaSel2 = document.getElementById('sba-camping');
+  if (sbaSel2 && sbaSel2.options.length <= 1) {
+    sbaSel2.innerHTML = '<option value="">– Välj camping –</option>' +
+      (_data.campings||[]).filter(c=>c.active!==false).map(c=>`<option value="${c.id}">${c.name}</option>`).join('');
+  }
 }
 
 function saveUser() {
@@ -1324,7 +1355,7 @@ function saveUser() {
   const pin = document.getElementById('user-pin').value.trim();
   if (!name) { alert('Namn krävs.'); return; }
   if (!pin || !/^\d{4}$/.test(pin)) { alert('PIN-kod måste vara 4 siffror.'); return; }
-  const adminRoles = ['global','sektions','besiktnings','personal','avvikelse-admin','avvikelse-ledning','avvikelse-anlaggning','avvikelse-brand','nyhetsadmin','störningsadmin','kontoadmin','inventarieadmin','gasol-kontrollant','sba-ansvarig','sba-lokal','sam-ansvarig','arshjul-admin','reserakning-admin','reserakning-godkannare','reserakning-utbetalare'].filter(r => document.getElementById('role-'+r)?.checked);
+  const adminRoles = ['global','sektions','besiktnings','personal','avvikelse-admin','avvikelse-ledning','avvikelse-anlaggning','avvikelse-brand','nyhetsadmin','störningsadmin','kontoadmin','inventarieadmin','gasol-kontrollant','sba-ansvarig','sba-lokal','sam-ansvarig','arshjul-admin','reserakning-admin','reserakning-godkannare','reserakning-utbetalare','nyckel-admin','lon-admin'].filter(r => document.getElementById('role-'+r)?.checked);
   const apps = Array.from(document.querySelectorAll('#user-apps-check input:checked')).map(e=>e.value);
   const editId = document.getElementById('user-edit-id').value;
   const godkannarcamping = adminRoles.includes('reserakning-godkannare')
@@ -1341,6 +1372,7 @@ function saveUser() {
     plCampingId: document.getElementById('user-pl-camping').value,
     godkannarcamping,
     sbaCamping: adminRoles.includes('sba-lokal') ? (document.getElementById('sba-camping')?.value || '') : '',
+    nyckelCamping: adminRoles.includes('nyckel-admin') ? (document.getElementById('nyckel-camping')?.value || '') : '',
   };
   if (editId) {
     const i = _data.users.findIndex(u=>u.id===editId);
