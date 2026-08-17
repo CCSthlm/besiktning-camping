@@ -545,11 +545,13 @@ async function init() {
 
   // Apply camping restriction from user role
   var userRoles = _user.adminRoles || [];
-  var hasNyckelAdmin = userRoles.includes('nyckel-admin') || userRoles.includes('global');
-  if (!hasNyckelAdmin) { window.location.replace('index.html'); return; }
+  var isGlobal = userRoles.includes('global');
 
-  // If user has nyckelCamping set, pre-filter to that camping
-  if (_user.nyckelCamping && !userRoles.includes('global')) {
+  await loadData();
+  populateCampingDropdowns();
+
+  // If user has nyckelCamping set and is not global, lock to that camping
+  if (_user.nyckelCamping && !isGlobal) {
     _filterCamping = _user.nyckelCamping;
     var gcSel = document.getElementById('global-camping');
     if (gcSel) {
@@ -558,7 +560,6 @@ async function init() {
       gcSel.title = 'Du har behörighet till en specifik camping';
     }
   }
-  populateCampingDropdowns();
 
   var campNames = _d.campingar.map(function(c){return c.name;}).join(', ');
   document.getElementById('camping-sub').textContent = 'Nyckelregister' + (campNames ? ' – ' + campNames : '');
