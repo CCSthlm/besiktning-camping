@@ -1,0 +1,1145 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nyckelregister – CCSthlm</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/tabler-icons.min.css">
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f5f5f3;--bg2:#ffffff;--bg3:#eeede8;--bg4:#e5e4de;
+  --text:#1a1a18;--text2:#5a5a57;--text3:#909088;
+  --accent:#3B6D11;--accent2:#27500A;--accent-glow:rgba(59,109,17,.1);
+  --red:#A32D2D;--red-bg:#FCEBEB;--red-text:#501313;
+  --amber:#854F0B;--amber-bg:#FAEEDA;--amber-text:#412402;
+  --blue:#1a4f7a;--blue-bg:rgba(26,79,122,.08);
+  --green-bg:#EAF3DE;--green-text:#27500A;
+  --border:rgba(0,0,0,.10);--border2:rgba(0,0,0,.18);
+  --radius:8px;--radius-lg:14px;--shadow:0 2px 16px rgba(0,0,0,.09);
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:var(--bg3);color:var(--text);min-height:100vh;}
+
+/* PORTAL BAR */
+#portal-bar{position:sticky;top:0;z-index:999;background:var(--bg2);border-bottom:1px solid var(--border2);display:flex;align-items:center;padding:0 20px;height:46px;font-size:13px;color:var(--text2);}
+.pb-avatar{width:28px;height:28px;border-radius:50%;background:var(--accent);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-right:10px;}
+.pb-info{flex:1;display:flex;align-items:center;gap:10px;min-width:0;}
+.pb-name{font-weight:600;color:var(--text);white-space:nowrap;}
+.pb-sep{width:1px;height:22px;background:var(--border2);margin:0 12px;flex-shrink:0;}
+.pb-btn{display:flex;align-items:center;gap:5px;padding:6px 12px;border-radius:7px;border:1px solid var(--border2);background:none;color:var(--text2);font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;white-space:nowrap;transition:background .15s;text-decoration:none;flex-shrink:0;margin-left:6px;}
+.pb-btn:hover{background:var(--bg3);color:var(--text);}
+.pb-btn-logout{background:var(--red-bg);color:var(--red);border-color:rgba(163,45,45,.25);}
+.pb-btn-logout:hover{background:var(--red);color:#fff;}
+.desktop-only{display:inline;}
+@media(max-width:480px){.desktop-only{display:none!important;}}
+
+/* LAYOUT */
+.page-wrap{max-width:1100px;margin:0 auto;padding:20px 16px 60px;}
+
+/* TABS */
+.tab-bar{display:flex;gap:4px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:5px;margin-bottom:20px;flex-wrap:wrap;}
+.tab-btn{flex:1;min-width:90px;padding:9px 10px;border-radius:10px;border:none;background:none;font-size:12px;font-weight:500;color:var(--text2);cursor:pointer;font-family:inherit;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:5px;}
+.tab-btn:hover{background:var(--bg3);}
+.tab-btn.active{background:var(--accent);color:#fff;box-shadow:0 2px 8px var(--accent-glow);}
+.tab-btn i{font-size:14px;}
+
+/* CARDS */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow);margin-bottom:16px;}
+.card-header{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+.card-title{font-size:13px;font-weight:600;display:flex;align-items:center;gap:7px;}
+.card-body{padding:16px;}
+
+/* SUMMARY STRIP */
+.summary-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin-bottom:18px;}
+.sc{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px 16px;}
+.sc-val{font-size:26px;font-weight:700;color:var(--text);}
+.sc-lbl{font-size:11px;color:var(--text3);margin-top:2px;text-transform:uppercase;letter-spacing:.04em;}
+.sc.red .sc-val{color:var(--red);}
+.sc.amber .sc-val{color:var(--amber);}
+.sc.green .sc-val{color:var(--accent);}
+
+/* TABLES */
+table{width:100%;border-collapse:collapse;}
+th{text-align:left;padding:9px 14px;font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--border2);background:var(--bg3);}
+td{padding:10px 14px;font-size:13px;border-bottom:1px solid var(--border);vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:rgba(59,109,17,.03);}
+.no-entries{text-align:center;padding:32px;color:var(--text3);}
+.no-entries i{font-size:28px;display:block;margin-bottom:6px;}
+
+/* SEARCH / FILTER */
+.filter-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:14px;}
+.filter-row select,.filter-row input{padding:8px 11px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);font-size:13px;color:var(--text);font-family:inherit;}
+.search-wrap{position:relative;flex:1;min-width:180px;}
+.search-wrap input{width:100%;padding:8px 11px 8px 34px;}
+.search-wrap i{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:15px;}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap;}
+.badge-in{background:var(--green-bg);color:var(--green-text);}
+.badge-out{background:var(--amber-bg);color:var(--amber-text);}
+.badge-lost{background:var(--red-bg);color:var(--red);}
+.badge-inv{background:var(--blue-bg);color:var(--blue);}
+.badge-dot{width:6px;height:6px;border-radius:50%;background:currentColor;}
+
+/* KEY TYPE CHIPS */
+.type-chip{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:600;background:var(--bg3);color:var(--text2);}
+
+/* FORM */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
+.form-grid.full{grid-template-columns:1fr;}
+.form-grid.trio{grid-template-columns:1fr 1fr 1fr;}
+.form-field{display:flex;flex-direction:column;gap:5px;}
+.form-field label{font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.04em;}
+.form-field input,.form-field select,.form-field textarea{padding:10px 12px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius);font-size:13px;color:var(--text);font-family:inherit;transition:border-color .2s;}
+.form-field input:focus,.form-field select:focus,.form-field textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow);}
+.req{color:var(--red);}
+.form-section-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);border-bottom:1px solid var(--border);padding-bottom:6px;margin:16px 0 12px;}
+
+/* BUTTONS */
+.btn-primary{padding:10px 18px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px;transition:background .15s;}
+.btn-primary:hover{background:var(--accent2);}
+.btn-secondary{padding:9px 14px;background:var(--bg3);color:var(--text2);border:1px solid var(--border2);border-radius:var(--radius);font-size:13px;font-weight:500;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px;}
+.btn-secondary:hover{background:var(--bg4);}
+.btn-danger{padding:9px 14px;background:var(--red-bg);color:var(--red);border:1px solid rgba(163,45,45,.25);border-radius:var(--radius);font-size:13px;font-weight:500;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px;}
+.btn-icon{padding:6px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius);cursor:pointer;font-size:12px;color:var(--text2);display:inline-flex;align-items:center;gap:4px;font-family:inherit;transition:all .15s;}
+.btn-icon:hover{border-color:var(--accent);color:var(--accent);}
+.btn-icon.red:hover{border-color:var(--red);color:var(--red);}
+.btn-icon.amber:hover{border-color:var(--amber);color:var(--amber);}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;align-items:flex-start;justify-content:center;padding:20px 16px;overflow-y:auto;}
+.modal-overlay.show{display:flex;}
+.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius-lg);width:100%;max-width:560px;box-shadow:0 8px 40px rgba(0,0,0,.18);margin:auto;}
+.modal-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--bg2);z-index:1;}
+.modal-title{font-size:15px;font-weight:700;}
+.modal-close{background:none;border:none;cursor:pointer;color:var(--text3);font-size:18px;}
+.modal-body{padding:18px 20px;}
+.modal-footer{padding:12px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px;}
+
+/* LOG ENTRIES */
+.log-entry{padding:10px 14px;border-left:3px solid var(--border2);margin-bottom:8px;background:var(--bg3);border-radius:0 var(--radius) var(--radius) 0;font-size:12px;}
+.log-entry.log-ut{border-left-color:var(--amber);}
+.log-entry.log-in{border-left-color:var(--accent);}
+.log-entry.log-lost{border-left-color:var(--red);}
+.log-entry.log-edit{border-left-color:var(--blue);}
+.log-entry.log-inv{border-left-color:#7c3aed;}
+.log-meta{color:var(--text3);font-size:11px;margin-top:3px;}
+
+/* INV CHECKLIST */
+.inv-row{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--border);background:var(--bg2);}
+.inv-row:last-child{border-bottom:none;}
+.inv-row.inv-done{background:var(--green-bg);}
+.inv-row.inv-missing{background:var(--red-bg);}
+.inv-check{width:20px;height:20px;accent-color:var(--accent);cursor:pointer;flex-shrink:0;}
+
+/* MOBILE */
+@media(max-width:600px){
+  .form-grid,.form-grid.trio{grid-template-columns:1fr;}
+  .summary-strip{grid-template-columns:1fr 1fr;}
+  th:nth-child(n+4),td:nth-child(n+4){display:none;}
+}
+@media print{
+  #portal-bar,.tab-bar,.no-print{display:none!important;}
+  body{background:#fff;}
+  .card{box-shadow:none;border:1px solid #ccc;}
+}
+</style>
+</head>
+<body>
+
+<div id="portal-bar">
+  <div class="pb-avatar" id="pb-avatar">?</div>
+  <div class="pb-info">
+    <span class="pb-name" id="pb-name">–</span>
+  </div>
+  <div class="pb-sep"></div>
+  <a href="index.html" class="pb-btn"><i class="ti ti-arrow-left"></i><span class="desktop-only"> Portal</span></a>
+  <button class="pb-btn pb-btn-logout" onclick="portalLogout()"><i class="ti ti-logout"></i><span class="desktop-only"> Logga ut</span></button>
+</div>
+
+<div class="page-wrap">
+  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:20px;">
+    <div>
+      <h1 style="font-size:22px;font-weight:700;display:flex;align-items:center;gap:10px"><i class="ti ti-key" style="color:var(--accent)"></i> Nyckelregister</h1>
+      <div id="camping-sub" style="font-size:13px;color:var(--text2);margin-top:2px;">Laddar…</div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;" class="no-print">
+      <select id="global-camping" onchange="onCampingChange()" style="padding:8px 12px;border:1px solid var(--border2);border-radius:var(--radius);font-size:13px;font-family:inherit;background:var(--bg2);color:var(--text);">
+        <option value="">Alla campingar</option>
+      </select>
+      <button class="btn-secondary" onclick="exportExcel()"><i class="ti ti-table-export"></i> Excel</button>
+    </div>
+  </div>
+
+  <div class="tab-bar">
+    <button class="tab-btn active" id="tab-oversikt"    onclick="showTab('oversikt')"><i class="ti ti-layout-dashboard"></i> Översikt</button>
+    <button class="tab-btn" id="tab-nycklar"   onclick="showTab('nycklar')"><i class="ti ti-key"></i> Nycklar</button>
+    <button class="tab-btn" id="tab-utlamning" onclick="showTab('utlamning')"><i class="ti ti-arrow-right-circle"></i> Utlämning</button>
+    <button class="tab-btn" id="tab-rapport"   onclick="showTab('rapport')"><i class="ti ti-file-analytics"></i> Rapport</button>
+    <button class="tab-btn" id="tab-inventering" onclick="showTab('inventering')"><i class="ti ti-clipboard-check"></i> Inventering</button>
+    <button class="tab-btn" id="tab-personal"  onclick="showTab('personal')"><i class="ti ti-users"></i> Personal</button>
+    <button class="tab-btn" id="tab-logg"      onclick="showTab('logg')"><i class="ti ti-history"></i> Logg</button>
+  </div>
+
+  <!-- ÖVERSIKT -->
+  <div id="view-oversikt">
+    <div class="summary-strip" id="summary-strip">
+      <div class="sc"><div class="sc-val" id="sum-total">0</div><div class="sc-lbl">Totalt nycklar</div></div>
+      <div class="sc green"><div class="sc-val" id="sum-inne">0</div><div class="sc-lbl">Inne / tillgängliga</div></div>
+      <div class="sc amber"><div class="sc-val" id="sum-ute">0</div><div class="sc-lbl">Utlämnade</div></div>
+      <div class="sc red"><div class="sc-val" id="sum-lost">0</div><div class="sc-lbl">Förlorade</div></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-title"><i class="ti ti-arrow-right-circle" style="color:var(--amber)"></i> Utlämnade nycklar just nu</span></div>
+      <div style="overflow-x:auto"><table>
+        <thead><tr><th>Nyckel-ID</th><th>Beskrivning</th><th>Camping</th><th>Innehavare</th><th>Utlämnad</th><th>Dagar ute</th></tr></thead>
+        <tbody id="oversikt-ute-tbody"></tbody>
+      </table></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-title"><i class="ti ti-alert-triangle" style="color:var(--red)"></i> Förlorade nycklar</span></div>
+      <div style="overflow-x:auto"><table>
+        <thead><tr><th>Nyckel-ID</th><th>Beskrivning</th><th>Camping</th><th>Senast hos</th><th>Markerades förlorad</th><th>Åtgärd</th></tr></thead>
+        <tbody id="oversikt-lost-tbody"></tbody>
+      </table></div>
+    </div>
+  </div>
+
+  <!-- NYCKLAR -->
+  <div id="view-nycklar" style="display:none">
+    <div class="filter-row">
+      <div class="search-wrap"><i class="ti ti-search"></i><input type="search" id="nyckel-sok" placeholder="Sök ID, beskrivning, plats…" oninput="renderNycklar()"></div>
+      <select id="nyckel-camping-filter" onchange="renderNycklar()"><option value="">Alla campingar</option></select>
+      <select id="nyckel-typ-filter" onchange="renderNycklar()">
+        <option value="">Alla typer</option>
+        <option>Nyckel</option><option>Tagg</option><option>Kort</option>
+      </select>
+      <select id="nyckel-status-filter" onchange="renderNycklar()">
+        <option value="">Alla statusar</option>
+        <option value="inne">Inne</option>
+        <option value="ute">Utlämnad</option>
+        <option value="forlorad">Förlorad</option>
+      </select>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title"><i class="ti ti-key"></i> Nycklar (<span id="nyckel-count">0</span>)</span>
+        <button class="btn-primary no-print" onclick="openNyckelModal(null)"><i class="ti ti-plus"></i> Lägg till nyckel</button>
+      </div>
+      <div style="overflow-x:auto"><table>
+        <thead><tr><th>Nyckel-ID</th><th>Typ</th><th>Beskrivning / Låser upp</th><th>Camping</th><th>Plats/Grupp</th><th>Status</th><th>Innehavare</th><th class="no-print" style="text-align:right">Åtgärder</th></tr></thead>
+        <tbody id="nyckel-tbody"></tbody>
+      </table></div>
+    </div>
+  </div>
+
+  <!-- UTLÄMNING -->
+  <div id="view-utlamning" style="display:none">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;" id="utlamning-grid">
+      <div class="card">
+        <div class="card-header"><span class="card-title"><i class="ti ti-arrow-right-circle" style="color:var(--amber)"></i> Lämna ut nyckel</span></div>
+        <div class="card-body">
+          <div class="form-field" style="margin-bottom:12px">
+            <label>Nyckel <span class="req">*</span></label>
+            <select id="ut-nyckel" onchange="onUtNyckelChange()"><option value="">– Välj nyckel –</option></select>
+          </div>
+          <div id="ut-nyckel-info" style="display:none;margin-bottom:12px;padding:10px;background:var(--bg3);border-radius:var(--radius);font-size:12px;color:var(--text2)"></div>
+          <div class="form-field" style="margin-bottom:12px">
+            <label>Mottagare <span class="req">*</span></label>
+            <select id="ut-person"><option value="">– Välj person –</option></select>
+          </div>
+          <div class="form-field" style="margin-bottom:12px">
+            <label>Datum och tid</label>
+            <input type="datetime-local" id="ut-datum">
+          </div>
+          <div class="form-field" style="margin-bottom:16px">
+            <label>Anteckning</label>
+            <input type="text" id="ut-anteckning" placeholder="Frivillig kommentar">
+          </div>
+          <button class="btn-primary" style="width:100%;justify-content:center" onclick="doUtlamning()"><i class="ti ti-arrow-right-circle"></i> Lämna ut</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-title"><i class="ti ti-arrow-left-circle" style="color:var(--accent)"></i> Återlämna nyckel</span></div>
+        <div class="card-body">
+          <div class="form-field" style="margin-bottom:12px">
+            <label>Nyckel <span class="req">*</span></label>
+            <select id="at-nyckel" onchange="onAtNyckelChange()"><option value="">– Välj utlämnad nyckel –</option></select>
+          </div>
+          <div id="at-nyckel-info" style="display:none;margin-bottom:12px;padding:10px;background:var(--bg3);border-radius:var(--radius);font-size:12px;color:var(--text2)"></div>
+          <div class="form-field" style="margin-bottom:12px">
+            <label>Datum och tid</label>
+            <input type="datetime-local" id="at-datum">
+          </div>
+          <div class="form-field" style="margin-bottom:16px">
+            <label>Anteckning</label>
+            <input type="text" id="at-anteckning" placeholder="Skick, anmärkning…">
+          </div>
+          <button class="btn-primary" style="width:100%;justify-content:center;background:var(--accent)" onclick="doAterlämning()"><i class="ti ti-arrow-left-circle"></i> Återlämna</button>
+        </div>
+      </div>
+    </div>
+    @media(max-width:600px){#utlamning-grid{grid-template-columns:1fr;}}
+  </div>
+
+  <!-- RAPPORT -->
+  <div id="view-rapport" style="display:none">
+    <div class="filter-row">
+      <select id="rapp-camping" onchange="renderRapport()"><option value="">Alla campingar</option></select>
+      <select id="rapp-status" onchange="renderRapport()">
+        <option value="ute">Utlämnade</option>
+        <option value="alle">Alla nycklar</option>
+        <option value="forlorad">Förlorade</option>
+      </select>
+      <button class="btn-secondary" onclick="exportRapportExcel()"><i class="ti ti-table-export"></i> Excel</button>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title" id="rapp-title"><i class="ti ti-file-analytics"></i> Rapport</span>
+        <span id="rapp-summary" style="font-size:12px;color:var(--text3)"></span>
+      </div>
+      <div style="overflow-x:auto"><table>
+        <thead><tr><th>Nyckel-ID</th><th>Beskrivning</th><th>Camping</th><th>Status</th><th>Innehavare</th><th>Utlämnad</th><th>Dagar ute</th><th>E-post</th></tr></thead>
+        <tbody id="rapp-tbody"></tbody>
+      </table></div>
+    </div>
+  </div>
+
+  <!-- INVENTERING -->
+  <div id="view-inventering" style="display:none">
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title"><i class="ti ti-clipboard-check"></i> Inventering – <span id="inv-period">–</span></span>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <select id="inv-camping" onchange="renderInventering()"><option value="">Alla campingar</option></select>
+          <button class="btn-secondary" onclick="startInventering()"><i class="ti ti-refresh"></i> Starta ny inventering</button>
+          <button class="btn-primary" onclick="signInventering()" id="btn-sign-inv" style="display:none"><i class="ti ti-check"></i> Signera klar</button>
+        </div>
+      </div>
+      <div id="inv-body"></div>
+    </div>
+  </div>
+
+  <!-- PERSONAL -->
+  <div id="view-personal" style="display:none">
+    <div class="filter-row">
+      <div class="search-wrap"><i class="ti ti-search"></i><input type="search" id="pers-sok" placeholder="Sök namn, e-post…" oninput="renderPersonal()"></div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title"><i class="ti ti-users"></i> Personal</span>
+        <button class="btn-primary no-print" onclick="openPersonModal(null)"><i class="ti ti-plus"></i> Lägg till person</button>
+      </div>
+      <div style="overflow-x:auto"><table>
+        <thead><tr><th>Namn</th><th>E-post</th><th>Telefon</th><th>Camping</th><th>Typ</th><th>Aktiv</th><th class="no-print" style="text-align:right">Åtgärder</th></tr></thead>
+        <tbody id="personal-tbody"></tbody>
+      </table></div>
+    </div>
+  </div>
+
+  <!-- LOGG -->
+  <div id="view-logg" style="display:none">
+    <div class="filter-row">
+      <input type="date" id="logg-datum">
+      <select id="logg-typ">
+        <option value="">Alla händelser</option>
+        <option value="ut">Utlämning</option>
+        <option value="in">Återlämning</option>
+        <option value="lost">Förlorad</option>
+        <option value="edit">Redigering</option>
+        <option value="inv">Inventering</option>
+      </select>
+      <div class="search-wrap" style="flex:1;min-width:160px"><i class="ti ti-search"></i><input type="search" id="logg-sok" placeholder="Sök nyckel-ID, namn…" oninput="renderLogg()"></div>
+      <button class="btn-secondary" onclick="renderLogg()"><i class="ti ti-refresh"></i></button>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-title"><i class="ti ti-history"></i> Behörighetslogg</span></div>
+      <div style="padding:14px" id="logg-body"></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: NYCKEL -->
+<div class="modal-overlay" id="modal-nyckel">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="modal-nyckel-title">Lägg till nyckel</span>
+      <button class="modal-close" onclick="closeModal('modal-nyckel')">&#x2715;</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="nyckel-edit-id">
+      <div class="form-grid">
+        <div class="form-field"><label>Nyckel-ID <span class="req">*</span></label><input type="text" id="n-id" placeholder="T.ex. NYC-001"></div>
+        <div class="form-field"><label>Typ <span class="req">*</span></label>
+          <select id="n-typ"><option>Nyckel</option><option>Tagg</option><option>Kort</option></select>
+        </div>
+      </div>
+      <div class="form-grid full">
+        <div class="form-field"><label>Beskrivning / Låser upp <span class="req">*</span></label><input type="text" id="n-beskrivning" placeholder="T.ex. Reception, Servicehus, Elskåp B3"></div>
+      </div>
+      <div class="form-grid">
+        <div class="form-field"><label>Camping <span class="req">*</span></label>
+          <select id="n-camping"><option value="">– Välj –</option></select>
+        </div>
+        <div class="form-field"><label>Plats / Grupp</label><input type="text" id="n-plats" placeholder="T.ex. Förråd A, Stuga 12"></div>
+      </div>
+      <div class="form-grid">
+        <div class="form-field"><label>Tillverkningsnummer</label><input type="text" id="n-tillvnr" placeholder="Serienummer på nyckeln"></div>
+        <div class="form-field"><label>Antal kopior</label><input type="number" id="n-kopior" value="1" min="1" max="99"></div>
+      </div>
+      <div class="form-grid full">
+        <div class="form-field"><label>Anteckning</label><textarea id="n-anteckning" rows="2" placeholder="Frivillig info om nyckeln"></textarea></div>
+      </div>
+      <div class="form-grid full">
+        <div class="form-field"><label>Status</label>
+          <select id="n-status"><option value="inne">Inne</option><option value="ute">Utlämnad</option><option value="forlorad">Förlorad</option></select>
+        </div>
+      </div>
+      <!-- FÖRLORAD sektion -->
+      <div id="lost-section" style="display:none">
+        <div class="form-section-title" style="color:var(--red)"><i class="ti ti-alert-triangle"></i> Förlorad nyckel</div>
+        <div class="form-grid full">
+          <div class="form-field"><label>Berörda lås / platser</label><input type="text" id="n-lost-las" placeholder="Vilka lås måste bytas?"></div>
+        </div>
+        <div class="form-grid full">
+          <div class="form-field"><label>Åtgärder</label><textarea id="n-lost-atgard" rows="2" placeholder="Låsbyte beställt, nycklar spärrade osv."></textarea></div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeModal('modal-nyckel')">Avbryt</button>
+      <button class="btn-primary" onclick="saveNyckel()"><i class="ti ti-check"></i> Spara</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: PERSON -->
+<div class="modal-overlay" id="modal-person">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="modal-person-title">Lägg till person</span>
+      <button class="modal-close" onclick="closeModal('modal-person')">&#x2715;</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="person-edit-id">
+      <div class="form-grid">
+        <div class="form-field"><label>Förnamn <span class="req">*</span></label><input type="text" id="p-fname" placeholder="Anna"></div>
+        <div class="form-field"><label>Efternamn <span class="req">*</span></label><input type="text" id="p-lname" placeholder="Andersson"></div>
+      </div>
+      <div class="form-grid">
+        <div class="form-field"><label>E-post</label><input type="email" id="p-email" placeholder="anna@exempel.se"></div>
+        <div class="form-field"><label>Telefon</label><input type="tel" id="p-tel" placeholder="070-xxx xx xx"></div>
+      </div>
+      <div class="form-grid">
+        <div class="form-field"><label>Camping</label><select id="p-camping"><option value="">– Välj –</option></select></div>
+        <div class="form-field"><label>Typ</label>
+          <select id="p-typ">
+            <option>Anställd</option><option>Ideell</option><option>Entreprenör</option>
+            <option>Gäst</option><option>Övrigt</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-grid full">
+        <div class="form-field"><label>Status</label>
+          <select id="p-aktiv"><option value="true">Aktiv</option><option value="false">Inaktiv</option></select>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeModal('modal-person')">Avbryt</button>
+      <button class="btn-primary" onclick="savePerson()"><i class="ti ti-check"></i> Spara</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: SÖK NYCKEL/PERSON -->
+<div class="modal-overlay" id="modal-sok">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="modal-sok-title">Sök</span>
+      <button class="modal-close" onclick="closeModal('modal-sok')">&#x2715;</button>
+    </div>
+    <div class="modal-body" id="modal-sok-body"></div>
+  </div>
+</div>
+
+<!-- MODAL: FÖRLORAD -->
+<div class="modal-overlay" id="modal-lost">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" style="color:var(--red)"><i class="ti ti-alert-triangle"></i> Markera som förlorad</span>
+      <button class="modal-close" onclick="closeModal('modal-lost')">&#x2715;</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="lost-nyckel-id">
+      <p style="font-size:13px;color:var(--text2);margin-bottom:14px" id="lost-nyckel-info">–</p>
+      <div class="form-grid full">
+        <div class="form-field"><label>Berörda lås / platser <span class="req">*</span></label><input type="text" id="lost-las" placeholder="Vilka lås behöver bytas?"></div>
+      </div>
+      <div class="form-grid full">
+        <div class="form-field"><label>Åtgärder</label><textarea id="lost-atgard" rows="2" placeholder="T.ex. Låsbyte beställt hos låssmed"></textarea></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeModal('modal-lost')">Avbryt</button>
+      <button class="btn-danger" onclick="saveLost()"><i class="ti ti-alert-triangle"></i> Markera förlorad</button>
+    </div>
+  </div>
+</div>
+
+<!-- DELETE CONFIRM -->
+<div class="modal-overlay" id="modal-delete">
+  <div class="modal" style="max-width:380px">
+    <div class="modal-header">
+      <span class="modal-title" style="color:var(--red)"><i class="ti ti-alert-triangle"></i> Bekräfta</span>
+      <button class="modal-close" onclick="closeModal('modal-delete')">&#x2715;</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:13px;color:var(--text2);line-height:1.6" id="delete-text">Är du säker?</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeModal('modal-delete')">Avbryt</button>
+      <button class="btn-danger" id="delete-confirm-btn">Ta bort</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" style="position:fixed;bottom:20px;right:20px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);padding:11px 16px;font-size:13px;z-index:999;box-shadow:var(--shadow);opacity:0;transform:translateY(6px);transition:all .25s;pointer-events:none;display:flex;align-items:center;gap:7px;max-width:320px;"></div>
+
+<script>
+var GH_REPO   = 'CCSthlm/besiktning-camping';
+var DATA_PATH = 'nyckelregister/data.json';
+var EJS_PUBLIC_KEY  = 'DIN_PUBLIC_KEY';
+var EJS_SERVICE_ID  = 'DIN_SERVICE_ID';
+var EJS_TEMPLATE_ID = 'DIN_TEMPLATE_ID';
+
+var _user = null;
+var _filterCamping = '';
+
+// DATA STRUCTURE
+var _d = {
+  nycklar:  [],   // {id,nyckelId,typ,beskrivning,camping,plats,tillvnr,kopior,anteckning,status,innehavarId,utlamnadTs,lostLas,lostAtgard,lostTs,lostAvId}
+  personal: [],   // {id,fname,lname,email,tel,camping,typ,aktiv}
+  händelser:[],   // {id,ts,action,nyckelId,nyckelDesc,personId,personNamn,utfordAv,anteckning,extra}
+  inventering: [], // {id,ts,camping,signerad,signeradAv,rows:[{nyckelId,status,anteckning}]}
+  campingar:[],   // [{id,name}]
+};
+
+// ── INIT ──────────────────────────────────────────────────────────────────
+async function init() {
+  var sess = sessionStorage.getItem('ccs_session') || sessionStorage.getItem('ccs_portal_user');
+  if (!sess) { window.location.replace('index.html'); return; }
+  try { _user = JSON.parse(sess); } catch(e) { window.location.replace('index.html'); return; }
+  var initials = (_user.name||'?').split(' ').map(function(n){return n[0]||'';}).join('').slice(0,2).toUpperCase();
+  document.getElementById('pb-avatar').textContent = initials;
+  document.getElementById('pb-name').textContent   = _user.name;
+
+  await loadData();
+  populateCampingDropdowns();
+  document.getElementById('camping-sub').textContent = 'Nyckelregister – ' + (_d.campingar.map(function(c){return c.name;}).join(', ')||'CCSthlm');
+  document.getElementById('logg-datum').value = todayStr();
+  setDefaultDatetime('ut-datum');
+  setDefaultDatetime('at-datum');
+
+  renderOversikt();
+  renderNycklar();
+  renderPersonal();
+  renderLogg();
+  renderRapport();
+}
+
+// ── DATA ──────────────────────────────────────────────────────────────────
+async function loadData() {
+  var token = localStorage.getItem('gh_token')||'';
+  if (!token) { loadFallback(); return; }
+  try {
+    // Load nyckelregister data
+    var r = await fetch('https://api.github.com/repos/'+GH_REPO+'/contents/'+DATA_PATH, {headers:{'Authorization':'token '+token}});
+    if (r.ok) {
+      var g = await r.json();
+      var b = Uint8Array.from(atob(g.content.replace(/\n/g,'')), function(c){return c.charCodeAt(0);});
+      var p = JSON.parse(new TextDecoder('utf-8').decode(b));
+      _d = Object.assign({nycklar:[],personal:[],händelser:[],inventering:[],campingar:[]}, p);
+    } else { loadFallback(); }
+    // Also try to get campings from users.json
+    var r2 = await fetch('https://api.github.com/repos/'+GH_REPO+'/contents/users/users.json', {headers:{'Authorization':'token '+token}});
+    if (r2.ok) {
+      var g2 = await r2.json();
+      var b2 = Uint8Array.from(atob(g2.content.replace(/\n/g,'')), function(c){return c.charCodeAt(0);});
+      var p2 = JSON.parse(new TextDecoder('utf-8').decode(b2));
+      if (p2.campings && p2.campings.length) _d.campingar = p2.campings.map(function(c){return {id:c.id||c.name, name:c.name};});
+    }
+  } catch(e) { loadFallback(); console.warn('loadData error', e); }
+}
+
+function loadFallback() {
+  _d = {
+    nycklar:[], personal:[], händelser:[], inventering:[],
+    campingar:[
+      {id:'c1',name:'CC Björkö Örns Camping'},
+      {id:'c2',name:'CC Östnora Camping'},
+    ],
+  };
+}
+
+async function saveData() {
+  var token = localStorage.getItem('gh_token')||'';
+  if (!token) { toast('GitHub-token saknas – data sparas inte','warn'); return; }
+  var url = 'https://api.github.com/repos/'+GH_REPO+'/contents/'+DATA_PATH;
+  try {
+    var sha = null;
+    var chk = await fetch(url,{headers:{'Authorization':'token '+token}});
+    if (chk.ok) sha = (await chk.json()).sha;
+    var content = btoa(unescape(encodeURIComponent(JSON.stringify(_d,null,2))));
+    var payload = {message:'Nyckelregister '+todayStr(), content, branch:'main'};
+    if (sha) payload.sha = sha;
+    var res = await fetch(url,{method:'PUT',headers:{'Authorization':'token '+token,'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    if (!res.ok) throw new Error((await res.json()).message||res.status);
+  } catch(e) { toast('Fel vid sparande: '+e.message,'err'); }
+}
+
+// ── CAMPING DROPDOWNS ─────────────────────────────────────────────────────
+function populateCampingDropdowns() {
+  var ids = ['global-camping','nyckel-camping-filter','rapp-camping','inv-camping'];
+  ids.forEach(function(id) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    while (el.options.length > 1) el.remove(1);
+    _d.campingar.forEach(function(c) {
+      var o = document.createElement('option'); o.value=c.id; o.textContent=c.name; el.appendChild(o);
+    });
+  });
+  var selIds = ['n-camping','p-camping'];
+  selIds.forEach(function(id) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    while (el.options.length > 1) el.remove(1);
+    _d.campingar.forEach(function(c) {
+      var o = document.createElement('option'); o.value=c.id; o.textContent=c.name; el.appendChild(o);
+    });
+  });
+}
+
+function onCampingChange() {
+  _filterCamping = document.getElementById('global-camping').value;
+  renderOversikt(); renderNycklar(); renderRapport();
+}
+
+function campingName(id) {
+  var c = _d.campingar.find(function(x){return x.id===id;});
+  return c ? c.name : id||'–';
+}
+
+// ── HJÄLP ─────────────────────────────────────────────────────────────────
+function filteredNycklar(extraFilter) {
+  return _d.nycklar.filter(function(n) {
+    if (_filterCamping && n.camping !== _filterCamping) return false;
+    if (extraFilter) return extraFilter(n);
+    return true;
+  });
+}
+
+function personNamn(id) {
+  var p = _d.personal.find(function(x){return x.id===id;});
+  return p ? p.fname+' '+p.lname : id||'–';
+}
+
+function personEmail(id) {
+  var p = _d.personal.find(function(x){return x.id===id;});
+  return p ? p.email||'' : '';
+}
+
+function nyckelDesc(id) {
+  var n = _d.nycklar.find(function(x){return x.id===id;});
+  return n ? (n.nyckelId+' – '+n.beskrivning) : id||'–';
+}
+
+function dagarsUte(ts) {
+  if (!ts) return '–';
+  var d = Math.floor((Date.now()-new Date(ts).getTime())/86400000);
+  return d+' dag'+(d!==1?'ar':'');
+}
+
+function statusBadge(s) {
+  if (s==='ute')       return '<span class="badge badge-out"><span class="badge-dot"></span>Utlämnad</span>';
+  if (s==='forlorad')  return '<span class="badge badge-lost"><span class="badge-dot"></span>Förlorad</span>';
+  return '<span class="badge badge-in"><span class="badge-dot"></span>Inne</span>';
+}
+
+// ── ÖVERSIKT ──────────────────────────────────────────────────────────────
+function renderOversikt() {
+  var all   = filteredNycklar();
+  var ute   = all.filter(function(n){return n.status==='ute';});
+  var lost  = all.filter(function(n){return n.status==='forlorad';});
+  var inne  = all.filter(function(n){return n.status==='inne';});
+  document.getElementById('sum-total').textContent = all.length;
+  document.getElementById('sum-inne').textContent  = inne.length;
+  document.getElementById('sum-ute').textContent   = ute.length;
+  document.getElementById('sum-lost').textContent  = lost.length;
+
+  var uteTbody = document.getElementById('oversikt-ute-tbody');
+  uteTbody.innerHTML = ute.length ? ute.map(function(n){
+    return '<tr><td><strong>'+n.nyckelId+'</strong></td><td>'+n.beskrivning+'</td><td>'+campingName(n.camping)+'</td>'
+      +'<td>'+personNamn(n.innehavarId)+'</td><td>'+(n.utlamnadTs?new Date(n.utlamnadTs).toLocaleDateString('sv-SE'):'–')+'</td>'
+      +'<td>'+dagarsUte(n.utlamnadTs)+'</td></tr>';
+  }).join('') : '<tr><td colspan="6"><div class="no-entries"><i class="ti ti-check"></i>Inga utlämnade nycklar</div></td></tr>';
+
+  var lostTbody = document.getElementById('oversikt-lost-tbody');
+  lostTbody.innerHTML = lost.length ? lost.map(function(n){
+    return '<tr><td><strong>'+n.nyckelId+'</strong></td><td>'+n.beskrivning+'</td><td>'+campingName(n.camping)+'</td>'
+      +'<td>'+personNamn(n.lostAvId)+'</td><td>'+(n.lostTs?new Date(n.lostTs).toLocaleDateString('sv-SE'):'–')+'</td>'
+      +'<td style="font-size:12px;color:var(--red)">'+(n.lostAtgard||'–')+'</td></tr>';
+  }).join('') : '<tr><td colspan="6"><div class="no-entries"><i class="ti ti-check"></i>Inga förlorade nycklar</div></td></tr>';
+}
+
+// ── NYCKLAR ───────────────────────────────────────────────────────────────
+function renderNycklar() {
+  var sok     = (document.getElementById('nyckel-sok').value||'').toLowerCase();
+  var typ     = document.getElementById('nyckel-typ-filter').value;
+  var status  = document.getElementById('nyckel-status-filter').value;
+  var campFil = document.getElementById('nyckel-camping-filter').value;
+
+  var list = _d.nycklar.filter(function(n) {
+    if (_filterCamping && n.camping!==_filterCamping) return false;
+    if (campFil && n.camping!==campFil) return false;
+    if (typ    && n.typ!==typ)          return false;
+    if (status && n.status!==status)    return false;
+    if (sok && !(n.nyckelId+n.beskrivning+(n.plats||'')).toLowerCase().includes(sok)) return false;
+    return true;
+  });
+
+  document.getElementById('nyckel-count').textContent = list.length;
+  var tbody = document.getElementById('nyckel-tbody');
+  if (!list.length) { tbody.innerHTML='<tr><td colspan="8"><div class="no-entries"><i class="ti ti-key"></i>Inga nycklar matchar</div></td></tr>'; return; }
+
+  tbody.innerHTML = list.map(function(n) {
+    var actions = '<div style="display:flex;gap:4px;justify-content:flex-end">'
+      +'<button class="btn-icon" data-nid="'+n.id+'" onclick="openNyckelModal(this.dataset.nid)"><i class="ti ti-pencil"></i> Redigera</button>'
+      +(n.status!=='forlorad'?'<button class="btn-icon amber" data-nid="'+n.id+'" onclick="openLostModal(this.dataset.nid)"><i class="ti ti-alert-triangle"></i> Förlorad</button>':'')
+      +'<button class="btn-icon" data-nid="'+n.id+'" onclick="sokPersonensNycklar(null,this.dataset.nid)"><i class="ti ti-search"></i></button>'
+      +'<button class="btn-icon red" data-nid="'+n.id+'" onclick="confirmDeleteNyckel(this.dataset.nid)"><i class="ti ti-trash"></i> Ta bort</button>'
+      +'</div>';
+    return '<tr>'
+      +'<td><strong>'+n.nyckelId+'</strong></td>'
+      +'<td><span class="type-chip"><i class="ti '+(n.typ==='Tagg'?'ti-bluetooth':'ti-key')+'" style="font-size:11px"></i>'+n.typ+'</span></td>'
+      +'<td>'+n.beskrivning+'<br><span style="font-size:11px;color:var(--text3)">'+(n.plats||'')+'</span></td>'
+      +'<td style="font-size:12px;color:var(--text2)">'+campingName(n.camping)+'</td>'
+      +'<td style="font-size:12px;color:var(--text3)">'+(n.plats||'–')+'</td>'
+      +'<td>'+statusBadge(n.status)+'</td>'
+      +'<td style="font-size:12px">'+(n.innehavarId&&n.status==='ute'?personNamn(n.innehavarId):'–')+'</td>'
+      +'<td class="no-print">'+actions+'</td>'
+      +'</tr>';
+  }).join('');
+}
+
+// ── NYCKEL MODAL ──────────────────────────────────────────────────────────
+function openNyckelModal(id) {
+  var n = id ? _d.nycklar.find(function(x){return x.id===id;}) : null;
+  document.getElementById('modal-nyckel-title').textContent = n ? 'Redigera nyckel – '+n.nyckelId : 'Lägg till nyckel';
+  document.getElementById('nyckel-edit-id').value  = n ? n.id : '';
+  document.getElementById('n-id').value            = n ? n.nyckelId : '';
+  document.getElementById('n-typ').value           = n ? n.typ : 'Nyckel';
+  document.getElementById('n-beskrivning').value   = n ? n.beskrivning : '';
+  document.getElementById('n-camping').value       = n ? n.camping : '';
+  document.getElementById('n-plats').value         = n ? (n.plats||'') : '';
+  document.getElementById('n-tillvnr').value       = n ? (n.tillvnr||'') : '';
+  document.getElementById('n-kopior').value        = n ? (n.kopior||1) : 1;
+  document.getElementById('n-anteckning').value    = n ? (n.anteckning||'') : '';
+  document.getElementById('n-status').value        = n ? n.status : 'inne';
+  document.getElementById('n-lost-las').value      = n ? (n.lostLas||'') : '';
+  document.getElementById('n-lost-atgard').value   = n ? (n.lostAtgard||'') : '';
+  document.getElementById('lost-section').style.display = (n && n.status==='forlorad') ? '' : 'none';
+  document.getElementById('n-status').onchange = function() {
+    document.getElementById('lost-section').style.display = this.value==='forlorad' ? '' : 'none';
+  };
+  openModal('modal-nyckel');
+}
+
+function saveNyckel() {
+  var editId  = document.getElementById('nyckel-edit-id').value;
+  var nyckelId= document.getElementById('n-id').value.trim().toUpperCase();
+  var beskr   = document.getElementById('n-beskrivning').value.trim();
+  var camping = document.getElementById('n-camping').value;
+  if (!nyckelId||!beskr||!camping) { alert('Fyll i Nyckel-ID, Beskrivning och Camping.'); return; }
+  // Check unique ID (unless editing same)
+  var dup = _d.nycklar.find(function(n){return n.nyckelId===nyckelId && n.id!==editId;});
+  if (dup) { alert('Nyckel-ID "'+nyckelId+'" används redan.'); return; }
+  var status = document.getElementById('n-status').value;
+  var obj = {
+    nyckelId, beskrivning:beskr, camping, typ:document.getElementById('n-typ').value,
+    plats:document.getElementById('n-plats').value.trim(),
+    tillvnr:document.getElementById('n-tillvnr').value.trim(),
+    kopior:parseInt(document.getElementById('n-kopior').value)||1,
+    anteckning:document.getElementById('n-anteckning').value.trim(),
+    status,
+    lostLas:status==='forlorad'?document.getElementById('n-lost-las').value.trim():'',
+    lostAtgard:status==='forlorad'?document.getElementById('n-lost-atgard').value.trim():'',
+  };
+  if (editId) {
+    var i = _d.nycklar.findIndex(function(n){return n.id===editId;});
+    if (i>=0) { var old=_d.nycklar[i]; _d.nycklar[i]=Object.assign({},old,obj); addLog('edit','Redigerade nyckel '+nyckelId,'',''); }
+  } else {
+    var newN = Object.assign({id:uid(),innehavarId:'',utlamnadTs:'',lostTs:'',lostAvId:''}, obj);
+    _d.nycklar.push(newN);
+    addLog('edit','Lade till nyckel '+nyckelId,'','');
+  }
+  closeModal('modal-nyckel');
+  renderNycklar(); renderOversikt();
+  saveData(); toast('Sparad','ok');
+}
+
+// ── UTLÄMNING / ÅTERLÄMNING ───────────────────────────────────────────────
+function populateUtlamningDropdowns() {
+  var utSel = document.getElementById('ut-nyckel');
+  var atSel = document.getElementById('at-nyckel');
+  var pSel  = document.getElementById('ut-person');
+
+  utSel.innerHTML = '<option value="">– Välj nyckel –</option>';
+  atSel.innerHTML = '<option value="">– Välj utlämnad nyckel –</option>';
+  pSel.innerHTML  = '<option value="">– Välj person –</option>';
+
+  _d.nycklar.filter(function(n){return n.status==='inne';}).forEach(function(n) {
+    var o = document.createElement('option'); o.value=n.id; o.textContent=n.nyckelId+' – '+n.beskrivning+' ('+campingName(n.camping)+')'; utSel.appendChild(o);
+  });
+  _d.nycklar.filter(function(n){return n.status==='ute';}).forEach(function(n) {
+    var o = document.createElement('option'); o.value=n.id; o.textContent=n.nyckelId+' – '+n.beskrivning+' – hos '+personNamn(n.innehavarId); atSel.appendChild(o);
+  });
+  _d.personal.filter(function(p){return p.aktiv!==false;}).forEach(function(p) {
+    var o = document.createElement('option'); o.value=p.id; o.textContent=p.fname+' '+p.lname; pSel.appendChild(o);
+  });
+}
+
+function onUtNyckelChange() {
+  var id = document.getElementById('ut-nyckel').value;
+  var el = document.getElementById('ut-nyckel-info');
+  if (!id) { el.style.display='none'; return; }
+  var n = _d.nycklar.find(function(x){return x.id===id;});
+  if (!n) { el.style.display='none'; return; }
+  el.style.display='';
+  el.innerHTML = '<strong>'+n.nyckelId+'</strong> – '+n.beskrivning+'<br>Camping: '+campingName(n.camping)+(n.plats?' · Plats: '+n.plats:'')+(n.tillvnr?' · Tillvnr: '+n.tillvnr:'');
+}
+
+function onAtNyckelChange() {
+  var id = document.getElementById('at-nyckel').value;
+  var el = document.getElementById('at-nyckel-info');
+  if (!id) { el.style.display='none'; return; }
+  var n = _d.nycklar.find(function(x){return x.id===id;});
+  if (!n) { el.style.display='none'; return; }
+  el.style.display='';
+  el.innerHTML = '<strong>'+n.nyckelId+'</strong> – '+n.beskrivning+'<br>Innehavare: <strong>'+personNamn(n.innehavarId)+'</strong> sedan '+(n.utlamnadTs?new Date(n.utlamnadTs).toLocaleString('sv-SE'):'–');
+}
+
+function doUtlamning() {
+  var nid  = document.getElementById('ut-nyckel').value;
+  var pid  = document.getElementById('ut-person').value;
+  var ts   = document.getElementById('ut-datum').value || nowISO();
+  var ant  = document.getElementById('ut-anteckning').value.trim();
+  if (!nid||!pid) { alert('Välj nyckel och mottagare.'); return; }
+  var n = _d.nycklar.find(function(x){return x.id===nid;});
+  if (!n) return;
+  n.status==='inne' || (n.status='inne'); // safety
+  n.status      = 'ute';
+  n.innehavarId = pid;
+  n.utlamnadTs  = ts;
+  addLog('ut', n.nyckelId+' lämnad ut till '+personNamn(pid), nid, pid, ant);
+  sendMail('ut', n, pid, ant);
+  document.getElementById('ut-nyckel').value='';
+  document.getElementById('ut-person').value='';
+  document.getElementById('ut-anteckning').value='';
+  document.getElementById('ut-nyckel-info').style.display='none';
+  populateUtlamningDropdowns();
+  renderOversikt(); renderNycklar(); renderRapport();
+  saveData(); toast('Utlämnad – '+personNamn(pid),'ok');
+}
+
+function doAterlämning() {
+  var nid = document.getElementById('at-nyckel').value;
+  var ts  = document.getElementById('at-datum').value || nowISO();
+  var ant = document.getElementById('at-anteckning').value.trim();
+  if (!nid) { alert('Välj nyckel.'); return; }
+  var n = _d.nycklar.find(function(x){return x.id===nid;});
+  if (!n) return;
+  var gammalPid = n.innehavarId;
+  addLog('in', n.nyckelId+' återlämnad av '+personNamn(gammalPid), nid, gammalPid, ant);
+  sendMail('in', n, gammalPid, ant);
+  n.status='inne'; n.innehavarId=''; n.utlamnadTs='';
+  document.getElementById('at-nyckel').value='';
+  document.getElementById('at-anteckning').value='';
+  document.getElementById('at-nyckel-info').style.display='none';
+  populateUtlamningDropdowns();
+  renderOversikt(); renderNycklar(); renderRapport();
+  saveData(); toast('Återlämnad – '+personNamn(gammalPid),'ok');
+}
+
+// ── E-POST ────────────────────────────────────────────────────────────────
+function sendMail(action, nyckel, personId, anteckning) {
+  if (!EJS_PUBLIC_KEY || EJS_PUBLIC_KEY==='DIN_PUBLIC_KEY') return;
+  var email = personEmail(personId);
+  if (!email) return;
+  if (typeof emailjs === 'undefined') return;
+  emailjs.init({publicKey:EJS_PUBLIC_KEY});
+  var subject = action==='ut' ? 'Nyckel utlämnad: '+nyckel.nyckelId : 'Nyckel återlämnad: '+nyckel.nyckelId;
+  var message = action==='ut'
+    ? 'Hej '+personNamn(personId)+'!\n\nNyckeln '+nyckel.nyckelId+' ('+nyckel.beskrivning+') har registrerats som utlämnad till dig.\n\nCamping: '+campingName(nyckel.camping)+(anteckning?'\nAnteckning: '+anteckning:'')+'\n\nMvh CCSthlm Nyckelregister'
+    : 'Hej '+personNamn(personId)+'!\n\nNyckeln '+nyckel.nyckelId+' ('+nyckel.beskrivning+') har registrerats som återlämnad.\n\nTack!\n\nMvh CCSthlm Nyckelregister';
+  emailjs.send(EJS_SERVICE_ID, EJS_TEMPLATE_ID, {
+    to_email: email, to_name: personNamn(personId),
+    subject, message,
+  }).catch(function(e){ console.warn('Mail error',e); });
+}
+
+// ── RAPPORT ───────────────────────────────────────────────────────────────
+function renderRapport() {
+  var campFil = document.getElementById('rapp-camping').value || _filterCamping;
+  var statusFil = document.getElementById('rapp-status').value || 'ute';
+  var list = _d.nycklar.filter(function(n) {
+    if (campFil && n.camping!==campFil) return false;
+    if (statusFil==='ute') return n.status==='ute';
+    if (statusFil==='forlorad') return n.status==='forlorad';
+    return true;
+  }).sort(function(a,b){ return a.nyckelId.localeCompare(b.nyckelId); });
+
+  var labels = {ute:'Utlämnade nycklar', forlorad:'Förlorade nycklar', alle:'Alla nycklar'};
+  document.getElementById('rapp-title').innerHTML = '<i class="ti ti-file-analytics"></i> '+labels[statusFil||'ute'];
+  document.getElementById('rapp-summary').textContent = list.length+' nyckel'+(list.length!==1?'ar':'');
+
+  var tbody = document.getElementById('rapp-tbody');
+  if (!list.length) { tbody.innerHTML='<tr><td colspan="8"><div class="no-entries"><i class="ti ti-check"></i>Inga nycklar matchar</div></td></tr>'; return; }
+  tbody.innerHTML = list.map(function(n) {
+    return '<tr>'
+      +'<td><strong>'+n.nyckelId+'</strong></td>'
+      +'<td>'+n.beskrivning+'</td>'
+      +'<td>'+campingName(n.camping)+'</td>'
+      +'<td>'+statusBadge(n.status)+'</td>'
+      +'<td>'+(n.innehavarId&&n.status==='ute'?personNamn(n.innehavarId):'–')+'</td>'
+      +'<td>'+(n.utlamnadTs?new Date(n.utlamnadTs).toLocaleDateString('sv-SE'):'–')+'</td>'
+      +'<td>'+dagarsUte(n.utlamnadTs)+'</td>'
+      +'<td style="font-size:11px;color:var(--text3)">'+(n.innehavarId&&n.status==='ute'?personEmail(n.innehavarId):'–')+'</td>'
+      +'</tr>';
+  }).join('');
+}
+
+function exportRapportExcel() {
+  try {
+    if (!window.XLSX) { toast('Excel laddas','warn'); return; }
+    var campFil   = document.getElementById('rapp-camping').value || _filterCamping;
+    var statusFil = document.getElementById('rapp-status').value || 'ute';
+    var list = _d.nycklar.filter(function(n) {
+      if (campFil && n.camping!==campFil) return false;
+      if (statusFil==='ute') return n.status==='ute';
+      if (statusFil==='forlorad') return n.status==='forlorad';
+      return true;
+    });
+    var wb = XLSX.utils.book_new();
+    var labels={ute:'Utlämnade',forlorad:'Förlorade',alle:'Alla'};
+    var data = [
+      ['NYCKELREGISTER – '+labels[statusFil||'ute'].toUpperCase()+' – '+new Date().toLocaleDateString('sv-SE')],[],
+      ['Nyckel-ID','Typ','Beskrivning','Camping','Plats','Status','Innehavare','Utlämnad','Dagar ute','E-post innehavare'],
+    ];
+    list.forEach(function(n){
+      var dagar = n.utlamnadTs ? Math.floor((Date.now()-new Date(n.utlamnadTs).getTime())/86400000) : '';
+      data.push([n.nyckelId,n.typ,n.beskrivning,campingName(n.camping),n.plats||'',n.status,
+        n.innehavarId&&n.status==='ute'?personNamn(n.innehavarId):'',
+        n.utlamnadTs?new Date(n.utlamnadTs).toLocaleDateString('sv-SE'):'', dagar,
+        n.innehavarId&&n.status==='ute'?personEmail(n.innehavarId):'']);
+    });
+    var ws = XLSX.utils.aoa_to_sheet(data);
+    ws['!cols']=[{wch:12},{wch:8},{wch:28},{wch:24},{wch:16},{wch:12},{wch:24},{wch:14},{wch:10},{wch:28}];
+    XLSX.utils.book_append_sheet(wb,ws,'Rapport');
+    XLSX.writeFile(wb,'Nyckelregister_'+statusFil+'_'+todayStr()+'.xlsx');
+    toast('Excel exporterad','ok');
+  } catch(e) { toast('Export misslyckades: '+e.message,'err'); }
+}
+
+function exportExcel() {
+  try {
+    if (!window.XLSX) { toast('Excel laddas','warn'); return; }
+    var wb = XLSX.utils.book_new();
+    // Sheet 1: Nycklar
+    var ndata = [['Nyckel-ID','Typ','Beskrivning','Camping','Plats','Tillvnr','Kopior','Status','Innehavare','Utlämnad','Anteckning']];
+    _d.nycklar.forEach(function(n){
+      ndata.push([n.nyckelId,n.typ,n.beskrivning,campingName(n.camping),n.plats||'',n.tillvnr||'',n.kopior||1,n.status,
+        n.innehavarId&&n.status==='ute'?personNamn(n.innehavarId):'',
+        n.utlamnadTs?new Date(n.utlamnadTs).toLocaleDateString('sv-SE'):'',n.anteckning||'']);
+    });
+    var ws1=XLSX.utils.aoa_to_sheet(ndata); ws1['!cols']=[{wch:12},{wch:8},{wch:28},{wch:24},{wch:16},{wch:14},{wch:8},{wch:10},{wch:24},{wch:14},{wch:30}];
+    XLSX.utils.book_append_sheet(wb,ws1,'Nycklar');
+    // Sheet 2: Logg
+    var ldata = [['Tidpunkt','Händelse','Nyckel','Person','Utförd av','Anteckning']];
+    _d.händelser.slice().reverse().forEach(function(h){
+      ldata.push([new Date(h.ts).toLocaleString('sv-SE'),h.action,h.nyckelId||'',h.personNamn||'',h.utfordAv||'',h.anteckning||'']);
+    });
+    var ws2=XLSX.utils.aoa_to_sheet(ldata); ws2['!cols']=[{wch:18},{wch:16},{wch:12},{wch:24},{wch:20},{wch:30}];
+    XLSX.utils.book_append_sheet(wb,ws2,'Logg');
+    XLSX.writeFile(wb,'Nyckelregister_komplett_'+todayStr()+'.xlsx');
+    toast('Excel exporterad','ok');
+  } catch(e) { toast('Export misslyckades','err'); }
+}
+
+// ── INVENTERING ───────────────────────────────────────────────────────────
+var _invRows = [];
+
+function startInventering() {
+  var camping = document.getElementById('inv-camping').value;
+  var nycklar = _d.nycklar.filter(function(n){ return !camping || n.camping===camping; });
+  if (!nycklar.length) { toast('Inga nycklar att inventera','warn'); return; }
+  _invRows = nycklar.map(function(n){
+    return {nyckelId:n.id, nyckelText:n.nyckelId+' – '+n.beskrivning, camping:n.camping, status:'', anteckning:''};
+  });
+  document.getElementById('btn-sign-inv').style.display='';
+  document.getElementById('inv-period').textContent = new Date().toLocaleDateString('sv-SE')+' – '+( camping?campingName(camping):'Alla campingar');
+  renderInventeringBody();
+}
+
+function renderInventering() {
+  if (!_invRows.length) {
+    document.getElementById('inv-body').innerHTML='<div class="no-entries" style="padding:40px"><i class="ti ti-clipboard-check" style="font-size:32px;display:block;margin-bottom:10px"></i>Klicka "Starta ny inventering" för att börja</div>';
+    return;
+  }
+  renderInventeringBody();
+}
+
+function renderInventeringBody() {
+  var kvar = _invRows.filter(function(r){return !r.status;}).length;
+  var body = '<div style="padding:10px 16px;font-size:12px;color:var(--text3);border-bottom:1px solid var(--border)">'
+    +(kvar>0?kvar+' nycklar återstår att markera':'Alla nycklar markerade ✓')+'</div>'
+    +'<div>';
+  _invRows.forEach(function(r,i) {
+    var cls = r.status==='ok'?'inv-done':r.status==='saknas'?'inv-missing':'';
+    body += '<div class="inv-row '+cls+'" id="inv-row-'+i+'">'
+      +'<div style="flex:1"><div style="font-weight:500;font-size:13px">'+r.nyckelText+'</div>'
+      +'<div style="font-size:11px;color:var(--text3)">'+campingName(r.camping)+'</div></div>'
+      +'<select style="padding:6px 10px;border:1px solid var(--border2);border-radius:var(--radius);font-size:12px;font-family:inherit" data-idx="'+i+'" onchange="invSetStatus(this)">'
+      +'<option value="">– Markera –</option>'
+      +'<option value="ok"'+(r.status==='ok'?' selected':'')+'>✓ Finns</option>'
+      +'<option value="saknas"'+(r.status==='saknas'?' selected':'')+'>✗ Saknas</option>'
+      +'<option value="skada"'+(r.status==='skada'?' selected':'')+'>⚠ Skadad</option>'
+      +'</select>'
+      +'<input type="text" placeholder="Not…" value="'+(r.anteckning||'')+'" style="padding:6px 10px;border:1px solid var(--border2);border-radius:var(--radius);font-size:12px;width:140px;font-family:inherit" data-idx="'+i+'" oninput="invSetNote(this)">'
+      +'</div>';
+  });
+  body += '</div>';
+  document.getElementById('inv-body').innerHTML = body;
+}
+
+function invSetStatus(sel) {
+  _invRows[parseInt(sel.dataset.idx)].status = sel.value;
+  renderInventeringBody();
+}
+function invSetNote(inp) {
+  _invRows[parseInt(inp.dataset.idx)].anteckning = inp.value;
+}
+
+function signInventering() {
+  if (_invRows.some(function(r){return !r.status;})) { if (!confirm('Det finns ej markerade nycklar. Signera ändå?')) return; }
+  var inv = {
+    id:uid(), ts:nowISO(), camping:document.getElementById('inv-camping').value,
+    signeradAv:_user.name, signerad:true,
+    rows:_invRows.slice(),
+  };
+  _d.inventering.push(inv);
+  addLog('inv','Inventering signerad av '+_user.name+' – '+_invRows.length+' nycklar kontrollerade','','','');
+  // Mark lost ones
+  _invRows.filter(function(r){return r.status==='saknas';}).forEach(function(r){
+    var n=_d.nycklar.find(function(x){return x.id===r.nyckelId;});
+    if (n&&n.status!=='forlorad') { n.status='forlorad'; n.lostTs=nowISO(); n.lostAvId=''; addLog('lost','Nyckel '+n.nyckelId+' markerad förlorad vid inventering',n.id,'',''); }
+  });
+  _invRows=[];
+  document.getElementById('btn-sign-inv').style.display='none';
+  renderInventeringBody();
+  renderOversikt(); renderNycklar();
+  saveData(); toast('Inventering signerad','ok');
+}
+
+// ── PERSONAL ──────────────────────────────────────────────────────────────
+function renderPersonal() {
+  var sok = (document.getElementById('pers-sok').value||'').toLowerCase();
+  var list = _d.personal.filter(function(p){
+    return !sok || (p.fname+' '+p.lname+' '+(p.email||'')).toLowerCase().includes(sok);
+  });
+  var tbody = document.getElementById('personal-tbody');
+  if (!list.length) { tbody.innerHTML='<tr><td colspan="7"><div class="no-entries"><i class="ti ti-user-x"></i>Inga personer i registret</div></td></tr>'; return; }
+  tbody.innerHTML = list.map(function(p) {
+    var aktiv = p.aktiv!==false ? '<span class="badge badge-in">Aktiv</span>' : '<span class="badge badge-lost">Inaktiv</span>';
+    // How many keys does person have?
+    var harNycklar = _d.nycklar.filter(function(n){return n.status==='ute'&&n.innehavarId===p.id;}).length;
+    return '<tr>'
+      +'<td style="font-weight:500">'+p.fname+' '+p.lname+(harNycklar>0?'<span class="badge badge-out" style="margin-left:6px">'+harNycklar+' nyckel'+(harNycklar!==1?'ar':'')+'</span>':'')+'</td>'
+      +'<td style="font-size:12px">'+(p.email||'–')+'</td>'
+      +'<td style="font-size:12px">'+(p.tel||'–')+'</td>'
+      +'<td style="font-size:12px;color:var(--text2)">'+campingName(p.camping)+'</td>'
+      +'<td style="font-size:12px;color:var(--text2)">'+(p.typ||'–')+'</td>'
+      +'<td>'+aktiv+'</td>'
+      +'<td class="no-print"><div style="display:flex;gap:4px;justify-content:flex-end">'
+      +'<button class="btn-icon" data-pid="'+p.id+'" onclick="sokPersonensNycklar(this.dataset.pid,null)"><i class="ti ti-key"></i> Nycklar</button>'
+      +'<button class="btn-icon" data-pid="'+p.id+'" onclick="openPersonModal(this.dataset.pid)"><i class="ti ti-pencil"></i> Redigera</button>'
+      +'<button class="btn-icon red" data-pid="'+p.id+'" data-pname="'+p.fname+' '+p.lname+'" onclick="confirmDeletePerson(this.dataset.pid,this.dataset.pname)"><i class="ti ti-trash"></i> Ta bort</button>'
+      +'</div></td>'
+      +'</tr>';
+  }).join('');
+}
+
+function openPersonModal(pid) {
+  var p = pid ? _d.personal.find(function(x){return x.id===pid;}) : null;
+  document.getElementById('modal-person-title').textContent = p ? 'Redigera – '+p.fname+' '+p.lname : 'Lägg till person';
+  document.getElementById('person-edit-id').value = p ? p.id : '';
+  document.getElementById('p-fname').value  = p ? p.fname  : '';
+  document.getElementById('p-lname').value  = p ? p.lname  : '';
+  document.getElementById('p-email').value  = p ? (p.email||'') : '';
+  document.getElementById('p-tel').value    = p ? (p.tel||'')   : '';
+  document.getElementById('p-camping').value= p ? (p.camping||'') : '';
+  document.getElementById('p-typ').value    = p ? (p.typ||'Anställd') : 'Anställd';
+  document.getElementById('p-aktiv').value  = p && p.aktiv===false ? 'false' : 'true';
+  openModal('modal-person');
+}
+
+function savePerson() {
+  var fname = document.getElementById('p-fname').value.trim();
+  var lname = document.getElementById('p-lname').value.trim();
+  if (!fname||!lname) { alert('Ange för- och efternamn.'); return; }
+  var obj = {
+    fname, lname,
+    email:   document.getElementById('p-email').value.trim(),
+    tel:     document.getElementById('p-tel').value.trim(),
+    camping: document.getElementById('p-camping').value,
+    typ:     document.getElementById('p-typ').value,
+    aktiv:   document.getElementById('p-aktiv').value==='true',
+  };
+  var editId = document.getElementById('person-edit-id').value;
+  if (editId) {
+    var i=_d.personal.findIndex(function(p){return p.id===editId;});
+    if (i>=0) _d.personal[i]=Object.assign({},_d.personal[i],obj);
+  } else {
+    _d.personal.push(Object.assign({id:uid()},obj));
+  }
+  closeModal('modal-person');
+  renderPersonal(); populateUtlamningDropdowns();
+  saveData(); toast('Sparad','ok');
+}
+
+// ── SÖK ───────────────────────────────────────────────────────────────────
+function sokPersonensNycklar(personId, nyckelId) {
+  var title, body;
+  if (personId) {
+    var p = _d.personal.find(function(x){return x.id===personId;});
+    if (!p) return;
+    var nycklar = _d.nycklar.filter(function(n){return n.status==='ute'&&n.innehavarId===personId;});
+    var hist    = _d.händelser.filter(function(h){return h.personId===personId;}).slice(-10).reverse();
+    title = 'Nycklar – '+p.fname+' '+p.lname;
+    body  = '<div class="form-section-title">Utlämnade just nu ('+nycklar.length+')</div>';
+    body += nycklar.length ? nycklar.map(function(n){
+      return '<div style="padding:8px 10px;background:var(--amber-bg);border-radius:var(--radius);margin-bottom:6px;font-size:13px"><strong>'+n.nyckelId+'</strong> – '+n.beskrivning+'<br><span style="font-size:11px;color:var(--text3)">Sedan '+(n.utlamnadTs?new Date(n.utlamnadTs).toLocaleDateString('sv-SE'):'–')+'</span></div>';
+    }).join('') : '<p style="color:var(--text3);font-size:13px">Inga nycklar utlämnade just nu.</p>';
+    body += '<div class="form-section-title" style="margin-top:14px">Historik (senaste 10)</div>';
+    body += hist.map(function(h){
+      return '<div class="log-entry log-'+(h.action==='ut'?'ut':'in')+'"><div>'+h.action.toUpperCase()+': '+h.nyckelId+'</div><div class="log-meta">'+new Date(h.ts).toLocaleString('sv-SE')+'</div></div>';
+    }).join('') || '<p style="color:var(--text3);font-size:13px">Ingen historik.</p>';
+  } else if (nyckelId) {
+    var n = _d.nycklar.find(function(x){return x.id===nyckelId;});
+    if (!n) return;
+    var hist2 = _d.händelser.filter(function(h){return h.nyckelDbId===nyckelId;}).slice(-20).reverse();
+    title = 'Historik – '+n.nyckelId;
+    body  = '<div class="form-section-title">Nyckelinfo</div>';
+    body += '<div style="font-size:13px;margin-bottom:12px"><strong>'+n.nyckelId+'</strong> – '+n.beskrivning+'<br>'+statusBadge(n.status)+(n.innehavarI
