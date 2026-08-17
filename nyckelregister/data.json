@@ -1,1 +1,48 @@
-
+{
+  "nycklar": [
+    {
+      "id": "msxnexm3plrgy",
+      "innehavarId": "",
+      "utlamnadTs": "",
+      "lostTs": "",
+      "lostAvId": "",
+      "nyckelId": "E11",
+      "beskrivning": "Huvudnyckel",
+      "camping": "c2",
+      "typ": "Nyckel",
+      "plats": "",
+      "tillvnr": "E111",
+      "kopior": 1,
+      "anteckning": "",
+      "status": "inne",
+      "lostLas": "",
+      "lostAtgard": ""
+    }
+  ],
+  "personal": [],
+  "händelser": [
+    {
+      "id": "msxnexm3k5fx4",
+      "ts": "2026-08-17T19:50:27.243Z",
+      "action": "edit",
+      "detail": "Lade till nyckel E11",
+      "nyckelDbId": "",
+      "nyckelId": "",
+      "personId": "",
+      "personNamn": "",
+      "utfordAv": "Testanvändare",
+      "anteckning": ""
+    }
+  ],
+  "inventering": [],
+  "campingar": [
+    {
+      "id": "c1",
+      "name": "CC Björkö Örns Camping"
+    },
+    {
+      "id": "c2",
+      "name": "CC Östnora Camping"
+    }
+  ]
+}
