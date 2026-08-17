@@ -35,7 +35,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
 @media(max-width:480px){.desktop-only{display:none!important;}}
 
 /* LAYOUT */
-.page-wrap{max-width:1100px;margin:0 auto;padding:20px 16px 60px;}
+.page-wrap{max-width:1100px;margin:0 auto;padding:20px 16px 60px;overflow:hidden;}
 
 /* TABS */
 .tab-bar{display:flex;gap:4px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:5px;margin-bottom:20px;flex-wrap:wrap;}
@@ -209,7 +209,7 @@ tr:hover td{background:rgba(59,109,17,.03);}
   </div>
 
   <!-- NYCKLAR -->
-  <div id="view-nycklar" style="display:none">
+  <div id="view-nycklar" style="display:none;min-width:0;overflow:hidden">
     <div class="filter-row">
       <div class="search-wrap"><i class="ti ti-search"></i><input type="search" id="nyckel-sok" placeholder="Sök ID, beskrivning, plats…" oninput="renderNycklar()"></div>
       <select id="nyckel-camping-filter" onchange="renderNycklar()"><option value="">Alla campingar</option></select>
@@ -286,7 +286,7 @@ tr:hover td{background:rgba(59,109,17,.03);}
   </div>
 
   <!-- RAPPORT -->
-  <div id="view-rapport" style="display:none">
+  <div id="view-rapport" style="display:none;min-width:0;overflow:hidden">
     <div class="filter-row">
       <select id="rapp-camping" onchange="renderRapport()"><option value="">Alla campingar</option></select>
       <select id="rapp-status" onchange="renderRapport()">
@@ -309,7 +309,7 @@ tr:hover td{background:rgba(59,109,17,.03);}
   </div>
 
   <!-- INVENTERING -->
-  <div id="view-inventering" style="display:none">
+  <div id="view-inventering" style="display:none;min-width:0;overflow:hidden">
     <div class="card">
       <div class="card-header">
         <span class="card-title"><i class="ti ti-clipboard-check"></i> Inventering – <span id="inv-period">–</span></span>
@@ -324,7 +324,7 @@ tr:hover td{background:rgba(59,109,17,.03);}
   </div>
 
   <!-- PERSONAL -->
-  <div id="view-personal" style="display:none">
+  <div id="view-personal" style="display:none;min-width:0;overflow:hidden">
     <div class="filter-row">
       <div class="search-wrap"><i class="ti ti-search"></i><input type="search" id="pers-sok" placeholder="Sök namn, e-post…" oninput="renderPersonal()"></div>
     </div>
@@ -341,7 +341,7 @@ tr:hover td{background:rgba(59,109,17,.03);}
   </div>
 
   <!-- LOGG -->
-  <div id="view-logg" style="display:none">
+  <div id="view-logg" style="display:none;min-width:0;overflow:hidden">
     <div class="filter-row">
       <input type="date" id="logg-datum">
       <select id="logg-typ">
@@ -747,7 +747,7 @@ function renderNycklar() {
     var actions = '<div style="display:flex;gap:4px;justify-content:flex-end">'
       +'<button class="btn-icon" data-nid="'+n.id+'" onclick="openNyckelModal(this.dataset.nid)"><i class="ti ti-pencil"></i> Redigera</button>'
       +(n.status!=='forlorad'?'<button class="btn-icon amber" data-nid="'+n.id+'" onclick="openLostModal(this.dataset.nid)"><i class="ti ti-alert-triangle"></i> Förlorad</button>':'')
-      +'<button class="btn-icon" data-nid="'+n.id+'" onclick="sokPersonensNycklar(null,this.dataset.nid)"><i class="ti ti-search"></i></button>'
+      +'<button class="btn-icon" data-nid="'+n.id+'" onclick="sokPersonensNycklar(null,this.dataset.nid)"><i class="ti ti-search"></i> Historik</button>'
       +'<button class="btn-icon red" data-nid="'+n.id+'" onclick="confirmDeleteNyckel(this.dataset.nid)"><i class="ti ti-trash"></i> Ta bort</button>'
       +'</div>';
     return '<tr>'
