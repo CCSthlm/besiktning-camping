@@ -530,15 +530,23 @@ var _d = {
 // ── INIT ──────────────────────────────────────────────────────────────────
 async function init() {
   var sess = sessionStorage.getItem('ccs_session') || sessionStorage.getItem('ccs_portal_user');
-  if (!sess) { window.location.replace('index.html'); return; }
-  try { _user = JSON.parse(sess); } catch(e) { window.location.replace('index.html'); return; }
+  if (sess) {
+    try { _user = JSON.parse(sess); } catch(e) { _user = null; }
+  }
+  // Fallback user if no session (direct file open / testing)
+  if (!_user || !_user.name) {
+    _user = { name: 'Testanvändare', email: '', id: 'local' };
+  }
   var initials = (_user.name||'?').split(' ').map(function(n){return n[0]||'';}).join('').slice(0,2).toUpperCase();
   document.getElementById('pb-avatar').textContent = initials;
   document.getElementById('pb-name').textContent   = _user.name;
 
   await loadData();
   populateCampingDropdowns();
-  document.getElementById('camping-sub').textContent = 'Nyckelregister – ' + (_d.campingar.map(function(c){return c.name;}).join(', ')||'CCSthlm');
+
+  var campNames = _d.campingar.map(function(c){return c.name;}).join(', ');
+  document.getElementById('camping-sub').textContent = 'Nyckelregister' + (campNames ? ' – ' + campNames : '');
+
   document.getElementById('logg-datum').value = todayStr();
   setDefaultDatetime('ut-datum');
   setDefaultDatetime('at-datum');
@@ -553,25 +561,45 @@ async function init() {
 // ── DATA ──────────────────────────────────────────────────────────────────
 async function loadData() {
   var token = localStorage.getItem('gh_token')||'';
-  if (!token) { loadFallback(); return; }
+  if (!token) {
+    loadFallback();
+    toast('GitHub-token saknas – arbetar med lokal data','warn');
+    return;
+  }
   try {
     // Load nyckelregister data
-    var r = await fetch('https://api.github.com/repos/'+GH_REPO+'/contents/'+DATA_PATH, {headers:{'Authorization':'token '+token}});
+    var r = await fetch('https://api.github.com/repos/'+GH_REPO+'/contents/'+DATA_PATH,
+      {headers:{'Authorization':'token '+token}});
     if (r.ok) {
       var g = await r.json();
       var b = Uint8Array.from(atob(g.content.replace(/\n/g,'')), function(c){return c.charCodeAt(0);});
       var p = JSON.parse(new TextDecoder('utf-8').decode(b));
       _d = Object.assign({nycklar:[],personal:[],händelser:[],inventering:[],campingar:[]}, p);
-    } else { loadFallback(); }
+    }
     // Also try to get campings from users.json
-    var r2 = await fetch('https://api.github.com/repos/'+GH_REPO+'/contents/users/users.json', {headers:{'Authorization':'token '+token}});
+    var r2 = await fetch('https://api.github.com/repos/'+GH_REPO+'/contents/users/users.json',
+      {headers:{'Authorization':'token '+token}});
     if (r2.ok) {
       var g2 = await r2.json();
       var b2 = Uint8Array.from(atob(g2.content.replace(/\n/g,'')), function(c){return c.charCodeAt(0);});
       var p2 = JSON.parse(new TextDecoder('utf-8').decode(b2));
-      if (p2.campings && p2.campings.length) _d.campingar = p2.campings.map(function(c){return {id:c.id||c.name, name:c.name};});
+      if (p2.campings && p2.campings.length) {
+        _d.campingar = p2.campings.filter(function(c){return c.active!==false;}).map(function(c){
+          return {id:c.id||c.name, name:c.name};
+        });
+      }
     }
-  } catch(e) { loadFallback(); console.warn('loadData error', e); }
+  } catch(e) {
+    console.warn('loadData error', e);
+    toast('Fel vid laddning: '+e.message,'err');
+  }
+  // Always ensure campingar has a fallback
+  if (!_d.campingar || !_d.campingar.length) {
+    _d.campingar = [
+      {id:'c1', name:'CC Björkö Örns Camping'},
+      {id:'c2', name:'CC Östnora Camping'},
+    ];
+  }
 }
 
 function loadFallback() {
