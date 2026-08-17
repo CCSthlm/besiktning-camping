@@ -1171,4 +1171,149 @@ function sokPersonensNycklar(personId, nyckelId) {
     var hist2 = _d.händelser.filter(function(h){return h.nyckelDbId===nyckelId;}).slice(-20).reverse();
     title = 'Historik – '+n.nyckelId;
     body  = '<div class="form-section-title">Nyckelinfo</div>';
-    body += '<div style="font-size:13px;margin-bottom:12px"><strong>'+n.nyckelId+'</strong> – '+n.beskrivning+'<br>'+statusBadge(n.status)+(n.innehavarI
+    body += '<div style="font-size:13px;margin-bottom:12px"><strong>'+n.nyckelId+'</strong> – '+n.beskrivning+'<br>'+statusBadge(n.status)+(n.innehavarId&&n.status==='ute'?' Hos: '+personNamn(n.innehavarId):'')+'</div>';
+    body += '<div class="form-section-title">Historik (senaste 20)</div>';
+    body += hist2.map(function(h){
+      return '<div class="log-entry log-'+(h.action==='ut'?'ut':'in')+'"><div>'+h.action.toUpperCase()+': '+h.personNamn+'</div><div class="log-meta">'+new Date(h.ts).toLocaleString('sv-SE')+(h.anteckning?' · '+h.anteckning:'')+'</div></div>';
+    }).join('') || '<p style="color:var(--text3);font-size:13px">Ingen historik.</p>';
+  }
+  document.getElementById('modal-sok-title').textContent = title;
+  document.getElementById('modal-sok-body').innerHTML = body;
+  openModal('modal-sok');
+}
+
+// ── FÖRLORAD ──────────────────────────────────────────────────────────────
+function openLostModal(nid) {
+  var n = _d.nycklar.find(function(x){return x.id===nid;});
+  if (!n) return;
+  document.getElementById('lost-nyckel-id').value = nid;
+  document.getElementById('lost-nyckel-info').innerHTML = '<strong>'+n.nyckelId+'</strong> – '+n.beskrivning+'<br>'+(n.innehavarId&&n.status==='ute'?'Senast hos: '+personNamn(n.innehavarId):'');
+  document.getElementById('lost-las').value    = n.lostLas||'';
+  document.getElementById('lost-atgard').value = n.lostAtgard||'';
+  openModal('modal-lost');
+}
+
+function saveLost() {
+  var nid = document.getElementById('lost-nyckel-id').value;
+  var las = document.getElementById('lost-las').value.trim();
+  if (!las) { alert('Ange berörda lås.'); return; }
+  var n = _d.nycklar.find(function(x){return x.id===nid;});
+  if (!n) return;
+  var gammalPid = n.innehavarId||'';
+  n.status     = 'forlorad';
+  n.lostTs     = nowISO();
+  n.lostAvId   = gammalPid;
+  n.lostLas    = las;
+  n.lostAtgard = document.getElementById('lost-atgard').value.trim();
+  addLog('lost','Nyckel '+n.nyckelId+' markerad förlorad'+(gammalPid?' – senast hos '+personNamn(gammalPid):'')+'. Lås: '+las, nid, gammalPid, n.lostAtgard);
+  closeModal('modal-lost');
+  renderNycklar(); renderOversikt();
+  saveData(); toast('Markerad som förlorad','ok');
+}
+
+// ── LOGG ──────────────────────────────────────────────────────────────────
+function addLog(action, detail, nyckelDbId, personId, anteckning) {
+  var n = nyckelDbId ? _d.nycklar.find(function(x){return x.id===nyckelDbId;}) : null;
+  _d.händelser.push({
+    id:uid(), ts:nowISO(), action, detail,
+    nyckelDbId:nyckelDbId||'',
+    nyckelId:  n ? n.nyckelId : '',
+    personId:  personId||'',
+    personNamn:personId ? personNamn(personId) : '',
+    utfordAv:  _user.name,
+    anteckning:anteckning||'',
+  });
+}
+
+function renderLogg() {
+  var datF = document.getElementById('logg-datum').value;
+  var typF = document.getElementById('logg-typ').value;
+  var sokF = (document.getElementById('logg-sok').value||'').toLowerCase();
+  var list = _d.händelser.slice().reverse().filter(function(h) {
+    if (datF && !h.ts.startsWith(datF)) return false;
+    if (typF && h.action!==typF) return false;
+    if (sokF && !(h.detail+h.nyckelId+h.personNamn).toLowerCase().includes(sokF)) return false;
+    return true;
+  });
+  var body = document.getElementById('logg-body');
+  if (!list.length) { body.innerHTML='<div class="no-entries"><i class="ti ti-history"></i>Inga loggposter</div>'; return; }
+  var icons={ut:'ti-arrow-right-circle',in:'ti-arrow-left-circle',lost:'ti-alert-triangle',edit:'ti-pencil',inv:'ti-clipboard-check'};
+  body.innerHTML = list.map(function(h) {
+    var cls='log-'+(h.action||'edit');
+    return '<div class="log-entry '+cls+'">'
+      +'<div style="display:flex;align-items:center;gap:6px"><i class="ti '+(icons[h.action]||'ti-edit')+'" style="font-size:13px"></i> '+h.detail+'</div>'
+      +(h.anteckning?'<div style="margin-top:2px;color:var(--text3);font-size:11px">'+h.anteckning+'</div>':'')
+      +'<div class="log-meta"><i class="ti ti-user" style="font-size:10px"></i> '+h.utfordAv+' &nbsp;·&nbsp; '+new Date(h.ts).toLocaleString('sv-SE')+'</div>'
+      +'</div>';
+  }).join('');
+}
+
+// ── DELETE ────────────────────────────────────────────────────────────────
+function confirmDeleteNyckel(id) {
+  var n=_d.nycklar.find(function(x){return x.id===id;});
+  if (n&&n.status==='ute') { toast('Kan ej ta bort en utlämnad nyckel','warn'); return; }
+  document.getElementById('delete-text').textContent='Ta bort nyckel "'+(n?n.nyckelId:'')+(n?' – '+n.beskrivning:'')+'"? Historiken behålls.';
+  document.getElementById('delete-confirm-btn').onclick=function(){
+    addLog('edit','Tog bort nyckel '+(n?n.nyckelId:''),id,'','');
+    _d.nycklar=_d.nycklar.filter(function(x){return x.id!==id;});
+    closeModal('modal-delete'); renderNycklar(); renderOversikt(); saveData(); toast('Borttagen','ok');
+  };
+  openModal('modal-delete');
+}
+
+function confirmDeletePerson(id, name) {
+  var harNycklar=_d.nycklar.filter(function(n){return n.status==='ute'&&n.innehavarId===id;}).length;
+  if (harNycklar>0) { toast('Kan ej ta bort – personen har utlämnade nycklar','warn'); return; }
+  document.getElementById('delete-text').textContent='Ta bort "'+name+'" från personregistret?';
+  document.getElementById('delete-confirm-btn').onclick=function(){
+    _d.personal=_d.personal.filter(function(p){return p.id!==id;});
+    closeModal('modal-delete'); renderPersonal(); populateUtlamningDropdowns(); saveData(); toast('Borttagen','ok');
+  };
+  openModal('modal-delete');
+}
+
+// ── TABS ──────────────────────────────────────────────────────────────────
+function showTab(tab) {
+  ['oversikt','nycklar','utlamning','rapport','inventering','personal','logg'].forEach(function(t){
+    document.getElementById('view-'+t).style.display = t===tab?'':'none';
+    document.getElementById('tab-'+t).classList.toggle('active',t===tab);
+  });
+  if (tab==='utlamning')   populateUtlamningDropdowns();
+  if (tab==='rapport')     renderRapport();
+  if (tab==='inventering') renderInventering();
+  if (tab==='logg')        renderLogg();
+}
+
+// ── HELPERS ───────────────────────────────────────────────────────────────
+function todayStr()  { return new Date().toISOString().slice(0,10); }
+function nowISO()    { return new Date().toISOString(); }
+function uid()       { return Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
+function setDefaultDatetime(id) {
+  var el=document.getElementById(id);
+  if(el) el.value=new Date().toISOString().slice(0,16);
+}
+function openModal(id)  { document.getElementById(id).classList.add('show'); }
+function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+document.addEventListener('click',function(e){ if(e.target.classList.contains('modal-overlay')) e.target.classList.remove('show'); });
+document.addEventListener('keydown',function(e){ if(e.key==='Escape') document.querySelectorAll('.modal-overlay.show').forEach(function(m){m.classList.remove('show');}); });
+function toast(msg,type){
+  type=type||'ok';
+  var t=document.getElementById('toast');
+  var colors={ok:'var(--green-bg)',err:'var(--red-bg)',warn:'var(--amber-bg)'};
+  var icons={ok:'ti-check',err:'ti-x',warn:'ti-alert-triangle'};
+  t.innerHTML='<i class="ti '+(icons[type]||'ti-info-circle')+'" style="font-size:14px"></i> '+msg;
+  t.style.background=colors[type]||colors.ok;
+  t.style.opacity='1'; t.style.transform='translateY(0)';
+  setTimeout(function(){ t.style.opacity='0'; t.style.transform='translateY(6px)'; },3000);
+}
+function portalLogout(){
+  sessionStorage.setItem('ccs_logged_out','1');
+  sessionStorage.removeItem('ccs_session');
+  sessionStorage.removeItem('ccs_portal_user');
+  window.location.replace('index.html');
+}
+
+init();
+</script>
+</body>
+</html>
