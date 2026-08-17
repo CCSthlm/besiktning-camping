@@ -1040,7 +1040,9 @@ function renderInventeringBody() {
     var cls = r.status==='ok'?'inv-done':r.status==='saknas'?'inv-missing':'';
     body += '<div class="inv-row '+cls+'" id="inv-row-'+i+'">'
       +'<div style="flex:1"><div style="font-weight:500;font-size:13px">'+r.nyckelText+'</div>'
-      +'<div style="font-size:11px;color:var(--text3)">'+campingName(r.camping)+'</div></div>'
+      +'<div style="font-size:11px;color:var(--text3);margin-top:2px">'+campingName(r.camping)+'</div>'
+      +'<div style="margin-top:4px">'+invStatusBadge(r)+'</div>'
+      +'</div>'
       +'<select style="padding:6px 10px;border:1px solid var(--border2);border-radius:var(--radius);font-size:12px;font-family:inherit" data-idx="'+i+'" onchange="invSetStatus(this)">'
       +'<option value="">– Markera –</option>'
       +'<option value="ok"'+(r.status==='ok'?' selected':'')+'>✓ Finns</option>'
@@ -1052,6 +1054,17 @@ function renderInventeringBody() {
   });
   body += '</div>';
   document.getElementById('inv-body').innerHTML = body;
+}
+
+function invStatusBadge(r) {
+  var n = _d.nycklar.find(function(x){return x.id===r.nyckelId;});
+  if (!n) return '';
+  if (n.status==='ute') {
+    return '<span class="badge badge-out" style="font-size:11px"><span class="badge-dot"></span>Utlämnad – '+personNamn(n.innehavarId)+'</span>';
+  } else if (n.status==='forlorad') {
+    return '<span class="badge badge-lost" style="font-size:11px"><span class="badge-dot"></span>Förlorad</span>';
+  }
+  return '<span class="badge badge-in" style="font-size:11px"><span class="badge-dot"></span>Inne</span>';
 }
 
 function invSetStatus(sel) {
