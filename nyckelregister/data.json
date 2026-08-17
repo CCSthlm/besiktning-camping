@@ -17,6 +17,24 @@
       "status": "ute",
       "lostLas": "",
       "lostAtgard": ""
+    },
+    {
+      "id": "msxokn7kk4csm",
+      "innehavarId": "",
+      "utlamnadTs": "",
+      "lostTs": "",
+      "lostAvId": "",
+      "nyckelId": "A21",
+      "beskrivning": "Larm Restaurang / Reception",
+      "camping": "c2",
+      "typ": "Tagg",
+      "plats": "",
+      "tillvnr": "",
+      "kopior": 1,
+      "anteckning": "",
+      "status": "inne",
+      "lostLas": "",
+      "lostAtgard": ""
     }
   ],
   "personal": [
@@ -63,6 +81,18 @@
       "nyckelId": "E11",
       "personId": "msxnjjrhipinb",
       "personNamn": "Massimo Johansson",
+      "utfordAv": "Massimo Johansson",
+      "anteckning": ""
+    },
+    {
+      "id": "msxokn7kim07c",
+      "ts": "2026-08-17T20:22:53.312Z",
+      "action": "edit",
+      "detail": "Lade till nyckel A21",
+      "nyckelDbId": "",
+      "nyckelId": "",
+      "personId": "",
+      "personNamn": "",
       "utfordAv": "Massimo Johansson",
       "anteckning": ""
     }
