@@ -18,10 +18,12 @@
       "adminRoles": [
         "global",
         "avvikelse-ledning",
-        "reserakning-godkannare"
+        "reserakning-godkannare",
+        "nyckel-admin"
       ],
       "godkannarcamping": "CC Björkö Örns Camping",
-      "sbaCamping": ""
+      "sbaCamping": "",
+      "nyckelCamping": ""
     },
     {
       "id": "umqbd61uqljhs",
