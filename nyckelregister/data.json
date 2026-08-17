@@ -19,7 +19,18 @@
       "lostAtgard": ""
     }
   ],
-  "personal": [],
+  "personal": [
+    {
+      "id": "msxnjjrhipinb",
+      "fname": "Massimo",
+      "lname": "Johansson",
+      "email": "massimo.johansson@cc-camping.se",
+      "tel": "0766319996",
+      "camping": "c2",
+      "typ": "Ideell",
+      "aktiv": true
+    }
+  ],
   "händelser": [
     {
       "id": "msxnexm3k5fx4",
@@ -38,11 +49,35 @@
   "campingar": [
     {
       "id": "c1",
-      "name": "CC Björkö Örns Camping"
+      "name": "Caravan Club Björkö Örns Camping"
     },
     {
       "id": "c2",
-      "name": "CC Östnora Camping"
+      "name": "Caravan Club Östnora Camping"
+    },
+    {
+      "id": "c3",
+      "name": "Caravan Club Kapellskärs Camping"
+    },
+    {
+      "id": "c4",
+      "name": "Caravan Club Mista Camping"
+    },
+    {
+      "id": "c5",
+      "name": "Caravan Club Storsveds Camping"
+    },
+    {
+      "id": "c6",
+      "name": "Caravan Club Örstigs Camping"
+    },
+    {
+      "id": "c7",
+      "name": "Gräddös Pärla Kök & Bar"
+    },
+    {
+      "id": "c8",
+      "name": "Östnora Kök & Bar"
     }
   ]
 }
