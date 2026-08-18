@@ -1,0 +1,32 @@
+{
+  "kontoVarden": {
+    "3011": 100000,
+    "4011": 10000
+  },
+  "kommentarer": {
+    "3010": "platser"
+  },
+  "paramVarden": {
+    "helarsplatser_antal": 60,
+    "helarsplatser_pris": 15000
+  },
+  "investeringar": [
+    {
+      "kb": "50",
+      "omrade": "Restaurangen",
+      "atgard": "Nytt golv på uteserveringen",
+      "y2025": 50000,
+      "y2026": 10000,
+      "y2027": 0,
+      "y2028": 0,
+      "kommentar": "Här kommer en kommentar. det rasar igen."
+    }
+  ],
+  "autosparad": "2026-08-18T20:25:44.044Z",
+  "typ": "budget",
+  "version": 1,
+  "versionKommentar": "",
+  "skickadAv": "Massimo Johansson",
+  "skickadTs": "2026-08-18T20:26:13.468Z",
+  "status": "inkickad"
+}
