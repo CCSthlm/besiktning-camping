@@ -1,0 +1,1315 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Budget – CCSthlm</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/tabler-icons.min.css">
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f5f5f3;--bg2:#ffffff;--bg3:#eeede8;--bg4:#e5e4de;
+  --text:#1a1a18;--text2:#5a5a57;--text3:#909088;
+  --accent:#3B6D11;--accent2:#27500A;--accent-glow:rgba(59,109,17,.1);
+  --blue:#1a4f7a;--blue-bg:rgba(26,79,122,.08);--blue-light:#e8f0f8;
+  --red:#A32D2D;--red-bg:#FCEBEB;--red-text:#501313;
+  --amber:#854F0B;--amber-bg:#FAEEDA;--amber-text:#412402;
+  --green-bg:#EAF3DE;--green-text:#27500A;
+  --purple:#5b21b6;--purple-bg:rgba(91,33,182,.08);
+  --border:rgba(0,0,0,.09);--border2:rgba(0,0,0,.16);
+  --radius:7px;--radius-lg:13px;--shadow:0 2px 12px rgba(0,0,0,.08);
+}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;background:var(--bg3);color:var(--text);min-height:100vh;display:grid;grid-template-rows:46px 1fr;grid-template-columns:220px 1fr;}
+
+/* TOPBAR */
+#topbar{grid-column:1/-1;grid-row:1;background:var(--bg2);border-bottom:1px solid var(--border2);display:flex;align-items:center;padding:0 20px;gap:0;z-index:100;position:sticky;top:0;}
+.tb-logo{font-size:14px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:8px;margin-right:20px;}
+.tb-logo i{color:var(--accent);font-size:18px;}
+.tb-sep{width:1px;height:22px;background:var(--border2);margin:0 12px;flex-shrink:0;}
+.tb-info{font-size:13px;color:var(--text2);flex:1;}
+.tb-year{font-size:12px;font-weight:600;padding:3px 10px;border-radius:20px;background:var(--green-bg);color:var(--green-text);}
+.tb-user{font-size:12px;color:var(--text2);display:flex;align-items:center;gap:8px;margin-left:auto;}
+.tb-avatar{width:26px;height:26px;border-radius:50%;background:var(--accent);color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+.tb-btn{display:flex;align-items:center;gap:5px;padding:5px 11px;border-radius:var(--radius);border:1px solid var(--border2);background:none;color:var(--text2);font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;margin-left:8px;text-decoration:none;}
+.tb-btn:hover{background:var(--bg3);}
+.tb-btn-danger{background:var(--red-bg);color:var(--red);border-color:rgba(163,45,45,.25);}
+
+/* SIDEBAR */
+#sidebar{grid-column:1;grid-row:2;background:var(--bg2);border-right:1px solid var(--border2);padding:16px 0;overflow-y:auto;position:sticky;top:46px;height:calc(100vh - 46px);}
+.nav-section{padding:0 10px;margin-bottom:6px;}
+.nav-label{font-size:10px;font-weight:600;color:var(--text3);padding:0 8px;margin:12px 0 4px;text-transform:uppercase;letter-spacing:.06em;}
+.nav-item{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:var(--radius);font-size:13px;color:var(--text2);cursor:pointer;border:none;background:none;width:100%;text-align:left;font-family:inherit;transition:all .12s;}
+.nav-item:hover{background:var(--bg3);color:var(--text);}
+.nav-item.active{background:var(--green-bg);color:var(--accent2);font-weight:500;}
+.nav-item i{font-size:15px;flex-shrink:0;}
+.nav-item .nav-badge{font-size:10px;font-weight:700;padding:1px 6px;border-radius:20px;background:var(--amber-bg);color:var(--amber-text);margin-left:auto;}
+.nav-divider{height:1px;background:var(--border);margin:10px 10px;}
+.nav-sub{font-size:11px;color:var(--text3);padding:3px 10px 3px 34px;}
+
+/* MAIN */
+#main{grid-column:2;grid-row:2;overflow-y:auto;display:flex;flex-direction:column;}
+
+/* PAGE HEADER */
+.page-header{padding:20px 24px 16px;border-bottom:1px solid var(--border);background:var(--bg2);display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+.page-header-left h1{font-size:18px;font-weight:600;display:flex;align-items:center;gap:8px;}
+.page-header-left .page-sub{font-size:12px;color:var(--text2);margin-top:4px;display:flex;align-items:center;gap:8px;}
+.page-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+
+/* STATUS BADGES */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap;}
+.badge-draft{background:var(--amber-bg);color:var(--amber-text);}
+.badge-sent{background:var(--blue-bg);color:var(--blue);}
+.badge-approved{background:var(--green-bg);color:var(--green-text);}
+.badge-set{background:var(--purple-bg);color:var(--purple);}
+.badge-forecast{background:rgba(163,45,45,.08);color:var(--red);}
+.dot{width:5px;height:5px;border-radius:50%;background:currentColor;}
+
+/* CONTENT AREA */
+.content{padding:20px 24px;flex:1;}
+.content.no-pad{padding:0;}
+
+/* CARDS */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow);margin-bottom:16px;}
+.card-header{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+.card-title{font-size:13px;font-weight:600;display:flex;align-items:center;gap:7px;}
+.card-body{padding:16px;}
+
+/* SUMMARY STRIP */
+.kpi-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:16px;}
+.kpi{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px 16px;}
+.kpi-val{font-size:22px;font-weight:700;font-variant-numeric:tabular-nums;}
+.kpi-lbl{font-size:11px;color:var(--text3);margin-top:3px;text-transform:uppercase;letter-spacing:.04em;}
+.kpi.green .kpi-val{color:var(--accent2);}
+.kpi.red .kpi-val{color:var(--red);}
+.kpi.blue .kpi-val{color:var(--blue);}
+.kpi.amber .kpi-val{color:var(--amber);}
+
+/* BUTTONS */
+.btn{padding:8px 16px;background:var(--bg3);color:var(--text2);border:1px solid var(--border2);border-radius:var(--radius);font-size:13px;font-weight:500;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px;transition:background .12s;}
+.btn:hover{background:var(--bg4);}
+.btn-primary{background:var(--accent);color:#fff;border-color:transparent;}
+.btn-primary:hover{background:var(--accent2);}
+.btn-blue{background:var(--blue-bg);color:var(--blue);border-color:rgba(26,79,122,.2);}
+.btn-amber{background:var(--amber-bg);color:var(--amber-text);border-color:rgba(133,79,11,.2);}
+.btn-danger{background:var(--red-bg);color:var(--red);border-color:rgba(163,45,45,.2);}
+.btn-sm{padding:5px 11px;font-size:12px;}
+.btn-icon{padding:6px 9px;}
+
+/* BUDGET TABLE */
+.budget-wrap{overflow-x:auto;}
+.btable{width:100%;border-collapse:collapse;font-size:12px;white-space:nowrap;}
+.btable th{position:sticky;top:0;background:var(--bg3);padding:8px 12px;font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--border2);text-align:left;z-index:2;}
+.btable th.num{text-align:right;}
+.btable th.sticky-col{position:sticky;left:0;z-index:3;background:var(--bg3);}
+.btable td{padding:7px 12px;border-bottom:1px solid var(--border);vertical-align:middle;}
+.btable td.num{text-align:right;font-variant-numeric:tabular-nums;}
+.btable td.sticky-col{position:sticky;left:0;z-index:1;background:var(--bg2);}
+.btable tr:hover td{background:rgba(59,109,17,.025);}
+.btable tr:hover td.sticky-col{background:var(--bg3);}
+.btable .row-section td{background:var(--bg3);font-size:10px;font-weight:700;letter-spacing:.05em;color:var(--text3);text-transform:uppercase;padding:6px 12px;border-bottom:1px solid var(--border2);}
+.btable .row-section td.sticky-col{background:var(--bg3);}
+.btable .row-subtotal td{background:rgba(26,79,122,.04);font-weight:600;border-top:1px solid var(--border2);}
+.btable .row-total td{background:var(--blue-bg);font-weight:700;border-top:1px solid rgba(26,79,122,.2);}
+.btable .row-total td.num{color:var(--blue);}
+.btable .row-result-pos td{background:var(--green-bg);font-weight:700;}
+.btable .row-result-pos td.num{color:var(--green-text);}
+.btable .row-result-neg td{background:var(--red-bg);font-weight:700;}
+.btable .row-result-neg td.num{color:var(--red);}
+.btable .row-group-sub td{background:rgba(59,109,17,.03);font-style:italic;color:var(--text2);}
+.konto-num{color:var(--text3);font-size:10px;}
+.cell-param{color:var(--blue);background:var(--blue-bg) !important;}
+.cell-empty{color:var(--text3);}
+.comment-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--amber);margin-left:4px;vertical-align:middle;}
+
+/* INPUT CELLS */
+.cell-input{width:90px;padding:4px 6px;border:1px solid var(--border2);border-radius:4px;font-size:12px;text-align:right;background:var(--bg2);color:var(--text);font-family:inherit;font-variant-numeric:tabular-nums;}
+.cell-input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-glow);}
+
+/* FORMS */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
+.form-grid.full{grid-template-columns:1fr;}
+.form-grid.trio{grid-template-columns:1fr 1fr 1fr;}
+.form-field{display:flex;flex-direction:column;gap:4px;}
+.form-field label{font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.04em;}
+.form-field input,.form-field select,.form-field textarea{padding:9px 12px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius);font-size:13px;color:var(--text);font-family:inherit;}
+.form-field input:focus,.form-field select:focus{outline:none;border-color:var(--accent);}
+.form-section-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);border-bottom:1px solid var(--border);padding-bottom:6px;margin:16px 0 12px;}
+.req{color:var(--red);}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:500;align-items:flex-start;justify-content:center;padding:40px 16px;overflow-y:auto;}
+.modal-overlay.show{display:flex;}
+.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius-lg);width:100%;max-width:560px;box-shadow:0 8px 40px rgba(0,0,0,.18);margin:auto;}
+.modal-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+.modal-title{font-size:15px;font-weight:600;}
+.modal-close{background:none;border:none;cursor:pointer;color:var(--text3);font-size:18px;}
+.modal-body{padding:18px 20px;}
+.modal-footer{padding:12px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px;}
+
+/* PARAM PANEL */
+.param-panel{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px;margin-bottom:16px;}
+.param-panel-title{font-size:13px;font-weight:600;display:flex;align-items:center;gap:7px;margin-bottom:12px;}
+.param-row{display:grid;grid-template-columns:1fr 120px 110px;gap:8px;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);}
+.param-row:last-child{border-bottom:none;}
+.param-label{font-size:12px;color:var(--text2);}
+.param-val{font-size:12px;font-weight:500;color:var(--blue);text-align:right;}
+.param-konto{font-size:11px;color:var(--text3);text-align:right;}
+.param-input-wrap input{width:100%;padding:5px 8px;border:1px solid var(--border2);border-radius:5px;font-size:12px;text-align:right;font-family:inherit;background:var(--bg3);color:var(--text);}
+.param-input-wrap input:focus{outline:none;border-color:var(--accent);}
+.param-locked{background:var(--bg3);color:var(--text3);padding:5px 8px;border-radius:5px;font-size:12px;text-align:right;border:1px solid var(--border);}
+
+/* VERSION HISTORY */
+.ver-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px;}
+.ver-icon{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:16px;}
+.ver-info{flex:1;min-width:0;}
+.ver-name{font-size:13px;font-weight:500;}
+.ver-meta{font-size:12px;color:var(--text3);margin-top:2px;}
+.ver-result{font-size:13px;font-weight:600;}
+
+/* FILTER ROW */
+.filter-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:14px;}
+.filter-row select,.filter-row input{padding:7px 11px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);font-size:13px;color:var(--text);font-family:inherit;}
+
+/* TABS */
+.tab-bar{display:flex;gap:2px;background:var(--bg3);border-radius:var(--radius-lg);padding:4px;margin-bottom:18px;width:fit-content;}
+.tab-btn{padding:7px 16px;border-radius:var(--radius);border:none;background:none;font-size:13px;color:var(--text2);cursor:pointer;font-family:inherit;}
+.tab-btn.active{background:var(--bg2);color:var(--text);font-weight:500;box-shadow:0 1px 4px rgba(0,0,0,.08);}
+
+/* INVEST TABLE */
+.invest-row input{padding:5px 8px;border:1px solid var(--border2);border-radius:5px;font-size:12px;font-family:inherit;background:var(--bg3);color:var(--text);width:100%;}
+.invest-row input.num{text-align:right;width:90px;}
+
+/* CONSOLIDATION */
+.consol-wrap{overflow-x:auto;}
+.ctable{border-collapse:collapse;font-size:11px;white-space:nowrap;}
+.ctable th{padding:7px 10px;border:1px solid var(--border2);background:var(--bg3);font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.04em;text-align:right;}
+.ctable th:first-child,.ctable th:nth-child(2){text-align:left;}
+.ctable td{padding:6px 10px;border:1px solid var(--border);text-align:right;font-variant-numeric:tabular-nums;}
+.ctable td:first-child,.ctable td:nth-child(2){text-align:left;}
+.ctable .csect td{background:var(--bg3);font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:.04em;color:var(--text3);}
+.ctable .csub td{background:rgba(26,79,122,.04);font-weight:600;}
+.ctable .ctotal td{background:var(--blue-bg);font-weight:700;color:var(--blue);}
+.ctable .cresult-pos td{background:var(--green-bg);font-weight:700;color:var(--green-text);}
+.ctable .cresult-neg td{background:var(--red-bg);font-weight:700;color:var(--red);}
+.ctable td.pos{color:var(--accent2);}
+.ctable td.neg{color:var(--red);}
+.ctable td.zero{color:var(--text3);}
+
+/* PROGNOS */
+.prognos-banner{background:var(--red-bg);border:1px solid rgba(163,45,45,.2);border-radius:var(--radius-lg);padding:12px 16px;margin-bottom:14px;display:flex;align-items:center;gap:10px;font-size:13px;color:var(--red-text);}
+
+/* TOAST */
+#toast{position:fixed;bottom:20px;right:20px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);padding:10px 16px;font-size:13px;z-index:999;box-shadow:var(--shadow);opacity:0;transform:translateY(6px);transition:all .25s;pointer-events:none;display:flex;align-items:center;gap:7px;}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  body{grid-template-columns:1fr;}
+  #sidebar{display:none;}
+  #topbar{grid-column:1;}
+  #main{grid-column:1;}
+}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div id="topbar">
+  <div class="tb-logo"><i class="ti ti-chart-bar"></i> CCSthlm Budget</div>
+  <div class="tb-sep"></div>
+  <div class="tb-info" id="tb-unit-name">–</div>
+  <span class="tb-year" id="tb-year">2026</span>
+  <div class="tb-user">
+    <div class="tb-avatar" id="tb-avatar">?</div>
+    <span id="tb-name">–</span>
+  </div>
+  <a href="index.html" class="tb-btn"><i class="ti ti-arrow-left"></i><span class="desktop-only"> Portal</span></a>
+  <button class="tb-btn tb-btn-danger" onclick="portalLogout()"><i class="ti ti-logout"></i></button>
+</div>
+
+<!-- SIDEBAR -->
+<div id="sidebar">
+  <div class="nav-section">
+    <div class="nav-label">Min budget</div>
+    <button class="nav-item active" id="nav-budget" onclick="showView('budget')"><i class="ti ti-table"></i> Budgetarbete</button>
+    <button class="nav-item" id="nav-param" onclick="showView('param')"><i class="ti ti-adjustments"></i> Parametrar</button>
+    <button class="nav-item" id="nav-invest" onclick="showView('invest')"><i class="ti ti-building-factory"></i> Investeringar</button>
+    <button class="nav-item" id="nav-versions" onclick="showView('versions')"><i class="ti ti-history"></i> Versioner</button>
+  </div>
+  <div class="nav-divider"></div>
+  <div class="nav-section" id="nav-section-ekonomi" style="display:none">
+    <div class="nav-label">Ekonomiansvarig</div>
+    <button class="nav-item" id="nav-konsolidering" onclick="showView('konsolidering')"><i class="ti ti-layout-columns"></i> Konsolidering</button>
+    <button class="nav-item" id="nav-prognos" onclick="showView('prognos')"><i class="ti ti-trending-up"></i> Prognos</button>
+    <button class="nav-item" id="nav-utfall" onclick="showView('utfall')"><i class="ti ti-arrow-bar-to-down"></i> Utfall</button>
+    <button class="nav-item" id="nav-kontoplan" onclick="showView('kontoplan')"><i class="ti ti-list-details"></i> Kontoplan</button>
+    <button class="nav-item" id="nav-param-admin" onclick="showView('param-admin')"><i class="ti ti-settings"></i> Parameteradmin</button>
+    <button class="nav-item" id="nav-enheter" onclick="showView('enheter')"><i class="ti ti-building"></i> Enheter</button>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div id="main">
+  <div id="view-content" style="flex:1;display:flex;flex-direction:column;"></div>
+</div>
+
+<!-- MODAL: KOMMENTAR -->
+<div class="modal-overlay" id="modal-comment">
+  <div class="modal" style="max-width:440px">
+    <div class="modal-header">
+      <span class="modal-title" id="modal-comment-title">Kommentar</span>
+      <button class="modal-close" onclick="closeModal('modal-comment')">&#x2715;</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-field">
+        <label>Konto</label>
+        <div id="modal-comment-konto" style="font-size:13px;color:var(--text2);padding:4px 0;"></div>
+      </div>
+      <div class="form-field" style="margin-top:10px">
+        <label>Kommentar</label>
+        <textarea id="modal-comment-text" rows="4" style="font-size:13px;padding:10px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius);font-family:inherit;resize:vertical;" placeholder="Beskriv antaganden, beräkningsgrund eller avvikelse…"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('modal-comment')">Avbryt</button>
+      <button class="btn btn-primary" onclick="saveComment()"><i class="ti ti-check"></i> Spara</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: SKICKA IN VERSION -->
+<div class="modal-overlay" id="modal-submit">
+  <div class="modal" style="max-width:440px">
+    <div class="modal-header">
+      <span class="modal-title">Skicka in budget</span>
+      <button class="modal-close" onclick="closeModal('modal-submit')">&#x2715;</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:13px;color:var(--text2);margin-bottom:14px">Budgeten låses och blir synlig för ekonomiansvarig och styrelse. Du kan fortfarande skicka in en ny reviderad version.</p>
+      <div class="form-field">
+        <label>Versionskommentar</label>
+        <textarea id="submit-comment" rows="3" placeholder="Beskriv vad som ändrats i denna version…" style="font-size:13px;padding:10px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius);font-family:inherit;"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('modal-submit')">Avbryt</button>
+      <button class="btn btn-primary" onclick="submitVersion()"><i class="ti ti-send"></i> Skicka in</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: KONTO -->
+<div class="modal-overlay" id="modal-konto">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="modal-konto-title">Konto</span>
+      <button class="modal-close" onclick="closeModal('modal-konto')">&#x2715;</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="konto-edit-id">
+      <div class="form-grid trio">
+        <div class="form-field"><label>Kontonr <span class="req">*</span></label><input type="text" id="konto-nr" placeholder="3010"></div>
+        <div class="form-field"><label>Typ <span class="req">*</span></label>
+          <select id="konto-typ">
+            <option value="intakt">Intäkt</option>
+            <option value="kostnad">Kostnad</option>
+            <option value="finans">Finansiell</option>
+            <option value="bokslut">Bokslutsdisposition</option>
+          </select>
+        </div>
+        <div class="form-field"><label>Aktiv</label>
+          <select id="konto-aktiv"><option value="true">Ja</option><option value="false">Nej</option></select>
+        </div>
+      </div>
+      <div class="form-grid full"><div class="form-field"><label>Namn <span class="req">*</span></label><input type="text" id="konto-namn" placeholder="Helårsplatser"></div></div>
+      <div class="form-grid">
+        <div class="form-field"><label>Grupp / Kategori</label><input type="text" id="konto-grupp" placeholder="Campingintäkter"></div>
+        <div class="form-field"><label>Budgeterbar</label>
+          <select id="konto-budgeterbar"><option value="true">Ja</option><option value="false">Nej</option></select>
+        </div>
+      </div>
+      <div class="form-grid">
+        <div class="form-field"><label>Från parameter</label>
+          <select id="konto-param"><option value="">– Ingen –</option></select>
+        </div>
+        <div class="form-field"><label>Kommentar</label><input type="text" id="konto-kommentar" placeholder="Frivillig notis"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('modal-konto')">Avbryt</button>
+      <button class="btn btn-primary" onclick="saveKonto()"><i class="ti ti-check"></i> Spara</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: INVESTERING RAD -->
+<div class="modal-overlay" id="modal-invest">
+  <div class="modal" style="max-width:500px">
+    <div class="modal-header">
+      <span class="modal-title" id="modal-invest-title">Investeringspost</span>
+      <button class="modal-close" onclick="closeModal('modal-invest')">&#x2715;</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="invest-edit-id">
+      <div class="form-grid">
+        <div class="form-field"><label>Område <span class="req">*</span></label><input type="text" id="inv-omrade" placeholder="Servicehus"></div>
+        <div class="form-field"><label>KB</label><input type="text" id="inv-kb" placeholder="60"></div>
+      </div>
+      <div class="form-grid full"><div class="form-field"><label>Åtgärd <span class="req">*</span></label><input type="text" id="inv-atgard" placeholder="Renovering toaletter"></div></div>
+      <div class="form-grid quad" style="grid-template-columns:1fr 1fr 1fr 1fr">
+        <div class="form-field"><label>2025</label><input type="number" id="inv-2025" placeholder="0"></div>
+        <div class="form-field"><label>2026</label><input type="number" id="inv-2026" placeholder="0"></div>
+        <div class="form-field"><label>2027</label><input type="number" id="inv-2027" placeholder="0"></div>
+        <div class="form-field"><label>2028</label><input type="number" id="inv-2028" placeholder="0"></div>
+      </div>
+      <div class="form-grid full"><div class="form-field"><label>Kommentar</label><textarea id="inv-kommentar" rows="2" style="padding:8px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius);font-size:13px;font-family:inherit;"></textarea></div></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('modal-invest')">Avbryt</button>
+      <button class="btn btn-primary" onclick="saveInvestRow()"><i class="ti ti-check"></i> Spara</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+var GH_REPO = 'CCSthlm/besiktning-camping';
+var BUDGET_BASE = 'budget';
+var BUDGET_YEAR = 2026;
+
+var _user = null;
+var _roles = [];
+var _isEkonomi = false;
+var _isStyrelse = false;
+
+var _settings = {
+  kontoplan: [],
+  parametrar: [],
+  enheter: [],
+};
+
+var _currentEnhet = null;
+var _currentDraft = {};
+var _commentKontoNr = null;
+var _autoSaveTimer = null;
+
+// ── KONTOPLAN ─────────────────────────────────────────────────────────────
+
+
+
+// ── INIT ──────────────────────────────────────────────────────────────────
+async function init() {
+  var sess = sessionStorage.getItem('ccs_session') || sessionStorage.getItem('ccs_portal_user');
+  if (sess) { try { _user = JSON.parse(sess); } catch(e) { _user = null; } }
+  if (!_user || !_user.name) { _user = {name:'Testanvändare', email:'', id:'local', adminRoles:[]}; }
+
+  _roles = _user.adminRoles || [];
+  _isEkonomi  = _roles.includes('budget-ekonomi')  || _roles.includes('budget-styrelse') || _roles.includes('global');
+  _isStyrelse = _roles.includes('budget-styrelse') || _roles.includes('global');
+
+  var initials = (_user.name||'?').split(' ').map(function(n){return n[0]||'';}).join('').slice(0,2).toUpperCase();
+  document.getElementById('tb-avatar').textContent = initials;
+  document.getElementById('tb-name').textContent   = _user.name;
+
+  if (_isEkonomi) document.getElementById('nav-section-ekonomi').style.display='';
+
+  await loadSettings();
+  if (!_settings.kontoplan || !_settings.kontoplan.length) {
+    document.getElementById('view-content').innerHTML = '<div style="padding:40px;text-align:center;color:var(--red)"><i class="ti ti-alert-triangle" style="font-size:32px;display:block;margin-bottom:10px"></i><strong>settings.json saknas</strong><p style="margin-top:8px;color:var(--text2);font-size:13px">Ladda upp <code>budget/settings/settings.json</code> till GitHub-repot för att komma igång.</p></div>';
+    return;
+  }
+
+  // Determine current enhet
+  var budgetEnhet = _user.budgetEnhet || '';
+  if (budgetEnhet) {
+    _currentEnhet = _settings.enheter.find(function(e){return e.id===budgetEnhet;});
+  }
+  if (!_currentEnhet && !_isEkonomi) {
+    _currentEnhet = _settings.enheter[0];
+  }
+  if (_currentEnhet) {
+    document.getElementById('tb-unit-name').textContent = _currentEnhet.namn;
+  } else {
+    document.getElementById('tb-unit-name').textContent = 'Alla enheter';
+  }
+
+  if (_currentEnhet) {
+    await loadDraft(_currentEnhet.id);
+  }
+
+  showView('budget');
+}
+
+// ── DATA PATHS ─────────────────────────────────────────────────────────────
+function settingsPath(file) { return BUDGET_BASE+'/settings/'+file; }
+function draftPath(enhetId)  { return BUDGET_BASE+'/'+BUDGET_YEAR+'/'+enhetId+'/draft.json'; }
+function versionPath(enhetId,v){ return BUDGET_BASE+'/'+BUDGET_YEAR+'/'+enhetId+'/v'+v+'.json'; }
+
+// ── GITHUB IO ──────────────────────────────────────────────────────────────
+async function ghGet(path) {
+  var token = localStorage.getItem('gh_token')||'';
+  if (!token) return null;
+  var r = await fetch('https://api.github.com/repos/'+GH_REPO+'/contents/'+path, {headers:{'Authorization':'token '+token}});
+  if (!r.ok) return null;
+  var g = await r.json();
+  var b = Uint8Array.from(atob(g.content.split('\n').join('')), function(c){return c.charCodeAt(0);});
+  return {data: JSON.parse(new TextDecoder('utf-8').decode(b)), sha: g.sha};
+}
+
+async function ghPut(path, data, msg) {
+  var token = localStorage.getItem('gh_token')||'';
+  if (!token) { toast('GitHub-token saknas','warn'); return false; }
+  var existing = await fetch('https://api.github.com/repos/'+GH_REPO+'/contents/'+path, {headers:{'Authorization':'token '+token}});
+  var sha = existing.ok ? (await existing.json()).sha : null;
+  var content = btoa(unescape(encodeURIComponent(JSON.stringify(data,null,2))));
+  var payload = {message:msg||'Budget update', content, branch:'main'};
+  if (sha) payload.sha = sha;
+  var r = await fetch('https://api.github.com/repos/'+GH_REPO+'/contents/'+path, {method:'PUT',headers:{'Authorization':'token '+token,'Content-Type':'application/json'},body:JSON.stringify(payload)});
+  return r.ok;
+}
+
+async function loadSettings() {
+  var r = await ghGet(settingsPath('settings.json'));
+  if (r && r.data) _settings = Object.assign({kontoplan:[],parametrar:[],enheter:[]}, r.data);
+}
+
+async function saveSettings() {
+  await ghPut(settingsPath('settings.json'), _settings, 'Inställningar uppdaterade');
+}
+
+async function loadDraft(enhetId) {
+  var r = await ghGet(draftPath(enhetId));
+  _currentDraft = r ? r.data : {kontoVarden:{}, kommentarer:{}, paramVarden:{}, investeringar:[], autosparad:null};
+  if (!_currentDraft.kontoVarden)  _currentDraft.kontoVarden = {};
+  if (!_currentDraft.kommentarer)  _currentDraft.kommentarer = {};
+  if (!_currentDraft.paramVarden)  _currentDraft.paramVarden = {};
+  if (!_currentDraft.investeringar) _currentDraft.investeringar = [];
+}
+
+async function saveDraft(silent) {
+  if (!_currentEnhet) return;
+  _currentDraft.autosparad = new Date().toISOString();
+  var ok = await ghPut(draftPath(_currentEnhet.id), _currentDraft, 'Autospar utkast '+_currentEnhet.namn);
+  if (!silent) { if (ok) toast('Autosparad','ok'); else toast('Kunde ej spara','err'); }
+  return ok;
+}
+
+function scheduleAutosave() {
+  if (_autoSaveTimer) clearTimeout(_autoSaveTimer);
+  _autoSaveTimer = setTimeout(function(){ saveDraft(true); }, 3000);
+}
+
+// ── BERÄKNA PARAMETRAR ────────────────────────────────────────────────────
+function calcParams() {
+  var result = {};
+  if (!_currentDraft || !_currentDraft.paramVarden) return result;
+  var pv = _currentDraft.paramVarden;
+  var gv = _settings.globalParamVarden || {};
+
+  _settings.parametrar.forEach(function(param) {
+    var vals = {};
+    param.fields.forEach(function(f) {
+      vals[f.id] = parseFloat(f.global ? (gv[param.id+'_'+f.id]||0) : (pv[param.id+'_'+f.id]||0)) || 0;
+    });
+    try {
+      var expr = param.formula;
+      Object.keys(vals).forEach(function(k){ expr = expr.split(k).join(String(vals[k])); });
+      // eslint-disable-next-line no-new-func
+      result[param.kontoNr] = new Function('return '+expr)();
+    } catch(e) { result[param.kontoNr] = 0; }
+  });
+  return result;
+}
+
+function getKontoVal(nr) {
+  var computed = calcParams();
+  if (computed[nr] !== undefined) return computed[nr];
+  var v = _currentDraft.kontoVarden ? _currentDraft.kontoVarden[nr] : 0;
+  return parseFloat(v)||0;
+}
+
+function isParamKonto(nr) {
+  var computed = calcParams();
+  return computed[nr] !== undefined;
+}
+
+// ── TOTALS ─────────────────────────────────────────────────────────────────
+function calcTotals() {
+  var kp = _settings.kontoplan.filter(function(k){return k.budgeterbar;});
+  var intakter = 0, kostnader = 0, finans = 0;
+  kp.forEach(function(k) {
+    var v = getKontoVal(k.nr);
+    if (k.typ==='intakt') intakter += v;
+    else if (k.typ==='kostnad') kostnader += v;
+    else if (k.typ==='finans') { if (k.nr<'8400') finans += v; else finans -= v; }
+  });
+  return {intakter, kostnader, resultat: intakter-kostnader, finans, aret: intakter-kostnader+finans};
+}
+
+// ── FORMAT ─────────────────────────────────────────────────────────────────
+function fmtKr(n) {
+  if (!n && n!==0) return '–';
+  var v = Math.round(n);
+  return v.toLocaleString('sv-SE')+' kr';
+}
+function fmtNum(n) {
+  if (!n && n!==0) return '–';
+  return Math.round(n).toLocaleString('sv-SE');
+}
+
+// ── VIEWS ──────────────────────────────────────────────────────────────────
+function showView(name) {
+  document.querySelectorAll('.nav-item').forEach(function(el){ el.classList.remove('active'); });
+  var navEl = document.getElementById('nav-'+name);
+  if (navEl) navEl.classList.add('active');
+  var vc = document.getElementById('view-content');
+  var renders = {
+    budget:        renderBudget,
+    param:         renderParam,
+    invest:        renderInvest,
+    versions:      renderVersions,
+    konsolidering: renderKonsolidering,
+    prognos:       renderPrognos,
+    utfall:        renderUtfall,
+    kontoplan:     renderKontoplan,
+    'param-admin': renderParamAdmin,
+    enheter:       renderEnheter,
+  };
+  var fn = renders[name];
+  if (fn) { vc.innerHTML=''; fn(vc); }
+}
+
+// ── VIEW: BUDGET ───────────────────────────────────────────────────────────
+function renderBudget(container) {
+  var totals = calcTotals();
+  var computed = calcParams();
+  var autosparad = _currentDraft.autosparad ? new Date(_currentDraft.autosparad).toLocaleString('sv-SE') : 'Aldrig';
+
+  var kp = _settings.kontoplan.filter(function(k){return k.budgeterbar;});
+
+  // Group by section
+  var SECTIONS = [
+    {label:'INTÄKTER', key:'intakt', grupper:[
+      {namn:'Campingintäkter', konton:['3010','3011','3012','3013','3014','3016','3017','3018','3021','3024','3029','3030']},
+      {namn:'Elintäkter', konton:['3031','3032','3033','3034','3044']},
+      {namn:'Försäljning', konton:['3157','3300','3301','3302','3303','3304','3305','3306','3308','3309','3311','3313','3316']},
+      {namn:'Aktiviteter', konton:['3401','3402','3403','3430']},
+      {namn:'Övrigt', konton:['3510','3610','3612','3691']},
+      {namn:'Summa försäljning', subtotal:true, konton:['3010','3011','3012','3013','3014','3016','3017','3018','3021','3024','3029','3030','3031','3032','3033','3034','3044','3157','3300','3301','3302','3303','3304','3305','3306','3308','3309','3311','3313','3316','3401','3402','3403','3430','3510','3610','3612','3691']},
+      {namn:'Övriga rörelseintäkter', konton:['3820','3840','3920','3990']},
+      {namn:'SUMMA RÖRELSEINTÄKTER', total:true, konton:['3010','3011','3012','3013','3014','3016','3017','3018','3021','3024','3029','3030','3031','3032','3033','3034','3044','3157','3300','3301','3302','3303','3304','3305','3306','3308','3309','3311','3313','3316','3401','3402','3403','3430','3510','3610','3612','3691','3820','3840','3920','3990']},
+    ]},
+    {label:'KOSTNADER', key:'kostnad', grupper:[
+      {namn:'Driftsmaterial', konton:['4010','4011','4015']},
+      {namn:'Varukostnader', konton:['4301','4302','4303','4304','4305','4306','4307','4308','4309','4390','4401','4402']},
+      {namn:'Övriga varukostnader', konton:['4610','4611','4612','4620','4731']},
+      {namn:'Lokalkostnader', konton:['5010','5090','5110','5140','5141','5162','5164']},
+      {namn:'Elkostnader', konton:['5120','5121']},
+      {namn:'Maskiner & Fordon', konton:['5210','5211','5212','5213','5410','5420','5520','5612','5613','5616','5619','5645']},
+      {namn:'Övriga externa kostnader', konton:['5710','5830','5890','5910','5930','5940','6040','6060','6062','6071','6072','6110','6210','6212','6230','6250','6310','6320','6370','6419','6420','6450','6513','6539','6540','6570','6590','6950','6981','6990','6992','6993']},
+      {namn:'SUMMA ÖVRIGA EXTERNA', subtotal:true, konton:['5010','5090','5110','5120','5121','5140','5141','5162','5164','5210','5211','5212','5213','5410','5420','5520','5612','5613','5616','5619','5645','5710','5830','5890','5910','5930','5940','6040','6060','6062','6071','6072','6110','6210','6212','6230','6250','6310','6320','6370','6419','6420','6450','6513','6539','6540','6570','6590','6950','6981','6990','6992','6993']},
+      {namn:'Personal', konton:['7010','7210','7240','7241','7321','7331','7332','7384','7412','7510','7530','7533','7580','7610','7631','7632']},
+      {namn:'Avskrivningar', konton:['7820','7830','7833']},
+      {namn:'SUMMA RÖRELSEKOSTNADER', total:true, konton:['4010','4011','4015','4301','4302','4303','4304','4305','4306','4307','4308','4309','4390','4401','4402','4610','4611','4612','4620','4731','5010','5090','5110','5120','5121','5140','5141','5162','5164','5210','5211','5212','5213','5410','5420','5520','5612','5613','5616','5619','5645','5710','5830','5890','5910','5930','5940','6040','6060','6062','6071','6072','6110','6210','6212','6230','6250','6310','6320','6370','6419','6420','6450','6513','6539','6540','6570','6590','6950','6981','6990','6992','6993','7010','7210','7240','7241','7321','7331','7332','7384','7412','7510','7530','7533','7580','7610','7631','7632','7820','7830','7833']},
+    ]},
+    {label:'FINANSIELLA POSTER', key:'finans', grupper:[
+      {namn:'Finansiella intäkter', konton:['8300','8310','8311','8314']},
+      {namn:'Finansiella kostnader', konton:['8400','8421','8422','8423']},
+      {namn:'SUMMA FINANSIELLA POSTER', total:true, konton:['8300','8310','8311','8314','8400','8421','8422','8423']},
+    ]},
+  ];
+
+  var kpMap = {};
+  _settings.kontoplan.forEach(function(k){ kpMap[k.nr]=k; });
+
+  function sumKonton(kontoList) {
+    return kontoList.reduce(function(s,nr){
+      var k = kpMap[nr];
+      if (!k || !k.budgeterbar) return s;
+      var v = getKontoVal(nr);
+      return s + (k.typ==='kostnad'? v : v);
+    },0);
+  }
+
+  function buildRows() {
+    var rows = '';
+    SECTIONS.forEach(function(sect) {
+      rows += '<tr class="row-section"><td class="sticky-col" colspan="4">'+sect.label+'</td></tr>';
+      sect.grupper.forEach(function(grp) {
+        if (grp.total) {
+          var s = sumKonton(grp.konton);
+          var cls = sect.key==='intakt' ? 'row-total' : (sect.key==='kostnad' ? 'row-total' : 'row-subtotal');
+          rows += '<tr class="'+cls+'"><td class="sticky-col"></td><td class="sticky-col" colspan="2" style="font-size:11px;text-transform:uppercase;letter-spacing:.04em;">'+grp.namn+'</td><td class="num">'+(s?fmtKr(s):'–')+'</td></tr>';
+          return;
+        }
+        if (grp.subtotal) {
+          var s2 = sumKonton(grp.konton);
+          rows += '<tr class="row-subtotal"><td class="sticky-col"></td><td class="sticky-col" colspan="2" style="font-style:italic">'+grp.namn+'</td><td class="num">'+(s2?fmtKr(s2):'–')+'</td></tr>';
+          return;
+        }
+        // Group header
+        if (grp.konton && grp.konton.length) {
+          var hasData = grp.konton.some(function(nr){ return kpMap[nr]&&kpMap[nr].budgeterbar; });
+          if (!hasData) return;
+          rows += '<tr><td class="sticky-col"></td><td class="sticky-col" colspan="3" style="font-size:11px;font-weight:600;color:var(--text3);padding:5px 12px;background:var(--bg3);">'+grp.namn+'</td></tr>';
+          grp.konton.forEach(function(nr) {
+            var k = kpMap[nr];
+            if (!k || !k.budgeterbar) return;
+            var v = getKontoVal(nr);
+            var isPar = isParamKonto(nr);
+            var hasComment = _currentDraft.kommentarer && _currentDraft.kommentarer[nr];
+            var cellClass = isPar ? 'num cell-param' : 'num';
+            var valStr = v ? fmtKr(v) : '<span class="cell-empty">–</span>';
+            if (isPar) valStr = fmtKr(v);
+            rows += '<tr>'
+              + '<td class="sticky-col konto-num">'+nr+'</td>'
+              + '<td class="sticky-col" style="max-width:260px">'+k.namn+(hasComment?'<span class="comment-dot" title="'+( (_currentDraft.kommentarer[nr]||'').replace(/"/g,"'"))+'"></span>':'')+'</td>'
+              + '<td><button class="btn-icon" onclick="openComment('+JSON.stringify(nr)+')" style="padding:3px 6px;font-size:11px" title="Lägg till kommentar"><i class="ti ti-message'+(hasComment?'-2':'')+'" style="font-size:12px'+(hasComment?';color:var(--amber)':'')+'"></i></button></td>'
+              + '<td class="'+cellClass+'">'+(isPar
+                ? '<span style="font-size:11px" title="Beräknat från parametrar">'+fmtKr(v)+'</span>'
+                : '<input class="cell-input" data-konto="'+nr+'" value="'+(v||'')+'" onchange="onCellChange(this)" oninput="scheduleAutosave()">'
+              )+'</td>'
+              + '</tr>';
+          });
+        }
+      });
+    });
+
+    // RÖRELSERESULTAT
+    var res = totals.intakter - totals.kostnader;
+    var resCls = res >= 0 ? 'row-result-pos' : 'row-result-neg';
+    rows += '<tr class="'+resCls+'"><td class="sticky-col"></td><td class="sticky-col" colspan="2" style="font-size:12px;text-transform:uppercase;letter-spacing:.04em;">Rörelseresultat</td><td class="num">'+fmtKr(res)+'</td></tr>';
+
+    // Finansiella
+    rows += '<tr class="row-section"><td class="sticky-col" colspan="4">FINANSIELLA POSTER</td></tr>';
+    ['8300','8310','8311','8314','8400','8421','8422','8423'].forEach(function(nr) {
+      var k = kpMap[nr]; if (!k) return;
+      var v = getKontoVal(nr);
+      rows += '<tr><td class="sticky-col konto-num">'+nr+'</td><td class="sticky-col" colspan="2">'+k.namn+'</td>'
+        +'<td class="num"><input class="cell-input" data-konto="'+nr+'" value="'+(v||'')+'" onchange="onCellChange(this)" oninput="scheduleAutosave()"></td></tr>';
+    });
+    var finSum = getKontoVal('8300')+getKontoVal('8310')+getKontoVal('8311')+getKontoVal('8314')-getKontoVal('8400')-getKontoVal('8421')-getKontoVal('8422')-getKontoVal('8423');
+    rows += '<tr class="row-subtotal"><td class="sticky-col"></td><td class="sticky-col" colspan="2" style="font-style:italic">Summa finansiella poster</td><td class="num">'+fmtKr(finSum)+'</td></tr>';
+
+    var aretsRes = res + finSum;
+    var aCls = aretsRes >= 0 ? 'row-result-pos' : 'row-result-neg';
+    rows += '<tr class="'+aCls+'"><td class="sticky-col"></td><td class="sticky-col" colspan="2" style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;">ÅRETS RESULTAT</td><td class="num">'+fmtKr(aretsRes)+'</td></tr>';
+    return rows;
+  }
+
+  container.innerHTML = `
+    <div class="page-header">
+      <div class="page-header-left">
+        <h1><i class="ti ti-table" style="font-size:18px;color:var(--accent)"></i> Budgetarbete ${BUDGET_YEAR}</h1>
+        <div class="page-sub">
+          ${_currentEnhet ? _currentEnhet.namn : '–'}
+          <span class="badge badge-draft"><span class="dot"></span> Utkast</span>
+          <span style="color:var(--text3)">Autosparad: ${autosparad}</span>
+        </div>
+      </div>
+      <div class="page-actions">
+        <button class="btn" onclick="saveDraft(false)"><i class="ti ti-device-floppy"></i> Spara</button>
+        <button class="btn" onclick="exportExcelBudget()"><i class="ti ti-download"></i> Excel</button>
+        <button class="btn btn-primary" onclick="openModal('modal-submit')"><i class="ti ti-send"></i> Skicka in version</button>
+      </div>
+    </div>
+    <div class="content no-pad">
+      <div class="kpi-strip" style="padding:16px 24px 0;gap:10px">
+        <div class="kpi green"><div class="kpi-val">${fmtNum(totals.intakter)}</div><div class="kpi-lbl">Intäkter (kr)</div></div>
+        <div class="kpi red"><div class="kpi-val">${fmtNum(totals.kostnader)}</div><div class="kpi-lbl">Kostnader (kr)</div></div>
+        <div class="kpi ${totals.resultat>=0?'green':'red'}"><div class="kpi-val">${fmtNum(totals.resultat)}</div><div class="kpi-lbl">Rörelseresultat (kr)</div></div>
+      </div>
+      <div style="padding:16px 24px 60px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;font-size:12px;color:var(--text3)">
+          <span style="display:inline-flex;align-items:center;gap:5px"><span style="display:inline-block;width:12px;height:12px;background:var(--blue-bg);border:1px solid rgba(26,79,122,.2);border-radius:3px"></span>Beräknat från parametrar</span>
+          <span>Ange belopp exkl. moms</span>
+        </div>
+        <div class="budget-wrap">
+          <table class="btable">
+            <thead><tr>
+              <th class="sticky-col" style="width:60px">Konto</th>
+              <th class="sticky-col" style="width:280px">Namn</th>
+              <th style="width:36px"></th>
+              <th class="num">Budget ${BUDGET_YEAR}</th>
+            </tr></thead>
+            <tbody>${buildRows()}</tbody>
+          </table>
+        </div>
+      </div>
+    </div>`;
+}
+
+function onCellChange(el) {
+  var nr = el.dataset.konto;
+  var v  = parseFloat(el.value.replace(/\s/g,'').replace(',','.'))||0;
+  if (!_currentDraft.kontoVarden) _currentDraft.kontoVarden = {};
+  _currentDraft.kontoVarden[nr] = v;
+  scheduleAutosave();
+}
+
+// ── VIEW: PARAMETRAR ───────────────────────────────────────────────────────
+function renderParam(container) {
+  var pv  = _currentDraft.paramVarden || {};
+  var gv  = _settings.globalParamVarden || {};
+
+  var panels = _settings.parametrar.map(function(param) {
+    var rows = param.fields.map(function(f) {
+      var key  = param.id+'_'+f.id;
+      var val  = f.global ? (gv[key]||0) : (pv[key]||0);
+      var cell = f.global
+        ? '<div class="param-locked">'+val+' <span style="font-size:10px;color:var(--text3)">(global)</span></div>'
+        : '<div class="param-input-wrap"><input type="number" data-paramkey="'+key+'" value="'+(val||'')+'" oninput="onParamChange(this)" placeholder="0"></div>';
+      return '<div class="param-row"><span class="param-label">'+f.label+'</span>'+cell+'</div>';
+    }).join('');
+
+    var computed = calcParams();
+    var result   = computed[param.kontoNr] || 0;
+    return '<div class="param-panel"><div class="param-panel-title"><i class="ti ti-adjustments" style="font-size:14px;color:var(--accent)"></i> '+param.namn+' → konto '+param.kontoNr+'</div>'+rows
+      +'<div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:8px;border-top:1px solid var(--border)">'
+      +'<span style="font-size:12px;color:var(--text2)">Beräknat värde till budget</span>'
+      +'<span style="font-size:14px;font-weight:600;color:var(--blue)">'+fmtKr(result)+'</span>'
+      +'</div></div>';
+  }).join('');
+
+  container.innerHTML = `
+    <div class="page-header">
+      <div class="page-header-left">
+        <h1><i class="ti ti-adjustments" style="font-size:18px;color:var(--accent)"></i> Parametrar</h1>
+        <div class="page-sub">${_currentEnhet ? _currentEnhet.namn : '–'} · Fyll i enhetens egna värden</div>
+      </div>
+      <div class="page-actions">
+        <button class="btn btn-primary" onclick="saveParamAndReturn()"><i class="ti ti-check"></i> Spara &amp; tillbaka</button>
+      </div>
+    </div>
+    <div class="content">${panels}</div>`;
+}
+
+function onParamChange(el) {
+  if (!_currentDraft.paramVarden) _currentDraft.paramVarden = {};
+  _currentDraft.paramVarden[el.dataset.paramkey] = parseFloat(el.value)||0;
+  scheduleAutosave();
+}
+
+async function saveParamAndReturn() {
+  await saveDraft(false);
+  showView('budget');
+}
+
+// ── VIEW: INVESTERINGAR ────────────────────────────────────────────────────
+function renderInvest(container) {
+  var inv = _currentDraft.investeringar || [];
+  var year = BUDGET_YEAR;
+  var totalYear = inv.reduce(function(s,r){return s+(parseFloat(r['y'+year])||0);},0);
+
+  var rows = inv.map(function(r,i) {
+    return '<tr>'
+      +'<td style="font-size:12px;color:var(--text2)">'+(r.kb||'–')+'</td>'
+      +'<td style="font-size:13px">'+r.omrade+'</td>'
+      +'<td style="font-size:13px">'+r.atgard+'</td>'
+      +'<td class="num">'+(r.y2025?fmtKr(r.y2025):'–')+'</td>'
+      +'<td class="num" style="font-weight:500">'+(r['y'+year]?fmtKr(r['y'+year]):'–')+'</td>'
+      +'<td class="num">'+(r.y2027?fmtKr(r.y2027):'–')+'</td>'
+      +'<td class="num">'+(r.y2028?fmtKr(r.y2028):'–')+'</td>'
+      +'<td style="font-size:12px;color:var(--text3)">'+(r.kommentar||'')+'</td>'
+      +'<td class="no-print"><div style="display:flex;gap:4px">'
+      +'<button class="btn btn-sm" data-idx="'+i+'" onclick="editInvest(parseInt(this.dataset.idx))"><i class="ti ti-pencil"></i></button>'
+      +'<button class="btn btn-sm btn-danger" data-idx="'+i+'" onclick="deleteInvest(parseInt(this.dataset.idx))"><i class="ti ti-trash"></i></button>'
+      +'</div></td>'
+      +'</tr>';
+  }).join('');
+
+  container.innerHTML = `
+    <div class="page-header">
+      <div class="page-header-left">
+        <h1><i class="ti ti-building-factory" style="font-size:18px;color:var(--accent)"></i> Investeringar ${year}</h1>
+        <div class="page-sub">${_currentEnhet ? _currentEnhet.namn : '–'} · Förs automatiskt till konto 4011</div>
+      </div>
+      <div class="page-actions">
+        <button class="btn btn-primary" onclick="openInvestModal(null)"><i class="ti ti-plus"></i> Ny investering</button>
+      </div>
+    </div>
+    <div class="content">
+      <div class="budget-wrap">
+        <table class="btable">
+          <thead><tr>
+            <th style="width:50px">KB</th><th>Område</th><th>Åtgärd</th>
+            <th class="num">2025</th><th class="num">${year}</th><th class="num">2027</th><th class="num">2028</th>
+            <th>Kommentar</th><th style="width:80px"></th>
+          </tr></thead>
+          <tbody>${rows || '<tr><td colspan="9" style="text-align:center;padding:32px;color:var(--text3)"><i class="ti ti-tool" style="font-size:24px;display:block;margin-bottom:8px"></i>Inga investeringar tillagda</td></tr>'}</tbody>
+          ${inv.length ? '<tfoot><tr class="row-total"><td colspan="3">Total investering → konto 4011</td><td class="num">–</td><td class="num">'+fmtKr(totalYear)+'</td><td class="num">–</td><td class="num">–</td><td colspan="2"></td></tr></tfoot>' : ''}
+        </table>
+      </div>
+    </div>`;
+
+  // Update konto 4011 with invest total
+  if (!_currentDraft.kontoVarden) _currentDraft.kontoVarden = {};
+  _currentDraft.kontoVarden['4011'] = totalYear;
+}
+
+function openInvestModal(idx) {
+  var r = idx !== null ? (_currentDraft.investeringar||[])[idx] : null;
+  document.getElementById('modal-invest-title').textContent = r ? 'Redigera investeringspost' : 'Ny investeringspost';
+  document.getElementById('invest-edit-id').value = idx !== null ? String(idx) : '';
+  document.getElementById('inv-omrade').value     = r ? (r.omrade||'')  : '';
+  document.getElementById('inv-kb').value         = r ? (r.kb||'')      : (_currentEnhet ? (_currentEnhet.kb||_currentEnhet.kst||'') : '');
+  document.getElementById('inv-atgard').value     = r ? (r.atgard||'')  : '';
+  document.getElementById('inv-2025').value       = r ? (r.y2025||0)    : 0;
+  document.getElementById('inv-2026').value       = r ? (r.y2026||0)    : 0;
+  document.getElementById('inv-2027').value       = r ? (r.y2027||0)    : 0;
+  document.getElementById('inv-2028').value       = r ? (r.y2028||0)    : 0;
+  document.getElementById('inv-kommentar').value  = r ? (r.kommentar||'') : '';
+  openModal('modal-invest');
+}
+
+function editInvest(idx)   { openInvestModal(idx); }
+function deleteInvest(idx) {
+  if (!confirm('Ta bort?')) return;
+  _currentDraft.investeringar.splice(idx,1);
+  saveDraft(true);
+  showView('invest');
+}
+
+function saveInvestRow() {
+  var idx = document.getElementById('invest-edit-id').value;
+  var omrade = document.getElementById('inv-omrade').value.trim();
+  var atgard = document.getElementById('inv-atgard').value.trim();
+  if (!omrade||!atgard) { alert('Fyll i Område och Åtgärd.'); return; }
+  var obj = {
+    kb:document.getElementById('inv-kb').value.trim(),
+    omrade, atgard,
+    y2025:parseFloat(document.getElementById('inv-2025').value)||0,
+    y2026:parseFloat(document.getElementById('inv-2026').value)||0,
+    y2027:parseFloat(document.getElementById('inv-2027').value)||0,
+    y2028:parseFloat(document.getElementById('inv-2028').value)||0,
+    kommentar:document.getElementById('inv-kommentar').value.trim(),
+  };
+  if (!_currentDraft.investeringar) _currentDraft.investeringar=[];
+  if (idx!=='') { _currentDraft.investeringar[parseInt(idx)] = obj; }
+  else          { _currentDraft.investeringar.push(obj); }
+  closeModal('modal-invest');
+  saveDraft(true);
+  showView('invest');
+}
+
+// ── VIEW: VERSIONER ────────────────────────────────────────────────────────
+function renderVersions(container) {
+  var draft = _currentDraft;
+  var autosparad = draft.autosparad ? new Date(draft.autosparad).toLocaleString('sv-SE') : 'Aldrig';
+
+  container.innerHTML = `
+    <div class="page-header">
+      <div class="page-header-left">
+        <h1><i class="ti ti-history" style="font-size:18px;color:var(--accent)"></i> Versionshistorik</h1>
+        <div class="page-sub">${_currentEnhet ? _currentEnhet.namn : '–'} · Budget ${BUDGET_YEAR}</div>
+      </div>
+    </div>
+    <div class="content">
+      <div style="max-width:560px;display:flex;flex-direction:column;gap:8px">
+        <div class="ver-card">
+          <div class="ver-icon" style="background:var(--amber-bg)"><i class="ti ti-pencil" style="color:var(--amber)"></i></div>
+          <div class="ver-info">
+            <div class="ver-name">Utkast (pågående) <span class="badge badge-draft" style="margin-left:6px">Autosparat</span></div>
+            <div class="ver-meta">Senast sparad: ${autosparad}</div>
+          </div>
+          <button class="btn" onclick="showView('budget')">Redigera</button>
+        </div>
+        <div style="text-align:center;color:var(--text3);font-size:13px;padding:20px">
+          <i class="ti ti-history" style="font-size:24px;display:block;margin-bottom:8px"></i>
+          Inga inskickade versioner ännu. Klicka "Skicka in version" i budgetvyn.
+        </div>
+      </div>
+    </div>`;
+}
+
+async function submitVersion() {
+  var comment = document.getElementById('submit-comment').value.trim();
+  if (!_currentEnhet) return;
+  var draft = Object.assign({}, _currentDraft, {
+    typ: 'budget',
+    version: 1,
+    versionKommentar: comment,
+    skickadAv: _user.name,
+    skickadTs: new Date().toISOString(),
+    status: 'inkickad',
+  });
+  var ok = await ghPut(versionPath(_currentEnhet.id, 1), draft, 'Budget v1 inskickad – '+_currentEnhet.namn);
+  if (ok) { closeModal('modal-submit'); toast('Budget inskickad','ok'); showView('versions'); }
+  else    { toast('Kunde ej skicka in','err'); }
+}
+
+// ── VIEW: KONSOLIDERING ───────────────────────────────────────────────────
+function renderKonsolidering(container) {
+  var ENHETER_COLS = [
+    {id:'ostnora',    label:'Östnora'},
+    {id:'orstig',     label:'Örstig'},
+    {id:'mista',      label:'Mista'},
+    {id:'storsved',   label:'Storsved'},
+    {id:'kapellskar', label:'Kapellskär'},
+    {id:'bjorko',     label:'BÖ (60+65)', merged:true, children:['bo_camp','graddos']},
+    {id:'angsudden',  label:'Ängsudden'},
+    {id:'sektionsgem',label:'Sekt.gem.'},
+  ];
+
+  // Placeholder rows for demo
+  var kpIntakt   = _settings.kontoplan.filter(function(k){return k.typ==='intakt'&&k.budgeterbar;});
+  var kpKostnad  = _settings.kontoplan.filter(function(k){return k.typ==='kostnad'&&k.budgeterbar;});
+
+  function buildColHeaders() {
+    var th = '<th class="sticky-col" style="width:50px">Konto</th><th class="sticky-col" style="width:200px">Namn</th>';
+    ENHETER_COLS.forEach(function(e){ th += '<th>'+e.label+'</th>'; });
+    th += '<th>Totalt</th>';
+    return th;
+  }
+
+  function buildConsolRows(konton, sectionLabel) {
+    var rows = '<tr class="csect"><td colspan="'+(ENHETER_COLS.length+3)+'">'+sectionLabel+'</td></tr>';
+    konton.forEach(function(k) {
+      rows += '<tr><td class="sticky-col konto-num">'+k.nr+'</td><td class="sticky-col">'+k.namn+'</td>';
+      ENHETER_COLS.forEach(function(){ rows += '<td class="zero">–</td>'; });
+      rows += '<td class="zero">–</td></tr>';
+    });
+    return rows;
+  }
+
+  container.innerHTML = `
+    <div class="page-header">
+      <div class="page-header-left">
+        <h1><i class="ti ti-layout-columns" style="font-size:18px;color:var(--blue)"></i> Konsolidering</h1>
+        <div class="page-sub">Alla kostnadställen · Budget ${BUDGET_YEAR}</div>
+      </div>
+      <div class="page-actions">
+        <select class="btn" id="consol-year"><option>2026</option></select>
+        <button class="btn btn-blue"><i class="ti ti-download"></i> Excel</button>
+      </div>
+    </div>
+    <div class="content no-pad" style="padding:0 0 40px">
+      <div class="consol-wrap" style="padding:16px 24px">
+        <p style="font-size:13px;color:var(--text2);margin-bottom:14px">Konsoliderad vy hämtar inskickade versioner från varje enhet. Ladda in data per enhet för att fylla tabellen.</p>
+        <table class="ctable">
+          <thead><tr>${buildColHeaders()}</tr></thead>
+          <tbody>
+            ${buildConsolRows(kpIntakt.slice(0,10), 'INTÄKTER – urval')}
+            <tr class="ctotal">
+              <td class="sticky-col" colspan="2">SUMMA RÖRELSEINTÄKTER</td>
+              ${ENHETER_COLS.map(function(){return '<td class="zero">–</td>';}).join('')}
+              <td class="zero">–</td>
+            </tr>
+            ${buildConsolRows(kpKostnad.slice(0,8), 'KOSTNADER – urval')}
+            <tr class="ctotal">
+              <td class="sticky-col" colspan="2">SUMMA RÖRELSEKOSTNADER</td>
+              ${ENHETER_COLS.map(function(){return '<td class="zero">–</td>';}).join('')}
+              <td class="zero">–</td>
+            </tr>
+            <tr class="cresult-pos">
+              <td class="sticky-col" colspan="2">RÖRELSERESULTAT</td>
+              ${ENHETER_COLS.map(function(){return '<td>–</td>';}).join('')}
+              <td>–</td>
+            </tr>
+          </tbody>
+        </table>
+        <p style="font-size:12px;color:var(--text3);margin-top:12px"><i class="ti ti-info-circle"></i> Inskickade budgetar från campingarna laddas automatiskt när de skickats in.</p>
+      </div>
+    </div>`;
+}
+
+// ── VIEW: PROGNOS ──────────────────────────────────────────────────────────
+function renderPrognos(container) {
+  container.innerHTML = `
+    <div class="page-header">
+      <div class="page-header-left">
+        <h1><i class="ti ti-trending-up" style="font-size:18px;color:var(--red)"></i> Prognos ${BUDGET_YEAR}</h1>
+        <div class="page-sub">Separat prognos utan att ändra fastställd budget</div>
+      </div>
+      <div class="page-actions">
+        <button class="btn btn-primary"><i class="ti ti-plus"></i> Ny prognos</button>
+      </div>
+    </div>
+    <div class="content">
+      <div class="prognos-banner"><i class="ti ti-info-circle"></i> Prognosen är en ny körning på årsutfallet baserat på kända siffror och förväntningar. Den påverkar inte den fastställda budgeten.</div>
+      <div style="text-align:center;padding:40px;color:var(--text3)">
+        <i class="ti ti-trending-up" style="font-size:36px;display:block;margin-bottom:10px"></i>
+        Ingen prognos skapad ännu för ${BUDGET_YEAR}.
+      </div>
+    </div>`;
+}
+
+// ── VIEW: UTFALL ───────────────────────────────────────────────────────────
+function renderUtfall(container) {
+  container.innerHTML = `
+    <div class="page-header">
+      <div class="page-header-left">
+        <h1><i class="ti ti-arrow-bar-to-down" style="font-size:18px;color:var(--blue)"></i> Utfall</h1>
+        <div class="page-sub">Mata in faktiska siffror per konto</div>
+      </div>
+    </div>
+    <div class="content">
+      <div class="filter-row">
+        <select id="utfall-enhet">${_settings.enheter.map(function(e){return '<option value="'+e.id+'">'+e.namn+'</option>';}).join('')}</select>
+        <select id="utfall-period">
+          <option>t.o.m. januari</option><option>t.o.m. februari</option>
+          <option>t.o.m. mars</option><option>t.o.m. april</option>
+          <option>t.o.m. maj</option><option>t.o.m. juni</option>
+          <option>t.o.m. juli</option><option>t.o.m. augusti</option>
+          <option>t.o.m. september</option><option>t.o.m. oktober</option>
+          <option>t.o.m. november</option><option>t.o.m. december</option>
+        </select>
+        <button class="btn btn-primary" style="margin-left:auto"><i class="ti ti-device-floppy"></i> Spara utfall</button>
+      </div>
+      <div class="budget-wrap">
+        <table class="btable">
+          <thead><tr>
+            <th class="sticky-col" style="width:60px">Konto</th>
+            <th class="sticky-col">Namn</th>
+            <th class="num">Budget ${BUDGET_YEAR}</th>
+            <th class="num">Utfall</th>
+            <th class="num">Avvikelse kr</th>
+            <th class="num">Avvikelse %</th>
+          </tr></thead>
+          <tbody>
+            <tr class="row-section"><td class="sticky-col" colspan="6">INTÄKTER</td></tr>
+            ${_settings.kontoplan.filter(function(k){return k.typ==='intakt'&&k.budgeterbar;}).slice(0,6).map(function(k){
+              return '<tr><td class="sticky-col konto-num">'+k.nr+'</td><td class="sticky-col">'+k.namn+'</td>'
+                +'<td class="num cell-empty">–</td>'
+                +'<td class="num"><input class="cell-input" placeholder="0"></td>'
+                +'<td class="num cell-empty">–</td>'
+                +'<td class="num cell-empty">–</td></tr>';
+            }).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>`;
+}
+
+// ── VIEW: KONTOPLAN ────────────────────────────────────────────────────────
+function renderKontoplan(container) {
+  var kp = _settings.kontoplan;
+  var tbody = kp.map(function(k) {
+    var typBadge = k.typ==='intakt'
+      ? '<span class="badge badge-approved">Intäkt</span>'
+      : k.typ==='kostnad'
+      ? '<span class="badge badge-sent">Kostnad</span>'
+      : '<span class="badge" style="background:var(--bg3);color:var(--text3)">'+k.typ+'</span>';
+    return '<tr>'
+      +'<td class="sticky-col konto-num">'+k.nr+'</td>'
+      +'<td class="sticky-col">'+k.namn+'</td>'
+      +'<td style="font-size:12px;color:var(--text2)">'+( k.grupp||'–')+'</td>'
+      +'<td>'+typBadge+'</td>'
+      +'<td style="text-align:center">'+(k.budgeterbar?'<i class="ti ti-check" style="color:var(--accent)"></i>':'<i class="ti ti-minus" style="color:var(--text3)"></i>')+'</td>'
+      +'<td style="text-align:center">'+(k.param?'<i class="ti ti-link" style="color:var(--blue)"></i>':'')+'</td>'
+      +'<td class="no-print" style="text-align:right">'
+      +'<button class="btn btn-sm" data-knr="'+k.nr+'" onclick="openKontoModal(this.dataset.knr)"><i class="ti ti-pencil"></i> Redigera</button>'
+      +'</td>'
+      +'</tr>';
+  }).join('');
+
+  container.innerHTML = `
+    <div class="page-header">
+      <div class="page-header-left">
+        <h1><i class="ti ti-list-details" style="font-size:18px;color:var(--blue)"></i> Kontoplan</h1>
+        <div class="page-sub">${kp.length} konton · Gäller alla enheter</div>
+      </div>
+      <div class="page-actions">
+        <button class="btn btn-primary" onclick="openKontoModal(null)"><i class="ti ti-plus"></i> Nytt konto</button>
+      </div>
+    </div>
+    <div class="content no-pad" style="padding-bottom:40px">
+      <div class="budget-wrap" style="padding:0 24px">
+        <table class="btable" style="margin-top:16px">
+          <thead><tr>
+            <th class="sticky-col" style="width:60px">Konto</th>
+            <th class="sticky-col">Namn</th>
+            <th>Grupp</th><th>Typ</th>
+            <th style="text-align:center">Budgeterbar</th>
+            <th style="text-align:center">Från param.</th>
+            <th class="no-print" style="text-align:right">Åtgärder</th>
+          </tr></thead>
+          <tbody>${tbody}</tbody>
+        </table>
+      </div>
+    </div>`;
+}
+
+function openKontoModal(nr) {
+  var k = nr ? _settings.kontoplan.find(function(x){return x.nr===nr;}) : null;
+  document.getElementById('modal-konto-title').textContent = k ? 'Redigera konto '+nr : 'Nytt konto';
+  document.getElementById('konto-edit-id').value   = nr||'';
+  document.getElementById('konto-nr').value        = k ? k.nr       : '';
+  document.getElementById('konto-namn').value      = k ? k.namn     : '';
+  document.getElementById('konto-typ').value       = k ? k.typ      : 'intakt';
+  document.getElementById('konto-grupp').value     = k ? (k.grupp||'') : '';
+  document.getElementById('konto-budgeterbar').value = k && !k.budgeterbar ? 'false' : 'true';
+  document.getElementById('konto-aktiv').value     = k && k.aktiv===false ? 'false' : 'true';
+  document.getElementById('konto-kommentar').value = k ? (k.kommentar||'') : '';
+  var ps = document.getElementById('konto-param');
+  ps.innerHTML = '<option value="">– Ingen –</option>';
+  _settings.parametrar.forEach(function(p){ ps.innerHTML += '<option value="'+p.id+'"'+(k&&k.param===p.id?' selected':'')+'>'+p.namn+'</option>'; });
+  openModal('modal-konto');
+}
+
+function saveKonto() {
+  var editNr = document.getElementById('konto-edit-id').value;
+  var nr     = document.getElementById('konto-nr').value.trim();
+  var namn   = document.getElementById('konto-namn').value.trim();
+  if (!nr||!namn) { alert('Fyll i kontonummer och namn.'); return; }
+  var obj = {
+    nr, namn,
+    typ:          document.getElementById('konto-typ').value,
+    grupp:        document.getElementById('konto-grupp').value.trim(),
+    budgeterbar:  document.getElementById('konto-budgeterbar').value==='true',
+    aktiv:        document.getElementById('konto-aktiv').value==='true',
+    param:        document.getElementById('konto-param').value||null,
+    kommentar:    document.getElementById('konto-kommentar').value.trim(),
+  };
+  if (editNr) {
+    var i = _settings.kontoplan.findIndex(function(k){return k.nr===editNr;});
+    if (i>=0) _settings.kontoplan[i] = obj;
+  } else {
+    _settings.kontoplan.push(obj);
+    _settings.kontoplan.sort(function(a,b){return a.nr.localeCompare(b.nr);});
+  }
+  closeModal('modal-konto');
+  saveSettings();
+  renderKontoplan(document.getElementById('view-content'));
+  toast('Konto sparat','ok');
+}
+
+// ── VIEW: PARAM ADMIN ──────────────────────────────────────────────────────
+function renderParamAdmin(container) {
+  container.innerHTML = `
+    <div class="page-header">
+      <div class="page-header-left">
+        <h1><i class="ti ti-settings" style="font-size:18px;color:var(--blue)"></i> Parameteradmin</h1>
+        <div class="page-sub">Globala värden som gäller alla enheter</div>
+      </div>
+    </div>
+    <div class="content">
+      <p style="font-size:13px;color:var(--text2);margin-bottom:16px">Globala parametrar är låsta för campingansvariga. De sätts av ekonomiansvarig och gäller samtliga enheter.</p>
+      ${_settings.parametrar.map(function(param) {
+        var gv = _settings.globalParamVarden || {};
+        var globalFields = param.fields.filter(function(f){return f.global;});
+        if (!globalFields.length) return '';
+        return '<div class="param-panel"><div class="param-panel-title">'+param.namn+'</div>'
+          +globalFields.map(function(f) {
+            var key = param.id+'_'+f.id;
+            var val = gv[key]||0;
+            return '<div class="param-row"><span class="param-label">'+f.label+'</span>'
+              +'<div class="param-input-wrap"><input type="number" data-gkey="'+key+'" value="'+val+'" oninput="onGlobalParamChange(this)" placeholder="0"></div></div>';
+          }).join('')
+          +'</div>';
+      }).join('')}
+      <button class="btn btn-primary" onclick="saveGlobalParams()"><i class="ti ti-device-floppy"></i> Spara globala parametrar</button>
+    </div>`;
+}
+
+function onGlobalParamChange(el) {
+  if (!_settings.globalParamVarden) _settings.globalParamVarden = {};
+  _settings.globalParamVarden[el.dataset.gkey] = parseFloat(el.value)||0;
+}
+
+function saveGlobalParams() {
+  saveSettings();
+  toast('Globala parametrar sparade','ok');
+}
+
+// ── VIEW: ENHETER ──────────────────────────────────────────────────────────
+function renderEnheter(container) {
+  var tbody = _settings.enheter.map(function(e) {
+    return '<tr>'
+      +'<td style="font-weight:500">'+e.namn+'</td>'
+      +'<td style="color:var(--text3)">'+e.kst+'</td>'
+      +'<td style="color:var(--text3)">'+(e.kb||'–')+'</td>'
+      +'<td>'+(e.parent?'<span style="font-size:11px;color:var(--text2)">Del av '+e.parent+'</span>':'–')+'</td>'
+      +'<td>'+(e.aktiv!==false?'<span class="badge badge-approved">Aktiv</span>':'<span class="badge" style="background:var(--bg3);color:var(--text3)">Inaktiv</span>')+'</td>'
+      +'</tr>';
+  }).join('');
+
+  container.innerHTML = `
+    <div class="page-header">
+      <div class="page-header-left">
+        <h1><i class="ti ti-building" style="font-size:18px;color:var(--blue)"></i> Enheter (kostnadställen)</h1>
+        <div class="page-sub">${_settings.enheter.length} enheter konfigurerade</div>
+      </div>
+    </div>
+    <div class="content">
+      <table class="btable">
+        <thead><tr><th>Namn</th><th>KST</th><th>KB</th><th>Ingår i</th><th>Status</th></tr></thead>
+        <tbody>${tbody}</tbody>
+      </table>
+    </div>`;
+}
+
+// ── KOMMENTARER ────────────────────────────────────────────────────────────
+function openComment(nr) {
+  _commentKontoNr = nr;
+  var kp = _settings.kontoplan.find(function(k){return k.nr===nr;});
+  document.getElementById('modal-comment-title').textContent = 'Kommentar – '+nr;
+  document.getElementById('modal-comment-konto').textContent = (kp?kp.namn:'');
+  document.getElementById('modal-comment-text').value = (_currentDraft.kommentarer && _currentDraft.kommentarer[nr]) || '';
+  openModal('modal-comment');
+}
+
+function saveComment() {
+  if (!_commentKontoNr) return;
+  if (!_currentDraft.kommentarer) _currentDraft.kommentarer = {};
+  _currentDraft.kommentarer[_commentKontoNr] = document.getElementById('modal-comment-text').value.trim();
+  closeModal('modal-comment');
+  scheduleAutosave();
+  showView('budget');
+  toast('Kommentar sparad','ok');
+}
+
+// ── EXCEL EXPORT ───────────────────────────────────────────────────────────
+function exportExcelBudget() {
+  try {
+    if (!window.XLSX) { toast('Excel laddas…','warn'); return; }
+    var kp = _settings.kontoplan.filter(function(k){return k.budgeterbar;});
+    var data = [
+      ['BUDGET '+BUDGET_YEAR+' – '+(_currentEnhet?_currentEnhet.namn:'')],
+      ['Alla belopp exkl. moms'],
+      [],
+      ['Konto','Namn','Grupp','Typ','Budget '+BUDGET_YEAR,'Kommentar'],
+    ];
+    kp.forEach(function(k){
+      var v = getKontoVal(k.nr);
+      var c = _currentDraft.kommentarer ? (_currentDraft.kommentarer[k.nr]||'') : '';
+      data.push([k.nr, k.namn, k.grupp||'', k.typ, v||0, c]);
+    });
+    var totals = calcTotals();
+    data.push([],[],['','Rörelseresultat','','',totals.resultat]);
+    var wb = XLSX.utils.book_new();
+    var ws = XLSX.utils.aoa_to_sheet(data);
+    ws['!cols']=[{wch:8},{wch:45},{wch:25},{wch:10},{wch:15},{wch:40}];
+    XLSX.utils.book_append_sheet(wb,ws,'Budget');
+    XLSX.writeFile(wb,'Budget_'+BUDGET_YEAR+'_'+(_currentEnhet?_currentEnhet.id:'ccsthlm')+'_'+new Date().toISOString().slice(0,10)+'.xlsx');
+    toast('Excel exporterad','ok');
+  } catch(e) { toast('Export misslyckades: '+e.message,'err'); }
+}
+
+// ── HELPERS ────────────────────────────────────────────────────────────────
+function openModal(id)  { document.getElementById(id).classList.add('show'); }
+function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+document.addEventListener('click',function(e){ if(e.target.classList.contains('modal-overlay')) e.target.classList.remove('show'); });
+document.addEventListener('keydown',function(e){ if(e.key==='Escape') document.querySelectorAll('.modal-overlay.show').forEach(function(m){m.classList.remove('show');}); });
+function toast(msg,type){
+  type=type||'ok';
+  var t=document.getElementById('toast');
+  var colors={ok:'var(--green-bg)',err:'var(--red-bg)',warn:'var(--amber-bg)'};
+  var icons={ok:'ti-check',err:'ti-x',warn:'ti-alert-triangle'};
+  t.innerHTML='<i class="ti '+(icons[type]||'ti-info-circle')+'" style="font-size:14px"></i> '+msg;
+  t.style.background=colors[type]||colors.ok;
+  t.style.opacity='1';t.style.transform='translateY(0)';
+  setTimeout(function(){t.style.opacity='0';t.style.transform='translateY(6px)';},3000);
+}
+function portalLogout(){
+  sessionStorage.setItem('ccs_logged_out','1');
+  sessionStorage.removeItem('ccs_session');
+  sessionStorage.removeItem('ccs_portal_user');
+  window.location.replace('index.html');
+}
+
+init();
+</script>
+</body>
+</html>
