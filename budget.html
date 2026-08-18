@@ -218,13 +218,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-seri
   <div class="tb-logo"><i class="ti ti-chart-bar"></i> CCSthlm Budget</div>
   <div class="tb-sep"></div>
   <div class="tb-info" id="tb-unit-name">–</div>
+  <select id="tb-enhet-select" onchange="onEnhetChange()" style="padding:5px 10px;border:1px solid var(--border2);border-radius:var(--radius);font-size:12px;font-family:inherit;background:var(--bg2);color:var(--text);display:none"></select>
   <span class="tb-year" id="tb-year">2026</span>
   <div class="tb-user">
     <div class="tb-avatar" id="tb-avatar">?</div>
     <span id="tb-name">–</span>
   </div>
   <a href="index.html" class="tb-btn"><i class="ti ti-arrow-left"></i><span class="desktop-only"> Portal</span></a>
-  <button class="tb-btn tb-btn-danger" onclick="portalLogout()"><i class="ti ti-logout"></i></button>
+  <button class="tb-btn tb-btn-danger" onclick="portalLogout()"><i class="ti ti-logout"></i> Logga ut</button>
 </div>
 
 <!-- SIDEBAR -->
@@ -356,17 +357,44 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-seri
         <div class="form-field"><label>KB</label><input type="text" id="inv-kb" placeholder="60"></div>
       </div>
       <div class="form-grid full"><div class="form-field"><label>Åtgärd <span class="req">*</span></label><input type="text" id="inv-atgard" placeholder="Renovering toaletter"></div></div>
-      <div class="form-grid quad" style="grid-template-columns:1fr 1fr 1fr 1fr">
-        <div class="form-field"><label>2025</label><input type="number" id="inv-2025" placeholder="0"></div>
-        <div class="form-field"><label>2026</label><input type="number" id="inv-2026" placeholder="0"></div>
-        <div class="form-field"><label>2027</label><input type="number" id="inv-2027" placeholder="0"></div>
-        <div class="form-field"><label>2028</label><input type="number" id="inv-2028" placeholder="0"></div>
+      <div id="invest-year-fields" style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:14px">
       </div>
       <div class="form-grid full"><div class="form-field"><label>Kommentar</label><textarea id="inv-kommentar" rows="2" style="padding:8px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius);font-size:13px;font-family:inherit;"></textarea></div></div>
     </div>
     <div class="modal-footer">
       <button class="btn" onclick="closeModal('modal-invest')">Avbryt</button>
       <button class="btn btn-primary" onclick="saveInvestRow()"><i class="ti ti-check"></i> Spara</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: ENHET -->
+<div class="modal-overlay" id="modal-enhet">
+  <div class="modal" style="max-width:480px">
+    <div class="modal-header">
+      <span class="modal-title" id="modal-enhet-title">Ny enhet</span>
+      <button class="modal-close" onclick="closeModal('modal-enhet')">&#x2715;</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="enhet-edit-id">
+      <div class="form-grid">
+        <div class="form-field"><label>Namn <span class="req">*</span></label><input type="text" id="enhet-namn" placeholder="Östnora"></div>
+        <div class="form-field"><label>KST <span class="req">*</span></label><input type="text" id="enhet-kst" placeholder="50"></div>
+      </div>
+      <div class="form-grid">
+        <div class="form-field"><label>KB (lämna tomt om ej aktuellt)</label><input type="text" id="enhet-kb" placeholder="60"></div>
+        <div class="form-field"><label>Ingår i (parent-id)</label><input type="text" id="enhet-parent" placeholder="bjorko"></div>
+      </div>
+      <div class="form-grid">
+        <div class="form-field"><label>Visningsnamn parent</label><input type="text" id="enhet-parentnamn" placeholder="Björkö Örn"></div>
+        <div class="form-field"><label>Status</label>
+          <select id="enhet-aktiv"><option value="true">Aktiv</option><option value="false">Inaktiv</option></select>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('modal-enhet')">Avbryt</button>
+      <button class="btn btn-primary" onclick="saveEnhet()"><i class="ti ti-check"></i> Spara</button>
     </div>
   </div>
 </div>
@@ -428,6 +456,7 @@ async function init() {
   if (!_currentEnhet && !_isEkonomi) {
     _currentEnhet = _settings.enheter[0];
   }
+  populateEnhetSelector();
   if (_currentEnhet) {
     document.getElementById('tb-unit-name').textContent = _currentEnhet.namn;
   } else {
@@ -716,9 +745,9 @@ function renderBudget(container) {
     </div>
     <div class="content no-pad">
       <div class="kpi-strip" style="padding:16px 24px 0;gap:10px">
-        <div class="kpi green"><div class="kpi-val">${fmtNum(totals.intakter)}</div><div class="kpi-lbl">Intäkter (kr)</div></div>
-        <div class="kpi red"><div class="kpi-val">${fmtNum(totals.kostnader)}</div><div class="kpi-lbl">Kostnader (kr)</div></div>
-        <div class="kpi ${totals.resultat>=0?'green':'red'}"><div class="kpi-val">${fmtNum(totals.resultat)}</div><div class="kpi-lbl">Rörelseresultat (kr)</div></div>
+        <div class="kpi green"><div class="kpi-val" id="kpi-intakter">${fmtNum(totals.intakter)}</div><div class="kpi-lbl">Intäkter (kr)</div></div>
+        <div class="kpi red"><div class="kpi-val" id="kpi-kostnader">${fmtNum(totals.kostnader)}</div><div class="kpi-lbl">Kostnader (kr)</div></div>
+        <div class="kpi ${totals.resultat>=0?'green':'red'}"><div class="kpi-val" id="kpi-resultat">${fmtNum(totals.resultat)}</div><div class="kpi-lbl">Rörelseresultat (kr)</div></div>
       </div>
       <div style="padding:16px 24px 60px">
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;font-size:12px;color:var(--text3)">
@@ -742,10 +771,24 @@ function renderBudget(container) {
 
 function onCellChange(el) {
   var nr = el.dataset.konto;
-  var v  = parseFloat(el.value.replace(/\s/g,'').replace(',','.'))||0;
+  var v  = parseFloat(el.value.replace(/[^0-9.,]/g,'').replace(',','.'))||0;
   if (!_currentDraft.kontoVarden) _currentDraft.kontoVarden = {};
   _currentDraft.kontoVarden[nr] = v;
+  updateLiveTotals();
   scheduleAutosave();
+}
+
+function updateLiveTotals() {
+  var t = calcTotals();
+  var kpiVals = [
+    {id:'kpi-intakter', val:t.intakter},
+    {id:'kpi-kostnader', val:t.kostnader},
+    {id:'kpi-resultat',  val:t.resultat},
+  ];
+  kpiVals.forEach(function(k){
+    var el = document.getElementById(k.id);
+    if (el) el.textContent = fmtNum(k.val);
+  });
 }
 
 // ── VIEW: PARAMETRAR ───────────────────────────────────────────────────────
@@ -802,19 +845,25 @@ function renderInvest(container) {
   var year = BUDGET_YEAR;
   var totalYear = inv.reduce(function(s,r){return s+(parseFloat(r['y'+year])||0);},0);
 
+  var investYears = [];
+  for (var iy = year - 1; iy <= year + 4; iy++) investYears.push(iy);
+  var totalsByYear = {};
+  investYears.forEach(function(iy){ totalsByYear[iy] = inv.reduce(function(s,r){return s+(r['y'+iy]||0);},0); });
+
   var rows = inv.map(function(r,i) {
+    var yearCells = investYears.map(function(iy){
+      var v = r['y'+iy]||0;
+      return '<td class="num"'+(iy===year?' style="font-weight:600;color:var(--accent2)"':'')+'>'+(v?fmtKr(v):'–')+'</td>';
+    }).join('');
     return '<tr>'
       +'<td style="font-size:12px;color:var(--text2)">'+(r.kb||'–')+'</td>'
       +'<td style="font-size:13px">'+r.omrade+'</td>'
       +'<td style="font-size:13px">'+r.atgard+'</td>'
-      +'<td class="num">'+(r.y2025?fmtKr(r.y2025):'–')+'</td>'
-      +'<td class="num" style="font-weight:500">'+(r['y'+year]?fmtKr(r['y'+year]):'–')+'</td>'
-      +'<td class="num">'+(r.y2027?fmtKr(r.y2027):'–')+'</td>'
-      +'<td class="num">'+(r.y2028?fmtKr(r.y2028):'–')+'</td>'
+      +yearCells
       +'<td style="font-size:12px;color:var(--text3)">'+(r.kommentar||'')+'</td>'
       +'<td class="no-print"><div style="display:flex;gap:4px">'
-      +'<button class="btn btn-sm" data-idx="'+i+'" onclick="editInvest(parseInt(this.dataset.idx))"><i class="ti ti-pencil"></i></button>'
-      +'<button class="btn btn-sm btn-danger" data-idx="'+i+'" onclick="deleteInvest(parseInt(this.dataset.idx))"><i class="ti ti-trash"></i></button>'
+      +'<button class="btn btn-sm" data-idx="'+i+'" onclick="editInvest(parseInt(this.dataset.idx))"><i class="ti ti-pencil"></i> Redigera</button>'
+      +'<button class="btn btn-sm btn-danger" data-idx="'+i+'" onclick="deleteInvest(parseInt(this.dataset.idx))"><i class="ti ti-trash"></i> Ta bort</button>'
       +'</div></td>'
       +'</tr>';
   }).join('');
@@ -834,11 +883,11 @@ function renderInvest(container) {
         <table class="btable">
           <thead><tr>
             <th style="width:50px">KB</th><th>Område</th><th>Åtgärd</th>
-            <th class="num">2025</th><th class="num">${year}</th><th class="num">2027</th><th class="num">2028</th>
-            <th>Kommentar</th><th style="width:80px"></th>
+            ${investYears.map(function(iy){return '<th class="num"'+(iy===year?' style="color:var(--accent)"':'')+'>'+(iy===year?'<strong>'+iy+'</strong>':iy)+'</th>';}).join('')}
+            <th>Kommentar</th><th style="width:140px"></th>
           </tr></thead>
           <tbody>${rows || '<tr><td colspan="9" style="text-align:center;padding:32px;color:var(--text3)"><i class="ti ti-tool" style="font-size:24px;display:block;margin-bottom:8px"></i>Inga investeringar tillagda</td></tr>'}</tbody>
-          ${inv.length ? '<tfoot><tr class="row-total"><td colspan="3">Total investering → konto 4011</td><td class="num">–</td><td class="num">'+fmtKr(totalYear)+'</td><td class="num">–</td><td class="num">–</td><td colspan="2"></td></tr></tfoot>' : ''}
+          ${inv.length ? '<tfoot><tr class="row-total"><td colspan="3">Total investering → konto 4011</td>'+investYears.map(function(iy){var t=totalsByYear[iy]||0;return '<td class="num"'+(iy===year?' style="color:var(--accent2)"':'')+'>'+( t?fmtKr(t):'–')+'</td>';}).join('')+'<td colspan="2"></td></tr></tfoot>' : ''}
         </table>
       </div>
     </div>`;
@@ -855,11 +904,22 @@ function openInvestModal(idx) {
   document.getElementById('inv-omrade').value     = r ? (r.omrade||'')  : '';
   document.getElementById('inv-kb').value         = r ? (r.kb||'')      : (_currentEnhet ? (_currentEnhet.kb||_currentEnhet.kst||'') : '');
   document.getElementById('inv-atgard').value     = r ? (r.atgard||'')  : '';
-  document.getElementById('inv-2025').value       = r ? (r.y2025||0)    : 0;
-  document.getElementById('inv-2026').value       = r ? (r.y2026||0)    : 0;
-  document.getElementById('inv-2027').value       = r ? (r.y2027||0)    : 0;
-  document.getElementById('inv-2028').value       = r ? (r.y2028||0)    : 0;
   document.getElementById('inv-kommentar').value  = r ? (r.kommentar||'') : '';
+  // Dynamic year fields: budgetår - 1 to budgetår + 4 (6 years)
+  var startYear = BUDGET_YEAR - 1;
+  var wrap = document.getElementById('invest-year-fields');
+  wrap.innerHTML = '';
+  for (var y = startYear; y <= BUDGET_YEAR + 4; y++) {
+    var key = 'y' + y;
+    var val = r ? (r[key] || 0) : 0;
+    var div = document.createElement('div');
+    div.style.cssText = 'display:flex;flex-direction:column;gap:4px';
+    div.innerHTML = '<label style="font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase">' + y + (y===BUDGET_YEAR ? ' ★' : '') + '</label>'
+      + '<input type="number" data-yearkey="' + key + '" value="' + val + '" placeholder="0" '
+      + 'style="padding:8px;border:1px solid var(--border2);border-radius:var(--radius);font-size:13px;font-family:inherit;background:var(--bg3);color:var(--text);text-align:right;'
+      + (y===BUDGET_YEAR ? 'border-color:var(--accent);' : '') + '">';
+    wrap.appendChild(div);
+  }
   openModal('modal-invest');
 }
 
@@ -879,12 +939,11 @@ function saveInvestRow() {
   var obj = {
     kb:document.getElementById('inv-kb').value.trim(),
     omrade, atgard,
-    y2025:parseFloat(document.getElementById('inv-2025').value)||0,
-    y2026:parseFloat(document.getElementById('inv-2026').value)||0,
-    y2027:parseFloat(document.getElementById('inv-2027').value)||0,
-    y2028:parseFloat(document.getElementById('inv-2028').value)||0,
     kommentar:document.getElementById('inv-kommentar').value.trim(),
   };
+  document.querySelectorAll('#invest-year-fields input[data-yearkey]').forEach(function(el){
+    obj[el.dataset.yearkey] = parseFloat(el.value)||0;
+  });
   if (!_currentDraft.investeringar) _currentDraft.investeringar=[];
   if (idx!=='') { _currentDraft.investeringar[parseInt(idx)] = obj; }
   else          { _currentDraft.investeringar.push(obj); }
@@ -1220,8 +1279,12 @@ function renderEnheter(container) {
       +'<td style="font-weight:500">'+e.namn+'</td>'
       +'<td style="color:var(--text3)">'+e.kst+'</td>'
       +'<td style="color:var(--text3)">'+(e.kb||'–')+'</td>'
-      +'<td>'+(e.parent?'<span style="font-size:11px;color:var(--text2)">Del av '+e.parent+'</span>':'–')+'</td>'
+      +'<td>'+(e.parent?'<span style="font-size:11px;color:var(--text2)">'+(e.parentNamn||e.parent)+'</span>':'–')+'</td>'
       +'<td>'+(e.aktiv!==false?'<span class="badge badge-approved">Aktiv</span>':'<span class="badge" style="background:var(--bg3);color:var(--text3)">Inaktiv</span>')+'</td>'
+      +'<td class="no-print" style="text-align:right"><div style="display:flex;gap:4px;justify-content:flex-end">'
+      +'<button class="btn btn-sm" data-eid="'+e.id+'" onclick="openEnhetModal(this.dataset.eid)"><i class="ti ti-pencil"></i> Redigera</button>'
+      +'<button class="btn btn-sm btn-danger" data-eid="'+e.id+'" onclick="deleteEnhet(this.dataset.eid)"><i class="ti ti-trash"></i> Ta bort</button>'
+      +'</div></td>'
       +'</tr>';
   }).join('');
 
@@ -1231,10 +1294,13 @@ function renderEnheter(container) {
         <h1><i class="ti ti-building" style="font-size:18px;color:var(--blue)"></i> Enheter (kostnadställen)</h1>
         <div class="page-sub">${_settings.enheter.length} enheter konfigurerade</div>
       </div>
+      <div class="page-actions">
+        <button class="btn btn-primary" onclick="openEnhetModal(null)"><i class="ti ti-plus"></i> Ny enhet</button>
+      </div>
     </div>
     <div class="content">
       <table class="btable">
-        <thead><tr><th>Namn</th><th>KST</th><th>KB</th><th>Ingår i</th><th>Status</th></tr></thead>
+        <thead><tr><th>Namn</th><th>KST</th><th>KB</th><th>Ingår i</th><th>Status</th><th class="no-print" style="text-align:right">Åtgärder</th></tr></thead>
         <tbody>${tbody}</tbody>
       </table>
     </div>`;
@@ -1285,6 +1351,84 @@ function exportExcelBudget() {
     XLSX.writeFile(wb,'Budget_'+BUDGET_YEAR+'_'+(_currentEnhet?_currentEnhet.id:'ccsthlm')+'_'+new Date().toISOString().slice(0,10)+'.xlsx');
     toast('Excel exporterad','ok');
   } catch(e) { toast('Export misslyckades: '+e.message,'err'); }
+}
+
+// ── ENHET MODAL ────────────────────────────────────────────────────────────
+function openEnhetModal(eid) {
+  var e = eid ? _settings.enheter.find(function(x){return x.id===eid;}) : null;
+  document.getElementById('modal-enhet-title').textContent = e ? 'Redigera – '+e.namn : 'Ny enhet';
+  document.getElementById('enhet-edit-id').value    = e ? e.id          : '';
+  document.getElementById('enhet-namn').value       = e ? e.namn        : '';
+  document.getElementById('enhet-kst').value        = e ? e.kst         : '';
+  document.getElementById('enhet-kb').value         = e ? (e.kb||'')    : '';
+  document.getElementById('enhet-parent').value     = e ? (e.parent||'')    : '';
+  document.getElementById('enhet-parentnamn').value = e ? (e.parentNamn||'') : '';
+  document.getElementById('enhet-aktiv').value      = e && e.aktiv===false ? 'false' : 'true';
+  openModal('modal-enhet');
+}
+
+function saveEnhet() {
+  var namn = document.getElementById('enhet-namn').value.trim();
+  var kst  = document.getElementById('enhet-kst').value.trim();
+  if (!namn||!kst) { alert('Namn och KST krävs.'); return; }
+  var editId = document.getElementById('enhet-edit-id').value;
+  var obj = {
+    id:         editId || namn.toLowerCase().replace(/[^a-z0-9]/g,'_').replace(/_+/g,'_'),
+    namn, kst,
+    kb:         document.getElementById('enhet-kb').value.trim(),
+    parent:     document.getElementById('enhet-parent').value.trim() || undefined,
+    parentNamn: document.getElementById('enhet-parentnamn').value.trim() || undefined,
+    aktiv:      document.getElementById('enhet-aktiv').value==='true',
+  };
+  if (!obj.parent) delete obj.parent;
+  if (!obj.parentNamn) delete obj.parentNamn;
+  if (!obj.kb) obj.kb = '';
+  if (editId) {
+    var i = _settings.enheter.findIndex(function(e){return e.id===editId;});
+    if (i>=0) _settings.enheter[i] = obj;
+  } else {
+    _settings.enheter.push(obj);
+  }
+  closeModal('modal-enhet');
+  saveSettings();
+  populateEnhetSelector();
+  renderEnheter(document.getElementById('view-content'));
+  toast('Enhet sparad','ok');
+}
+
+function deleteEnhet(eid) {
+  if (!confirm('Ta bort enheten? Sparad budgetdata påverkas inte.')) return;
+  _settings.enheter = _settings.enheter.filter(function(e){return e.id!==eid;});
+  saveSettings();
+  populateEnhetSelector();
+  renderEnheter(document.getElementById('view-content'));
+  toast('Borttagen','ok');
+}
+
+function populateEnhetSelector() {
+  var sel = document.getElementById('tb-enhet-select');
+  if (!sel) return;
+  // Show selector for camping-role users (not ekonomi/styrelse who see all)
+  if (_isEkonomi) { sel.style.display='none'; return; }
+  sel.innerHTML = _settings.enheter.filter(function(e){return e.aktiv!==false;}).map(function(e){
+    return '<option value="'+e.id+'"'+((_currentEnhet&&_currentEnhet.id===e.id)?' selected':'')+'>'
+      +e.namn+(e.kb?' (KB '+e.kb+')':'')+'</option>';
+  }).join('');
+  // Only show if user has access to multiple enheter (no budgetEnhet restriction)
+  var budgetEnhet = _user.budgetEnhet || '';
+  if (!budgetEnhet) { sel.style.display=''; }
+  else { sel.style.display='none'; } // locked to one enhet
+}
+
+async function onEnhetChange() {
+  var sel = document.getElementById('tb-enhet-select');
+  var eid = sel.value;
+  var e   = _settings.enheter.find(function(x){return x.id===eid;});
+  if (!e) return;
+  _currentEnhet = e;
+  document.getElementById('tb-unit-name').textContent = e.namn;
+  await loadDraft(e.id);
+  showView('budget');
 }
 
 // ── HELPERS ────────────────────────────────────────────────────────────────
