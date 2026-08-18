@@ -1067,75 +1067,6 @@
       "budgeterbar": true
     }
   ],
-  "enheter": [
-    {
-      "id": "ostnora",
-      "namn": "Östnora",
-      "kst": "50",
-      "kb": "",
-      "aktiv": true
-    },
-    {
-      "id": "orstig",
-      "namn": "Örstig",
-      "kst": "55",
-      "kb": "",
-      "aktiv": true
-    },
-    {
-      "id": "mista",
-      "namn": "Mista",
-      "kst": "65",
-      "kb": "",
-      "aktiv": true
-    },
-    {
-      "id": "storsved",
-      "namn": "Storsved",
-      "kst": "70",
-      "kb": "",
-      "aktiv": true
-    },
-    {
-      "id": "kapellskar",
-      "namn": "Kapellskär",
-      "kst": "80",
-      "kb": "",
-      "aktiv": true
-    },
-    {
-      "id": "bo_camp",
-      "namn": "Björkö Örns Camping",
-      "kst": "60",
-      "kb": "60",
-      "aktiv": true,
-      "parent": "bjorko",
-      "parentNamn": "Björkö Örn"
-    },
-    {
-      "id": "graddos",
-      "namn": "Gräddös Pärla",
-      "kst": "60",
-      "kb": "65",
-      "aktiv": true,
-      "parent": "bjorko",
-      "parentNamn": "Björkö Örn"
-    },
-    {
-      "id": "angsudden",
-      "namn": "Ängsudden",
-      "kst": "85",
-      "kb": "",
-      "aktiv": true
-    },
-    {
-      "id": "sektionsgem",
-      "namn": "Sektionsgemensamt",
-      "kst": "10",
-      "kb": "",
-      "aktiv": true
-    }
-  ],
   "parametrar": [
     {
       "id": "helarsplatser",
@@ -1349,6 +1280,75 @@
       ],
       "formula": "lonekostnad*sats/100",
       "kontoNr": "7510"
+    }
+  ],
+  "enheter": [
+    {
+      "id": "ostnora",
+      "namn": "Östnora",
+      "kst": "50",
+      "kb": "",
+      "aktiv": true
+    },
+    {
+      "id": "orstig",
+      "namn": "Örstig",
+      "kst": "55",
+      "kb": "",
+      "aktiv": true
+    },
+    {
+      "id": "mista",
+      "namn": "Mista",
+      "kst": "65",
+      "kb": "",
+      "aktiv": true
+    },
+    {
+      "id": "storsved",
+      "namn": "Storsved",
+      "kst": "70",
+      "kb": "",
+      "aktiv": true
+    },
+    {
+      "id": "kapellskar",
+      "namn": "Kapellskär",
+      "kst": "80",
+      "kb": "",
+      "aktiv": true
+    },
+    {
+      "id": "bo_camp",
+      "namn": "Björkö Örns Camping",
+      "kst": "60",
+      "kb": "60",
+      "aktiv": true,
+      "parent": "bjorko",
+      "parentNamn": "Björkö Örn"
+    },
+    {
+      "id": "graddos",
+      "namn": "Gräddös Pärla",
+      "kst": "60",
+      "kb": "65",
+      "aktiv": true,
+      "parent": "bjorko",
+      "parentNamn": "Björkö Örn"
+    },
+    {
+      "id": "angsudden",
+      "namn": "Ängsudden",
+      "kst": "85",
+      "kb": "",
+      "aktiv": true
+    },
+    {
+      "id": "sektionsgem",
+      "namn": "Sektionsgemensamt",
+      "kst": "10",
+      "kb": "",
+      "aktiv": true
     }
   ],
   "globalParamVarden": {
