@@ -127,7 +127,8 @@
       "pin": "1111",
       "pnr": "",
       "adminRoles": [
-        "nyckel-admin"
+        "nyckel-admin",
+        "budget-camping"
       ],
       "role": "Användare",
       "active": true,
@@ -136,7 +137,8 @@
       "godkannarcamping": "",
       "sbaCamping": "",
       "nyckelCamping": "c2",
-      "created": "2026-08-18"
+      "created": "2026-08-18",
+      "budgetEnhet": "ostnora"
     }
   ],
   "campings": [
