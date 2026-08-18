@@ -19,11 +19,13 @@
         "global",
         "avvikelse-ledning",
         "reserakning-godkannare",
-        "nyckel-admin"
+        "nyckel-admin",
+        "budget-styrelse"
       ],
       "godkannarcamping": "CC Björkö Örns Camping",
       "sbaCamping": "",
-      "nyckelCamping": "c2"
+      "nyckelCamping": "c2",
+      "budgetEnhet": ""
     },
     {
       "id": "umqbd61uqljhs",
