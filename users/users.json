@@ -119,6 +119,24 @@
       "godkannarcamping": "",
       "sbaCamping": "",
       "created": "2026-07-29"
+    },
+    {
+      "id": "umsyzxopmvp9x",
+      "name": "Oktoberfest",
+      "email": "oktoberfest2027@cc-camping.se",
+      "pin": "1111",
+      "pnr": "",
+      "adminRoles": [
+        "nyckel-admin"
+      ],
+      "role": "Användare",
+      "active": true,
+      "apps": [],
+      "plCampingId": "",
+      "godkannarcamping": "",
+      "sbaCamping": "",
+      "nyckelCamping": "c2",
+      "created": "2026-08-18"
     }
   ],
   "campings": [
