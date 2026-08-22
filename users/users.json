@@ -141,6 +141,26 @@
       "nyckelCamping": "c2",
       "created": "2026-08-18",
       "budgetEnhet": "ostnora"
+    },
+    {
+      "id": "umt45ge2nypou",
+      "name": "Christoffer Maddison",
+      "email": "christoffer.maddison@cc-camping.se",
+      "pin": "2222",
+      "pnr": "",
+      "adminRoles": [
+        "personal",
+        "budget-camping"
+      ],
+      "role": "Användare",
+      "active": true,
+      "apps": [],
+      "plCampingId": "c7",
+      "godkannarcamping": "",
+      "sbaCamping": "",
+      "nyckelCamping": "",
+      "budgetEnhet": "graddos",
+      "created": "2026-08-22"
     }
   ],
   "campings": [
