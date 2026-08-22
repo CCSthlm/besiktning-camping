@@ -1354,21 +1354,36 @@ async function loadReferensData(enhetId) {
     }
   }
 
-  // Ref budget: always previous year (BUDGET_YEAR - 1), latest submitted version
+  // Ref budget: always previous year (BUDGET_YEAR - 1)
   var prevYear = BUDGET_YEAR - 1;
-  // Try v3, v2, v1 in order to get latest version
+  var budgetFound = false;
+  // Try submitted versions v5 → v1
   for (var v = 5; v >= 1; v--) {
     var budPath = BUDGET_BASE+'/'+prevYear+'/'+enhetId+'/v'+v+'.json';
     var r2 = await ghGet(budPath);
     if (r2 && r2.data && r2.data.kontoVarden) {
       _referensData[enhetId].budget = r2.data.kontoVarden;
+      _referensData[enhetId].budgetSource = 'version';
+      budgetFound = true;
       break;
+    }
+  }
+  // Fallback: manually entered budget for previous year
+  if (!budgetFound) {
+    var manPath = BUDGET_BASE+'/'+prevYear+'/'+enhetId+'/budget_manuell.json';
+    var r3 = await ghGet(manPath);
+    if (r3 && r3.data) {
+      var manData = Object.assign({}, r3.data);
+      delete manData._meta;
+      _referensData[enhetId].budget = manData;
+      _referensData[enhetId].budgetSource = 'manuell';
     }
   }
 }
 
 // ── VIEW: UTFALL ───────────────────────────────────────────────────────────
 var _utfallData    = {};
+var _budgetManuellData = {}; // {enhetId: {kontoNr: value}}
 var _statusData    = {}; // {year: {enhetId: {status, utfallAr, utfallPeriod, referensBudgetAr, ...}}}
 var _referensData  = {}; // cached utfall and budget reference per enhet
 var _utfallEnhetId = '';
@@ -1401,6 +1416,7 @@ function renderUtfall(container) {
             return '<option value="'+(i+1)+'">t.o.m. '+m+'</option>';
           }).join('')}
         </select>
+        <button class="btn btn-blue" onclick="saveBudgetManuell(_utfallEnhetId)"><i class="ti ti-device-floppy"></i> Spara budget '+( BUDGET_YEAR-1)+'</button>
         <button class="btn btn-primary" onclick="saveUtfall()"><i class="ti ti-device-floppy"></i> Spara utfall</button>
       </div>
       <div id="utfall-table-wrap"></div>
@@ -1417,6 +1433,13 @@ async function loadUtfallView() {
   var key     = enhetId + '_' + period;
 
   // Always reload from GitHub - don't use cache
+  // Also load manual previous year budget
+  var prevYear = BUDGET_YEAR - 1;
+  var manPath = BUDGET_BASE + '/' + prevYear + '/' + enhetId + '/budget_manuell.json';
+  var rMan = await ghGet(manPath);
+  _budgetManuellData[enhetId] = rMan ? Object.assign({}, rMan.data) : {};
+  if (_budgetManuellData[enhetId]._meta) delete _budgetManuellData[enhetId]._meta;
+
   var path = BUDGET_BASE + '/' + BUDGET_YEAR + '/' + enhetId + '/utfall_p' + period + '.json';
   var r = await ghGet(path);
   _utfallData[key] = r ? r.data : {};
@@ -1458,17 +1481,19 @@ async function loadUtfallView() {
   SECTIONS.forEach(function(sect) {
     var konton = _settings.kontoplan.filter(function(k){return k.budgeterbar && sect.filter(k);});
     if (!konton.length) return;
-    tbody += '<tr class="row-section"><td class="sticky-col" colspan="6">'+sect.label+'</td></tr>';
+    tbody += '<tr class="row-section"><td class="sticky-col" colspan="7">'+sect.label+'</td></tr>';
     var sectBudget = 0, sectUtfall = 0;
     konton.forEach(function(k) {
       var bv  = budgetRef[k.nr] || 0;
       var uv  = parseFloat(utfall[k.nr]) || 0;
       var av  = avvik(bv, uv);
       sectBudget += bv; sectUtfall += uv;
+      var mv = parseFloat((_budgetManuellData[enhetId]||{})[k.nr]) || 0;
       tbody += '<tr>'
         + '<td class="sticky-col konto-num">'+k.nr+'</td>'
         + '<td class="sticky-col">'+k.namn+'</td>'
         + '<td class="num">'+(bv ? fmtKr(bv) : '<span class="cell-empty">–</span>')+'</td>'
+        + '<td class="num"><input class="cell-input" data-manknr="'+k.nr+'" data-manenhet="'+enhetId+'" value="'+(mv||'')+'" onchange="onBudgetManuellChange(this)" placeholder="0" style="border-color:rgba(26,79,122,.3);background:var(--blue-bg)"></td>'
         + '<td class="num"><input class="cell-input" data-utknr="'+k.nr+'" value="'+(uv||'')+'" onchange="onUtfallChange(this)" placeholder="0"></td>'
         + '<td class="num '+(av.cls==='pos'?'':av.cls==='neg'?'red':'')+'">'+av.kr+'</td>'
         + '<td class="num '+(av.cls==='pos'?'':av.cls==='neg'?'red':'')+'">'+av.pct+'</td>'
@@ -1480,6 +1505,7 @@ async function loadUtfallView() {
       + '<td class="sticky-col"></td>'
       + '<td class="sticky-col" style="font-style:italic">Summa '+sect.label.toLowerCase()+'</td>'
       + '<td class="num">'+fmtKr(sectBudget)+'</td>'
+      + '<td class="num">–</td>'
       + '<td class="num" style="font-weight:600">'+fmtKr(sectUtfall)+'</td>'
       + '<td class="num '+(sav.cls==='pos'?'':sav.cls==='neg'?'red':'')+'">'+sav.kr+'</td>'
       + '<td class="num '+(sav.cls==='pos'?'':sav.cls==='neg'?'red':'')+'">'+sav.pct+'</td>'
@@ -1492,6 +1518,7 @@ async function loadUtfallView() {
     + '<td class="sticky-col"></td>'
     + '<td class="sticky-col">Rörelseresultat</td>'
     + '<td class="num">'+fmtKr(totBudget)+'</td>'
+    + '<td class="num">–</td>'
     + '<td class="num">'+fmtKr(totUtfall)+'</td>'
     + '<td class="num" colspan="2">'+fmtKr(res)+'</td>'
     + '</tr>';
@@ -1504,15 +1531,39 @@ async function loadUtfallView() {
       <table class="btable">
         <thead><tr>
           <th class="sticky-col" style="width:60px">Konto</th>
-          <th class="sticky-col" style="width:240px">Namn</th>
+          <th class="sticky-col" style="width:220px">Namn</th>
           <th class="num">Budget ${BUDGET_YEAR}</th>
-          <th class="num">Utfall</th>
+          <th class="num" style="color:var(--blue)">Budget ${prevYear} <span style="font-size:9px;opacity:.7">(manuell)</span></th>
+          <th class="num">Utfall t.o.m. ${periodLabel}</th>
           <th class="num">Avvikelse kr</th>
           <th class="num">Avvikelse %</th>
         </tr></thead>
         <tbody>${tbody}</tbody>
       </table>
     </div>`;
+}
+
+function onBudgetManuellChange(el) {
+  var nr     = el.dataset.manknr;
+  var enhetId= el.dataset.manenhet;
+  if (!_budgetManuellData[enhetId]) _budgetManuellData[enhetId] = {};
+  _budgetManuellData[enhetId][nr] = parseFloat(el.value) || 0;
+}
+
+async function saveBudgetManuell(enhetId) {
+  var data    = _budgetManuellData[enhetId] || {};
+  var prevYear= BUDGET_YEAR - 1;
+  var path    = BUDGET_BASE + '/' + prevYear + '/' + enhetId + '/budget_manuell.json';
+  var payload = Object.assign({}, data, {
+    _meta: { enhetId, ar: prevYear, sparadAv: _user.name, sparadTs: new Date().toISOString(), typ: 'manuell' }
+  });
+  var ok = await ghPut(path, payload, 'Manuell budget '+prevYear+' – '+enhetId);
+  if (ok) {
+    delete _referensData[enhetId]; // clear cache
+    toast('Budget '+prevYear+' sparad','ok');
+  } else {
+    toast('Kunde ej spara','err');
+  }
 }
 
 function onUtfallChange(el) {
