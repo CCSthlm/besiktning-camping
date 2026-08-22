@@ -243,6 +243,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-seri
   <div class="nav-divider"></div>
   <div class="nav-section" id="nav-section-ekonomi" style="display:none">
     <div class="nav-label">Ekonomiansvarig</div>
+    <button class="nav-item" id="nav-oppna-budget" onclick="showView('oppna-budget')"><i class="ti ti-lock-open"></i> Öppna budgetår</button>
     <button class="nav-item" id="nav-konsolidering" onclick="showView('konsolidering')"><i class="ti ti-layout-columns"></i> Konsolidering</button>
     <button class="nav-item" id="nav-prognos" onclick="showView('prognos')"><i class="ti ti-trending-up"></i> Prognos</button>
     <button class="nav-item" id="nav-utfall" onclick="showView('utfall')"><i class="ti ti-arrow-bar-to-down"></i> Utfall</button>
@@ -402,6 +403,56 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-seri
   </div>
 </div>
 
+<!-- MODAL: ÖPPNA ENHET -->
+<div class="modal-overlay" id="modal-oppna">
+  <div class="modal" style="max-width:460px">
+    <div class="modal-header">
+      <span class="modal-title"><i class="ti ti-lock-open" style="color:var(--accent)"></i> Öppna budget <span id="oppna-enhet-namn"></span></span>
+      <button class="modal-close" onclick="closeModal('modal-oppna')">&#x2715;</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:13px;color:var(--text2);margin-bottom:16px;line-height:1.6">
+        Välj vilket utfall och vilken budget som ska visas som referens för campingansvarig. Befintligt utkast nollställs.
+      </p>
+      <div class="form-section-title">Utfall som referens</div>
+      <div class="form-grid">
+        <div class="form-field">
+          <label>Utfallsår</label>
+          <input type="number" id="oppna-utfall-ar" value="2025" min="2020" max="2030">
+        </div>
+        <div class="form-field">
+          <label>T.o.m. period</label>
+          <select id="oppna-utfall-period">
+            <option value="1">Januari</option><option value="2">Februari</option>
+            <option value="3">Mars</option><option value="4">April</option>
+            <option value="5">Maj</option><option value="6">Juni</option>
+            <option value="7">Juli</option><option value="8">Augusti</option>
+            <option value="9">September</option><option value="10">Oktober</option>
+            <option value="11">November</option><option value="12" selected>December</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-section-title">Referensbudget</div>
+      <div class="form-grid">
+        <div class="form-field">
+          <label>Referensbudgetår</label>
+          <input type="number" id="oppna-ref-budget-ar" value="2025" min="2020" max="2030">
+        </div>
+        <div class="form-field" style="justify-content:flex-end;padding-top:20px">
+          <p style="font-size:12px;color:var(--text3)">Den senast inskickade versionen för detta år används.</p>
+        </div>
+      </div>
+      <div style="background:var(--amber-bg);border-radius:var(--radius);padding:10px 14px;font-size:12px;color:var(--amber-text);margin-top:4px">
+        <i class="ti ti-alert-triangle"></i> Befintligt utkast för enheten nollställs när du öppnar.
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('modal-oppna')">Avbryt</button>
+      <button class="btn btn-primary" onclick="sparaOppnaEnhet()"><i class="ti ti-lock-open"></i> Öppna budgetåret</button>
+    </div>
+  </div>
+</div>
+
 <!-- MODAL: TOKEN -->
 <div class="modal-overlay" id="modal-token">
   <div class="modal" style="max-width:440px">
@@ -466,6 +517,7 @@ async function init() {
   if (_isEkonomi) document.getElementById('nav-section-ekonomi').style.display='';
 
   await loadSettings();
+  await loadStatus();
   if (!_settings.kontoplan || !_settings.kontoplan.length) {
     var token = localStorage.getItem('gh_token')||'';
     var msg = token
@@ -505,6 +557,25 @@ async function init() {
   }
 
   showView('budget');
+}
+
+// ── STATUS ────────────────────────────────────────────────────────────────────
+async function loadStatus() {
+  var r = await ghGet(settingsPath('status.json'));
+  _statusData = r ? r.data : {};
+}
+
+async function saveStatus() {
+  await ghPut(settingsPath('status.json'), _statusData, 'Status uppdaterad');
+}
+
+function getEnhetStatus(enhetId) {
+  var yr = String(BUDGET_YEAR);
+  return (_statusData[yr] && _statusData[yr][enhetId]) || {status:'stängd'};
+}
+
+function isEnhetOpen(enhetId) {
+  return getEnhetStatus(enhetId).status === 'öppen';
 }
 
 // ── DATA PATHS ─────────────────────────────────────────────────────────────
@@ -642,6 +713,7 @@ function showView(name) {
   var vc = document.getElementById('view-content');
   var renders = {
     budget:        renderBudget,
+    'oppna-budget':renderOppnaBudgetar,
     param:         renderParam,
     invest:        renderInvest,
     versions:      renderVersions,
@@ -657,7 +729,7 @@ function showView(name) {
 }
 
 // ── VIEW: BUDGET ───────────────────────────────────────────────────────────
-function renderBudget(container) {
+async function renderBudget(container) {
   var totals = calcTotals();
   var computed = calcParams();
   var autosparad = _currentDraft.autosparad ? new Date(_currentDraft.autosparad).toLocaleString('sv-SE') : 'Aldrig';
@@ -738,10 +810,14 @@ function renderBudget(container) {
             var cellClass = isPar ? 'num cell-param' : 'num';
             var valStr = v ? fmtKr(v) : '<span class="cell-empty">–</span>';
             if (isPar) valStr = fmtKr(v);
+            var utfVal = (_referensData[_currentEnhet&&_currentEnhet.id] && _referensData[_currentEnhet.id].utfall && _referensData[_currentEnhet.id].utfall[nr]) || 0;
+            var refVal = (_referensData[_currentEnhet&&_currentEnhet.id] && _referensData[_currentEnhet.id].budget && _referensData[_currentEnhet.id].budget[nr]) || 0;
             rows += '<tr>'
               + '<td class="sticky-col konto-num">'+nr+'</td>'
-              + '<td class="sticky-col" style="max-width:260px">'+k.namn+(hasComment?'<span class="comment-dot" title="'+( (_currentDraft.kommentarer[nr]||'').replace(/"/g,"'"))+'"></span>':'')+'</td>'
+              + '<td class="sticky-col" style="max-width:220px">'+k.namn+(hasComment?'<span class="comment-dot" title="'+( (_currentDraft.kommentarer[nr]||'').replace(/"/g,"'"))+'"></span>':'')+'</td>'
               + '<td><button class="btn btn-sm" data-knr="'+nr+'" onclick="openComment(this.dataset.knr)" style="font-size:11px;padding:3px 8px">'+(hasComment?'<i class="ti ti-message-2" style="color:var(--amber)"></i> Ändra':'<i class="ti ti-message"></i> Not')+'</button></td>'
+              + '<td class="num" style="color:var(--text3);font-size:11px">'+(utfVal?fmtKr(utfVal):'–')+'</td>'
+              + '<td class="num" style="color:var(--text3);font-size:11px">'+(refVal?fmtKr(refVal):'–')+'</td>'
               + '<td class="'+cellClass+'">'+(isPar
                 ? '<span style="font-size:11px" title="Beräknat från parametrar">'+fmtKr(v)+'</span>'
                 : '<input class="cell-input" data-konto="'+nr+'" value="'+(v||'')+'" onchange="onCellChange(this)" oninput="scheduleAutosave()">'
@@ -773,6 +849,30 @@ function renderBudget(container) {
     rows += '<tr class="'+aCls+'"><td class="sticky-col"></td><td class="sticky-col" colspan="2" style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;">ÅRETS RESULTAT</td><td class="num">'+fmtKr(aretsRes)+'</td></tr>';
     return rows;
   }
+
+  // Check if budget year is open for this enhet
+  if (!_isEkonomi && _currentEnhet && !isEnhetOpen(_currentEnhet.id)) {
+    container.innerHTML = `
+      <div class="page-header">
+        <div class="page-header-left">
+          <h1><i class="ti ti-table" style="font-size:18px;color:var(--accent)"></i> Budget ${BUDGET_YEAR}</h1>
+          <div class="page-sub">${_currentEnhet ? _currentEnhet.namn : '–'}</div>
+        </div>
+      </div>
+      <div class="content">
+        <div style="text-align:center;padding:60px 20px;max-width:420px;margin:0 auto">
+          <i class="ti ti-lock" style="font-size:48px;color:var(--text3);display:block;margin-bottom:16px"></i>
+          <div style="font-size:18px;font-weight:600;margin-bottom:10px">Budgetåret är inte öppnat ännu</div>
+          <p style="font-size:13px;color:var(--text2);line-height:1.7">
+            Ekonomiansvarig behöver fylla i utfall och öppna budgetåret ${BUDGET_YEAR} för ${_currentEnhet ? _currentEnhet.namn : 'din enhet'} innan du kan börja arbeta med budgeten.
+          </p>
+        </div>
+      </div>`;
+    return;
+  }
+
+  // Load reference data (utfall + previous budget) if not cached
+  if (_currentEnhet) await loadReferensData(_currentEnhet.id);
 
   container.innerHTML = `
     <div class="page-header">
@@ -1141,8 +1241,31 @@ function renderPrognos(container) {
     </div>`;
 }
 
+// ── REFERENSDATA ──────────────────────────────────────────────────────────────
+async function loadReferensData(enhetId) {
+  if (_referensData[enhetId]) return; // already loaded
+  _referensData[enhetId] = {utfall:{}, budget:{}};
+  var st = getEnhetStatus(enhetId);
+
+  // Load utfall reference
+  if (st.utfallAr && st.utfallPeriod) {
+    var utfPath = BUDGET_BASE+'/'+st.utfallAr+'/'+enhetId+'/utfall_p'+st.utfallPeriod+'.json';
+    var r1 = await ghGet(utfPath);
+    if (r1 && r1.data) _referensData[enhetId].utfall = r1.data;
+  }
+
+  // Load previous budget reference (latest submitted version)
+  if (st.referensBudgetAr) {
+    var budPath = BUDGET_BASE+'/'+st.referensBudgetAr+'/'+enhetId+'/v1.json';
+    var r2 = await ghGet(budPath);
+    if (r2 && r2.data && r2.data.kontoVarden) _referensData[enhetId].budget = r2.data.kontoVarden;
+  }
+}
+
 // ── VIEW: UTFALL ───────────────────────────────────────────────────────────
 var _utfallData    = {};
+var _statusData    = {}; // {year: {enhetId: {status, utfallAr, utfallPeriod, referensBudgetAr, ...}}}
+var _referensData  = {}; // cached utfall and budget reference per enhet
 var _utfallEnhetId = '';
 var _utfallPeriod  = '';
 
@@ -1304,6 +1427,116 @@ async function saveUtfall() {
   var ok = await ghPut(path, payload, 'Utfall period '+period+' – '+enhetId);
   if (ok) toast('Utfall sparat','ok');
   else    toast('Kunde ej spara utfall','err');
+}
+
+// ── VIEW: ÖPPNA BUDGETÅR ──────────────────────────────────────────────────────
+function renderOppnaBudgetar(container) {
+  var yr  = String(BUDGET_YEAR);
+  var MNAMES = ['','Januari','Februari','Mars','April','Maj','Juni','Juli','Augusti','September','Oktober','November','December'];
+
+  var rows = _settings.enheter.filter(function(e){return e.aktiv!==false;}).map(function(e) {
+    var st     = getEnhetStatus(e.id);
+    var isOpen = st.status === 'öppen';
+    var statusBadge = isOpen
+      ? '<span class="badge badge-approved"><span class="dot"></span> Öppen</span>'
+      : '<span class="badge badge-draft"><span class="dot"></span> Stängd</span>';
+    var refInfo = isOpen
+      ? 'Utfall '+( st.utfallAr||'–')+' t.o.m. '+(MNAMES[st.utfallPeriod]||'–')+' · Ref.budget '+(st.referensBudgetAr||'–')
+      : '–';
+    var actions = isOpen
+      ? '<button class="btn btn-sm btn-danger" data-eid="'+e.id+'" onclick="stangEnhet(this.dataset.eid)"><i class="ti ti-lock"></i> Stäng</button>'
+      : '<button class="btn btn-sm btn-primary" data-eid="'+e.id+'" onclick="oppnaEnhetDialog(this.dataset.eid)"><i class="ti ti-lock-open"></i> Öppna</button>';
+    return '<tr>'
+      +'<td style="font-weight:500">'+e.namn+'</td>'
+      +'<td style="color:var(--text3)">KST '+e.kst+(e.kb?' / KB '+e.kb:'')+'</td>'
+      +'<td>'+statusBadge+'</td>'
+      +'<td style="font-size:12px;color:var(--text2)">'+refInfo+'</td>'
+      +'<td style="font-size:12px;color:var(--text3)">'+(st.öppadAv||'')+(st.öppadTs?' · '+new Date(st.öppadTs).toLocaleDateString('sv-SE'):'')+'</td>'
+      +'<td class="no-print" style="text-align:right">'+actions+'</td>'
+      +'</tr>';
+  }).join('');
+
+  container.innerHTML = `
+    <div class="page-header">
+      <div class="page-header-left">
+        <h1><i class="ti ti-lock-open" style="font-size:18px;color:var(--blue)"></i> Öppna budgetår ${BUDGET_YEAR}</h1>
+        <div class="page-sub">Öppna budget per enhet när utfall är inlagt – campingansvarig kan sedan börja arbeta</div>
+      </div>
+    </div>
+    <div class="content">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title"><i class="ti ti-building"></i> Enheter – Budget ${BUDGET_YEAR}</span>
+        </div>
+        <div style="overflow-x:auto">
+          <table class="btable">
+            <thead><tr>
+              <th>Enhet</th><th>KST/KB</th><th>Status</th>
+              <th>Referensdata</th><th>Öppnad av</th>
+              <th class="no-print" style="text-align:right">Åtgärd</th>
+            </tr></thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </div>
+      </div>
+    </div>`;
+}
+
+function oppnaEnhetDialog(enhetId) {
+  var e = _settings.enheter.find(function(x){return x.id===enhetId;});
+  if (!e) return;
+  _openingEnhetId = enhetId;
+  document.getElementById('oppna-enhet-namn').textContent = e.namn;
+  // Set defaults
+  document.getElementById('oppna-utfall-ar').value    = BUDGET_YEAR - 1;
+  document.getElementById('oppna-utfall-period').value = 12;
+  document.getElementById('oppna-ref-budget-ar').value = BUDGET_YEAR - 1;
+  openModal('modal-oppna');
+}
+
+var _openingEnhetId = '';
+
+async function sparaOppnaEnhet() {
+  var enhetId   = _openingEnhetId;
+  var utfallAr  = parseInt(document.getElementById('oppna-utfall-ar').value);
+  var utfPeriod = parseInt(document.getElementById('oppna-utfall-period').value);
+  var refBudAr  = parseInt(document.getElementById('oppna-ref-budget-ar').value);
+  if (!enhetId) return;
+
+  var yr = String(BUDGET_YEAR);
+  if (!_statusData[yr]) _statusData[yr] = {};
+
+  // Reset draft for this enhet
+  var emptyDraft = {kontoVarden:{}, kommentarer:{}, paramVarden:{}, investeringar:[], autosparad:null};
+  await ghPut(draftPath(enhetId), emptyDraft, 'Nollställt utkast inför budget '+BUDGET_YEAR+' – '+enhetId);
+
+  _statusData[yr][enhetId] = {
+    status:          'öppen',
+    utfallAr:        utfallAr,
+    utfallPeriod:    utfPeriod,
+    referensBudgetAr: refBudAr,
+    öppadAv:         _user.name,
+    öppadTs:         new Date().toISOString(),
+  };
+
+  // Clear cached reference data so it reloads
+  delete _referensData[enhetId];
+
+  await saveStatus();
+  closeModal('modal-oppna');
+  toast('Budget '+BUDGET_YEAR+' öppnad för '+enhetId,'ok');
+  renderOppnaBudgetar(document.getElementById('view-content'));
+}
+
+async function stangEnhet(enhetId) {
+  if (!confirm('Stäng budget '+BUDGET_YEAR+' för enheten? Campingansvarig kan inte längre redigera.')) return;
+  var yr = String(BUDGET_YEAR);
+  if (!_statusData[yr]) _statusData[yr] = {};
+  if (!_statusData[yr][enhetId]) _statusData[yr][enhetId] = {};
+  _statusData[yr][enhetId].status = 'stängd';
+  await saveStatus();
+  toast('Stängd','ok');
+  renderOppnaBudgetar(document.getElementById('view-content'));
 }
 
 // ── VIEW: KONTOPLAN ────────────────────────────────────────────────────────
