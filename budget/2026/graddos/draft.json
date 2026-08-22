@@ -1,16 +1,7 @@
 {
-  "kontoVarden": {
-    "4010": 230000,
-    "4011": 0
-  },
-  "kommentarer": {
-    "4010": "Ökad"
-  },
-  "paramVarden": {
-    "helarsplatser_antal": 2,
-    "helarsplatser_pris": 339.29,
-    "arvoden_antal": 1
-  },
+  "kontoVarden": {},
+  "kommentarer": {},
+  "paramVarden": {},
   "investeringar": [],
-  "autosparad": "2026-08-22T13:06:53.270Z"
+  "autosparad": null
 }
