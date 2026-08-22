@@ -518,6 +518,17 @@ async function init() {
 
   await loadSettings();
   await loadStatus();
+
+  // For camping role: hide nav items if budget year is not open
+  if (!_isEkonomi) {
+    var budgetEnhetId = _user.budgetEnhet || (_settings.enheter[0] && _settings.enheter[0].id) || '';
+    if (!isEnhetOpen(budgetEnhetId)) {
+      ['nav-budget','nav-param','nav-invest','nav-versions'].forEach(function(id){
+        var el = document.getElementById(id);
+        if (el) el.style.display = 'none';
+      });
+    }
+  }
   if (!_settings.kontoplan || !_settings.kontoplan.length) {
     var token = localStorage.getItem('gh_token')||'';
     var msg = token
