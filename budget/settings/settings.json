@@ -1324,7 +1324,7 @@
     {
       "id": "kapellskar",
       "namn": "Kapellskär",
-      "kst": "80",
+      "kst": "10",
       "kb": "",
       "aktiv": true
     },
