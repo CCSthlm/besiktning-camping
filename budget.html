@@ -158,6 +158,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-seri
 .param-input-wrap input{width:100%;padding:5px 8px;border:1px solid var(--border2);border-radius:5px;font-size:12px;text-align:right;font-family:inherit;background:var(--bg3);color:var(--text);}
 .param-input-wrap input:focus{outline:none;border-color:var(--accent);}
 .param-locked{background:var(--bg3);color:var(--text3);padding:5px 8px;border-radius:5px;font-size:12px;text-align:right;border:1px solid var(--border);}
+.moms-helper{display:flex;align-items:center;gap:8px;padding:6px 0 6px 0;margin-bottom:2px;background:rgba(59,109,17,.04);border-radius:var(--radius);padding:7px 10px;margin-top:2px;}
+.moms-label{font-size:11px;color:var(--text2);white-space:nowrap;min-width:130px;}
+.moms-inkl-input{width:100px;padding:5px 8px;border:1px solid var(--accent);border-radius:5px;font-size:12px;text-align:right;font-family:inherit;background:var(--green-bg);color:var(--green-text);}
+.moms-inkl-input:focus{outline:none;border-color:var(--accent2);}
+.moms-arrow{font-size:11px;color:var(--text2);white-space:nowrap;}
 
 /* VERSION HISTORY */
 .ver-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px;}
@@ -950,34 +955,57 @@ function updateLiveTotals() {
 }
 
 // ── VIEW: PARAMETRAR ───────────────────────────────────────────────────────
+var MOMS_PARAMS = ['helarsplatser', 'gastavgift']; // parametrar med momshjälp
+var MOMS_SATS   = 0.12; // 12%
+
 function renderParam(container) {
-  var pv  = _currentDraft.paramVarden || {};
-  var gv  = _settings.globalParamVarden || {};
+  var pv = _currentDraft.paramVarden || {};
+  var gv = _settings.globalParamVarden || {};
 
   var panels = _settings.parametrar.map(function(param) {
+    var hasMoms = MOMS_PARAMS.indexOf(param.id) !== -1;
+
     var rows = param.fields.map(function(f) {
-      var key  = param.id+'_'+f.id;
-      var val  = f.global ? (gv[key]||0) : (pv[key]||0);
+      var key = param.id + '_' + f.id;
+      var val = f.global ? (gv[key]||0) : (pv[key]||0);
       var cell = f.global
         ? '<div class="param-locked">'+val+' <span style="font-size:10px;color:var(--text3)">(global)</span></div>'
-        : '<div class="param-input-wrap"><input type="number" data-paramkey="'+key+'" value="'+(val||'')+'" oninput="onParamChange(this)" placeholder="0"></div>';
-      return '<div class="param-row"><span class="param-label">'+f.label+'</span>'+cell+'</div>';
+        : '<div class="param-input-wrap"><input type="number" data-paramkey="'+key+'" data-paramid="'+param.id+'" value="'+(val||'')+'" oninput="onParamChange(this)" placeholder="0"></div>';
+
+      // For pris-field on moms-params: add moms helper
+      var momsHelper = '';
+      if (hasMoms && f.id === 'pris') {
+        var exkl = val || 0;
+        var inkl = Math.round(exkl * (1 + MOMS_SATS));
+        momsHelper = '<div class="moms-helper">'
+          + '<span class="moms-label">Inkl. moms (12%):</span>'
+          + '<input type="number" class="moms-inkl-input" data-paramkey="'+key+'" data-paramid="'+param.id+'" value="'+(inkl||'')+'" oninput="onMomsInklChange(this)" placeholder="0">'
+          + '<span class="moms-arrow">→ exkl: <strong id="moms-exkl-'+key.replace(/_/g,'-')+'">'+fmtKr(exkl)+'</strong></span>'
+          + '</div>';
+      }
+
+      return '<div class="param-row"><span class="param-label">'+f.label+(hasMoms&&f.id==='pris'?' <span style="font-size:10px;color:var(--text3)">(exkl. moms)</span>':'')+'</span>'+cell+'</div>'
+        + momsHelper;
     }).join('');
 
     var computed = calcParams();
     var result   = computed[param.kontoNr] || 0;
-    return '<div class="param-panel"><div class="param-panel-title"><i class="ti ti-adjustments" style="font-size:14px;color:var(--accent)"></i> '+param.namn+' → konto '+param.kontoNr+'</div>'+rows
-      +'<div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:8px;border-top:1px solid var(--border)">'
-      +'<span style="font-size:12px;color:var(--text2)">Beräknat värde till budget</span>'
-      +'<span style="font-size:14px;font-weight:600;color:var(--blue)">'+fmtKr(result)+'</span>'
-      +'</div></div>';
+    var resultId = 'param-result-'+param.id;
+
+    return '<div class="param-panel">'
+      + '<div class="param-panel-title"><i class="ti ti-adjustments" style="font-size:14px;color:var(--accent)"></i> '+param.namn+' → konto '+param.kontoNr+'</div>'
+      + rows
+      + '<div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:8px;border-top:1px solid var(--border)">'
+      + '<span style="font-size:12px;color:var(--text2)">Beräknat värde till budget (exkl. moms)</span>'
+      + '<span id="'+resultId+'" style="font-size:16px;font-weight:700;color:var(--blue)">'+fmtKr(result)+'</span>'
+      + '</div></div>';
   }).join('');
 
   container.innerHTML = `
     <div class="page-header">
       <div class="page-header-left">
         <h1><i class="ti ti-adjustments" style="font-size:18px;color:var(--accent)"></i> Parametrar</h1>
-        <div class="page-sub">${_currentEnhet ? _currentEnhet.namn : '–'} · Fyll i enhetens egna värden</div>
+        <div class="page-sub">${_currentEnhet ? _currentEnhet.namn : '–'} · Fyll i enhetens egna värden · Alla belopp exkl. moms</div>
       </div>
       <div class="page-actions">
         <button class="btn btn-primary" onclick="saveParamAndReturn()"><i class="ti ti-check"></i> Spara &amp; tillbaka</button>
@@ -988,8 +1016,55 @@ function renderParam(container) {
 
 function onParamChange(el) {
   if (!_currentDraft.paramVarden) _currentDraft.paramVarden = {};
-  _currentDraft.paramVarden[el.dataset.paramkey] = parseFloat(el.value)||0;
+  var key    = el.dataset.paramkey;
+  var paramId= el.dataset.paramid;
+  var val    = parseFloat(el.value) || 0;
+  _currentDraft.paramVarden[key] = val;
+
+  // Update moms inkl field if this is a pris field
+  if (MOMS_PARAMS.indexOf(paramId) !== -1 && key.endsWith('_pris')) {
+    var inkl = Math.round(val * (1 + MOMS_SATS));
+    var inklEl = document.querySelector('.moms-inkl-input[data-paramkey="'+key+'"]');
+    if (inklEl) inklEl.value = inkl || '';
+    var exklEl = document.getElementById('moms-exkl-'+key.replace(/_/g,'-'));
+    if (exklEl) exklEl.textContent = fmtKr(val);
+  }
+
+  // Live-update result for this param
+  updateParamResult(paramId);
+  updateLiveTotals();
   scheduleAutosave();
+}
+
+function onMomsInklChange(el) {
+  var key    = el.dataset.paramkey;
+  var paramId= el.dataset.paramid;
+  var inkl   = parseFloat(el.value) || 0;
+  var exkl   = Math.round(inkl / (1 + MOMS_SATS) * 100) / 100;
+
+  // Update the exkl input
+  var exklInput = document.querySelector('input[data-paramkey="'+key+'"]:not(.moms-inkl-input)');
+  if (exklInput) exklInput.value = exkl || '';
+
+  // Update display
+  var exklEl = document.getElementById('moms-exkl-'+key.replace(/_/g,'-'));
+  if (exklEl) exklEl.textContent = fmtKr(exkl);
+
+  // Save exkl value (budget always uses exkl)
+  if (!_currentDraft.paramVarden) _currentDraft.paramVarden = {};
+  _currentDraft.paramVarden[key] = exkl;
+
+  updateParamResult(paramId);
+  updateLiveTotals();
+  scheduleAutosave();
+}
+
+function updateParamResult(paramId) {
+  var computed = calcParams();
+  var param    = _settings.parametrar.find(function(p){ return p.id === paramId; });
+  if (!param) return;
+  var el = document.getElementById('param-result-' + paramId);
+  if (el) el.textContent = fmtKr(computed[param.kontoNr] || 0);
 }
 
 async function saveParamAndReturn() {
