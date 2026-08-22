@@ -925,14 +925,12 @@ async function renderBudget(container) {
               <th class="sticky-col" style="width:240px">Namn</th>
               <th style="width:36px"></th>
               ${(function(){
-                var st2 = _currentEnhet ? getEnhetStatus(_currentEnhet.id) : {};
-                var uAr = st2.utfallAr || (BUDGET_YEAR-1);
-                var rAr = st2.referensBudgetAr || (BUDGET_YEAR-1);
                 var ref = _referensData[_currentEnhet&&_currentEnhet.id] || {};
-                var uP  = ref.utfallFoundPeriod || st2.utfallPeriod || 12;
+                var uP  = ref.utfallFoundPeriod || 0;
                 var MN  = ['','Jan','Feb','Mar','Apr','Maj','Jun','Jul','Aug','Sep','Okt','Nov','Dec'];
-                return '<th class="num" style="color:var(--text3);font-size:10px">Utfall '+uAr+' t.o.m. '+MN[uP]+'</th>'
-                  +'<th class="num" style="color:var(--text3);font-size:10px">Budget '+rAr+'</th>';
+                var utfLabel = uP ? 'Utfall '+BUDGET_YEAR+' t.o.m. '+MN[uP] : 'Utfall '+BUDGET_YEAR+' (ej inlagt)';
+                return '<th class="num" style="color:var(--text3);font-size:10px">'+utfLabel+'</th>'
+                  +'<th class="num" style="color:var(--text3);font-size:10px">Budget '+(BUDGET_YEAR-1)+'</th>';
               })()}
               <th class="num">Budget ${BUDGET_YEAR}</th>
             </tr></thead>
@@ -1340,30 +1338,31 @@ function renderPrognos(container) {
 
 // ── REFERENSDATA ──────────────────────────────────────────────────────────────
 async function loadReferensData(enhetId) {
-  // Always reload - don't cache so changes are visible immediately
-  _referensData[enhetId] = {utfall:{}, budget:{}};
-  var st = getEnhetStatus(enhetId);
+  // Always reload fresh - no caching
+  _referensData[enhetId] = {utfall:{}, budget:{}, utfallFoundPeriod:0};
 
-  // Load utfall - try from highest period downward to find latest saved
-  if (st.utfallAr) {
-    var maxPeriod = st.utfallPeriod || 12;
-    for (var p = maxPeriod; p >= 1; p--) {
-      var utfPath = BUDGET_BASE+'/'+st.utfallAr+'/'+enhetId+'/utfall_p'+p+'.json';
-      var r1 = await ghGet(utfPath);
-      if (r1 && r1.data) {
-        _referensData[enhetId].utfall = r1.data;
-        _referensData[enhetId].utfallFoundPeriod = p;
-        break;
-      }
+  // Utfall: always current budget year, find latest saved period (12 → 1)
+  for (var p = 12; p >= 1; p--) {
+    var utfPath = BUDGET_BASE+'/'+BUDGET_YEAR+'/'+enhetId+'/utfall_p'+p+'.json';
+    var r1 = await ghGet(utfPath);
+    if (r1 && r1.data) {
+      var utfData = Object.assign({}, r1.data);
+      delete utfData._meta;
+      _referensData[enhetId].utfall = utfData;
+      _referensData[enhetId].utfallFoundPeriod = p;
+      break;
     }
   }
 
-  // Load previous budget reference (latest submitted version)
-  if (st.referensBudgetAr) {
-    var budPath = BUDGET_BASE+'/'+st.referensBudgetAr+'/'+enhetId+'/v1.json';
+  // Ref budget: always previous year (BUDGET_YEAR - 1), latest submitted version
+  var prevYear = BUDGET_YEAR - 1;
+  // Try v3, v2, v1 in order to get latest version
+  for (var v = 5; v >= 1; v--) {
+    var budPath = BUDGET_BASE+'/'+prevYear+'/'+enhetId+'/v'+v+'.json';
     var r2 = await ghGet(budPath);
     if (r2 && r2.data && r2.data.kontoVarden) {
       _referensData[enhetId].budget = r2.data.kontoVarden;
+      break;
     }
   }
 }
@@ -1417,11 +1416,15 @@ async function loadUtfallView() {
   var period  = _utfallPeriod;
   var key     = enhetId + '_' + period;
 
-  // Load utfall from GitHub if not cached
-  if (!_utfallData[key]) {
-    var path = BUDGET_BASE + '/' + BUDGET_YEAR + '/' + enhetId + '/utfall_p' + period + '.json';
-    var r = await ghGet(path);
-    _utfallData[key] = r ? r.data : {};
+  // Always reload from GitHub - don't use cache
+  var path = BUDGET_BASE + '/' + BUDGET_YEAR + '/' + enhetId + '/utfall_p' + period + '.json';
+  var r = await ghGet(path);
+  _utfallData[key] = r ? r.data : {};
+  // Strip _meta from loaded data before using as konto values
+  if (_utfallData[key]._meta) {
+    var raw = Object.assign({}, _utfallData[key]);
+    delete raw._meta;
+    _utfallData[key] = raw;
   }
 
   var utfall  = _utfallData[key] || {};
@@ -1524,15 +1527,25 @@ async function saveUtfall() {
   var enhetId = _utfallEnhetId || (document.getElementById('utfall-enhet') && document.getElementById('utfall-enhet').value);
   var period  = _utfallPeriod  || (document.getElementById('utfall-period') && document.getElementById('utfall-period').value);
   if (!enhetId || !period) { toast('Välj enhet och period först','warn'); return; }
-  var key     = enhetId + '_' + period;
-  var data    = _utfallData[key] || {};
-  var path    = BUDGET_BASE + '/' + BUDGET_YEAR + '/' + enhetId + '/utfall_p' + period + '.json';
-  var payload = Object.assign({}, data, {
+  var key  = enhetId + '_' + period;
+  var data = _utfallData[key] || {};
+
+  // Save konto values at root level, meta separately
+  var kontoVarden = Object.assign({}, data);
+  delete kontoVarden._meta;
+
+  var payload = Object.assign({}, kontoVarden, {
     _meta: { enhetId, period: parseInt(period), ar: BUDGET_YEAR, sparadAv: _user.name, sparadTs: new Date().toISOString() }
   });
-  var ok = await ghPut(path, payload, 'Utfall period '+period+' – '+enhetId);
-  if (ok) toast('Utfall sparat','ok');
-  else    toast('Kunde ej spara utfall','err');
+  var savePath = BUDGET_BASE + '/' + BUDGET_YEAR + '/' + enhetId + '/utfall_p' + period + '.json';
+  var ok = await ghPut(savePath, payload, 'Utfall period '+period+' – '+enhetId);
+  if (ok) {
+    // Clear referens cache so budget view reloads it
+    delete _referensData[enhetId];
+    toast('Utfall sparat','ok');
+  } else {
+    toast('Kunde ej spara utfall','err');
+  }
 }
 
 // ── VIEW: ÖPPNA BUDGETÅR ──────────────────────────────────────────────────────
@@ -1547,7 +1560,7 @@ function renderOppnaBudgetar(container) {
       ? '<span class="badge badge-approved"><span class="dot"></span> Öppen</span>'
       : '<span class="badge badge-draft"><span class="dot"></span> Stängd</span>';
     var refInfo = isOpen
-      ? 'Utfall '+( st.utfallAr||'–')+' t.o.m. '+(MNAMES[st.utfallPeriod]||'–')+' · Ref.budget '+(st.referensBudgetAr||'–')
+      ? 'Utfall '+BUDGET_YEAR+' (senaste period) · Ref.budget '+(BUDGET_YEAR-1)
       : '–';
     var actions = isOpen
       ? '<button class="btn btn-sm btn-danger" data-eid="'+e.id+'" onclick="stangEnhet(this.dataset.eid)"><i class="ti ti-lock"></i> Stäng</button>'
