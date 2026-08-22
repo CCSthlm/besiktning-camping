@@ -1,10 +1,11 @@
 {
   "3010": 500,
+  "4010": 200000,
   "_meta": {
     "enhetId": "graddos",
     "ar": 2025,
     "sparadAv": "Massimo Johansson",
-    "sparadTs": "2026-08-22T12:17:01.609Z",
+    "sparadTs": "2026-08-22T12:17:51.721Z",
     "typ": "manuell"
   }
 }
