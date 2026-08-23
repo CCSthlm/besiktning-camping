@@ -2,10 +2,11 @@
   "kontoVarden": {},
   "kommentarer": {},
   "paramVarden": {
-    "helarsplatser_antal": 50
+    "helarsplatser_antal": 50,
+    "helarsplatser_pris": 18750
   },
   "investeringar": [],
-  "autosparad": "2026-08-23T07:15:21.348Z",
+  "autosparad": "2026-08-23T07:15:26.677Z",
   "_meta": {
     "aterstalld": true,
     "aterstalldAv": "Massimo Johansson",
