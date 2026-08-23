@@ -1617,6 +1617,7 @@ function renderOppnaBudgetar(container) {
     var actions = isOpen
       ? '<button class="btn btn-sm btn-danger" data-eid="'+e.id+'" onclick="stangEnhet(this.dataset.eid)"><i class="ti ti-lock"></i> Stäng</button>'
       : '<button class="btn btn-sm btn-primary" data-eid="'+e.id+'" onclick="oppnaEnhetDialog(this.dataset.eid)"><i class="ti ti-lock-open"></i> Öppna</button>';
+    actions += ' <button class="btn btn-sm btn-danger" data-eid="'+e.id+'" data-enamn="'+e.namn+'" onclick="aterstallEnhet(this.dataset.eid,this.dataset.enamn)" style="margin-left:4px"><i class="ti ti-trash"></i> Återställ</button>';
     return '<tr>'
       +'<td style="font-weight:500">'+e.namn+'</td>'
       +'<td style="color:var(--text3)">KST '+e.kst+(e.kb?' / KB '+e.kb:'')+'</td>'
@@ -1707,6 +1708,65 @@ async function stangEnhet(enhetId) {
   _statusData[yr][enhetId].status = 'stängd';
   await saveStatus();
   toast('Stängd','ok');
+  renderOppnaBudgetar(document.getElementById('view-content'));
+}
+
+async function aterstallEnhet(enhetId, enhetNamn) {
+  if (!confirm(
+    'ÅTERSTÄLL budgetår '+BUDGET_YEAR+' för '+enhetNamn+'?\n\n' +
+    'Detta raderar:\n' +
+    '  • Alla budgetsiffror (utkast och versioner)\n' +
+    '  • Alla utfall för '+BUDGET_YEAR+'\n\n' +
+    'Inställningar, kontoplan och föregående år berörs INTE.\n' +
+    'Enheten stängs och campingansvarig förlorar åtkomst.\n\n' +
+    'Är du säker?'
+  )) return;
+
+  toast('Återställer '+enhetNamn+'…','warn');
+
+  var emptyDraft = {kontoVarden:{}, kommentarer:{}, paramVarden:{}, investeringar:[], autosparad:null,
+    _meta:{aterstalld:true, aterstalldAv:_user.name, aterstalldTs:new Date().toISOString()}};
+
+  // 1. Nollställ draft
+  await ghPut(draftPath(enhetId), emptyDraft, 'Återställt utkast '+enhetId+' '+BUDGET_YEAR);
+
+  // 2. Nollställ versioner v1-v5
+  var emptyVer = Object.assign({}, emptyDraft, {kontoVarden:{}, investeringar:[]});
+  for (var v = 1; v <= 5; v++) {
+    var vPath = BUDGET_BASE+'/'+BUDGET_YEAR+'/'+enhetId+'/v'+v+'.json';
+    var exists = await ghGet(vPath);
+    if (exists) {
+      await ghPut(vPath, emptyVer, 'Återställd version v'+v+' '+enhetId);
+    }
+  }
+
+  // 3. Nollställ alla utfall p1-p12
+  var emptyUtfall = {_meta:{aterstalld:true, aterstalldAv:_user.name, aterstalldTs:new Date().toISOString()}};
+  for (var p = 1; p <= 12; p++) {
+    var uPath = BUDGET_BASE+'/'+BUDGET_YEAR+'/'+enhetId+'/utfall_p'+p+'.json';
+    var uExists = await ghGet(uPath);
+    if (uExists) {
+      await ghPut(uPath, emptyUtfall, 'Återställt utfall p'+p+' '+enhetId);
+    }
+  }
+
+  // 4. Stäng enheten i status
+  var yr = String(BUDGET_YEAR);
+  if (!_statusData[yr]) _statusData[yr] = {};
+  _statusData[yr][enhetId] = {
+    status: 'stängd',
+    aterstalldAv: _user.name,
+    aterstalldTs: new Date().toISOString(),
+  };
+  await saveStatus();
+
+  // 5. Clear local caches
+  delete _referensData[enhetId];
+  var key12 = enhetId + '_';
+  Object.keys(_utfallData).forEach(function(k){ if (k.startsWith(enhetId+'_')) delete _utfallData[k]; });
+  delete _budgetManuellData[enhetId];
+
+  toast(enhetNamn+' återställt och stängt','ok');
   renderOppnaBudgetar(document.getElementById('view-content'));
 }
 
