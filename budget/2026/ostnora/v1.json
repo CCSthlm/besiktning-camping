@@ -8,7 +8,8 @@
   },
   "paramVarden": {
     "helarsplatser_antal": 60,
-    "helarsplatser_pris": 15000
+    "helarsplatser_pris": 15000,
+    "soc_avg_lonekostnad": 0
   },
   "investeringar": [
     {
@@ -22,11 +23,11 @@
       "kommentar": "Här kommer en kommentar. det rasar igen."
     }
   ],
-  "autosparad": "2026-08-18T20:25:44.044Z",
+  "autosparad": "2026-08-18T20:27:59.877Z",
   "typ": "budget",
   "version": 1,
-  "versionKommentar": "",
+  "versionKommentar": "klar",
   "skickadAv": "Massimo Johansson",
-  "skickadTs": "2026-08-18T20:26:13.468Z",
+  "skickadTs": "2026-08-23T07:18:26.554Z",
   "status": "inkickad"
 }
