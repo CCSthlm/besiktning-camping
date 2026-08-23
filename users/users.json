@@ -161,6 +161,25 @@
       "nyckelCamping": "",
       "budgetEnhet": "graddos",
       "created": "2026-08-22"
+    },
+    {
+      "id": "umt5v3lw7ktmh",
+      "name": "jeanette Liljegren",
+      "email": "jeanette.liljegren@cc-camping.se",
+      "pin": "2222",
+      "pnr": "",
+      "adminRoles": [
+        "budget-camping"
+      ],
+      "role": "Användare",
+      "active": true,
+      "apps": [],
+      "plCampingId": "",
+      "godkannarcamping": "",
+      "sbaCamping": "",
+      "nyckelCamping": "",
+      "budgetEnhet": "bo_camp",
+      "created": "2026-08-23"
     }
   ],
   "campings": [
