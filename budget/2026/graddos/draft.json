@@ -3,5 +3,10 @@
   "kommentarer": {},
   "paramVarden": {},
   "investeringar": [],
-  "autosparad": null
+  "autosparad": null,
+  "_meta": {
+    "aterstalld": true,
+    "aterstalldAv": "Massimo Johansson",
+    "aterstalldTs": "2026-08-23T07:14:05.483Z"
+  }
 }
