@@ -1147,9 +1147,10 @@ function openInvestModal(idx) {
   document.getElementById('inv-kb').value         = r ? (r.kb||'')      : (_currentEnhet ? (_currentEnhet.kb||_currentEnhet.kst||'') : '');
   document.getElementById('inv-atgard').value     = r ? (r.atgard||'')  : '';
   document.getElementById('inv-kommentar').value  = r ? (r.kommentar||'') : '';
-  // Dynamic year fields: budgetår - 1 to budgetår + 4 (6 years)
+  // Dynamic year fields: budgetår - 1 to budgetår + 4 (6 years), 3 per row
   var startYear = BUDGET_YEAR - 1;
   var wrap = document.getElementById('invest-year-fields');
+  wrap.style.cssText = 'display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px';
   wrap.innerHTML = '';
   for (var y = startYear; y <= BUDGET_YEAR + 4; y++) {
     var key = 'y' + y;
