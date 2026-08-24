@@ -199,6 +199,26 @@
       "nyckelCamping": "",
       "budgetEnhet": "",
       "created": "2026-08-24"
+    },
+    {
+      "id": "umt7ob6ricizh",
+      "name": "Malin Liljedahl",
+      "email": "malin.liljedahl@cc-camping.se",
+      "pin": "2222",
+      "pnr": "",
+      "adminRoles": [
+        "nyckel-admin",
+        "budget-camping"
+      ],
+      "role": "Användare",
+      "active": true,
+      "apps": [],
+      "plCampingId": "",
+      "godkannarcamping": "",
+      "sbaCamping": "",
+      "nyckelCamping": "c1",
+      "budgetEnhet": "bo_camp",
+      "created": "2026-08-24"
     }
   ],
   "campings": [
