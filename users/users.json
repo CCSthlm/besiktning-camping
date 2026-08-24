@@ -71,18 +71,16 @@
       "email": "dorry.johansson@cc-camping.se",
       "pin": "1212",
       "pnr": "",
-      "adminRoles": [
-        "gasol-kontrollant",
-        "sba-lokal",
-        "reserakning-godkannare"
-      ],
+      "adminRoles": [],
       "role": "Användare",
       "active": true,
       "apps": [],
       "plCampingId": "",
-      "godkannarcamping": "CC Björkö Örns Camping",
+      "godkannarcamping": "",
       "created": "2026-06-26",
-      "sbaCamping": "CC Björkö Örns Camping"
+      "sbaCamping": "",
+      "nyckelCamping": "",
+      "budgetEnhet": ""
     },
     {
       "id": "umr39tsqhqx74",
