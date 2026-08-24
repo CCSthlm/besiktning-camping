@@ -97,6 +97,26 @@
         "av": "Massimo Johansson",
         "ts": "2026-06-16T20:59:58.009Z"
       }
+    },
+    {
+      "id": "SR-2608-B68P",
+      "ts": "2026-08-24T18:44:22.802Z",
+      "anläggning": "CC Östnora Camping",
+      "platsOmråde": "Utomhusområde",
+      "datum": "2026-08-16",
+      "tid": "",
+      "rapportör": "Massimo Johansson <massimo.johansson@cc-camping.se>",
+      "risk": "Medel",
+      "riskNivå": 2,
+      "ccNr": "125450",
+      "platsNr": "2",
+      "gästTyp": "Säsongsgäst",
+      "gästNamn": "Gron Kia & Rickard",
+      "personal": "Massimo Johansson",
+      "överlämnas": "Kia & Rickard Gron",
+      "beskrivning": "Under lördagen uppträdde Rickard upprört och aggresivt i dialogen med flertalet säsongsgäster då han var upprörd över det som hänt på campingen. Flera kände sig väldigt utsatta samt att de blev rädda för honom. I restaurangen låste man till och med dörren för att man var rädd att han kom in. \n\nRickard hade även gått till en säsongsgäst tält och bett om att få prata med en familjemedlem vilket övriga familjen inte ville men Rickard uppträdde hotfullt och gav sig inte. \n\nDet hade även framkommit att flera kände sig hotade. ",
+      "status": "ny",
+      "beslut": null
     }
   ]
 }
