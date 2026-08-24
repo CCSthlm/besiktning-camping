@@ -1,21 +1,12 @@
 {
   "kontoVarden": {},
   "kommentarer": {},
-  "paramVarden": {
-    "helarsplatser_antal": 50,
-    "helarsplatser_pris": 18750
-  },
+  "paramVarden": {},
   "investeringar": [],
-  "autosparad": "2026-08-23T07:15:31.625Z",
+  "autosparad": null,
   "_meta": {
     "aterstalld": true,
-    "aterstalldAv": "Massimo Johansson",
-    "aterstalldTs": "2026-08-23T07:14:05.483Z"
-  },
-  "typ": "budget",
-  "version": 1,
-  "versionKommentar": "klar",
-  "skickadAv": "Massimo Johansson",
-  "skickadTs": "2026-08-23T07:17:00.898Z",
-  "status": "inkickad"
+    "aterstalldAv": "Cristina Sundberg",
+    "aterstalldTs": "2026-08-24T10:46:46.196Z"
+  }
 }
