@@ -1,7 +1,9 @@
 {
-  "kontoVarden": {},
+  "kontoVarden": {
+    "3302": 50000
+  },
   "kommentarer": {},
   "paramVarden": {},
   "investeringar": [],
-  "autosparad": null
+  "autosparad": "2026-08-24T09:24:24.351Z"
 }
