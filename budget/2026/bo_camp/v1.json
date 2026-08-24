@@ -1,0 +1,20 @@
+{
+  "kontoVarden": {
+    "3016": 50000
+  },
+  "kommentarer": {},
+  "paramVarden": {
+    "helarsplatser_antal": 10,
+    "helarsplatser_pris": 18750,
+    "gastavgift_antal": 3000,
+    "gastavgift_pris": 339.29
+  },
+  "investeringar": [],
+  "autosparad": "2026-08-24T07:07:21.875Z",
+  "typ": "budget",
+  "version": 1,
+  "versionKommentar": "Klart",
+  "skickadAv": "Massimo Johansson",
+  "skickadTs": "2026-08-24T07:07:25.356Z",
+  "status": "inkickad"
+}
