@@ -180,6 +180,27 @@
       "nyckelCamping": "",
       "budgetEnhet": "bo_camp",
       "created": "2026-08-23"
+    },
+    {
+      "id": "umt6wq07xhe6r",
+      "name": "Cristina Sundberg",
+      "email": "cristina.sundberg@cc-camping.se",
+      "pin": "2222",
+      "pnr": "",
+      "adminRoles": [
+        "avvikelse-ledning",
+        "arshjul-admin",
+        "budget-styrelse"
+      ],
+      "role": "Användare",
+      "active": true,
+      "apps": [],
+      "plCampingId": "",
+      "godkannarcamping": "",
+      "sbaCamping": "",
+      "nyckelCamping": "",
+      "budgetEnhet": "",
+      "created": "2026-08-24"
     }
   ],
   "campings": [
