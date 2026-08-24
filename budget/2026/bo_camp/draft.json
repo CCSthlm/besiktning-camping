@@ -1,5 +1,7 @@
 {
-  "kontoVarden": {},
+  "kontoVarden": {
+    "3016": 50000
+  },
   "kommentarer": {},
   "paramVarden": {
     "helarsplatser_antal": 10,
@@ -8,5 +10,5 @@
     "gastavgift_pris": 339.29
   },
   "investeringar": [],
-  "autosparad": "2026-08-22T09:37:48.921Z"
+  "autosparad": "2026-08-24T07:07:21.875Z"
 }
