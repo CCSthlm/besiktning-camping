@@ -54,6 +54,15 @@
       "harAntal": false,
       "aktiv": true,
       "ordning": 6
+    },
+    {
+      "id": "mt7kjgz4ad0tn",
+      "namn": "Minigolf",
+      "konto": "3316",
+      "moms": 6,
+      "harAntal": true,
+      "aktiv": true,
+      "ordning": 99
     }
   ],
   "_meta": {
