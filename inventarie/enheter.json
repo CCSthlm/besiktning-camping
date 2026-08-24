@@ -107,6 +107,30 @@
       "skapadAv": "Joachim Säfqvist",
       "andrad": "2026-08-24T06:26:50.357Z",
       "andradAv": "Joachim Säfqvist"
+    },
+    {
+      "id": "INV-2608-QH6G",
+      "namn": "Citizen",
+      "kategori": "Kvittoskrivare",
+      "funktion": "Reception",
+      "status": "Aktiv",
+      "marke": "Citizen",
+      "modell": "CT-E",
+      "serienr": "TF302491924",
+      "anlaggning": "CC Storsveds Camping",
+      "placering": "Reception",
+      "ansvarig": "Fredrik Smedin",
+      "inkopDatum": "",
+      "garantiTill": "",
+      "leverantor": "",
+      "anteckningar": "",
+      "iptyp": "Dynamisk",
+      "ip": "",
+      "mac": "",
+      "skapad": "2026-08-24T06:28:14.594Z",
+      "skapadAv": "Joachim Säfqvist",
+      "andrad": "2026-08-24T06:28:14.594Z",
+      "andradAv": "Joachim Säfqvist"
     }
   ]
 }
