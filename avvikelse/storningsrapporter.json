@@ -24,33 +24,7 @@
         "ts": "2026-06-16T20:25:39.413Z"
       }
     },
-    {
-      "id": "SR-2606-O8U0",
-      "ts": "2026-06-16T20:32:21.152Z",
-      "anläggning": "Gräddös Pärla Kök & Bar",
-      "platsOmråde": "Restaurang / kök",
-      "datum": "2026-06-16",
-      "tid": "23:30",
-      "rapportör": "Massimo Johansson <massimo.johansson@cc-camping.se>",
-      "risk": "Medel",
-      "riskNivå": 2,
-      "ccNr": "92136",
-      "platsNr": "38",
-      "gästTyp": "Säsongsgäst",
-      "gästNamn": "Massimo Johansson",
-      "personal": "Malin L, Jörgen L",
-      "överlämnas": "Massimo Johansson",
-      "beskrivning": "Uppträdde hotfullt när han nekades alkoholservering",
-      "status": "beslutad",
-      "beslut": {
-        "typ": "Avvisning",
-        "datum": "2026-06-16",
-        "beskrivning": "DU är avvisad",
-        "uteslutning": false,
-        "av": "Massimo Johansson",
-        "ts": "2026-06-16T20:35:57.075Z"
-      }
-    },
+    
     {
       "id": "SR-2606-A579",
       "ts": "2026-06-16T20:48:54.673Z",
@@ -71,33 +45,7 @@
       "status": "ny",
       "beslut": null
     },
-    {
-      "id": "SR-2606-LI0L",
-      "ts": "2026-06-16T20:57:38.039Z",
-      "anläggning": "CC Storsveds Camping",
-      "platsOmråde": "Restaurang / kök",
-      "datum": "2026-06-16",
-      "tid": "",
-      "rapportör": "Massimo Johansson <massimo.johansson@cc-camping.se>",
-      "risk": "Hög",
-      "riskNivå": 3,
-      "ccNr": "232323",
-      "platsNr": "23",
-      "gästTyp": "Säsongsgäst",
-      "gästNamn": "Massimo Johansson",
-      "personal": "Malin L, Jörgen L",
-      "överlämnas": "Massimo Johansson",
-      "beskrivning": "asdsdfsdafa dsads dskjsdbf kjsda klsdfnh kljsdn,.ncv,.x nv,m.cxzn z.,n,xcnv, xnzv .,xcnv .,xcn ,.xzcn .,zxcn .,xzmvöcxlzvnölsfjlö ns .,xnv .,mx väsadvfc .wa nlkxslkdf  oisdf sdk.sn z.x, z<jöä<df czm",
-      "status": "beslutad",
-      "beslut": {
-        "typ": "Muntlig tillsägelse",
-        "datum": "2026-06-16",
-        "beskrivning": "dfh saklj hsladkkjl kadsfhksajl fgkjkjkfj dslöj dl jsdöl jdölsjglöbmvclkömb.,vcmmbödjbgöld b.,bm vc., .cvb .,m .m b.-,cx.-xmvbxjölb dflgdsm bmmbm.bö.cxmb .öl-cx bm ögm böb.m.mbölfdm m.bm ölbö mdmb cbg ämöm",
-        "uteslutning": false,
-        "av": "Massimo Johansson",
-        "ts": "2026-06-16T20:59:58.009Z"
-      }
-    },
+    
     {
       "id": "SR-2608-B68P",
       "ts": "2026-08-24T18:44:22.802Z",
