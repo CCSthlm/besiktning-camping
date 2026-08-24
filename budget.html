@@ -1196,9 +1196,33 @@ function saveInvestRow() {
 }
 
 // ── VIEW: VERSIONER ────────────────────────────────────────────────────────
-function renderVersions(container) {
-  var draft = _currentDraft;
+async function renderVersions(container) {
+  var draft      = _currentDraft;
   var autosparad = draft.autosparad ? new Date(draft.autosparad).toLocaleString('sv-SE') : 'Aldrig';
+  var totals     = calcTotals();
+
+  // Load submitted versions v1-v5
+  var versions = [];
+  for (var v = 1; v <= 5; v++) {
+    var r = await ghGet(versionPath(_currentEnhet.id, v));
+    if (r && r.data && r.data.skickadTs) versions.push(Object.assign({v:v}, r.data));
+  }
+
+  var verCards = versions.map(function(ver) {
+    var vt = calcTotalsFromKonton(ver.kontoVarden || {});
+    var resCls = vt.resultat >= 0 ? 'color:var(--accent2)' : 'color:var(--red)';
+    return '<div class="ver-card" style="border-color:var(--blue-bg)">'
+      +'<div class="ver-icon" style="background:var(--blue-bg)"><i class="ti ti-send" style="color:var(--blue)"></i></div>'
+      +'<div class="ver-info">'
+      +'<div class="ver-name" style="display:flex;align-items:center;gap:8px">Version '+ver.v
+        +' <span class="badge badge-sent">Inskickad</span></div>'
+      +'<div class="ver-meta">'+new Date(ver.skickadTs).toLocaleString('sv-SE')+' · '+ver.skickadAv+'</div>'
+      +(ver.versionKommentar?'<div style="font-size:12px;color:var(--text2);margin-top:3px;font-style:italic">'+ver.versionKommentar+'</div>':'')
+      +'</div>'
+      +'<div style="text-align:right"><div style="font-size:14px;font-weight:700;'+resCls+'">'+fmtKr(vt.resultat)+'</div>'
+      +'<div style="font-size:11px;color:var(--text3)">rörelseresultat</div></div>'
+      +'</div>';
+  }).join('');
 
   container.innerHTML = `
     <div class="page-header">
@@ -1208,41 +1232,66 @@ function renderVersions(container) {
       </div>
     </div>
     <div class="content">
-      <div style="max-width:560px;display:flex;flex-direction:column;gap:8px">
+      <div style="max-width:600px;display:flex;flex-direction:column;gap:8px">
         <div class="ver-card">
           <div class="ver-icon" style="background:var(--amber-bg)"><i class="ti ti-pencil" style="color:var(--amber)"></i></div>
           <div class="ver-info">
             <div class="ver-name">Utkast (pågående) <span class="badge badge-draft" style="margin-left:6px">Autosparat</span></div>
             <div class="ver-meta">Senast sparad: ${autosparad}</div>
           </div>
-          <button class="btn" onclick="showView('budget')">Redigera</button>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
+            <div style="font-size:14px;font-weight:700;${totals.resultat>=0?'color:var(--accent2)':'color:var(--red)'}">${fmtKr(totals.resultat)}</div>
+            <button class="btn btn-sm" onclick="showView('budget')">Redigera</button>
+          </div>
         </div>
-        <div style="text-align:center;color:var(--text3);font-size:13px;padding:20px">
-          <i class="ti ti-history" style="font-size:24px;display:block;margin-bottom:8px"></i>
-          Inga inskickade versioner ännu. Klicka "Skicka in version" i budgetvyn.
-        </div>
+        ${verCards || '<div style="text-align:center;color:var(--text3);font-size:13px;padding:20px"><i class="ti ti-history" style="font-size:24px;display:block;margin-bottom:8px"></i>Inga inskickade versioner ännu. Klicka "Skicka in version" i budgetvyn.</div>'}
       </div>
     </div>`;
+}
+
+function calcTotalsFromKonton(kontoVarden) {
+  var intakter = 0, kostnader = 0;
+  _settings.kontoplan.filter(function(k){return k.budgeterbar;}).forEach(function(k) {
+    var v = parseFloat(kontoVarden[k.nr]) || 0;
+    if (k.typ==='intakt') intakter += v;
+    else if (k.typ==='kostnad') kostnader += v;
+  });
+  return {intakter:intakter, kostnader:kostnader, resultat:intakter-kostnader};
 }
 
 async function submitVersion() {
   var comment = document.getElementById('submit-comment').value.trim();
   if (!_currentEnhet) return;
-  var draft = Object.assign({}, _currentDraft, {
+
+  // Find next version number
+  var nextV = 1;
+  for (var v = 1; v <= 10; v++) {
+    var existing = await ghGet(versionPath(_currentEnhet.id, v));
+    if (!existing || !existing.data || !existing.data.skickadTs) { nextV = v; break; }
+  }
+
+  var versionData = Object.assign({}, _currentDraft, {
+    kontoVarden: Object.assign({}, _currentDraft.kontoVarden),
     typ: 'budget',
-    version: 1,
+    version: nextV,
     versionKommentar: comment,
     skickadAv: _user.name,
     skickadTs: new Date().toISOString(),
     status: 'inkickad',
   });
-  var ok = await ghPut(versionPath(_currentEnhet.id, 1), draft, 'Budget v1 inskickad – '+_currentEnhet.namn);
-  if (ok) { closeModal('modal-submit'); toast('Budget inskickad','ok'); showView('versions'); }
-  else    { toast('Kunde ej skicka in','err'); }
+
+  var ok = await ghPut(versionPath(_currentEnhet.id, nextV), versionData, 'Budget v'+nextV+' inskickad – '+_currentEnhet.namn);
+  if (ok) {
+    closeModal('modal-submit');
+    toast('Budget v'+nextV+' inskickad','ok');
+    showView('versions');
+  } else {
+    toast('Kunde ej skicka in','err');
+  }
 }
 
 // ── VIEW: KONSOLIDERING ───────────────────────────────────────────────────
-function renderKonsolidering(container) {
+async function renderKonsolidering(container) {
   var ENHETER_COLS = [
     {id:'ostnora',    label:'Östnora'},
     {id:'orstig',     label:'Örstig'},
@@ -1254,27 +1303,7 @@ function renderKonsolidering(container) {
     {id:'sektionsgem',label:'Sekt.gem.'},
   ];
 
-  // Placeholder rows for demo
-  var kpIntakt   = _settings.kontoplan.filter(function(k){return k.typ==='intakt'&&k.budgeterbar;});
-  var kpKostnad  = _settings.kontoplan.filter(function(k){return k.typ==='kostnad'&&k.budgeterbar;});
-
-  function buildColHeaders() {
-    var th = '<th class="sticky-col" style="width:50px">Konto</th><th class="sticky-col" style="width:200px">Namn</th>';
-    ENHETER_COLS.forEach(function(e){ th += '<th>'+e.label+'</th>'; });
-    th += '<th>Totalt</th>';
-    return th;
-  }
-
-  function buildConsolRows(konton, sectionLabel) {
-    var rows = '<tr class="csect"><td colspan="'+(ENHETER_COLS.length+3)+'">'+sectionLabel+'</td></tr>';
-    konton.forEach(function(k) {
-      rows += '<tr><td class="sticky-col konto-num">'+k.nr+'</td><td class="sticky-col">'+k.namn+'</td>';
-      ENHETER_COLS.forEach(function(){ rows += '<td class="zero">–</td>'; });
-      rows += '<td class="zero">–</td></tr>';
-    });
-    return rows;
-  }
-
+  // Show loading state immediately
   container.innerHTML = `
     <div class="page-header">
       <div class="page-header-left">
@@ -1282,38 +1311,122 @@ function renderKonsolidering(container) {
         <div class="page-sub">Alla kostnadställen · Budget ${BUDGET_YEAR}</div>
       </div>
       <div class="page-actions">
-        <select class="btn" id="consol-year"><option>2026</option></select>
-        <button class="btn btn-blue"><i class="ti ti-download"></i> Excel</button>
+        <button class="btn btn-blue" onclick="exportKonsolExcel()"><i class="ti ti-download"></i> Excel</button>
       </div>
     </div>
-    <div class="content no-pad" style="padding:0 0 40px">
-      <div class="consol-wrap" style="padding:16px 24px">
-        <p style="font-size:13px;color:var(--text2);margin-bottom:14px">Konsoliderad vy hämtar inskickade versioner från varje enhet. Ladda in data per enhet för att fylla tabellen.</p>
-        <table class="ctable">
-          <thead><tr>${buildColHeaders()}</tr></thead>
-          <tbody>
-            ${buildConsolRows(kpIntakt.slice(0,10), 'INTÄKTER – urval')}
-            <tr class="ctotal">
-              <td class="sticky-col" colspan="2">SUMMA RÖRELSEINTÄKTER</td>
-              ${ENHETER_COLS.map(function(){return '<td class="zero">–</td>';}).join('')}
-              <td class="zero">–</td>
-            </tr>
-            ${buildConsolRows(kpKostnad.slice(0,8), 'KOSTNADER – urval')}
-            <tr class="ctotal">
-              <td class="sticky-col" colspan="2">SUMMA RÖRELSEKOSTNADER</td>
-              ${ENHETER_COLS.map(function(){return '<td class="zero">–</td>';}).join('')}
-              <td class="zero">–</td>
-            </tr>
-            <tr class="cresult-pos">
-              <td class="sticky-col" colspan="2">RÖRELSERESULTAT</td>
-              ${ENHETER_COLS.map(function(){return '<td>–</td>';}).join('')}
-              <td>–</td>
-            </tr>
-          </tbody>
-        </table>
-        <p style="font-size:12px;color:var(--text3);margin-top:12px"><i class="ti ti-info-circle"></i> Inskickade budgetar från campingarna laddas automatiskt när de skickats in.</p>
+    <div class="content" id="konsol-body">
+      <div style="text-align:center;padding:40px;color:var(--text2);font-size:13px">
+        <i class="ti ti-loader" style="font-size:28px;display:block;margin-bottom:10px;animation:spin 1s linear infinite"></i>
+        Laddar inskickade versioner…
       </div>
     </div>`;
+
+  // Load latest submitted version per enhet
+  var enhetData = {};
+  for (var ci = 0; ci < ENHETER_COLS.length; ci++) {
+    var col = ENHETER_COLS[ci];
+    if (col.merged && col.children) {
+      enhetData[col.id] = {kontoVarden:{}};
+      for (var chi = 0; chi < col.children.length; chi++) {
+        var chData = await loadLatestVersion(col.children[chi]);
+        if (chData) {
+          Object.keys(chData.kontoVarden||{}).forEach(function(nr){
+            enhetData[col.id].kontoVarden[nr] = (enhetData[col.id].kontoVarden[nr]||0) + (parseFloat(chData.kontoVarden[nr])||0);
+          });
+        }
+      }
+    } else {
+      enhetData[col.id] = await loadLatestVersion(col.id);
+    }
+  }
+
+  function getVal(enhetId, nr) {
+    return enhetData[enhetId] ? (parseFloat((enhetData[enhetId].kontoVarden||{})[nr])||0) : 0;
+  }
+  function fmtC(v) {
+    return v ? '<span style="'+(v<0?'color:var(--red)':'')+'">'+fmtKr(v)+'</span>' : '<span class="zero">–</span>';
+  }
+
+  var kp = _settings.kontoplan.filter(function(k){return k.budgeterbar;});
+  var SECTIONS = [
+    {label:'INTÄKTER',    filter:function(k){return k.typ==='intakt';},   totKey:'intakter'},
+    {label:'KOSTNADER',   filter:function(k){return k.typ==='kostnad';},  totKey:'kostnader'},
+    {label:'FINANSIELLA', filter:function(k){return k.typ==='finans';},   totKey:'finans'},
+  ];
+
+  var grandByEnhet = {};
+  ENHETER_COLS.forEach(function(e){ grandByEnhet[e.id]={intakter:0,kostnader:0,finans:0}; });
+
+  var thead = '<tr>'
+    +'<th class="sticky-col" style="width:55px">Konto</th>'
+    +'<th class="sticky-col" style="width:190px">Namn</th>'
+    +ENHETER_COLS.map(function(e){return '<th style="text-align:right;font-size:10px;white-space:nowrap">'+e.label+'</th>';}).join('')
+    +'<th style="text-align:right;font-size:10px">Totalt</th>'
+    +'</tr>';
+
+  var tbody = '';
+  SECTIONS.forEach(function(sect) {
+    var sectKonton = kp.filter(sect.filter);
+    if (!sectKonton.length) return;
+    var sectByEnhet = {};
+    ENHETER_COLS.forEach(function(e){ sectByEnhet[e.id]=0; });
+
+    tbody += '<tr class="csect"><td colspan="'+(ENHETER_COLS.length+3)+'">'+sect.label+'</td></tr>';
+    sectKonton.forEach(function(k) {
+      var rowTotal = 0;
+      var cells = ENHETER_COLS.map(function(e) {
+        var v = getVal(e.id, k.nr);
+        sectByEnhet[e.id] += v;
+        grandByEnhet[e.id][sect.totKey] += v;
+        rowTotal += v;
+        return '<td style="text-align:right;font-size:11px">'+fmtC(v)+'</td>';
+      }).join('');
+      tbody += '<tr><td class="sticky-col konto-num">'+k.nr+'</td>'
+        +'<td class="sticky-col" style="font-size:12px">'+k.namn+'</td>'
+        +cells
+        +'<td style="text-align:right;font-size:11px;font-weight:500">'+fmtC(rowTotal)+'</td></tr>';
+    });
+
+    var sectRowTotal = 0;
+    var sectCells = ENHETER_COLS.map(function(e){ sectRowTotal+=sectByEnhet[e.id]; return '<td style="text-align:right;font-weight:600">'+fmtC(sectByEnhet[e.id])+'</td>'; }).join('');
+    tbody += '<tr class="csub"><td class="sticky-col"></td><td class="sticky-col">Summa '+sect.label.toLowerCase()+'</td>'+sectCells+'<td style="text-align:right;font-weight:700">'+fmtC(sectRowTotal)+'</td></tr>';
+  });
+
+  // Result row
+  var grandRowTotal = 0;
+  var resCells = ENHETER_COLS.map(function(e){
+    var res = grandByEnhet[e.id].intakter - grandByEnhet[e.id].kostnader;
+    grandRowTotal += res;
+    return '<td style="text-align:right;font-weight:700;'+(res<0?'color:var(--red)':'color:var(--accent2)')+'">'+fmtC(res)+'</td>';
+  }).join('');
+  tbody += '<tr class="'+(grandRowTotal>=0?'cresult-pos':'cresult-neg')+'">'
+    +'<td class="sticky-col"></td><td class="sticky-col" style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em">Rörelseresultat</td>'
+    +resCells+'<td style="text-align:right;font-weight:700">'+fmtC(grandRowTotal)+'</td></tr>';
+
+  document.getElementById('konsol-body').innerHTML = `
+    <div class="consol-wrap">
+      <table class="ctable" style="min-width:900px">
+        <thead>${thead}</thead>
+        <tbody>${tbody}</tbody>
+      </table>
+    </div>
+    <p style="font-size:12px;color:var(--text3);margin-top:12px">
+      <i class="ti ti-info-circle"></i>
+      Senaste inskickade version per enhet. Enheter utan inskickad version visas med –.
+      BÖ (60+65) är summan av Björkö Örns Camping och Gräddös Pärla.
+    </p>`;
+}
+
+async function loadLatestVersion(enhetId) {
+  for (var v = 5; v >= 1; v--) {
+    var r = await ghGet(versionPath(enhetId, v));
+    if (r && r.data && r.data.skickadTs) return r.data;
+  }
+  return null;
+}
+
+function exportKonsolExcel() {
+  toast('Excel-export av konsolidering – kommer snart','warn');
 }
 
 // ── VIEW: PROGNOS ──────────────────────────────────────────────────────────
