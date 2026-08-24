@@ -748,8 +748,8 @@ function renderAdminPoster() {
       +'<td>'+(p.harAntal?'<span class="badge badge-green">Ja</span>':'Nej')+'</td>'
       +'<td>'+(p.aktiv!==false?'<span class="badge badge-green">Aktiv</span>':'<span class="badge badge-red">Inaktiv</span>')+'</td>'
       +'<td style="text-align:right"><div style="display:flex;gap:4px;justify-content:flex-end">'
-        +'<button class="btn btn-sm" data-pid="'+p.id+'" onclick="openPostModal(this.dataset.pid)"><i class="ti ti-pencil"></i></button>'
-        +'<button class="btn btn-sm btn-danger" data-pid="'+p.id+'" onclick="deletePost(this.dataset.pid)"><i class="ti ti-trash"></i></button>'
+        +'<button class="btn btn-sm" data-pid="'+p.id+'" onclick="openPostModal(this.dataset.pid)"><i class="ti ti-pencil"></i> Redigera</button>'
+        +'<button class="btn btn-sm btn-danger" data-pid="'+p.id+'" onclick="deletePost(this.dataset.pid)"><i class="ti ti-trash"></i> Ta bort</button>'
       +'</div></td>'
       +'</tr>';
   }).join('');
@@ -818,20 +818,29 @@ function exportExcel() {
     .filter(function(r){return !r.raderad;});
   var wb = XLSX.utils.book_new();
 
-  // Sheet 1: Registreringar
-  var data1 = [['Nr','Camping','Datum','Swish-konto','Swish-total','Inskickat av']];
+  // Sheet 1: En rad per kassarapport, en kolumn per post
+  var allPoster = (_config.poster||[]).filter(function(p){return p.aktiv!==false;})
+    .sort(function(a,b){return (a.ordning||0)-(b.ordning||0);});
+  var header1 = ['Nr','Camping','Datum','Swish-konto','Swish-total (kr)','Inskickat av'];
+  allPoster.forEach(function(p) {
+    if (p.harAntal) header1.push(p.namn+' Antal');
+    header1.push(p.namn+' Belopp (kr)');
+  });
+  var data1 = [header1];
   filtered.forEach(function(r) {
-    data1.push([r.nr, r.campingNamn, r.datum, r.swishKonto, r.swishTotal, r.inskickatAv]);
-    (r.posterConfig||[]).forEach(function(p) {
-      var pv = r.poster&&r.poster[p.id];
-      if (!pv||(!pv.belopp&&!pv.antal)) return;
-      data1.push(['','',p.namn+' ('+p.konto+')', '', pv.belopp||0, pv.antal!=null?pv.antal+'st':'']);
+    var row = [r.nr, r.campingNamn, r.datum, r.swishKonto, r.swishTotal, r.inskickatAv];
+    allPoster.forEach(function(p) {
+      var pv = (r.poster&&r.poster[p.id])||{};
+      if (p.harAntal) row.push(pv.antal!=null?pv.antal:0);
+      row.push(pv.belopp||0);
     });
-    data1.push([]);
+    data1.push(row);
   });
   var ws1 = XLSX.utils.aoa_to_sheet(data1);
-  ws1['!cols']=[{wch:16},{wch:24},{wch:12},{wch:8},{wch:14},{wch:20}];
-  XLSX.utils.book_append_sheet(wb, ws1, 'Registreringar');
+  var colW = [{wch:16},{wch:24},{wch:12},{wch:10},{wch:16},{wch:22}];
+  allPoster.forEach(function(p){ if(p.harAntal) colW.push({wch:12}); colW.push({wch:16}); });
+  ws1['!cols'] = colW;
+  XLSX.utils.book_append_sheet(wb, ws1, 'Kassarapporter');
 
   // Sheet 2: Bokföringsjournal
   var data2 = [['Datum','Kassarapport','Camping','Konto','Kontonamn','Debet','Kredit','Moms%']];
