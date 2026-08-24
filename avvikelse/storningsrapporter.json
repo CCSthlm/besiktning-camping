@@ -115,8 +115,15 @@
       "personal": "Massimo Johansson",
       "överlämnas": "Kia & Rickard Gron",
       "beskrivning": "Under lördagen uppträdde Rickard upprört och aggresivt i dialogen med flertalet säsongsgäster då han var upprörd över det som hänt på campingen. Flera kände sig väldigt utsatta samt att de blev rädda för honom. I restaurangen låste man till och med dörren för att man var rädd att han kom in. \n\nRickard hade även gått till en säsongsgäst tält och bett om att få prata med en familjemedlem vilket övriga familjen inte ville men Rickard uppträdde hotfullt och gav sig inte. \n\nDet hade även framkommit att flera kände sig hotade. ",
-      "status": "ny",
-      "beslut": null
+      "status": "beslutad",
+      "beslut": {
+        "typ": "Varning",
+        "datum": "2026-08-24",
+        "beskrivning": "Efter en enhetligt beslut från alla styrelsemedlemmar den 24/8 beslutades att utdela en Varning med bakgrund av:\n\nMed tanke på att personerna kände sig hotade och illa tillmods: \nArbetsmiljölagen 3 kap. 2 och 2 a §§. Arbetsgivaren ska vidta de åtgärder som behövs för att förebygga ohälsa och olycksfall samt fortlöpande undersöka risker och åtgärda dem.\n\nFinns det en konkret risk för att personal utsätts för hot, rädsla, psykisk belastning eller våld? Om svaret är ja måste arbetsgivaren hantera risken. Arbetsmiljöverket säger också att arbetsgivaren ska dokumentera tillbud och händelser där våld eller hot om våld förekommit och följa upp vad som hänt och vilka åtgärder som behövs.\n\nDet strider samtidigt mot Sektionens trivselregler / stadgar.",
+        "uteslutning": false,
+        "av": "Massimo Johansson",
+        "ts": "2026-08-24T19:50:35.484Z"
+      }
     },
     {
       "id": "SR-2608-05L6",
