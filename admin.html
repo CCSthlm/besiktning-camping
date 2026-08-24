@@ -1277,7 +1277,7 @@ function openAddUser() {
   document.getElementById('user-pin').value = '';
   document.getElementById('user-pnr').value = '';
   document.getElementById('user-active').value = 'true';
-  ['global','sektions','besiktnings','personal','avvikelse-admin','avvikelse-ledning','avvikelse-anlaggning','avvikelse-brand','nyhetsadmin','störningsadmin','kontoadmin','inventarieadmin','gasol-kontrollant','sba-ansvarig','sba-lokal','sam-ansvarig','arshjul-admin','reserakning-admin','reserakning-godkannare','reserakning-utbetalare','nyckel-admin','lon-admin','budget-camping','budget-ekonomi','budget-styrelse'].forEach(r => { const el=document.getElementById('role-'+r); if(el) el.checked=false; });
+  ['global','sektions','besiktnings','personal','avvikelse-admin','avvikelse-ledning','avvikelse-anlaggning','avvikelse-brand','nyhetsadmin','störningsadmin','kontoadmin','inventarieadmin','gasol-kontrollant','sba-ansvarig','sba-lokal','sam-ansvarig','arshjul-admin','reserakning-admin','reserakning-godkannare','reserakning-utbetalare','nyckel-admin','lon-admin','swish-admin','budget-camping','budget-ekonomi','budget-styrelse'].forEach(r => { const el=document.getElementById('role-'+r); if(el) el.checked=false; });
   buildAppCheckboxes([]);
   populatePLCampingSelect('');
   toggleGodkannarcamping();
@@ -1299,7 +1299,7 @@ function openEditUser(id) {
   document.getElementById('user-active').value = u.active===false?'false':'true';
   // Set admin role checkboxes
   const roles = u.adminRoles || (u.role==='Admin'?['global']:[]);
-  ['global','sektions','besiktnings','personal','avvikelse-admin','avvikelse-ledning','avvikelse-anlaggning','avvikelse-brand','nyhetsadmin','störningsadmin','kontoadmin','inventarieadmin','gasol-kontrollant','sba-ansvarig','sba-lokal','sam-ansvarig','arshjul-admin','reserakning-admin','reserakning-godkannare','reserakning-utbetalare','nyckel-admin','lon-admin','budget-camping','budget-ekonomi','budget-styrelse'].forEach(r => {
+  ['global','sektions','besiktnings','personal','avvikelse-admin','avvikelse-ledning','avvikelse-anlaggning','avvikelse-brand','nyhetsadmin','störningsadmin','kontoadmin','inventarieadmin','gasol-kontrollant','sba-ansvarig','sba-lokal','sam-ansvarig','arshjul-admin','reserakning-admin','reserakning-godkannare','reserakning-utbetalare','nyckel-admin','lon-admin','swish-admin','budget-camping','budget-ekonomi','budget-styrelse'].forEach(r => {
     const el=document.getElementById('role-'+r);
     if(el) el.checked = roles.includes(r);
   });
@@ -1385,7 +1385,7 @@ function saveUser() {
   const pin = document.getElementById('user-pin').value.trim();
   if (!name) { alert('Namn krävs.'); return; }
   if (!pin || !/^\d{4}$/.test(pin)) { alert('PIN-kod måste vara 4 siffror.'); return; }
-  const adminRoles = ['global','sektions','besiktnings','personal','avvikelse-admin','avvikelse-ledning','avvikelse-anlaggning','avvikelse-brand','nyhetsadmin','störningsadmin','kontoadmin','inventarieadmin','gasol-kontrollant','sba-ansvarig','sba-lokal','sam-ansvarig','arshjul-admin','reserakning-admin','reserakning-godkannare','reserakning-utbetalare','nyckel-admin','lon-admin','budget-camping','budget-ekonomi','budget-styrelse'].filter(r => document.getElementById('role-'+r)?.checked);
+  const adminRoles = ['global','sektions','besiktnings','personal','avvikelse-admin','avvikelse-ledning','avvikelse-anlaggning','avvikelse-brand','nyhetsadmin','störningsadmin','kontoadmin','inventarieadmin','gasol-kontrollant','sba-ansvarig','sba-lokal','sam-ansvarig','arshjul-admin','reserakning-admin','reserakning-godkannare','reserakning-utbetalare','nyckel-admin','lon-admin','swish-admin','budget-camping','budget-ekonomi','budget-styrelse'].filter(r => document.getElementById('role-'+r)?.checked);
   const apps = Array.from(document.querySelectorAll('#user-apps-check input:checked')).map(e=>e.value);
   const editId = document.getElementById('user-edit-id').value;
   const godkannarcamping = adminRoles.includes('reserakning-godkannare')
