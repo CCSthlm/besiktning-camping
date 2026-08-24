@@ -23,6 +23,30 @@
       "skapadAv": "Joachim Säfqvist",
       "andrad": "2026-08-05T10:00:07.809Z",
       "andradAv": "Joachim Säfqvist"
+    },
+    {
+      "id": "INV-2608-L5F1",
+      "namn": "Epson TM-T88V",
+      "kategori": "Kvittoskrivare",
+      "funktion": "Reception",
+      "status": "Aktiv",
+      "marke": "Epson",
+      "modell": "TM-T88V",
+      "serienr": "MQEF724737",
+      "anlaggning": "CC Kapellskärs Camping",
+      "placering": "Reception",
+      "ansvarig": "Elisabeth Terol",
+      "inkopDatum": "",
+      "garantiTill": "",
+      "leverantor": "",
+      "anteckningar": "",
+      "iptyp": "Dynamisk",
+      "ip": "",
+      "mac": "",
+      "skapad": "2026-08-24T06:17:06.832Z",
+      "skapadAv": "Joachim Säfqvist",
+      "andrad": "2026-08-24T06:17:06.832Z",
+      "andradAv": "Joachim Säfqvist"
     }
   ]
 }
