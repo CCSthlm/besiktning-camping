@@ -14,7 +14,15 @@
       "utfallPeriod": 8,
       "referensBudgetAr": 2026,
       "öppadAv": "Cristina Sundberg",
-      "öppadTs": "2026-08-24T09:23:17.230Z"
+      "öppadTs": "2026-08-24T09:23:17.230Z",
+      "versionStatus": {
+        "v3": {
+          "status": "granskad",
+          "kommentar": "",
+          "av": "Massimo Johansson",
+          "ts": "2026-08-24T10:44:59.721Z"
+        }
+      }
     }
   }
 }
