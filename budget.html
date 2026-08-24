@@ -249,6 +249,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-seri
   <div class="nav-section" id="nav-section-ekonomi" style="display:none">
     <div class="nav-label">Ekonomiansvarig</div>
     <button class="nav-item" id="nav-oppna-budget" onclick="showView('oppna-budget')"><i class="ti ti-lock-open"></i> Öppna budgetår</button>
+    <button class="nav-item" id="nav-granskning" onclick="showView('granskning')"><i class="ti ti-clipboard-check"></i> Granskning</button>
     <button class="nav-item" id="nav-konsolidering" onclick="showView('konsolidering')"><i class="ti ti-layout-columns"></i> Konsolidering</button>
     <button class="nav-item" id="nav-prognos" onclick="showView('prognos')"><i class="ti ti-trending-up"></i> Prognos</button>
     <button class="nav-item" id="nav-utfall" onclick="showView('utfall')"><i class="ti ti-arrow-bar-to-down"></i> Utfall</button>
@@ -454,6 +455,28 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-seri
     <div class="modal-footer">
       <button class="btn" onclick="closeModal('modal-oppna')">Avbryt</button>
       <button class="btn btn-primary" onclick="sparaOppnaEnhet()"><i class="ti ti-lock-open"></i> Öppna budgetåret</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: GRANSKNING -->
+<div class="modal-overlay" id="modal-granskning">
+  <div class="modal" style="max-width:440px">
+    <div class="modal-header">
+      <span class="modal-title" id="modal-granskning-title">Granska budget</span>
+      <button class="modal-close" onclick="closeModal('modal-granskning')">&#x2715;</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-field">
+        <label id="granskning-action-label">Kommentar</label>
+        <textarea id="granskning-kommentar" rows="4"
+          style="padding:10px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius);font-size:13px;font-family:inherit;width:100%;resize:vertical"
+          placeholder="Eventuell kommentar…"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('modal-granskning')">Avbryt</button>
+      <button class="btn btn-primary" id="btn-granskning-confirm" onclick="confirmGranskning()">Bekräfta</button>
     </div>
   </div>
 </div>
@@ -730,6 +753,7 @@ function showView(name) {
   var renders = {
     budget:        renderBudget,
     'oppna-budget':renderOppnaBudgetar,
+    granskning:    renderGranskning,
     param:         renderParam,
     invest:        renderInvest,
     versions:      renderVersions,
@@ -868,6 +892,22 @@ async function renderBudget(container) {
   }
 
   // Check if budget year is open for this enhet
+  var enhetFastst = _currentEnhet && isFastställd(_currentEnhet.id);
+  if (!_isEkonomi && _currentEnhet && enhetFastst) {
+    container.innerHTML = `
+      <div class="page-header"><div class="page-header-left">
+        <h1><i class="ti ti-lock" style="color:var(--accent)"></i> Budget ${BUDGET_YEAR}</h1>
+        <div class="page-sub">${_currentEnhet.namn}</div>
+      </div></div>
+      <div class="content"><div style="text-align:center;padding:60px 20px;max-width:420px;margin:0 auto">
+        <i class="ti ti-lock" style="font-size:48px;color:var(--accent);display:block;margin-bottom:16px"></i>
+        <div style="font-size:18px;font-weight:600;margin-bottom:10px">Budget fastställd</div>
+        <p style="font-size:13px;color:var(--text2);line-height:1.7">
+          Budgeten för ${_currentEnhet.namn} är fastställd av styrelsen och kan inte längre ändras.
+        </p>
+      </div></div>`;
+    return;
+  }
   if (!_isEkonomi && _currentEnhet && !isEnhetOpen(_currentEnhet.id)) {
     container.innerHTML = `
       <div class="page-header">
@@ -1214,8 +1254,14 @@ async function renderVersions(container) {
     return '<div class="ver-card" style="border-color:var(--blue-bg)">'
       +'<div class="ver-icon" style="background:var(--blue-bg)"><i class="ti ti-send" style="color:var(--blue)"></i></div>'
       +'<div class="ver-info">'
-      +'<div class="ver-name" style="display:flex;align-items:center;gap:8px">Version '+ver.v
-        +' <span class="badge badge-sent">Inskickad</span></div>'
+      +(function(){
+        var vs = getVersionStatus(_currentEnhet.id, ver.v);
+        var isF = isFastställd(_currentEnhet.id);
+        return '<div class="ver-name" style="display:flex;align-items:center;gap:8px">Version '+ver.v
+          +' '+versionStatusBadge(vs.status)
+          +(vs.kommentar&&vs.status==='återsänd'?'</div><div style="font-size:12px;color:var(--amber-text);margin-top:2px">↩ '+vs.kommentar:'')
+          +'</div>';
+      })()
       +'<div class="ver-meta">'+new Date(ver.skickadTs).toLocaleString('sv-SE')+' · '+ver.skickadAv+'</div>'
       +(ver.versionKommentar?'<div style="font-size:12px;color:var(--text2);margin-top:3px;font-style:italic">'+ver.versionKommentar+'</div>':'')
       +'</div>'
@@ -1427,6 +1473,129 @@ async function loadLatestVersion(enhetId) {
 
 function exportKonsolExcel() {
   toast('Excel-export av konsolidering – kommer snart','warn');
+}
+
+// ── VIEW: GRANSKNING ──────────────────────────────────────────────────────────
+async function renderGranskning(container) {
+  container.innerHTML = `
+    <div class="page-header">
+      <div class="page-header-left">
+        <h1><i class="ti ti-clipboard-check" style="font-size:18px;color:var(--blue)"></i> Granskning – Budget ${BUDGET_YEAR}</h1>
+        <div class="page-sub">Granska och godkänn inskickade budgetar per enhet</div>
+      </div>
+    </div>
+    <div class="content" id="granskning-body">
+      <div style="text-align:center;padding:40px;color:var(--text2);font-size:13px">
+        <i class="ti ti-loader" style="font-size:28px;display:block;margin-bottom:10px;animation:spin 1s linear infinite"></i>
+        Laddar inskickade versioner…
+      </div>
+    </div>`;
+
+  var enheter = _settings.enheter.filter(function(e){return e.aktiv!==false;});
+  var rows = '';
+
+  for (var ei = 0; ei < enheter.length; ei++) {
+    var e   = enheter[ei];
+    var yr  = String(BUDGET_YEAR);
+    var est = (_statusData[yr] && _statusData[yr][e.id]) || {};
+    if (est.status !== 'öppen' && est.status !== 'fastställd') continue;
+
+    var fastst = est.fastställdVersion;
+    rows += '<div class="card" style="margin-bottom:16px">'
+      +'<div class="card-header">'
+      +'<span class="card-title"><i class="ti ti-building"></i> '+e.namn+' <span style="font-size:11px;color:var(--text3)">KST '+e.kst+(e.kb?' / KB '+e.kb:'')+'</span></span>'
+      +(fastst?'<span class="badge badge-set"><i class="ti ti-check"></i> Fastställd v'+fastst+'</span>':'')
+      +'</div>'
+      +'<div style="overflow-x:auto"><table class="btable"><thead><tr>'
+      +'<th>Version</th><th>Skickad</th><th>Av</th><th>Kommentar</th>'
+      +'<th>Resultat</th><th>Status</th>'
+      +(est.status!=='fastställd'?'<th class="no-print" style="text-align:right">Åtgärd</th>':'')
+      +'</tr></thead><tbody>';
+
+    for (var v = 1; v <= 5; v++) {
+      var vr = await ghGet(versionPath(e.id, v));
+      if (!vr || !vr.data || !vr.data.skickadTs) continue;
+      var vd  = vr.data;
+      var vs  = getVersionStatus(e.id, v);
+      var vt  = calcTotalsFromKonton(vd.kontoVarden||{});
+      var isFast = fastst == v;
+
+      var actions = '';
+      if (!isFastställd(e.id)) {
+        if (_isEkonomi) {
+          actions += '<button class="btn btn-sm badge-approved" style="background:var(--green-bg);border-color:var(--accent)" '
+            +'data-eid="'+e.id+'" data-v="'+v+'" onclick="granskaBudget(this.dataset.eid,parseInt(this.dataset.v),this.dataset.action)" data-action="granskad">'
+            +'<i class="ti ti-check"></i> Godkänn</button> ';
+          actions += '<button class="btn btn-sm btn-amber" '
+            +'data-eid="'+e.id+'" data-v="'+v+'" onclick="granskaBudget(this.dataset.eid,parseInt(this.dataset.v),this.dataset.action)" data-action="återsänd">'
+            +'<i class="ti ti-arrow-back-up"></i> Återsänd</button> ';
+        }
+        if (_isStyrelse && vs.status === 'granskad') {
+          actions += '<button class="btn btn-sm btn-primary" '
+            +'data-eid="'+e.id+'" data-v="'+v+'" onclick="fastställBudget(this.dataset.eid,parseInt(this.dataset.v))">'
+            +'<i class="ti ti-lock"></i> Fastställ</button>';
+        }
+      }
+
+      rows += '<tr style="'+(isFast?'background:rgba(59,109,17,.04)':'')+'">'
+        +'<td style="font-weight:500">Version '+v+(isFast?' <i class="ti ti-star" style="color:var(--accent)"></i>':'')+'</td>'
+        +'<td style="font-size:12px">'+new Date(vd.skickadTs).toLocaleDateString('sv-SE')+'</td>'
+        +'<td style="font-size:12px">'+vd.skickadAv+'</td>'
+        +'<td style="font-size:12px;color:var(--text2);max-width:200px">'+(vd.versionKommentar||'–')+'</td>'
+        +'<td class="num" style="font-weight:600;'+(vt.resultat<0?'color:var(--red)':'color:var(--accent2)')+'">'+fmtKr(vt.resultat)+'</td>'
+        +'<td>'+versionStatusBadge(vs.status)
+          +(vs.kommentar?'<div style="font-size:11px;color:var(--text2);margin-top:2px">'+vs.kommentar+'</div>':'')
+        +'</td>'
+        +(est.status!=='fastställd'?'<td class="no-print" style="text-align:right">'+actions+'</td>':'')
+        +'</tr>';
+    }
+
+    rows += '</tbody></table></div></div>';
+  }
+
+  document.getElementById('granskning-body').innerHTML = rows ||
+    '<div style="text-align:center;padding:40px;color:var(--text3)"><i class="ti ti-clipboard" style="font-size:32px;display:block;margin-bottom:10px"></i>Inga öppna enheter med inskickade versioner.</div>';
+}
+
+var _granskningModal = {enhetId:'', v:0, action:''};
+
+function granskaBudget(enhetId, v, action) {
+  _granskningModal = {enhetId:enhetId, v:v, action:action};
+  var e     = _settings.enheter.find(function(x){return x.id===enhetId;});
+  var label = action==='granskad' ? 'Godkänn' : 'Återsänd';
+  document.getElementById('modal-granskning-title').textContent = label+' – '+( e?e.namn:enhetId)+' Version '+v;
+  document.getElementById('granskning-action-label').textContent = action==='återsänd'
+    ? 'Ange anledning (visas för campingansvarig):'
+    : 'Eventuell kommentar:';
+  document.getElementById('granskning-kommentar').value = '';
+  document.getElementById('btn-granskning-confirm').textContent = label;
+  document.getElementById('btn-granskning-confirm').className = action==='granskad'
+    ? 'btn btn-primary' : 'btn btn-amber';
+  openModal('modal-granskning');
+}
+
+async function confirmGranskning() {
+  var kommentar = document.getElementById('granskning-kommentar').value.trim();
+  var g = _granskningModal;
+  if (g.action==='återsänd' && !kommentar) { alert('Ange en anledning vid återsändning.'); return; }
+  await setVersionStatus(g.enhetId, g.v, g.action, kommentar);
+  closeModal('modal-granskning');
+  toast(g.action==='granskad'?'Godkänd':'Återsänd','ok');
+  renderGranskning(document.getElementById('view-content'));
+}
+
+async function fastställBudget(enhetId, v) {
+  var e = _settings.enheter.find(function(x){return x.id===enhetId;});
+  if (!confirm('Fastställ Version '+v+' för '+(e?e.namn:enhetId)+'?\n\nBudgeten låses och kan inte längre ändras.')) return;
+  await setVersionStatus(enhetId, v, 'fastställd', '');
+  // Lock the enhet - set status to fastställd
+  var yr = String(BUDGET_YEAR);
+  if (!_statusData[yr]) _statusData[yr] = {};
+  if (!_statusData[yr][enhetId]) _statusData[yr][enhetId] = {};
+  _statusData[yr][enhetId].status = 'fastställd';
+  await saveStatus();
+  toast('Budget fastställd','ok');
+  renderGranskning(document.getElementById('view-content'));
 }
 
 // ── VIEW: PROGNOS ──────────────────────────────────────────────────────────
@@ -2093,6 +2262,49 @@ function exportExcelBudget() {
     XLSX.writeFile(wb,'Budget_'+BUDGET_YEAR+'_'+(_currentEnhet?_currentEnhet.id:'ccsthlm')+'_'+new Date().toISOString().slice(0,10)+'.xlsx');
     toast('Excel exporterad','ok');
   } catch(e) { toast('Export misslyckades: '+e.message,'err'); }
+}
+
+// ── VERSION STATUS HELPERS ───────────────────────────────────────────────────
+function getVersionStatus(enhetId, v) {
+  var yr  = String(BUDGET_YEAR);
+  var st  = _statusData[yr] && _statusData[yr][enhetId];
+  return (st && st.versionStatus && st.versionStatus['v'+v]) || {status:'inkickad'};
+}
+
+async function setVersionStatus(enhetId, v, status, kommentar) {
+  var yr = String(BUDGET_YEAR);
+  if (!_statusData[yr]) _statusData[yr] = {};
+  if (!_statusData[yr][enhetId]) _statusData[yr][enhetId] = {};
+  if (!_statusData[yr][enhetId].versionStatus) _statusData[yr][enhetId].versionStatus = {};
+  _statusData[yr][enhetId].versionStatus['v'+v] = {
+    status:    status,
+    kommentar: kommentar||'',
+    av:        _user.name,
+    ts:        new Date().toISOString(),
+  };
+  if (status === 'fastställd') {
+    _statusData[yr][enhetId].fastställdVersion = v;
+    _statusData[yr][enhetId].fastställdAv      = _user.name;
+    _statusData[yr][enhetId].fastställdTs      = new Date().toISOString();
+  }
+  await saveStatus();
+}
+
+function versionStatusBadge(vs) {
+  var map = {
+    inkickad:   ['badge-sent',    'Inkickad'],
+    granskad:   ['badge-approved','Granskad'],
+    återsänd:   ['badge-draft',   'Återsänd'],
+    fastställd: ['badge-set',     'Fastställd'],
+  };
+  var info = map[vs] || ['','Okänd'];
+  return '<span class="badge '+info[0]+'">'+info[1]+'</span>';
+}
+
+function isFastställd(enhetId) {
+  var yr = String(BUDGET_YEAR);
+  var st = _statusData[yr] && _statusData[yr][enhetId];
+  return st && st.fastställdVersion;
 }
 
 // ── ENHET MODAL ────────────────────────────────────────────────────────────
