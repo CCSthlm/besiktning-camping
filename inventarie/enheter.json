@@ -54,7 +54,7 @@
       "kategori": "Betalterminaler",
       "funktion": "Reception",
       "status": "Aktiv",
-      "marke": "Lane/3000 Ingenico",
+      "marke": "ngenico",
       "modell": "Lane/3000",
       "serienr": "22067733011101023991563",
       "anlaggning": "CC Kapellskärs Camping",
@@ -75,7 +75,7 @@
       "termSlut": "",
       "skapad": "2026-08-24T06:20:10.833Z",
       "skapadAv": "Joachim Säfqvist",
-      "andrad": "2026-08-24T06:20:10.833Z",
+      "andrad": "2026-08-24T06:20:35.367Z",
       "andradAv": "Joachim Säfqvist"
     }
   ]
