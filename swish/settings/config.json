@@ -1,0 +1,63 @@
+{
+  "swishKonto": "1582",
+  "poster": [
+    {
+      "id": "p1",
+      "namn": "Bastu",
+      "konto": "3034",
+      "moms": 25,
+      "harAntal": true,
+      "aktiv": true,
+      "ordning": 1
+    },
+    {
+      "id": "p2",
+      "namn": "Tvätt",
+      "konto": "3044",
+      "moms": 25,
+      "harAntal": true,
+      "aktiv": true,
+      "ordning": 2
+    },
+    {
+      "id": "p3",
+      "namn": "Släputhyrning",
+      "konto": "3430",
+      "moms": 25,
+      "harAntal": true,
+      "aktiv": true,
+      "ordning": 3
+    },
+    {
+      "id": "p4",
+      "namn": "Gasoltester",
+      "konto": "3030",
+      "moms": 25,
+      "harAntal": true,
+      "aktiv": true,
+      "ordning": 4
+    },
+    {
+      "id": "p5",
+      "namn": "CamperClean",
+      "konto": "3030",
+      "moms": 25,
+      "harAntal": true,
+      "aktiv": true,
+      "ordning": 5
+    },
+    {
+      "id": "p6",
+      "namn": "Lotterier",
+      "konto": "3402",
+      "moms": 0,
+      "harAntal": false,
+      "aktiv": true,
+      "ordning": 6
+    }
+  ],
+  "_meta": {
+    "skapad": "2026-08-24",
+    "beskrivning": "CCSthlm – Obemannad Swish – konfiguration"
+  }
+}
