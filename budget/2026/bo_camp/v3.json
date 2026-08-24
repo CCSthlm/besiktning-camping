@@ -1,15 +1,12 @@
 {
-  "kontoVarden": {
-    "3029": 10000
-  },
+  "kontoVarden": {},
   "kommentarer": {},
   "paramVarden": {},
   "investeringar": [],
-  "autosparad": "2026-08-24T09:23:39.882Z",
-  "typ": "budget",
-  "version": 3,
-  "versionKommentar": "",
-  "skickadAv": "Cristina Sundberg",
-  "skickadTs": "2026-08-24T09:23:48.421Z",
-  "status": "inkickad"
+  "autosparad": null,
+  "_meta": {
+    "aterstalld": true,
+    "aterstalldAv": "Cristina Sundberg",
+    "aterstalldTs": "2026-08-24T10:46:01.585Z"
+  }
 }
