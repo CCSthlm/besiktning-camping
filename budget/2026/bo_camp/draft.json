@@ -1,9 +1,12 @@
 {
-  "kontoVarden": {
-    "3029": 10000
-  },
+  "kontoVarden": {},
   "kommentarer": {},
   "paramVarden": {},
   "investeringar": [],
-  "autosparad": "2026-08-24T09:23:39.882Z"
+  "autosparad": null,
+  "_meta": {
+    "aterstalld": true,
+    "aterstalldAv": "Cristina Sundberg",
+    "aterstalldTs": "2026-08-24T10:46:01.585Z"
+  }
 }
