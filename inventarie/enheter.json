@@ -47,6 +47,36 @@
       "skapadAv": "Joachim Säfqvist",
       "andrad": "2026-08-24T06:17:06.832Z",
       "andradAv": "Joachim Säfqvist"
+    },
+    {
+      "id": "INV-2608-YED5",
+      "namn": "Lane/3000",
+      "kategori": "Betalterminaler",
+      "funktion": "Reception",
+      "status": "Aktiv",
+      "marke": "Lane/3000 Ingenico",
+      "modell": "Lane/3000",
+      "serienr": "22067733011101023991563",
+      "anlaggning": "CC Kapellskärs Camping",
+      "placering": "Reception",
+      "ansvarig": "Elisabeth Terol",
+      "inkopDatum": "",
+      "garantiTill": "",
+      "leverantor": "",
+      "anteckningar": "",
+      "iptyp": "Dynamisk",
+      "ip": "",
+      "mac": "",
+      "terminalId": "",
+      "inlosare": "",
+      "inlosenAvtal": "",
+      "terminalKontakt": "",
+      "termStart": "",
+      "termSlut": "",
+      "skapad": "2026-08-24T06:20:10.833Z",
+      "skapadAv": "Joachim Säfqvist",
+      "andrad": "2026-08-24T06:20:10.833Z",
+      "andradAv": "Joachim Säfqvist"
     }
   ]
 }
