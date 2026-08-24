@@ -77,6 +77,36 @@
       "skapadAv": "Joachim Säfqvist",
       "andrad": "2026-08-24T06:20:35.367Z",
       "andradAv": "Joachim Säfqvist"
+    },
+    {
+      "id": "INV-2608-EK1S",
+      "namn": "Lane/3000",
+      "kategori": "Betalterminaler",
+      "funktion": "Reception",
+      "status": "Aktiv",
+      "marke": "Ingenico",
+      "modell": "Lane/3000",
+      "serienr": "24129733301110155668145",
+      "anlaggning": "CC Storsveds Camping",
+      "placering": "Reception",
+      "ansvarig": "",
+      "inkopDatum": "",
+      "garantiTill": "",
+      "leverantor": "",
+      "anteckningar": "",
+      "iptyp": "Dynamisk",
+      "ip": "",
+      "mac": "",
+      "terminalId": "",
+      "inlosare": "",
+      "inlosenAvtal": "",
+      "terminalKontakt": "",
+      "termStart": "",
+      "termSlut": "",
+      "skapad": "2026-08-24T06:25:59.642Z",
+      "skapadAv": "Joachim Säfqvist",
+      "andrad": "2026-08-24T06:25:59.642Z",
+      "andradAv": "Joachim Säfqvist"
     }
   ]
 }
