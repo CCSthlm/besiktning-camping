@@ -115,7 +115,7 @@
       "funktion": "Reception",
       "status": "Aktiv",
       "marke": "Citizen",
-      "modell": "CT-E",
+      "modell": "CT-E?",
       "serienr": "TF302491924",
       "anlaggning": "CC Storsveds Camping",
       "placering": "Reception",
@@ -129,7 +129,7 @@
       "mac": "",
       "skapad": "2026-08-24T06:28:14.594Z",
       "skapadAv": "Joachim Säfqvist",
-      "andrad": "2026-08-24T06:28:14.594Z",
+      "andrad": "2026-08-24T06:29:03.638Z",
       "andradAv": "Joachim Säfqvist"
     }
   ]
