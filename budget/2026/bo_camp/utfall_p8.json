@@ -1,11 +1,7 @@
 {
-  "3010": 2000,
-  "3014": 400000,
   "_meta": {
-    "enhetId": "bo_camp",
-    "period": 8,
-    "ar": 2026,
-    "sparadAv": "Massimo Johansson",
-    "sparadTs": "2026-08-22T09:38:13.593Z"
+    "aterstalld": true,
+    "aterstalldAv": "Cristina Sundberg",
+    "aterstalldTs": "2026-08-24T10:46:06.089Z"
   }
 }
