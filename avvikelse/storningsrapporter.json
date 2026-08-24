@@ -124,26 +124,6 @@
         "av": "Massimo Johansson",
         "ts": "2026-08-24T19:50:35.484Z"
       }
-    },
-    {
-      "id": "SR-2608-05L6",
-      "ts": "2026-08-24T18:46:14.084Z",
-      "anläggning": "CC Östnora Camping",
-      "platsOmråde": "",
-      "datum": "2026-08-16",
-      "tid": "",
-      "rapportör": "Massimo Johansson <massimo.johansson@cc-camping.se>",
-      "risk": "Medel",
-      "riskNivå": 2,
-      "ccNr": "125450",
-      "platsNr": "2",
-      "gästTyp": "",
-      "gästNamn": "Gron Kia & Rickard",
-      "personal": "Massimo Johansson",
-      "överlämnas": "Kia & Rickard Gron",
-      "beskrivning": "dfdf",
-      "status": "ny",
-      "beslut": null
     }
   ]
 }
