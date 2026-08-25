@@ -20,7 +20,7 @@
 }
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:var(--bg3);color:var(--text);min-height:100vh;display:flex;}
 
-/* SIDEBARR */
+/* SIDEBAR */
 .sidebar{width:var(--sidebar);flex-shrink:0;background:var(--bg2);border-right:1px solid var(--border2);display:flex;flex-direction:column;position:fixed;inset:0 auto 0 0;z-index:10;}
 .sidebar-logo{padding:18px 18px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;}
 .sidebar-logo-text{font-size:14px;font-weight:700;line-height:1.2;}
@@ -555,6 +555,26 @@ tr:hover td{background:var(--bg3);}
             <label class="checkbox-item"><input type="checkbox" id="role-budget-ekonomi"> <i class="ti ti-chart-bar" style="font-size:14px;color:#27500A"></i> <span><strong>Budget – Ekonomiansvarig</strong> – konsolidering, utfall och parameteradmin</span></label>
             <label class="checkbox-item"><input type="checkbox" id="role-budget-styrelse"> <i class="ti ti-chart-bar" style="font-size:14px;color:#5b21b6"></i> <span><strong>Budget – Styrelse</strong> – fullständig åtkomst inkl. fastställande</span></label>
           </div>
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin:10px 0 6px;padding-top:8px;border-top:1px solid var(--border)">Elavläsning &amp; Swish</div>
+          <div class="role-section" style="padding:9px 12px;border-left:3px solid #3B6D11;">
+            <label class="checkbox-item"><input type="checkbox" id="role-el-admin"> <i class="ti ti-bolt" style="font-size:14px;color:#854F0B"></i> <span><strong>Elavläsning-admin</strong> – väljer alla campingar, kan ändra pris per kWh</span></label>
+            <label class="checkbox-item"><input type="checkbox" id="role-el-avlasning" onchange="toggleElCamping()"> <i class="ti ti-bolt" style="font-size:14px;color:#3B6D11"></i> <span><strong>Elavläsning</strong> – utför avläsning på tilldelad camping</span></label>
+            <div id="el-camping-wrap" style="display:none;margin-top:8px;padding-left:22px">
+              <label style="font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.04em;display:block;margin-bottom:4px">Camping <span style="color:var(--red)">*</span></label>
+              <select id="el-camping" style="padding:7px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius);font-size:12px;font-family:inherit;width:100%;max-width:300px">
+                <option value="">– Välj camping –</option>
+                <option value="bo_camp">Björkö Örns Camping</option>
+                <option value="graddos">Gräddös Pärla</option>
+                <option value="ostnora">Östnora</option>
+                <option value="orstig">Örstig</option>
+                <option value="mista">Mista</option>
+                <option value="storsved">Storsved</option>
+                <option value="kapellskar">Kapellskär</option>
+                <option value="angsudden">Ängsudden</option>
+              </select>
+            </div>
+            <label class="checkbox-item"><input type="checkbox" id="role-swish-admin"> <i class="ti ti-brand-cashapp" style="font-size:14px;color:#3B6D11"></i> <span><strong>Swish-admin</strong> – administrera formulärposter och konton för Obemannad Swish</span></label>
+          </div>
           <div class="role-section" style="padding:9px 12px;border-left:3px solid #1a4f7a;">
             <label class="checkbox-item"><input type="checkbox" id="role-reserakning-godkannare" onchange="toggleGodkannarcamping()"> <i class="ti ti-check" style="font-size:14px;color:#1a4f7a"></i> <span><strong>Reseräkning Godkännare</strong> – godkänn/neka räkningar för sin camping</span></label>
             <div id="godkannare-camping-wrap" style="display:none;margin-top:8px;padding-left:22px">
@@ -718,6 +738,12 @@ const ADMIN_ROLES = {
   'reserakning-admin':      { key:'reserakning-admin',      label:'Reseräkning Admin',          icon:'ti-car',            color:'#3B6D11', badge:'badge-global' },
   'lon-admin':              { key:'lon-admin',               label:'Löneadmin',                  icon:'ti-cash-register',  color:'#1a4f7a', badge:'badge-global' },
   'nyckel-admin':           { key:'nyckel-admin',            label:'Nyckeladmin',                 icon:'ti-key',            color:'#854F0B', badge:'badge-global' },
+  'el-admin':               { key:'el-admin',                label:'Elavläsning-admin',            icon:'ti-bolt',           color:'#854F0B', badge:'badge-global' },
+  'el-avlasning':           { key:'el-avlasning',            label:'Elavläsning',                  icon:'ti-bolt',           color:'#3B6D11', badge:'badge-personal' },
+  'swish-admin':            { key:'swish-admin',             label:'Swish-admin',                  icon:'ti-brand-cashapp',  color:'#3B6D11', badge:'badge-global' },
+  'budget-camping':         { key:'budget-camping',          label:'Budget – Campingansvarig',     icon:'ti-chart-bar',      color:'#1a4f7a', badge:'badge-personal' },
+  'budget-ekonomi':         { key:'budget-ekonomi',          label:'Budget – Ekonomiansvarig',     icon:'ti-chart-bar',      color:'#27500A', badge:'badge-global' },
+  'budget-styrelse':        { key:'budget-styrelse',         label:'Budget – Styrelse',            icon:'ti-chart-bar',      color:'#5b21b6', badge:'badge-global' },
   'reserakning-godkannare': { key:'reserakning-godkannare', label:'Reseräkning Godkännare',     icon:'ti-check',          color:'#1a4f7a', badge:'badge-personal' },
   'reserakning-utbetalare': { key:'reserakning-utbetalare', label:'Reseräkning Utbetalare',     icon:'ti-coin',           color:'#854F0B', badge:'badge-personal' },
   'inventarieadmin':    { key:'inventarieadmin',    label:'Inventarieadmin',       icon:'ti-devices',       color:'#3B6D11', badge:'badge-global' },
