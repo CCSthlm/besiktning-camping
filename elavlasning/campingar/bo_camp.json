@@ -15,14 +15,6 @@
           "forbruk": null,
           "belopp": null,
           "session": "import-juni-2026"
-        },
-        {
-          "datum": "2026-08-25",
-          "avlast": 13500,
-          "foreg": 13410,
-          "forbruk": 90,
-          "belopp": 211.5,
-          "session": "2026-08-25_bo_camp"
         }
       ]
     },
@@ -53,14 +45,6 @@
           "forbruk": null,
           "belopp": null,
           "session": "import-juni-2026"
-        },
-        {
-          "datum": "2026-08-25",
-          "avlast": 9000,
-          "foreg": 8068,
-          "forbruk": 932,
-          "belopp": 2190.2,
-          "session": "2026-08-25_bo_camp"
         }
       ]
     },
@@ -586,14 +570,6 @@
           "forbruk": null,
           "belopp": null,
           "session": "import-juni-2026"
-        },
-        {
-          "datum": "2026-08-25",
-          "avlast": 22000,
-          "foreg": 19842,
-          "forbruk": 2158,
-          "belopp": 5071.3,
-          "session": "2026-08-25_bo_camp"
         }
       ]
     },
