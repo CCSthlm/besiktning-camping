@@ -350,17 +350,26 @@ async function init() {
 
   var roles = _user.adminRoles || [];
   _isAdmin     = roles.includes('el-admin') || roles.includes('global');
-  _userCamping = _user.elCamping || '';
+  var hasElRole = roles.includes('el-avlasning');
+  _userCamping = _user.elCamping || _user.elcamping || '';
 
-  // If not admin and no camping assigned - show error
-  if (!_isAdmin && !_userCamping) {
+  // If not admin and no el role at all - show error
+  if (!_isAdmin && !hasElRole) {
     document.getElementById('setup-panel').innerHTML =
       '<div style="text-align:center;padding:48px 20px;color:var(--text3)">'
       +'<i class="ti ti-lock" style="font-size:48px;display:block;margin-bottom:12px;color:var(--text3)"></i>'
-      +'<div style="font-size:17px;font-weight:600;color:var(--text);margin-bottom:8px">Ingen camping tilldelad</div>'
+      +'<div style="font-size:17px;font-weight:600;color:var(--text);margin-bottom:8px">Ingen behörighet</div>'
       +'<p style="font-size:14px;line-height:1.6">Kontakta administratören för att få tillgång till elavläsning.</p>'
+      +'<div style="margin-top:16px;font-size:11px;color:var(--text3);background:var(--bg3);padding:8px 12px;border-radius:8px;text-align:left">'
+      +'Roller: '+JSON.stringify(roles)+'<br>elCamping: '+JSON.stringify(_user.elCamping)
+      +'</div>'
       +'</div>';
     return;
+  }
+
+  // el-avlasning without elCamping - show camping selector
+  if (hasElRole && !_isAdmin && !_userCamping) {
+    _isAdmin = false; // show camping selector but not price
   }
 
   setupFormForRole();
@@ -375,27 +384,37 @@ async function init() {
 function setupFormForRole() {
   var campingSelect = document.getElementById('s-camping');
   var prisField     = document.getElementById('pris-field');
+  var CAMPINGS = [
+    {id:'bo_camp',    namn:'Björkö Örns Camping'},
+    {id:'graddos',    namn:'Gräddös Pärla'},
+    {id:'ostnora',    namn:'Östnora'},
+    {id:'orstig',     namn:'Örstig'},
+    {id:'mista',      namn:'Mista'},
+    {id:'storsved',   namn:'Storsved'},
+    {id:'kapellskar', namn:'Kapellskär'},
+    {id:'angsudden',  namn:'Ängsudden'},
+  ];
 
   if (_isAdmin) {
-    // Admin: all campings visible, price editable
-    campingSelect.innerHTML =
-      '<option value="">– Välj camping –</option>'
-      +'<option value="bo_camp">Björkö Örns Camping</option>'
-      +'<option value="graddos">Gräddös Pärla</option>'
-      +'<option value="ostnora">Östnora</option>'
-      +'<option value="orstig">Örstig</option>'
-      +'<option value="mista">Mista</option>'
-      +'<option value="storsved">Storsved</option>'
-      +'<option value="kapellskar">Kapellskär</option>'
-      +'<option value="angsudden">Ängsudden</option>';
+    // Admin: all campings, price editable
+    campingSelect.innerHTML = '<option value="">– Välj camping –</option>'
+      + CAMPINGS.map(function(c){return '<option value="'+c.id+'">'+c.namn+'</option>';}).join('');
+    campingSelect.disabled = false;
     if (prisField) prisField.style.display = '';
-  } else {
-    // Regular user: locked to assigned camping, price readonly
+  } else if (_userCamping) {
+    // Locked to assigned camping
     campingSelect.innerHTML = '<option value="'+_userCamping+'">'+campingNamn(_userCamping)+'</option>';
     campingSelect.value     = _userCamping;
     campingSelect.disabled  = true;
     if (prisField) prisField.style.display = 'none';
+  } else {
+    // Has el-avlasning role but no camping set - show selector without price
+    campingSelect.innerHTML = '<option value="">– Välj camping –</option>'
+      + CAMPINGS.map(function(c){return '<option value="'+c.id+'">'+c.namn+'</option>';}).join('');
+    campingSelect.disabled = false;
+    if (prisField) prisField.style.display = 'none';
   }
+  updateRoleInfo();
 }
 
 function updateRoleInfo() {
@@ -481,10 +500,8 @@ async function raderaUtkast() {
 }
 
 function checkStartReady() {
-  var campingVal = _isAdmin
-    ? document.getElementById('s-camping').value
-    : _userCamping;
-  var datumVal = document.getElementById('s-datum').value;
+  var campingVal = _userCamping || document.getElementById('s-camping').value;
+  var datumVal   = document.getElementById('s-datum').value;
   var btn = document.getElementById('btn-start');
   if (btn) btn.disabled = !(campingVal && datumVal);
 }
