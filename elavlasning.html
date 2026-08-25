@@ -481,8 +481,12 @@ async function raderaUtkast() {
 }
 
 function checkStartReady() {
-  var ok = document.getElementById('s-camping').value && document.getElementById('s-datum').value;
-  document.getElementById('btn-start').disabled = !ok;
+  var campingVal = _isAdmin
+    ? document.getElementById('s-camping').value
+    : _userCamping;
+  var datumVal = document.getElementById('s-datum').value;
+  var btn = document.getElementById('btn-start');
+  if (btn) btn.disabled = !(campingVal && datumVal);
 }
 
 async function onCampingChange() {
