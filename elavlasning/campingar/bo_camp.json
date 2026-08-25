@@ -1,0 +1,986 @@
+{
+  "campingId": "bo_camp",
+  "campingNamn": "Björkö Örns Camping",
+  "kwh_pris": 2.35,
+  "platser": [
+    {
+      "plats": 1,
+      "ccnr": "130671",
+      "namn": "Eva Meltzer",
+      "avlasningar": [
+        {
+          "datum": "2026-06-01",
+          "avlast": 13410,
+          "foreg": null,
+          "forbruk": null,
+          "belopp": null,
+          "session": "import-juni-2026"
+        }
+      ]
+    },
+    {
+      "plats": 2,
+      "ccnr": "131074",
+      "namn": "Gunnar Tennander",
+      "avlasningar": [
+        {
+          "datum": "2026-06-01",
+          "avlast": 20947,
+          "foreg": null,
+          "forbruk": null,
+          "belopp": null,
+          "session": "import-juni-2026"
+        }
+      ]
+    },
+    {
+      "plats": 3,
+      "ccnr": "126544",
+      "namn": "Peo Karlsson",
+      "avlasningar": [
+        {
+          "datum": "2026-06-01",
+          "avlast": 8068,
+          "foreg": null,
+          "forbruk": null,
+          "belopp": null,
+          "session": "import-juni-2026"
+        }
+      ]
+    },
+    {
+      "plats": 4,
+      "ccnr": "109052",
+      "namn": "Anders Jansson",
+      "avlasningar": [
+        {
+          "datum": "2026-06-01",
+          "avlast": 4788,
+          "foreg": null,
+          "forbruk": null,
+          "belopp": null,
+          "session": "import-juni-2026"
+        }
+      ]
+    },
+    {
+      "plats": 5,
+      "ccnr": "115230",
+      "namn": "Tommy Karlsson",
+      "avlasningar": [
+        {
+          "datum": "2026-06-01",
+          "avlast": 11513,
+          "foreg": null,
+          "forbruk": null,
+          "belopp": null,
+          "session": "import-juni-2026"
+        }
+      ]
+    },
+    {
+      "plats": 6,
+      "ccnr": "113751",
+      "namn": "Kerstin Andersson Franzén",
+      "avlasningar": [
+        {
+          "datum": "2026-06-01",
+          "avlast": 9249,
+          "foreg": null,
+          "forbruk": null,
+          "belopp": null,
+          "session": "import-juni-2026"
+        }
+      ]
+    },
+    {
+      "plats": 7,
+      "ccnr": "109814",
+      "namn": "Heikki Lidén",
+      "avlasningar": [
+        {
+          "datum": "2026-06-01",
+          "avlast": 22294,
+          "foreg": null,
+          "forbruk": null,
+          "belopp": null,
+          "session": "import-juni-2026"
+        }
+      ]
+    },
+    {
+      "plats": 8,
+      "ccnr": "109419",
+      "namn": "Jan Löfqvist",
+      "avlasningar": [
+        {
+          "datum": "2026-06-01",
+          "avlast": 13639,
+          "foreg": null,
+          "forbruk": null,
+          "belopp": null,
+          "session": "import-juni-2026"
+        }
+      ]
+    },
+    {
+      "plats": 9,
+      "ccnr": "128620",
+      "namn": "R-M Odelby",
+      "avlasningar": [
+        {
+          "datum": "2026-06-01",
+          "avlast": 7590,
+          "foreg": null,
+          "forbruk": null,
+          "belopp": null,
+          "session": "import-juni-2026"
+        }
+      ]
+    },
+    {
+      "plats": 10,
+      "ccnr": "127796",
+      "namn": "Juliane Christensen",
+      "avlasningar": [
+        {
+          "datum": "2026-06-01",
+          "avlast": 6621,
+          "foreg": null,
+          "forbruk": null,
+          "belopp": null,
+          "session": "import-juni-2026"
+        }
+      ]
+    },
+    {
+      "plats": 11,
+      "ccnr": "",
+      "namn": "Åke Jonson",
+      "avlasningar": [
+        {
+          "datum": "2026-06-01",
+          "avlast": 7965,
+          "foreg": null,
+          "forbruk": null,
+          "belopp": null,
+          "session": "import-juni-2026"
+        }
+      ]
+    },
+    {
+      "plats": 12,
+      "ccnr": "128193",
+      "namn": "Jerry Kajhed",
+      "avlasningar": [
+        {
+          "datum": "2026-06-01",
+          "avlast": 10602,
+          "foreg": null,
+          "forbruk": null,
+          "belopp": null,
+          "session": "import-juni-2026"
+        }
+      ]
+    },
+    {
+      "plats": 13,
+      "ccnr": "",
+      "namn": "Johan Brunnberg",
+      "avlasningar": [
+        {
+          "datum": "2026-06-01",
+          "avlast": 10702,
+          "foreg": null,
+          "forbruk": null,
+          "belopp": null,
+          "session": "import-juni-2026"
+        }
+      ]
+    },
+    {
+      "plats": 14,
+      "ccnr": "72195",
+      "namn": "Leif Ekdahl",
+      "avlasningar": [
+        {
+          "datum": "2026-06-01",
+          "avlast": 11682,
+          "foreg": null,
+          "forbruk": null,
+          "belopp": null,
+          "session": "import-juni-2026"
+        }
+      ]
+    },
+    {
+      "plats": 15,
+      "ccnr": "117152",
+      "namn": "Dec Grzegorz",
+      "avlasningar": [
+        {
+          "datum": "2026-06-01",
+          "avlast": 10871,
+          "foreg": null,
+          "forbruk": null,
+          "belopp": null,
+          "session": "import-juni-2026"
+        }
+      ]
+    },
+    {
+      "plats": 16,
+      "ccnr": "106133",
+      "namn": "Johan Snäll",
+      "avlasningar": [
+        {
+          "datum": "2026-06-01",
+          "avlast": 20174,
+          "foreg": null,
+          "forbruk": null,
+          "belopp": null,
+          "session": "import-juni-2026"
+        }
+      ]
+    },
+    {
+      "plats": 17,
+      "ccnr": "103246",
+      "namn": "Monica Svärdsjö",
+      "avlasningar": [
+        {
+          "datum": "2026-06-01",
+          "avlast": 7550,
+          "foreg": null,
+          "forbruk": null,
+          "belopp": null,
+          "session": "import-juni-2026"
+        }
+      ]
+    },
+    {
+      "plats": 18,
+      "ccnr": "109065",
+      "namn": "Petri Koistinen",
+      "avlasningar": [
+        {
+          "datum": "2026-06-01",
+          "avlast": 6238,
+          "foreg": null,
+          "forbruk": null,
+          "belopp": null,
+          "session": "import-juni-2026"
+        }
+      ]
+    },
+    {
+      "plats": 19,
+      "ccnr": "110606",
+      "namn": "Pege Gustafsson",
+      "avlasningar": [
+        {
+          "datum": "2026-06-01",
+          "avlast": 5097,
+          "foreg": null,
+          "forbruk": null,
+          "belopp": null,
+          "session": "import-juni-2026"
+        }
+      ]
+    },
+    {
+      "plats": 20,
+      "ccnr": "110468",
+      "namn": "Nils Jansson",
+      "avlasningar": [
+        {
+          "datum": "2026-06-01",
+          "avlast": 23389,
+          "foreg": null,
+          "forbruk": null,
+          "belopp": null,
+          "session": "import-juni-2026"
+        }
+      ]
+    },
+    {
+      "plats": 21,
+      "ccnr": "58277",
+      "namn": "Hans Forevärn",
+      "avlasningar": [
+        {
+          "datum": "2026-06-01",
+          "avlast": 17297,
+          "foreg": null,
+          "forbruk": null,
+          "belopp": null,
+          "session": "import-juni-2026"
+        }
+      ]
+    },
+    {
+      "plats": 22,
+      "ccnr": "27266",
+      "namn": "Stefan Wallenius",
+      "avlasningar": [
+        {
+          "datum": "2026-06-01",
+          "avlast": 11817,
+          "foreg": null,
+          "forbruk": null,
+          "belopp": null,
+          "session": "import-juni-2026"
+        }
+      ]
+    },
+    {
+      "plats": 23,
+      "ccnr": "52917",
+      "namn": "Pär Lindström",
+      "avlasningar": [
+        {
+          "datum": "2026-06-01",
+          "avlast": 9317,
+          "foreg": null,
+          "forbruk": null,
+          "belopp": null,
+          "session": "import-juni-2026"
+        }
+      ]
+    },
+    {
+      "plats": 24,
+      "ccnr": "109606",
+      "namn": "Tarja Hedman",
+      "avlasningar": [
+        {
+          "datum": "2026-06-01",
+          "avlast": 1527,
+          "foreg": null,
+          "forbruk": null,
+          "belopp": null,
+          "session": "import-juni-2026"
+        }
+      ]
+    },
+    {
+      "plats": 25,
+      "ccnr": "123174",
+      "namn": "Åke Perers",
+      "avlasningar": [
+        {
+          "datum": "2026-06-01",
+          "avlast": 17774,
+          "foreg": null,
+          "forbruk": null,
+          "belopp": null,
+          "session": "import-juni-2026"
+        }
+      ]
+    },
+    {
+      "plats": 26,
+      "ccnr": "",
+      "namn": "Maarit Ekola",
+      "avlasningar": [
+        {
+          "datum": "2026-06-01",
+          "avlast": 21416,
+          "foreg": null,
+          "forbruk": null,
+          "belopp": null,
+          "session": "import-juni-2026"
+        }
+      ]
+    },
+    {
+      "plats": 27,
+      "ccnr": "42480",
+      "namn": "Kjell Österberg",
+      "avlasningar": [
+        {
+          "datum": "2026-06-01",
+          "avlast": 19878,
+          "foreg": null,
+          "forbruk": null,
+          "belopp": null,
+          "session": "import-juni-2026"
+        }
+      ]
+    },
+    {
+      "plats": 28,
+      "ccnr": "118594",
+      "namn": "Mikael Narfström",
+      "avlasningar": [
+        {
+          "datum": "2026-06-01",
+          "avlast": 19342,
+          "foreg": null,
+          "forbruk": null,
+          "belopp": null,
+          "session": "import-juni-2026"
+        }
+      ]
+    },
+    {
+      "plats": 29,
+      "ccnr": "108727",
+      "namn": "Christine Hellsing",
+      "avlasningar": [
+        {
+          "datum": "2026-06-01",
+          "avlast": 8787,
+          "foreg": null,
+          "forbruk": null,
+          "belopp": null,
+          "session": "import-juni-2026"
+        }
+      ]
+    },
+    {
+      "plats": 30,
+      "ccnr": "128893",
+      "namn": "Johan Lindkvist",
+      "avlasningar": [
+        {
+          "datum": "2026-06-01",
+          "avlast": 1810,
+          "foreg": null,
+          "forbruk": null,
+          "belopp": null,
+          "session": "import-juni-2026"
+        }
+      ]
+    },
+    {
+      "plats": 31,
+      "ccnr": "124614",
+      "namn": "Fredrik Berggren",
+      "avlasningar": [
+        {
+          "datum": "2026-06-01",
+          "avlast": 11689,
+          "foreg": null,
+          "forbruk": null,
+          "belopp": null,
+          "session": "import-juni-2026"
+        }
+      ]
+    },
+    {
+      "plats": 32,
+      "ccnr": "110583",
+      "namn": "Rikard Staf",
+      "avlasningar": [
+        {
+          "datum": "2026-06-01",
+          "avlast": 11190,
+          "foreg": null,
+          "forbruk": null,
+          "belopp": null,
+          "session": "import-juni-2026"
+        }
+      ]
+    },
+    {
+      "plats": 33,
+      "ccnr": "123634",
+      "namn": "Carina Westman",
+      "avlasningar": [
+        {
+          "datum": "2026-06-01",
+          "avlast": 12810,
+          "foreg": null,
+          "forbruk": null,
+          "belopp": null,
+          "session": "import-juni-2026"
+        }
+      ]
+    },
+    {
+      "plats": 34,
+      "ccnr": "132281",
+      "namn": "Per Siöö",
+      "avlasningar": [
+        {
+          "datum": "2026-06-01",
+          "avlast": 7916,
+          "foreg": null,
+          "forbruk": null,
+          "belopp": null,
+          "session": "import-juni-2026"
+        }
+      ]
+    },
+    {
+      "plats": 35,
+      "ccnr": "130893",
+      "namn": "Olle Vide",
+      "avlasningar": [
+        {
+          "datum": "2026-06-01",
+          "avlast": 19676,
+          "foreg": null,
+          "forbruk": null,
+          "belopp": null,
+          "session": "import-juni-2026"
+        }
+      ]
+    },
+    {
+      "plats": 36,
+      "ccnr": "114849",
+      "namn": "Jan Erik Asplund",
+      "avlasningar": [
+        {
+          "datum": "2026-06-01",
+          "avlast": 270,
+          "foreg": null,
+          "forbruk": null,
+          "belopp": null,
+          "session": "import-juni-2026"
+        }
+      ]
+    },
+    {
+      "plats": 37,
+      "ccnr": "123671",
+      "namn": "Lars-Göran Fridlund",
+      "avlasningar": [
+        {
+          "datum": "2026-06-01",
+          "avlast": 20325,
+          "foreg": null,
+          "forbruk": null,
+          "belopp": null,
+          "session": "import-juni-2026"
+        }
+      ]
+    },
+    {
+      "plats": 38,
+      "ccnr": "",
+      "namn": "Massimo Johansson",
+      "avlasningar": [
+        {
+          "datum": "2026-06-01",
+          "avlast": 19842,
+          "foreg": null,
+          "forbruk": null,
+          "belopp": null,
+          "session": "import-juni-2026"
+        }
+      ]
+    },
+    {
+      "plats": 39,
+      "ccnr": "132738",
+      "namn": "Andreas Tunmar",
+      "avlasningar": [
+        {
+          "datum": "2026-06-01",
+          "avlast": 11121,
+          "foreg": null,
+          "forbruk": null,
+          "belopp": null,
+          "session": "import-juni-2026"
+        }
+      ]
+    },
+    {
+      "plats": 40,
+      "ccnr": "129254",
+      "namn": "Patrik Johansson",
+      "avlasningar": [
+        {
+          "datum": "2026-06-01",
+          "avlast": 8271,
+          "foreg": null,
+          "forbruk": null,
+          "belopp": null,
+          "session": "import-juni-2026"
+        }
+      ]
+    },
+    {
+      "plats": 41,
+      "ccnr": "115219",
+      "namn": "Christoffer Maddison",
+      "avlasningar": [
+        {
+          "datum": "2026-06-01",
+          "avlast": 22092,
+          "foreg": null,
+          "forbruk": null,
+          "belopp": null,
+          "session": "import-juni-2026"
+        }
+      ]
+    },
+    {
+      "plats": 42,
+      "ccnr": "",
+      "namn": "Eva Rydström",
+      "avlasningar": [
+        {
+          "datum": "2026-06-01",
+          "avlast": 22781,
+          "foreg": null,
+          "forbruk": null,
+          "belopp": null,
+          "session": "import-juni-2026"
+        }
+      ]
+    },
+    {
+      "plats": 43,
+      "ccnr": "121628",
+      "namn": "Malin Liljedahl",
+      "avlasningar": [
+        {
+          "datum": "2026-06-01",
+          "avlast": 13569,
+          "foreg": null,
+          "forbruk": null,
+          "belopp": null,
+          "session": "import-juni-2026"
+        }
+      ]
+    },
+    {
+      "plats": 44,
+      "ccnr": "",
+      "namn": "Christoffer Bjurenborg",
+      "avlasningar": [
+        {
+          "datum": "2026-06-01",
+          "avlast": 10471,
+          "foreg": null,
+          "forbruk": null,
+          "belopp": null,
+          "session": "import-juni-2026"
+        }
+      ]
+    },
+    {
+      "plats": 45,
+      "ccnr": "112445",
+      "namn": "Fred Adolfsson",
+      "avlasningar": [
+        {
+          "datum": "2026-06-01",
+          "avlast": 23140,
+          "foreg": null,
+          "forbruk": null,
+          "belopp": null,
+          "session": "import-juni-2026"
+        }
+      ]
+    },
+    {
+      "plats": 46,
+      "ccnr": "131882",
+      "namn": "Jessica Åkerström",
+      "avlasningar": [
+        {
+          "datum": "2026-06-01",
+          "avlast": 15034,
+          "foreg": null,
+          "forbruk": null,
+          "belopp": null,
+          "session": "import-juni-2026"
+        }
+      ]
+    },
+    {
+      "plats": 47,
+      "ccnr": "122590",
+      "namn": "Nina Gefvert",
+      "avlasningar": [
+        {
+          "datum": "2026-06-01",
+          "avlast": 23182,
+          "foreg": null,
+          "forbruk": null,
+          "belopp": null,
+          "session": "import-juni-2026"
+        }
+      ]
+    },
+    {
+      "plats": 48,
+      "ccnr": "128485",
+      "namn": "Mikael Engfors",
+      "avlasningar": [
+        {
+          "datum": "2026-06-01",
+          "avlast": 7034,
+          "foreg": null,
+          "forbruk": null,
+          "belopp": null,
+          "session": "import-juni-2026"
+        }
+      ]
+    },
+    {
+      "plats": 49,
+      "ccnr": "",
+      "namn": "Göran Ahlin",
+      "avlasningar": [
+        {
+          "datum": "2026-06-01",
+          "avlast": 4457,
+          "foreg": null,
+          "forbruk": null,
+          "belopp": null,
+          "session": "import-juni-2026"
+        }
+      ]
+    },
+    {
+      "plats": 50,
+      "ccnr": "129826",
+      "namn": "Eva Eriksson",
+      "avlasningar": [
+        {
+          "datum": "2026-06-01",
+          "avlast": 9385,
+          "foreg": null,
+          "forbruk": null,
+          "belopp": null,
+          "session": "import-juni-2026"
+        }
+      ]
+    },
+    {
+      "plats": 51,
+      "ccnr": "132373",
+      "namn": "Carolina Eek",
+      "avlasningar": [
+        {
+          "datum": "2026-06-01",
+          "avlast": 9977,
+          "foreg": null,
+          "forbruk": null,
+          "belopp": null,
+          "session": "import-juni-2026"
+        }
+      ]
+    },
+    {
+      "plats": 52,
+      "ccnr": "111677",
+      "namn": "Christer Jakobsson",
+      "avlasningar": [
+        {
+          "datum": "2026-06-01",
+          "avlast": 17588,
+          "foreg": null,
+          "forbruk": null,
+          "belopp": null,
+          "session": "import-juni-2026"
+        }
+      ]
+    },
+    {
+      "plats": 53,
+      "ccnr": "117474",
+      "namn": "Jenny Barregren",
+      "avlasningar": [
+        {
+          "datum": "2026-06-01",
+          "avlast": 4318,
+          "foreg": null,
+          "forbruk": null,
+          "belopp": null,
+          "session": "import-juni-2026"
+        }
+      ]
+    },
+    {
+      "plats": 54,
+      "ccnr": "",
+      "namn": "Helena Eriksson",
+      "avlasningar": [
+        {
+          "datum": "2026-06-01",
+          "avlast": 30446,
+          "foreg": null,
+          "forbruk": null,
+          "belopp": null,
+          "session": "import-juni-2026"
+        }
+      ]
+    },
+    {
+      "plats": 55,
+      "ccnr": "121006",
+      "namn": "Björn Wagman",
+      "avlasningar": [
+        {
+          "datum": "2026-06-01",
+          "avlast": 15853,
+          "foreg": null,
+          "forbruk": null,
+          "belopp": null,
+          "session": "import-juni-2026"
+        }
+      ]
+    },
+    {
+      "plats": 56,
+      "ccnr": "104215",
+      "namn": "Camilla Eek",
+      "avlasningar": [
+        {
+          "datum": "2026-06-01",
+          "avlast": 8468,
+          "foreg": null,
+          "forbruk": null,
+          "belopp": null,
+          "session": "import-juni-2026"
+        }
+      ]
+    },
+    {
+      "plats": 57,
+      "ccnr": "131685",
+      "namn": "Anders Händel",
+      "avlasningar": [
+        {
+          "datum": "2026-06-01",
+          "avlast": 18660,
+          "foreg": null,
+          "forbruk": null,
+          "belopp": null,
+          "session": "import-juni-2026"
+        }
+      ]
+    },
+    {
+      "plats": 58,
+      "ccnr": "112692",
+      "namn": "Kerstin Larsson",
+      "avlasningar": [
+        {
+          "datum": "2026-06-01",
+          "avlast": 23649,
+          "foreg": null,
+          "forbruk": null,
+          "belopp": null,
+          "session": "import-juni-2026"
+        }
+      ]
+    },
+    {
+      "plats": 59,
+      "ccnr": "116276",
+      "namn": "Marie Lundqvist",
+      "avlasningar": [
+        {
+          "datum": "2026-06-01",
+          "avlast": 18746,
+          "foreg": null,
+          "forbruk": null,
+          "belopp": null,
+          "session": "import-juni-2026"
+        }
+      ]
+    },
+    {
+      "plats": 60,
+      "ccnr": "124774",
+      "namn": "Lars From",
+      "avlasningar": [
+        {
+          "datum": "2026-06-01",
+          "avlast": 11461,
+          "foreg": null,
+          "forbruk": null,
+          "belopp": null,
+          "session": "import-juni-2026"
+        }
+      ]
+    },
+    {
+      "plats": 61,
+      "ccnr": "110848",
+      "namn": "Jeanette Liljegren",
+      "avlasningar": [
+        {
+          "datum": "2026-06-01",
+          "avlast": 18067,
+          "foreg": null,
+          "forbruk": null,
+          "belopp": null,
+          "session": "import-juni-2026"
+        }
+      ]
+    },
+    {
+      "plats": 62,
+      "ccnr": "116121",
+      "namn": "Angelica Kihlbom",
+      "avlasningar": [
+        {
+          "datum": "2026-06-01",
+          "avlast": 892,
+          "foreg": null,
+          "forbruk": null,
+          "belopp": null,
+          "session": "import-juni-2026"
+        }
+      ]
+    },
+    {
+      "plats": 63,
+      "ccnr": "130984",
+      "namn": "Martina Persson",
+      "avlasningar": [
+        {
+          "datum": "2026-06-01",
+          "avlast": 3286,
+          "foreg": null,
+          "forbruk": null,
+          "belopp": null,
+          "session": "import-juni-2026"
+        }
+      ]
+    },
+    {
+      "plats": 105,
+      "ccnr": "121583",
+      "namn": "Björn Ohlsson",
+      "avlasningar": [
+        {
+          "datum": "2026-06-01",
+          "avlast": 8105,
+          "foreg": null,
+          "forbruk": null,
+          "belopp": null,
+          "session": "import-juni-2026"
+        }
+      ]
+    },
+    {
+      "plats": 106,
+      "ccnr": "113230",
+      "namn": "Åsa Axe",
+      "avlasningar": [
+        {
+          "datum": "2026-06-01",
+          "avlast": 18532,
+          "foreg": null,
+          "forbruk": null,
+          "belopp": null,
+          "session": "import-juni-2026"
+        }
+      ]
+    }
+  ],
+  "_meta": {
+    "skapad": "2026-08-25",
+    "beskrivning": "Elavläsning Björkö Örns Camping – grunddata från Juni 2026"
+  }
+}
