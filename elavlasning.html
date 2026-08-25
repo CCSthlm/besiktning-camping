@@ -877,6 +877,7 @@ async function renderHistorik() {
     if (r&&r.data) _sessions.push(r.data);
   }
   _sessions.sort(function(a,b){return b.datum.localeCompare(a.datum);});
+  _sessions = _sessions.filter(function(s){return !s.raderad;});
 
   // Need platser for names
   if (!_campingData) {
@@ -940,6 +941,7 @@ async function renderHistorik() {
       +'</table></div>'
       +'<div class="session-actions">'
       +'<button class="btn btn-blue" data-si="'+si+'" onclick="exportSessionExcel(parseInt(this.dataset.si))"><i class="ti ti-download"></i> Excel</button>'
+      +(_isAdmin ? '<button class="btn btn-danger" data-si="'+si+'" onclick="raderaSession(parseInt(this.dataset.si))" style="margin-left:auto"><i class="ti ti-trash"></i> Radera avläsning</button>' : '')
       +'</div>'
       +'</div>'
       +'</div>';
@@ -950,6 +952,36 @@ function toggleSession(si) {
   var body = document.getElementById('sess-body-'+si);
   if (!body) return;
   body.style.display = body.style.display==='none' ? '' : 'none';
+}
+
+async function raderaSession(si) {
+  var sess = _sessions[si];
+  if (!sess) return;
+  if (!confirm('Radera avläsning '+sess.datum+' för '+( sess.campingNamn||sess.campingId)+'?\n\nDetta tar bort sessionsfilen. Platshistoriken rensas också för berörda platser.')) return;
+
+  toast('Raderar…','warn');
+
+  // 1. Mark session file as deleted (GitHub can't truly delete via PUT, mark as raderad)
+  var path = EL_BASE+'/campingar/'+sess.campingId+'/sessioner/'+sess.datum+'.json';
+  var deleted = Object.assign({}, sess, {
+    raderad: true, raderadAv: _user.name, raderadTs: new Date().toISOString()
+  });
+  var ok = await ghPut(path, deleted, 'Raderad avläsning '+sess.datum+' – '+sess.campingId);
+  if (!ok) { toast('Kunde ej radera','err'); return; }
+
+  // 2. Remove this session's readings from platser.json
+  if (_campingData) {
+    (_campingData.platser||[]).forEach(function(p) {
+      if (!p.avlasningar) return;
+      p.avlasningar = p.avlasningar.filter(function(a){return a.datum !== sess.datum;});
+    });
+    var platserPath = EL_BASE+'/campingar/'+sess.campingId+'.json';
+    var ok2 = await ghPut(platserPath, _campingData, 'Platshistorik rensad efter radering '+sess.datum);
+    if (!ok2) toast('Session raderad men platshistorik ej rensad – kontrollera manuellt','warn');
+  }
+
+  toast('Avläsning raderad','ok');
+  renderHistorik();
 }
 
 // ── EXCEL ─────────────────────────────────────────────────────────────────
