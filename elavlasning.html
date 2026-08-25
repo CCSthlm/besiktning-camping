@@ -368,6 +368,7 @@ async function init() {
   document.getElementById('s-datum').value = todayStr();
   document.getElementById('s-camping').addEventListener('change', checkStartReady);
   document.getElementById('s-datum').addEventListener('change', checkStartReady);
+  checkStartReady(); // run immediately after setup so locked users get button enabled
   await checkForUtkast();
 }
 
