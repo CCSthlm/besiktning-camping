@@ -321,10 +321,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-seri
   <div id="historik-list"></div>
 </div>
 
-<!-- FAB -->
-<button class="fab" id="fab-save" onclick="saveUtkast(false)">
-  <i class="ti ti-device-floppy"></i> Spara
-</button>
+<!-- FAB borttagen - Spara utkast-knappen räcker -->
 
 <div id="toast"></div>
 
@@ -483,7 +480,7 @@ async function fortsattUtkast() {
 
   document.getElementById('setup-panel').style.display   = 'none';
   document.getElementById('session-panel').style.display = '';
-  document.getElementById('fab-save').classList.add('show');
+  
   scheduleAutosave();
   renderPlatser();
   toast('Fortsätter avläsning '+_session.datum,'ok');
@@ -588,7 +585,7 @@ async function startSession() {
 
   document.getElementById('setup-panel').style.display   = 'none';
   document.getElementById('session-panel').style.display = '';
-  document.getElementById('fab-save').classList.add('show');
+  
 
   scheduleAutosave();
   renderPlatser();
@@ -847,7 +844,7 @@ async function avlasningKlar() {
 
   document.getElementById('session-panel').style.display = 'none';
   document.getElementById('setup-panel').style.display   = '';
-  document.getElementById('fab-save').classList.remove('show');
+  
   document.getElementById('utkast-card').style.display   = 'none';
   document.getElementById('btn-start').disabled = false;
   document.getElementById('btn-start').innerHTML = '<i class="ti ti-bolt"></i> Starta avläsning';
