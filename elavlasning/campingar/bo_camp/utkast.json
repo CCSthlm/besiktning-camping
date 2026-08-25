@@ -1,7 +1,11 @@
 {
-  "datum": null,
+  "id": "2026-08-25_bo_camp",
+  "campingId": "bo_camp",
+  "campingNamn": "Björkö Örns Camping",
+  "datum": "2026-08-25",
+  "pris": 2.35,
+  "totalPlatser": 65,
   "avlasningar": {},
-  "avslutad": true,
-  "avslutadAv": "Malin Liljedahl",
-  "avslutadTs": "2026-08-25T18:15:39.877Z"
+  "sparadAv": "Malin Liljedahl",
+  "startTs": "2026-08-25T18:24:50.024Z"
 }
