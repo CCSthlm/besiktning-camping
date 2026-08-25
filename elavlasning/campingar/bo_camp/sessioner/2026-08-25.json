@@ -1,0 +1,16 @@
+{
+  "id": "2026-08-25_bo_camp",
+  "campingId": "bo_camp",
+  "campingNamn": "Björkö Örns Camping",
+  "datum": "2026-08-25",
+  "pris": 2.35,
+  "totalPlatser": 65,
+  "avlasningar": {
+    "1": 13500,
+    "3": 9000,
+    "38": 22000
+  },
+  "sparadAv": "Malin Liljedahl",
+  "startTs": "2026-08-25T18:24:50.024Z",
+  "sparadTs": "2026-08-25T18:25:55.123Z"
+}
