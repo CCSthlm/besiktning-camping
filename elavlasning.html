@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Elavläsning – CCSthlm</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/tabler-icons.min.css">
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f5f5f3;--bg2:#fff;--bg3:#eeede8;--bg4:#e5e4de;
+  --text:#1a1a18;--text2:#5a5a57;--text3:#909088;
+  --accent:#3B6D11;--accent2:#27500A;--glow:rgba(59,109,17,.12);
+  --blue:#1a4f7a;--blue-bg:rgba(26,79,122,.08);
+  --red:#A32D2D;--red-bg:#FCEBEB;
+  --amber:#854F0B;--amber-bg:#FAEEDA;
+  --green-bg:#EAF3DE;--green-text:#27500A;
+  --border:rgba(0,0,0,.09);--border2:rgba(0,0,0,.16);
+  --radius:12px;--shadow:0 2px 12px rgba(0,0,0,.08);
+}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
+  background:var(--bg3);color:var(--text);min-height:100vh;padding-bottom:80px;}
+
+/* TOPBAR */
+#topbar{position:sticky;top:0;z-index:100;background:var(--bg2);
+  border-bottom:1px solid var(--border2);display:flex;align-items:center;
+  padding:0 14px;height:48px;gap:8px;}
+.tb-logo{font-size:15px;font-weight:700;display:flex;align-items:center;gap:7px;color:var(--text);}
+.tb-logo i{color:var(--accent);font-size:20px;}
+.tb-spacer{flex:1;}
+.tb-btn{display:flex;align-items:center;gap:5px;padding:7px 12px;border-radius:8px;
+  border:1px solid var(--border2);background:none;color:var(--text2);font-size:13px;
+  font-weight:500;cursor:pointer;font-family:inherit;text-decoration:none;white-space:nowrap;}
+.tb-btn:hover{background:var(--bg3);}
+.tb-btn-danger{background:var(--red-bg);color:var(--red);border-color:rgba(163,45,45,.25);}
+
+/* TABS */
+.tabs{display:flex;background:var(--bg2);border-bottom:1px solid var(--border2);}
+.tab{flex:1;padding:13px 8px;font-size:13px;font-weight:500;color:var(--text3);
+  border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;
+  font-family:inherit;display:flex;align-items:center;justify-content:center;gap:5px;}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent);}
+.tab i{font-size:16px;}
+
+/* VIEWS */
+.view{display:none;padding:16px 14px;}
+.view.active{display:block;}
+
+/* SESSION SETUP */
+.setup-card{background:var(--bg2);border-radius:var(--radius);padding:20px;
+  box-shadow:var(--shadow);margin-bottom:16px;}
+.setup-card h2{font-size:17px;font-weight:700;margin-bottom:16px;
+  display:flex;align-items:center;gap:8px;}
+.form-field{margin-bottom:14px;}
+.form-field label{display:block;font-size:11px;font-weight:600;
+  color:var(--text2);text-transform:uppercase;letter-spacing:.04em;margin-bottom:5px;}
+.form-field select,.form-field input{width:100%;padding:12px 14px;
+  background:var(--bg3);border:1px solid var(--border2);border-radius:10px;
+  font-size:16px;color:var(--text);font-family:inherit;-webkit-appearance:none;}
+.form-field input[type=number]{font-size:17px;font-weight:600;}
+.form-field select:focus,.form-field input:focus{outline:none;border-color:var(--accent);
+  box-shadow:0 0 0 3px var(--glow);}
+
+/* PROGRESS BAR */
+.progress-wrap{background:var(--bg3);border-radius:var(--radius);padding:14px 16px;
+  margin-bottom:14px;border:1px solid var(--border);}
+.progress-label{display:flex;justify-content:space-between;font-size:13px;
+  color:var(--text2);margin-bottom:8px;}
+.progress-bar{height:8px;background:var(--border2);border-radius:20px;overflow:hidden;}
+.progress-fill{height:100%;background:var(--accent);border-radius:20px;transition:width .3s;}
+.progress-count{font-weight:700;color:var(--accent);}
+
+/* SEARCH */
+.search-wrap{position:relative;margin-bottom:12px;}
+.search-wrap i{position:absolute;left:12px;top:50%;transform:translateY(-50%);
+  color:var(--text3);font-size:18px;}
+.search-wrap input{width:100%;padding:12px 12px 12px 40px;background:var(--bg2);
+  border:1px solid var(--border2);border-radius:10px;font-size:15px;
+  color:var(--text);font-family:inherit;}
+.search-wrap input:focus{outline:none;border-color:var(--accent);}
+
+/* FILTER CHIPS */
+.chips{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;}
+.chip{padding:6px 14px;border-radius:20px;font-size:12px;font-weight:500;
+  border:1px solid var(--border2);background:var(--bg2);color:var(--text2);
+  cursor:pointer;}
+.chip.active{background:var(--accent);color:#fff;border-color:transparent;}
+
+/* PLATS CARD */
+.plats-card{background:var(--bg2);border-radius:var(--radius);margin-bottom:10px;
+  overflow:hidden;box-shadow:var(--shadow);border:1px solid var(--border);}
+.plats-card.done{border-color:rgba(59,109,17,.3);background:rgba(59,109,17,.02);}
+.plats-card.done .plats-header{background:var(--green-bg);}
+.plats-header{padding:12px 14px;display:flex;align-items:center;gap:10px;cursor:pointer;}
+.plats-nr{width:38px;height:38px;border-radius:50%;background:var(--bg3);
+  display:flex;align-items:center;justify-content:center;font-size:14px;
+  font-weight:700;color:var(--text2);flex-shrink:0;}
+.plats-card.done .plats-nr{background:var(--accent);color:#fff;}
+.plats-info{flex:1;min-width:0;}
+.plats-namn{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.plats-ccnr{font-size:12px;color:var(--text3);margin-top:1px;}
+.plats-status{flex-shrink:0;text-align:right;}
+.plats-avlast{font-size:14px;font-weight:700;color:var(--accent);}
+.plats-forbruk{font-size:11px;color:var(--text3);}
+.plats-body{padding:14px;border-top:1px solid var(--border);background:var(--bg3);}
+.foreg-info{font-size:12px;color:var(--text2);margin-bottom:12px;padding:8px 12px;
+  background:var(--bg2);border-radius:8px;display:flex;justify-content:space-between;}
+.input-row{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.input-row label{font-size:12px;font-weight:600;color:var(--text2);
+  text-transform:uppercase;letter-spacing:.04em;flex-shrink:0;width:80px;}
+.avlasning-input{flex:1;padding:14px;border:2px solid var(--border2);border-radius:10px;
+  font-size:22px;font-weight:700;text-align:center;font-family:inherit;
+  color:var(--text);background:var(--bg2);}
+.avlasning-input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--glow);}
+.kpi-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
+.kpi-box{background:var(--bg2);border-radius:8px;padding:10px 12px;text-align:center;}
+.kpi-val{font-size:17px;font-weight:700;}
+.kpi-lbl{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.04em;margin-top:2px;}
+.kpi-box.green .kpi-val{color:var(--accent);}
+.kpi-box.blue  .kpi-val{color:var(--blue);}
+.kpi-box.err   .kpi-val{color:var(--red);}
+.btn-spara{width:100%;padding:13px;background:var(--accent);color:#fff;border:none;
+  border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;
+  display:flex;align-items:center;justify-content:center;gap:7px;}
+.btn-spara:disabled{background:var(--bg4);color:var(--text3);cursor:not-allowed;}
+.btn-edit{padding:6px 12px;background:var(--amber-bg);color:var(--amber);
+  border:1px solid rgba(133,79,11,.2);border-radius:8px;font-size:12px;
+  font-weight:500;cursor:pointer;font-family:inherit;display:flex;
+  align-items:center;gap:5px;}
+
+/* HISTORIK */
+.session-card{background:var(--bg2);border-radius:var(--radius);margin-bottom:10px;
+  overflow:hidden;box-shadow:var(--shadow);border:1px solid var(--border);}
+.session-header{padding:14px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;}
+.session-icon{width:42px;height:42px;border-radius:50%;background:var(--green-bg);
+  display:flex;align-items:center;justify-content:center;color:var(--accent);font-size:20px;flex-shrink:0;}
+.session-info{flex:1;}
+.session-title{font-size:14px;font-weight:600;}
+.session-meta{font-size:12px;color:var(--text3);margin-top:2px;}
+.session-body{border-top:1px solid var(--border);}
+.session-table{width:100%;border-collapse:collapse;font-size:13px;}
+.session-table th{text-align:left;padding:8px 12px;font-size:10px;font-weight:600;
+  color:var(--text3);text-transform:uppercase;letter-spacing:.04em;
+  background:var(--bg3);border-bottom:1px solid var(--border2);}
+.session-table th.num{text-align:right;}
+.session-table td{padding:9px 12px;border-bottom:1px solid var(--border);}
+.session-table td.num{text-align:right;font-variant-numeric:tabular-nums;}
+.session-table tr:last-child td{border-bottom:none;}
+.session-actions{padding:12px 16px;display:flex;gap:8px;background:var(--bg3);}
+
+/* BUTTONS */
+.btn{padding:10px 16px;border-radius:10px;font-size:13px;font-weight:500;
+  cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px;
+  border:1px solid var(--border2);background:var(--bg3);color:var(--text2);}
+.btn-primary{background:var(--accent);color:#fff;border-color:transparent;}
+.btn-blue{background:var(--blue-bg);color:var(--blue);border-color:rgba(26,79,122,.2);}
+.btn-start{width:100%;padding:16px;background:var(--accent);color:#fff;border:none;
+  border-radius:var(--radius);font-size:17px;font-weight:700;cursor:pointer;
+  font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px;
+  margin-top:8px;}
+.btn-start:disabled{background:var(--bg4);color:var(--text3);cursor:not-allowed;}
+
+/* TOAST */
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(10px);
+  background:var(--text);color:#fff;border-radius:var(--radius);padding:12px 20px;
+  font-size:13px;z-index:999;opacity:0;transition:all .25s;pointer-events:none;
+  display:flex;align-items:center;gap:8px;white-space:nowrap;box-shadow:var(--shadow);}
+
+/* FAB - floating save all button */
+.fab{position:fixed;bottom:20px;right:16px;z-index:50;background:var(--accent);
+  color:#fff;border:none;border-radius:50px;padding:14px 20px;font-size:14px;
+  font-weight:600;cursor:pointer;font-family:inherit;box-shadow:0 4px 16px rgba(59,109,17,.4);
+  display:none;align-items:center;gap:7px;}
+.fab.show{display:flex;}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);
+  z-index:200;align-items:flex-end;justify-content:center;}
+.modal-overlay.show{display:flex;}
+.modal{background:var(--bg2);border-radius:var(--radius) var(--radius) 0 0;
+  width:100%;max-width:520px;padding:20px 20px 40px;}
+.modal-title{font-size:16px;font-weight:700;margin-bottom:16px;
+  display:flex;align-items:center;gap:8px;}
+.modal-close{margin-left:auto;background:none;border:none;font-size:20px;
+  cursor:pointer;color:var(--text3);}
+
+/* NO-DATA */
+.no-data{text-align:center;padding:48px 20px;color:var(--text3);}
+.no-data i{font-size:48px;display:block;margin-bottom:12px;}
+.no-data p{font-size:14px;line-height:1.6;}
+
+@media(min-width:600px){
+  .view{padding:20px;}
+  .fab{right:24px;}
+}
+</style>
+</head>
+<body>
+
+<div id="topbar">
+  <div class="tb-logo"><i class="ti ti-bolt"></i> Elavläsning</div>
+  <div class="tb-spacer"></div>
+  <a href="index.html" class="tb-btn"><i class="ti ti-arrow-left"></i></a>
+  <button class="tb-btn tb-btn-danger" onclick="portalLogout()"><i class="ti ti-logout"></i></button>
+</div>
+
+<div class="tabs">
+  <button class="tab active" id="tab-avlas" onclick="showTab('avlas')">
+    <i class="ti ti-bolt"></i> Avläsning
+  </button>
+  <button class="tab" id="tab-historik" onclick="showTab('historik')">
+    <i class="ti ti-history"></i> Historik
+  </button>
+</div>
+
+<!-- AVLÄSNING -->
+<div class="view active" id="view-avlas">
+
+  <!-- SESSION SETUP -->
+  <div id="setup-panel">
+    <div class="setup-card">
+      <h2><i class="ti ti-settings" style="color:var(--accent)"></i> Starta avläsning</h2>
+      <div class="form-field">
+        <label>Camping</label>
+        <select id="s-camping" onchange="onCampingChange()">
+          <option value="">– Välj camping –</option>
+          <option value="bo_camp">Björkö Örns Camping</option>
+        </select>
+      </div>
+      <div class="form-field">
+        <label>Datum</label>
+        <input type="date" id="s-datum" value="">
+      </div>
+      <div class="form-field">
+        <label>Pris per kWh (kr)</label>
+        <input type="number" id="s-pris" value="2.35" step="0.01" min="0">
+      </div>
+      <button class="btn-start" id="btn-start" onclick="startSession()" disabled>
+        <i class="ti ti-bolt"></i> Starta avläsning
+      </button>
+    </div>
+  </div>
+
+  <!-- ACTIVE SESSION -->
+  <div id="session-panel" style="display:none">
+    <!-- Progress -->
+    <div class="progress-wrap">
+      <div class="progress-label">
+        <span>Avlästa platser</span>
+        <span class="progress-count"><span id="prog-done">0</span> / <span id="prog-total">0</span></span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+    </div>
+
+    <!-- Search + filter -->
+    <div class="search-wrap">
+      <i class="ti ti-search"></i>
+      <input type="search" id="search-input" placeholder="Sök plats eller namn…" oninput="filterPlatser()">
+    </div>
+    <div class="chips">
+      <div class="chip active" id="chip-alla" onclick="setChip('alla')">Alla</div>
+      <div class="chip" id="chip-kvar" onclick="setChip('kvar')"><i class="ti ti-clock" style="font-size:12px"></i> Kvar</div>
+      <div class="chip" id="chip-klara" onclick="setChip('klara')"><i class="ti ti-check" style="font-size:12px"></i> Klara</div>
+    </div>
+
+    <!-- Platser list -->
+    <div id="platser-list"></div>
+
+    <button class="btn-start" onclick="avslutaSession()" style="background:var(--blue);margin-top:4px">
+      <i class="ti ti-device-floppy"></i> Spara och avsluta session
+    </button>
+  </div>
+</div>
+
+<!-- HISTORIK -->
+<div class="view" id="view-historik">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px">
+    <h2 style="font-size:17px;font-weight:700">Historik</h2>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-blue" onclick="exportExcel()"><i class="ti ti-download"></i> Excel</button>
+    </div>
+  </div>
+  <div id="historik-list"></div>
+</div>
+
+<!-- FAB -->
+<button class="fab" id="fab-save" onclick="saveSession()">
+  <i class="ti ti-device-floppy"></i> Spara
+</button>
+
+<div id="toast"></div>
+
+<script>
+var GH_REPO   = 'CCSthlm/besiktning-camping';
+var EL_BASE   = 'elavlasning';
+var _user     = null;
+var _campingData = null;  // loaded platser.json for current camping
+var _session  = null;     // active session {datum, pris, campingId, avlasningar:{plats: value}}
+var _chip     = 'alla';
+var _openPlats= null;
+var _sessions = [];       // loaded historical sessions
+
+// ── INIT ──────────────────────────────────────────────────────────────────
+function init() {
+  var sess = sessionStorage.getItem('ccs_session') || sessionStorage.getItem('ccs_portal_user');
+  if (sess) { try { _user = JSON.parse(sess); } catch(e) {} }
+  if (!_user) _user = {name:'Testanvändare', adminRoles:[], id:'local'};
+  document.getElementById('s-datum').value = todayStr();
+  document.getElementById('s-camping').addEventListener('change', checkStartReady);
+  document.getElementById('s-datum').addEventListener('change', checkStartReady);
+}
+
+function checkStartReady() {
+  var ok = document.getElementById('s-camping').value && document.getElementById('s-datum').value;
+  document.getElementById('btn-start').disabled = !ok;
+}
+
+async function onCampingChange() {
+  checkStartReady();
+}
+
+// ── GITHUB ────────────────────────────────────────────────────────────────
+async function ghGet(path) {
+  var token = localStorage.getItem('gh_token')||'';
+  if (!token) return null;
+  try {
+    var r = await fetch('https://api.github.com/repos/'+GH_REPO+'/contents/'+path,
+      {headers:{'Authorization':'token '+token}});
+    if (!r.ok) return null;
+    var g = await r.json();
+    var b = Uint8Array.from(atob(g.content.split('\n').join('')), function(c){return c.charCodeAt(0);});
+    return {data:JSON.parse(new TextDecoder('utf-8').decode(b)), sha:g.sha};
+  } catch(e) { return null; }
+}
+
+async function ghPut(path, data, msg) {
+  var token = localStorage.getItem('gh_token')||'';
+  if (!token) { toast('Token saknas','err'); return false; }
+  var chk = await fetch('https://api.github.com/repos/'+GH_REPO+'/contents/'+path,
+    {headers:{'Authorization':'token '+token}});
+  var sha = chk.ok ? (await chk.json()).sha : null;
+  var content = btoa(unescape(encodeURIComponent(JSON.stringify(data,null,2))));
+  var payload = {message:msg||'El update', content, branch:'main'};
+  if (sha) payload.sha = sha;
+  var r = await fetch('https://api.github.com/repos/'+GH_REPO+'/contents/'+path,
+    {method:'PUT', headers:{'Authorization':'token '+token,'Content-Type':'application/json'},
+     body:JSON.stringify(payload)});
+  return r.ok;
+}
+
+async function ghList(path) {
+  var token = localStorage.getItem('gh_token')||'';
+  if (!token) return [];
+  try {
+    var r = await fetch('https://api.github.com/repos/'+GH_REPO+'/contents/'+path,
+      {headers:{'Authorization':'token '+token}});
+    if (!r.ok) return [];
+    return await r.json();
+  } catch(e) { return []; }
+}
+
+// ── SESSION ───────────────────────────────────────────────────────────────
+async function startSession() {
+  var campingId = document.getElementById('s-camping').value;
+  var datum     = document.getElementById('s-datum').value;
+  var pris      = parseFloat(document.getElementById('s-pris').value)||2.35;
+
+  document.getElementById('btn-start').textContent = 'Laddar…';
+  document.getElementById('btn-start').disabled = true;
+
+  // Load camping data
+  var r = await ghGet(EL_BASE+'/campingar/'+campingId+'.json');
+  if (r && r.data) {
+    _campingData = r.data;
+  } else {
+    toast('Kunde ej ladda platsdata – kontrollera token','err');
+    document.getElementById('btn-start').disabled = false;
+    document.getElementById('btn-start').innerHTML = '<i class="ti ti-bolt"></i> Starta avläsning';
+    return;
+  }
+
+  _session = {
+    id:        datum+'_'+campingId,
+    campingId: campingId,
+    campingNamn: _campingData.campingNamn,
+    datum:     datum,
+    pris:      pris,
+    avlasningar: {},
+    sparadAv:  _user.name,
+    startTs:   new Date().toISOString(),
+  };
+
+  document.getElementById('setup-panel').style.display = 'none';
+  document.getElementById('session-panel').style.display = '';
+  document.getElementById('fab-save').classList.add('show');
+
+  renderPlatser();
+}
+
+function getForegAv(plats) {
+  // Find most recent avlasning for this plats
+  var p = (_campingData.platser||[]).find(function(x){return x.plats===plats;});
+  if (!p || !p.avlasningar || !p.avlasningar.length) return null;
+  // Sort by datum desc
+  var sorted = p.avlasningar.slice().filter(function(a){return a.avlast!=null;})
+    .sort(function(a,b){return b.datum.localeCompare(a.datum);});
+  return sorted[0] || null;
+}
+
+// ── RENDER PLATSER ────────────────────────────────────────────────────────
+function renderPlatser() {
+  var sok  = (document.getElementById('search-input').value||'').toLowerCase();
+  var platser = (_campingData.platser||[])
+    .filter(function(p) {
+      if (_chip==='klara') return _session.avlasningar[p.plats]!=null;
+      if (_chip==='kvar')  return _session.avlasningar[p.plats]==null;
+      return true;
+    })
+    .filter(function(p) {
+      if (!sok) return true;
+      return String(p.plats).includes(sok) || p.namn.toLowerCase().includes(sok);
+    });
+
+  var done  = Object.keys(_session.avlasningar).length;
+  var total = (_campingData.platser||[]).length;
+  var pct   = total ? Math.round(done/total*100) : 0;
+  document.getElementById('prog-done').textContent  = done;
+  document.getElementById('prog-total').textContent = total;
+  document.getElementById('prog-fill').style.width  = pct+'%';
+
+  var html = platser.map(function(p) {
+    var avlast  = _session.avlasningar[p.plats];
+    var isDone  = avlast!=null;
+    var foreg   = getForegAv(p.plats);
+    var isOpen  = _openPlats === p.plats;
+
+    var forbruk = (isDone && foreg) ? (avlast - foreg.avlast) : null;
+    var belopp  = forbruk!=null ? forbruk*_session.pris : null;
+    var hasErr  = forbruk!=null && forbruk < 0;
+
+    var statusHtml = isDone
+      ? '<div class="plats-avlast">'+avlast+'</div>'
+        +(forbruk!=null
+          ? '<div class="plats-forbruk"'+(hasErr?' style="color:var(--red)"':'')+'>'+
+            (forbruk>=0?'+':'')+forbruk+' kWh</div>'
+          : '<div class="plats-forbruk">Ingen föregående</div>')
+      : '<div style="font-size:22px;color:var(--border2)"><i class="ti ti-minus"></i></div>';
+
+    var bodyHtml = '';
+    if (isOpen) {
+      var foregTxt = foreg
+        ? foreg.avlast+' &nbsp;('+foreg.datum+')'
+        : '<em style="color:var(--text3)">Ingen föregående avläsning</em>';
+
+      var forbrukDisp = '–', beloppDisp = '–', kpiClass1='', kpiClass2='';
+      if (avlast!=null && foreg) {
+        var fb = avlast - foreg.avlast;
+        forbrukDisp = (fb>=0?'+':'')+fb+' kWh';
+        beloppDisp  = (fb*_session.pris).toFixed(2)+' kr';
+        kpiClass1   = fb>=0?'green':'err';
+        kpiClass2   = fb>=0?'blue':'err';
+      } else if (avlast!=null) {
+        forbrukDisp = 'Ingen föregående';
+      }
+
+      bodyHtml = '<div class="plats-body">'
+        +'<div class="foreg-info">'
+        +'<span style="color:var(--text3)">Föregående avläsning</span>'
+        +'<span style="font-weight:500">'+foregTxt+'</span>'
+        +'</div>'
+        +'<div class="input-row">'
+        +'<label>Avläst</label>'
+        +'<input type="number" class="avlasning-input" id="inp-'+p.plats+'" '
+        +'value="'+(avlast!=null?avlast:'')+'" '
+        +'placeholder="Mätarställning" min="0" '
+        +'oninput="onAvlasInput('+p.plats+',this.value)" '
+        +'inputmode="numeric">'
+        +'</div>'
+        +'<div class="kpi-row">'
+        +'<div class="kpi-box '+kpiClass1+'"><div class="kpi-val">'+forbrukDisp+'</div><div class="kpi-lbl">Förbrukning</div></div>'
+        +'<div class="kpi-box '+kpiClass2+'"><div class="kpi-val">'+beloppDisp+'</div><div class="kpi-lbl">Belopp ('+_session.pris+' kr/kWh)</div></div>'
+        +'</div>'
+        +'<button class="btn-spara" '+(avlast==null?'disabled':'')+' '
+        +'onclick="sparaPlats('+p.plats+')" id="btn-spara-'+p.plats+'">'
+        +'<i class="ti ti-check"></i> Spara avläsning'
+        +'</button>'
+        +'</div>';
+    }
+
+    return '<div class="plats-card'+(isDone?' done':'')+'">'
+      +'<div class="plats-header" onclick="togglePlats('+p.plats+')">'
+      +'<div class="plats-nr">'+(isDone?'<i class="ti ti-check" style="font-size:16px"></i>':p.plats)+'</div>'
+      +'<div class="plats-info">'
+      +'<div class="plats-namn">Plats '+p.plats+'&nbsp;·&nbsp;'+p.namn+'</div>'
+      +'<div class="plats-ccnr">'+(p.ccnr?'CC: '+p.ccnr:'Inget CC-nr')+'</div>'
+      +'</div>'
+      +'<div class="plats-status">'+statusHtml+'</div>'
+      +'</div>'
+      +bodyHtml
+      +'</div>';
+  }).join('');
+
+  document.getElementById('platser-list').innerHTML = html || '<div class="no-data"><i class="ti ti-search"></i><p>Inga platser matchar</p></div>';
+
+  // Focus input if open
+  if (_openPlats) {
+    var el = document.getElementById('inp-'+_openPlats);
+    if (el && !el.value) el.focus();
+  }
+}
+
+function togglePlats(plats) {
+  _openPlats = _openPlats===plats ? null : plats;
+  renderPlatser();
+}
+
+function onAvlasInput(plats, val) {
+  var v = parseFloat(val);
+  if (!isNaN(v) && v>=0) {
+    _session.avlasningar[plats] = v;
+  } else {
+    delete _session.avlasningar[plats];
+  }
+  // Update KPI in real time without full re-render
+  var foreg   = getForegAv(plats);
+  var avlast  = _session.avlasningar[plats];
+  var kpi1 = document.querySelector('#inp-'+plats+'~*~ .kpi-row .kpi-box:first-child .kpi-val');
+  var kpi2 = document.querySelector('#inp-'+plats+'~*~ .kpi-row .kpi-box:last-child .kpi-val');
+  if (avlast!=null && foreg) {
+    var fb = avlast - foreg.avlast;
+    if (kpi1) { kpi1.textContent=(fb>=0?'+':'')+fb+' kWh'; kpi1.parentElement.className='kpi-box '+(fb>=0?'green':'err'); }
+    if (kpi2) { kpi2.textContent=(fb*_session.pris).toFixed(2)+' kr'; kpi2.parentElement.className='kpi-box '+(fb>=0?'blue':'err'); }
+  }
+  var btn = document.getElementById('btn-spara-'+plats);
+  if (btn) btn.disabled = avlast==null;
+}
+
+function sparaPlats(plats) {
+  if (_session.avlasningar[plats]==null) return;
+  _openPlats = null;
+  renderPlatser();
+  // Auto-scroll to next unread
+  var platser = _campingData.platser||[];
+  var idx = platser.findIndex(function(p){return p.plats===plats;});
+  for (var i=idx+1; i<platser.length; i++) {
+    if (_session.avlasningar[platser[i].plats]==null) {
+      _openPlats = platser[i].plats;
+      renderPlatser();
+      setTimeout(function(){ var el=document.querySelector('.plats-header:last-of-type'); if(el) el.scrollIntoView({behavior:'smooth',block:'center'}); },100);
+      break;
+    }
+  }
+}
+
+function filterPlatser() { renderPlatser(); }
+function setChip(chip) {
+  _chip = chip;
+  document.querySelectorAll('.chip').forEach(function(c){c.classList.remove('active');});
+  document.getElementById('chip-'+chip).classList.add('active');
+  renderPlatser();
+}
+
+// ── SAVE / CLOSE ──────────────────────────────────────────────────────────
+async function saveSession() {
+  if (!_session) return;
+  var done = Object.keys(_session.avlasningar).length;
+  if (!done) { toast('Inga avläsningar att spara','warn'); return; }
+
+  var sessionData = Object.assign({}, _session, {sparadTs: new Date().toISOString()});
+  var path = EL_BASE+'/campingar/'+_session.campingId+'/sessioner/'+_session.datum+'.json';
+  var ok = await ghPut(path, sessionData, 'Elavläsning '+_session.datum+' – '+_session.campingId);
+  if (!ok) { toast('Sparning misslyckades – kontrollera token','err'); return; }
+
+  // Update platser.json with new readings
+  var platser = _campingData.platser||[];
+  platser.forEach(function(p) {
+    var avlast = _session.avlasningar[p.plats];
+    if (avlast==null) return;
+    if (!p.avlasningar) p.avlasningar = [];
+    // Remove any existing entry for this date
+    p.avlasningar = p.avlasningar.filter(function(a){return a.datum!==_session.datum;});
+    var foreg = getForegAv(p.plats);
+    p.avlasningar.push({
+      datum:    _session.datum,
+      avlast:   avlast,
+      foreg:    foreg ? foreg.avlast : null,
+      forbruk:  foreg ? avlast - foreg.avlast : null,
+      belopp:   foreg ? Math.round((avlast-foreg.avlast)*_session.pris*100)/100 : null,
+      session:  _session.id,
+    });
+  });
+
+  var platserPath = EL_BASE+'/campingar/'+_session.campingId+'.json';
+  await ghPut(platserPath, _campingData, 'Platser uppdaterade '+_session.datum);
+  toast('Sparat ('+done+' platser)','ok');
+}
+
+async function avslutaSession() {
+  await saveSession();
+  _session    = null;
+  _openPlats  = null;
+  document.getElementById('session-panel').style.display = 'none';
+  document.getElementById('setup-panel').style.display   = '';
+  document.getElementById('fab-save').classList.remove('show');
+  document.getElementById('btn-start').disabled = false;
+  document.getElementById('btn-start').innerHTML = '<i class="ti ti-bolt"></i> Starta avläsning';
+  toast('Session avslutad','ok');
+}
+
+// ── HISTORIK ──────────────────────────────────────────────────────────────
+async function renderHistorik() {
+  var list = document.getElementById('historik-list');
+  list.innerHTML = '<div class="no-data"><i class="ti ti-loader"></i><p>Laddar…</p></div>';
+
+  var campingId = 'bo_camp';
+  var sessPath  = EL_BASE+'/campingar/'+campingId+'/sessioner';
+  var files     = await ghList(sessPath);
+  if (!Array.isArray(files)||!files.length) {
+    list.innerHTML = '<div class="no-data"><i class="ti ti-history"></i><p>Inga sessioner sparade ännu.</p></div>';
+    return;
+  }
+
+  _sessions = [];
+  for (var i=0;i<files.length;i++) {
+    if (!files[i].name||!files[i].name.endsWith('.json')) continue;
+    var r = await ghGet(sessPath+'/'+files[i].name);
+    if (r&&r.data) _sessions.push(r.data);
+  }
+  _sessions.sort(function(a,b){return b.datum.localeCompare(a.datum);});
+
+  // Need platser for names
+  if (!_campingData) {
+    var pr = await ghGet(EL_BASE+'/campingar/'+campingId+'.json');
+    if (pr&&pr.data) _campingData = pr.data;
+  }
+
+  list.innerHTML = _sessions.map(function(sess,si) {
+    var avlasningar = sess.avlasningar||{};
+    var platserKeys = Object.keys(avlasningar);
+    var totForbruk = 0, totBelopp = 0, count = 0;
+
+    var tableRows = platserKeys.sort(function(a,b){return parseInt(a)-parseInt(b);}).map(function(pk) {
+      var platsNr = parseInt(pk);
+      var avlast  = avlasningar[pk];
+      var pInfo   = (_campingData&&_campingData.platser||[]).find(function(p){return p.plats===platsNr;});
+      var namn    = pInfo ? pInfo.namn : 'Plats '+platsNr;
+      var ccnr    = pInfo ? pInfo.ccnr : '';
+      // Find previous from platser history
+      var allAv   = (pInfo&&pInfo.avlasningar||[])
+        .filter(function(a){return a.datum<sess.datum&&a.avlast!=null;})
+        .sort(function(a,b){return b.datum.localeCompare(a.datum);});
+      var foregAv = allAv[0];
+      var foregVal= foregAv ? foregAv.avlast : null;
+      var forbruk = foregVal!=null ? avlast-foregVal : null;
+      var belopp  = forbruk!=null ? Math.round(forbruk*sess.pris*100)/100 : null;
+      if (forbruk!=null) { totForbruk+=forbruk; totBelopp+=(belopp||0); count++; }
+
+      return '<tr>'
+        +'<td style="font-weight:500">'+platsNr+'</td>'
+        +'<td>'+namn+'</td>'
+        +'<td style="color:var(--text3)">'+( ccnr||'–')+'</td>'
+        +'<td class="num">'+(foregVal!=null?foregVal:'–')+'</td>'
+        +'<td class="num" style="font-weight:600">'+avlast+'</td>'
+        +'<td class="num">'+(forbruk!=null?(forbruk>=0?'+':'')+forbruk:'–')+'</td>'
+        +'<td class="num">'+(belopp!=null?belopp.toFixed(2)+' kr':'–')+'</td>'
+        +'</tr>';
+    }).join('');
+
+    return '<div class="session-card">'
+      +'<div class="session-header" onclick="toggleSession('+si+')">'
+      +'<div class="session-icon"><i class="ti ti-bolt"></i></div>'
+      +'<div class="session-info">'
+      +'<div class="session-title">'+sess.datum+'&nbsp;·&nbsp;'+(sess.campingNamn||sess.campingId)+'</div>'
+      +'<div class="session-meta">'+(sess.sparadAv||'')+'&nbsp;·&nbsp;'+platserKeys.length+' avlästa platser&nbsp;·&nbsp;'
+      +(count?'Totalt '+totForbruk.toFixed(0)+' kWh / '+totBelopp.toFixed(2)+' kr':'')+'</div>'
+      +'</div>'
+      +'<i class="ti ti-chevron-down" style="color:var(--text3)"></i>'
+      +'</div>'
+      +'<div class="session-body" id="sess-body-'+si+'" style="display:none">'
+      +'<div style="overflow-x:auto"><table class="session-table"><thead><tr>'
+      +'<th>Plats</th><th>Namn</th><th>CC-nr</th>'
+      +'<th class="num">Föregående</th><th class="num">Avläst</th>'
+      +'<th class="num">Förbrukn. kWh</th><th class="num">Belopp</th>'
+      +'</tr></thead><tbody>'+tableRows+'</tbody>'
+      +'<tfoot><tr style="background:var(--bg3);font-weight:600">'
+      +'<td colspan="5">Totalt ('+count+' platser)</td>'
+      +'<td class="num">'+totForbruk.toFixed(0)+' kWh</td>'
+      +'<td class="num">'+totBelopp.toFixed(2)+' kr</td>'
+      +'</tr></tfoot>'
+      +'</table></div>'
+      +'<div class="session-actions">'
+      +'<button class="btn btn-blue" data-si="'+si+'" onclick="exportSessionExcel(parseInt(this.dataset.si))"><i class="ti ti-download"></i> Excel</button>'
+      +'</div>'
+      +'</div>'
+      +'</div>';
+  }).join('');
+}
+
+function toggleSession(si) {
+  var body = document.getElementById('sess-body-'+si);
+  if (!body) return;
+  body.style.display = body.style.display==='none' ? '' : 'none';
+}
+
+// ── EXCEL ─────────────────────────────────────────────────────────────────
+function exportExcel() {
+  if (!_sessions.length) { toast('Ingen data att exportera','warn'); return; }
+  if (!window.XLSX) { toast('Excel laddas','warn'); return; }
+  var wb = XLSX.utils.book_new();
+  var data = [['Datum','Camping','Plats','CC-nr','Namn','Föregående','Avläst','Förbrukning kWh','Belopp kr','kWh-pris']];
+  _sessions.forEach(function(sess) {
+    var avlasningar = sess.avlasningar||{};
+    Object.keys(avlasningar).sort(function(a,b){return parseInt(a)-parseInt(b);}).forEach(function(pk) {
+      var platsNr = parseInt(pk);
+      var avlast  = avlasningar[pk];
+      var pInfo   = (_campingData&&_campingData.platser||[]).find(function(p){return p.plats===platsNr;});
+      var allAv   = (pInfo&&pInfo.avlasningar||[])
+        .filter(function(a){return a.datum<sess.datum&&a.avlast!=null;})
+        .sort(function(a,b){return b.datum.localeCompare(a.datum);});
+      var foregAv = allAv[0];
+      var foregVal= foregAv ? foregAv.avlast : '';
+      var forbruk = foregVal!=='' ? avlast-foregVal : '';
+      var belopp  = forbruk!=='' ? Math.round(forbruk*sess.pris*100)/100 : '';
+      data.push([sess.datum, sess.campingNamn||sess.campingId, platsNr,
+        pInfo?pInfo.ccnr:'', pInfo?pInfo.namn:'Plats '+platsNr,
+        foregVal, avlast, forbruk, belopp, sess.pris]);
+    });
+  });
+  var ws = XLSX.utils.aoa_to_sheet(data);
+  ws['!cols']=[{wch:12},{wch:24},{wch:7},{wch:10},{wch:26},{wch:12},{wch:10},{wch:16},{wch:12},{wch:10}];
+  XLSX.utils.book_append_sheet(wb,ws,'Elavläsning');
+  XLSX.writeFile(wb,'Elavlasning_'+todayStr()+'.xlsx');
+  toast('Excel exporterad','ok');
+}
+
+function exportSessionExcel(si) {
+  var sess = _sessions[si];
+  if (!sess||!window.XLSX) return;
+  var wb   = XLSX.utils.book_new();
+  var data = [['Plats','CC-nr','Namn','Föregående mätarst.','Avläst mätarst.','Förbrukning kWh','Belopp kr','kWh-pris','Datum']];
+  var avlasningar = sess.avlasningar||{};
+  Object.keys(avlasningar).sort(function(a,b){return parseInt(a)-parseInt(b);}).forEach(function(pk) {
+    var platsNr = parseInt(pk);
+    var avlast  = avlasningar[pk];
+    var pInfo   = (_campingData&&_campingData.platser||[]).find(function(p){return p.plats===platsNr;});
+    var allAv   = (pInfo&&pInfo.avlasningar||[])
+      .filter(function(a){return a.datum<sess.datum&&a.avlast!=null;})
+      .sort(function(a,b){return b.datum.localeCompare(a.datum);});
+    var foregAv = allAv[0];
+    var foregVal= foregAv ? foregAv.avlast : '';
+    var forbruk = foregVal!=='' ? avlast-foregVal : '';
+    var belopp  = forbruk!=='' ? Math.round(forbruk*sess.pris*100)/100 : '';
+    data.push([platsNr, pInfo?pInfo.ccnr:'', pInfo?pInfo.namn:'Plats '+platsNr,
+      foregVal, avlast, forbruk, belopp, sess.pris, sess.datum]);
+  });
+  var ws = XLSX.utils.aoa_to_sheet(data);
+  ws['!cols']=[{wch:7},{wch:10},{wch:26},{wch:16},{wch:14},{wch:16},{wch:12},{wch:10},{wch:12}];
+  XLSX.utils.book_append_sheet(wb,ws,'Avläsning '+sess.datum);
+  XLSX.writeFile(wb,'Elavlasning_'+sess.datum+'.xlsx');
+  toast('Excel exporterad','ok');
+}
+
+// ── TABS ──────────────────────────────────────────────────────────────────
+function showTab(tab) {
+  ['avlas','historik'].forEach(function(t){
+    document.getElementById('view-'+t).classList.toggle('active',t===tab);
+    document.getElementById('tab-'+t).classList.toggle('active',t===tab);
+  });
+  if (tab==='historik') renderHistorik();
+}
+
+// ── HELPERS ───────────────────────────────────────────────────────────────
+function todayStr(){ return new Date().toISOString().slice(0,10); }
+function toast(msg,type){
+  var t=document.getElementById('toast');
+  var bg=type==='err'?'var(--red)':type==='warn'?'var(--amber)':'var(--accent)';
+  var ic=type==='err'?'ti-x':type==='warn'?'ti-alert-triangle':'ti-check';
+  t.innerHTML='<i class="ti '+ic+'"></i> '+msg;
+  t.style.background=bg;
+  t.style.opacity='1';t.style.transform='translateX(-50%) translateY(0)';
+  setTimeout(function(){t.style.opacity='0';t.style.transform='translateX(-50%) translateY(10px)';},3000);
+}
+function portalLogout(){
+  sessionStorage.setItem('ccs_logged_out','1');
+  sessionStorage.removeItem('ccs_session');
+  sessionStorage.removeItem('ccs_portal_user');
+  window.location.replace('index.html');
+}
+
+init();
+</script>
+</body>
+</html>
