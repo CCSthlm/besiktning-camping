@@ -783,71 +783,77 @@ function setChip(chip) {
 
 // ── SAVE / CLOSE ──────────────────────────────────────────────────────────
 async function saveSession() {
-  if (!_session) return;
+  if (!_session) return false;
   var done = Object.keys(_session.avlasningar).length;
-  if (!done) { toast('Inga avläsningar att spara','warn'); return; }
+  if (!done) { toast('Inga avläsningar att spara','warn'); return false; }
 
+  // 1. Save session file
   var sessionData = Object.assign({}, _session, {sparadTs: new Date().toISOString()});
   var path = EL_BASE+'/campingar/'+_session.campingId+'/sessioner/'+_session.datum+'.json';
   var ok = await ghPut(path, sessionData, 'Elavläsning '+_session.datum+' – '+_session.campingId);
-  if (!ok) { toast('Sparning misslyckades – kontrollera token','err'); return; }
+  if (!ok) {
+    toast('Kunde ej spara – kontrollera token och GitHub-behörighet','err');
+    return false;
+  }
 
-  // Update platser.json with new readings
-  var platser = _campingData.platser||[];
-  platser.forEach(function(p) {
-    var avlast = _session.avlasningar[p.plats];
-    if (avlast==null) return;
-    if (!p.avlasningar) p.avlasningar = [];
-    // Remove any existing entry for this date
-    p.avlasningar = p.avlasningar.filter(function(a){return a.datum!==_session.datum;});
-    var foreg = getForegAv(p.plats);
-    p.avlasningar.push({
-      datum:    _session.datum,
-      avlast:   avlast,
-      foreg:    foreg ? foreg.avlast : null,
-      forbruk:  foreg ? avlast - foreg.avlast : null,
-      belopp:   foreg ? Math.round((avlast-foreg.avlast)*_session.pris*100)/100 : null,
-      session:  _session.id,
+  // 2. Update platser.json (non-blocking)
+  try {
+    var platser = _campingData.platser||[];
+    platser.forEach(function(p) {
+      var avlast = _session.avlasningar[p.plats];
+      if (avlast==null) return;
+      if (!p.avlasningar) p.avlasningar = [];
+      p.avlasningar = p.avlasningar.filter(function(a){return a.datum!==_session.datum;});
+      var foreg = getForegAv(p.plats);
+      p.avlasningar.push({
+        datum:   _session.datum,
+        avlast:  avlast,
+        foreg:   foreg ? foreg.avlast : null,
+        forbruk: foreg ? avlast - foreg.avlast : null,
+        belopp:  foreg ? Math.round((avlast-foreg.avlast)*_session.pris*100)/100 : null,
+        session: _session.id,
+      });
     });
-  });
+    var platserPath = EL_BASE+'/campingar/'+_session.campingId+'.json';
+    var ok2 = await ghPut(platserPath, _campingData, 'Platser uppdaterade '+_session.datum);
+    if (!ok2) toast('Session sparad – platshistorik uppdaterades ej','warn');
+  } catch(e) {
+    toast('Session sparad – platshistorik misslyckades: '+e.message,'warn');
+  }
 
-  var platserPath = EL_BASE+'/campingar/'+_session.campingId+'.json';
-  await ghPut(platserPath, _campingData, 'Platser uppdaterade '+_session.datum);
   toast('Sparat ('+done+' platser)','ok');
+  return true;
 }
 
 async function avlasningKlar() {
   var done  = Object.keys(_session.avlasningar||{}).length;
   var total = _session.totalPlatser || (_campingData.platser||[]).length;
   var kvar  = total - done;
-
-  var msg = 'Markera avläsningen som klar?';
-  if (kvar > 0) {
-    msg = kvar+' platser är inte avlästa ännu.\n\nVill du ändå avsluta och spara de '+done+' platser som avlästs?';
-  } else {
-    msg = 'Alla '+done+' platser är avlästa.\n\nSpara och avsluta avläsningen?';
-  }
+  var msg   = kvar > 0
+    ? kvar+' platser ej avlästa.\n\nAvsluta ändå och spara de '+done+' avlästa?'
+    : 'Alla '+done+' platser avlästa.\n\nSpara och avsluta?';
   if (!confirm(msg)) return;
 
-  // Save final session
-  await saveSession();
+  var ok = await saveSession();
+  if (!ok) {
+    toast('Avslutades INTE – rätta felet och försök igen','err');
+    return;
+  }
 
-  // Clear utkast
   var emptyUtkast = {datum:null, avlasningar:{}, avslutad:true,
     avslutadAv:_user.name, avslutadTs:new Date().toISOString()};
   await ghPut(EL_BASE+'/campingar/'+_session.campingId+'/utkast.json',
     emptyUtkast, 'Utkast avslutat '+_session.datum);
 
   if (_autoSaveTimer) clearTimeout(_autoSaveTimer);
-  _session   = null;
-  _openPlats = null;
+  _session = null; _openPlats = null;
 
   document.getElementById('session-panel').style.display = 'none';
   document.getElementById('setup-panel').style.display   = '';
-  
   document.getElementById('utkast-card').style.display   = 'none';
   document.getElementById('btn-start').disabled = false;
   document.getElementById('btn-start').innerHTML = '<i class="ti ti-bolt"></i> Starta avläsning';
+  checkStartReady();
   toast('Avläsning klar och sparad!','ok');
 }
 
