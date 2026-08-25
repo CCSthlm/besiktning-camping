@@ -190,6 +190,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-seri
 .no-data i{font-size:48px;display:block;margin-bottom:12px;}
 .no-data p{font-size:14px;line-height:1.6;}
 
+.autosave-indicator{font-size:11px;color:var(--text3);padding:4px 10px;
+  border-radius:20px;background:var(--bg3);display:inline-flex;align-items:center;gap:5px;}
 @media(min-width:600px){
   .view{padding:20px;}
   .fab{right:24px;}
@@ -200,9 +202,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-seri
 
 <div id="topbar">
   <div class="tb-logo"><i class="ti ti-bolt"></i> Elavläsning</div>
-  <div class="tb-spacer"></div>
-  <a href="index.html" class="tb-btn"><i class="ti ti-arrow-left"></i></a>
-  <button class="tb-btn tb-btn-danger" onclick="portalLogout()"><i class="ti ti-logout"></i></button>
+  <div style="font-size:12px;color:var(--text2);flex:1;padding:0 8px" id="tb-role-info"></div>
+  <a href="index.html" class="tb-btn"><i class="ti ti-arrow-left"></i> Portal</a>
+  <button class="tb-btn tb-btn-danger" onclick="portalLogout()"><i class="ti ti-logout"></i> Logga ut</button>
 </div>
 
 <div class="tabs">
@@ -219,8 +221,35 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-seri
 
   <!-- SESSION SETUP -->
   <div id="setup-panel">
-    <div class="setup-card">
-      <h2><i class="ti ti-settings" style="color:var(--accent)"></i> Starta avläsning</h2>
+    <!-- Pågående utkast -->
+    <div id="utkast-card" style="display:none;background:var(--green-bg);border:1px solid rgba(59,109,17,.25);border-radius:var(--radius);padding:18px;margin-bottom:14px;">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+        <i class="ti ti-refresh" style="font-size:24px;color:var(--accent)"></i>
+        <div>
+          <div style="font-size:15px;font-weight:700;color:var(--accent2)">Pågående avläsning</div>
+          <div style="font-size:13px;color:var(--green-text);margin-top:2px" id="utkast-info">–</div>
+        </div>
+      </div>
+      <div style="background:rgba(255,255,255,.6);border-radius:8px;padding:10px 14px;margin-bottom:12px">
+        <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px">
+          <span style="color:var(--text2)">Avlästa platser</span>
+          <span style="font-weight:700;color:var(--accent)" id="utkast-progress">–</span>
+        </div>
+        <div style="height:6px;background:rgba(59,109,17,.15);border-radius:20px;overflow:hidden">
+          <div style="height:100%;background:var(--accent);border-radius:20px;transition:width .3s" id="utkast-bar" style="width:0%"></div>
+        </div>
+      </div>
+      <button class="btn-start" onclick="fortsattUtkast()" style="margin-bottom:10px">
+        <i class="ti ti-arrow-right"></i> Fortsätt avläsning
+      </button>
+      <button class="btn" onclick="raderaUtkast()" style="width:100%;justify-content:center;color:var(--red);border-color:rgba(163,45,45,.2)">
+        <i class="ti ti-trash"></i> Kassera och börja om
+      </button>
+    </div>
+
+    <!-- Ny session -->
+    <div id="ny-session-card" class="setup-card">
+      <h2><i class="ti ti-bolt" style="color:var(--accent)"></i> Starta ny avläsning</h2>
       <div class="form-field">
         <label>Camping</label>
         <select id="s-camping" onchange="onCampingChange()">
@@ -232,7 +261,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-seri
         <label>Datum</label>
         <input type="date" id="s-datum" value="">
       </div>
-      <div class="form-field">
+      <div class="form-field" id="pris-field">
         <label>Pris per kWh (kr)</label>
         <input type="number" id="s-pris" value="2.35" step="0.01" min="0">
       </div>
@@ -248,7 +277,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-seri
     <div class="progress-wrap">
       <div class="progress-label">
         <span>Avlästa platser</span>
-        <span class="progress-count"><span id="prog-done">0</span> / <span id="prog-total">0</span></span>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span class="autosave-indicator" id="autosave-lbl"><i class="ti ti-cloud"></i> –</span>
+          <span class="progress-count"><span id="prog-done">0</span> / <span id="prog-total">0</span></span>
+        </div>
       </div>
       <div class="progress-bar"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
     </div>
@@ -267,9 +299,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-seri
     <!-- Platser list -->
     <div id="platser-list"></div>
 
-    <button class="btn-start" onclick="avslutaSession()" style="background:var(--blue);margin-top:4px">
-      <i class="ti ti-device-floppy"></i> Spara och avsluta session
-    </button>
+    <div style="display:flex;gap:10px;margin-top:4px">
+      <button class="btn" onclick="saveUtkast(false)" style="flex:1;justify-content:center">
+        <i class="ti ti-device-floppy"></i> Spara utkast
+      </button>
+      <button class="btn-start" onclick="avlasningKlar()" style="flex:2;background:var(--blue)">
+        <i class="ti ti-circle-check"></i> Avläsning klar
+      </button>
+    </div>
   </div>
 </div>
 
@@ -285,7 +322,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-seri
 </div>
 
 <!-- FAB -->
-<button class="fab" id="fab-save" onclick="saveSession()">
+<button class="fab" id="fab-save" onclick="saveUtkast(false)">
   <i class="ti ti-device-floppy"></i> Spara
 </button>
 
@@ -300,15 +337,146 @@ var _session  = null;     // active session {datum, pris, campingId, avlasningar
 var _chip     = 'alla';
 var _openPlats= null;
 var _sessions = [];       // loaded historical sessions
+var _isAdmin = false;
+var _userCamping = ''; // assigned camping for el-avlasning role
+var _autoSaveTimer = null;
+var _utkastExists = false;
 
 // ── INIT ──────────────────────────────────────────────────────────────────
-function init() {
+async function init() {
   var sess = sessionStorage.getItem('ccs_session') || sessionStorage.getItem('ccs_portal_user');
   if (sess) { try { _user = JSON.parse(sess); } catch(e) {} }
-  if (!_user) _user = {name:'Testanvändare', adminRoles:[], id:'local'};
+  if (!_user) _user = {name:'Testanvändare', adminRoles:[], elCamping:'', id:'local'};
+
+  var roles = _user.adminRoles || [];
+  _isAdmin     = roles.includes('el-admin') || roles.includes('global');
+  _userCamping = _user.elCamping || '';
+
+  // If not admin and no camping assigned - show error
+  if (!_isAdmin && !_userCamping) {
+    document.getElementById('setup-panel').innerHTML =
+      '<div style="text-align:center;padding:48px 20px;color:var(--text3)">'
+      +'<i class="ti ti-lock" style="font-size:48px;display:block;margin-bottom:12px;color:var(--text3)"></i>'
+      +'<div style="font-size:17px;font-weight:600;color:var(--text);margin-bottom:8px">Ingen camping tilldelad</div>'
+      +'<p style="font-size:14px;line-height:1.6">Kontakta administratören för att få tillgång till elavläsning.</p>'
+      +'</div>';
+    return;
+  }
+
+  setupFormForRole();
+
   document.getElementById('s-datum').value = todayStr();
   document.getElementById('s-camping').addEventListener('change', checkStartReady);
   document.getElementById('s-datum').addEventListener('change', checkStartReady);
+  await checkForUtkast();
+}
+
+function setupFormForRole() {
+  var campingSelect = document.getElementById('s-camping');
+  var prisField     = document.getElementById('pris-field');
+
+  if (_isAdmin) {
+    // Admin: all campings visible, price editable
+    campingSelect.innerHTML =
+      '<option value="">– Välj camping –</option>'
+      +'<option value="bo_camp">Björkö Örns Camping</option>'
+      +'<option value="graddos">Gräddös Pärla</option>'
+      +'<option value="ostnora">Östnora</option>'
+      +'<option value="orstig">Örstig</option>'
+      +'<option value="mista">Mista</option>'
+      +'<option value="storsved">Storsved</option>'
+      +'<option value="kapellskar">Kapellskär</option>'
+      +'<option value="angsudden">Ängsudden</option>';
+    if (prisField) prisField.style.display = '';
+  } else {
+    // Regular user: locked to assigned camping, price readonly
+    campingSelect.innerHTML = '<option value="'+_userCamping+'">'+campingNamn(_userCamping)+'</option>';
+    campingSelect.value     = _userCamping;
+    campingSelect.disabled  = true;
+    if (prisField) prisField.style.display = 'none';
+  }
+}
+
+function updateRoleInfo() {
+  var el = document.getElementById('tb-role-info');
+  if (!el) return;
+  if (_isAdmin) {
+    el.innerHTML = '<span style="color:var(--accent);font-weight:500"><i class="ti ti-shield" style="font-size:12px"></i> Admin</span>';
+  } else if (_userCamping) {
+    el.textContent = campingNamn(_userCamping);
+  }
+}
+
+function campingNamn(id) {
+  var map = {
+    bo_camp:'Björkö Örns Camping', graddos:'Gräddös Pärla',
+    ostnora:'Östnora', orstig:'Örstig', mista:'Mista',
+    storsved:'Storsved', kapellskar:'Kapellskär', angsudden:'Ängsudden'
+  };
+  return map[id] || id;
+}
+
+async function checkForUtkast() {
+  // For regular users: only check their assigned camping
+  // For admins: check all campings
+  var campingar = _isAdmin
+    ? ['bo_camp','graddos','ostnora','orstig','mista','storsved','kapellskar','angsudden']
+    : [_userCamping];
+  for (var i=0; i<campingar.length; i++) {
+    var campingId = campingar[i];
+    if (!campingId) continue;
+    var r = await ghGet(EL_BASE+'/campingar/'+campingId+'/utkast.json');
+    if (r && r.data && r.data.datum && Object.keys(r.data.avlasningar||{}).length > 0) {
+      showUtkastCard(r.data, campingId);
+      return;
+    }
+  }
+}
+
+function showUtkastCard(utkast, campingId) {
+  _utkastExists = true;
+  var done  = Object.keys(utkast.avlasningar||{}).length;
+  var total = utkast.totalPlatser || 65;
+  var pct   = total ? Math.round(done/total*100) : 0;
+  document.getElementById('utkast-info').textContent =
+    (utkast.campingNamn||campingId)+' · '+utkast.datum+' · '+utkast.pris+' kr/kWh';
+  document.getElementById('utkast-progress').textContent = done+' av '+total+' platser';
+  document.getElementById('utkast-bar').style.width = pct+'%';
+  document.getElementById('utkast-card').style.display = '';
+  document.getElementById('utkast-card').dataset.campingId = campingId;
+  document.getElementById('utkast-card').dataset.datum = utkast.datum;
+  // Store utkast data for fortsatt
+  document.getElementById('utkast-card').dataset.utkast = JSON.stringify(utkast);
+}
+
+async function fortsattUtkast() {
+  var utkastData = JSON.parse(document.getElementById('utkast-card').dataset.utkast||'{}');
+  var campingId  = document.getElementById('utkast-card').dataset.campingId;
+  document.getElementById('utkast-card').textContent = 'Laddar…';
+
+  var r = await ghGet(EL_BASE+'/campingar/'+campingId+'.json');
+  if (!r||!r.data) { toast('Kunde ej ladda platsdata','err'); return; }
+  _campingData = r.data;
+
+  _session = Object.assign({}, utkastData, {campingId: campingId});
+  if (!_session.avlasningar) _session.avlasningar = {};
+
+  document.getElementById('setup-panel').style.display   = 'none';
+  document.getElementById('session-panel').style.display = '';
+  document.getElementById('fab-save').classList.add('show');
+  scheduleAutosave();
+  renderPlatser();
+  toast('Fortsätter avläsning '+_session.datum,'ok');
+}
+
+async function raderaUtkast() {
+  var campingId = document.getElementById('utkast-card').dataset.campingId;
+  if (!confirm('Kassera pågående avläsning? Alla inmatade värden försvinner.')) return;
+  var empty = {datum:null, avlasningar:{}, raderad:true};
+  await ghPut(EL_BASE+'/campingar/'+campingId+'/utkast.json', empty, 'Utkast raderat');
+  document.getElementById('utkast-card').style.display = 'none';
+  _utkastExists = false;
+  toast('Utkast kasserat','ok');
 }
 
 function checkStartReady() {
@@ -362,14 +530,13 @@ async function ghList(path) {
 
 // ── SESSION ───────────────────────────────────────────────────────────────
 async function startSession() {
-  var campingId = document.getElementById('s-camping').value;
+  var campingId = _isAdmin ? document.getElementById('s-camping').value : _userCamping;
   var datum     = document.getElementById('s-datum').value;
-  var pris      = parseFloat(document.getElementById('s-pris').value)||2.35;
+  var pris      = _isAdmin ? (parseFloat(document.getElementById('s-pris').value)||2.35) : 2.35;
 
-  document.getElementById('btn-start').textContent = 'Laddar…';
+  document.getElementById('btn-start').innerHTML = '<i class="ti ti-loader"></i> Laddar…';
   document.getElementById('btn-start').disabled = true;
 
-  // Load camping data
   var r = await ghGet(EL_BASE+'/campingar/'+campingId+'.json');
   if (r && r.data) {
     _campingData = r.data;
@@ -380,21 +547,28 @@ async function startSession() {
     return;
   }
 
+  var totalPlatser = (_campingData.platser||[]).length;
+
   _session = {
-    id:        datum+'_'+campingId,
-    campingId: campingId,
+    id:          datum+'_'+campingId,
+    campingId:   campingId,
     campingNamn: _campingData.campingNamn,
-    datum:     datum,
-    pris:      pris,
+    datum:       datum,
+    pris:        pris,
+    totalPlatser:totalPlatser,
     avlasningar: {},
-    sparadAv:  _user.name,
-    startTs:   new Date().toISOString(),
+    sparadAv:    _user.name,
+    startTs:     new Date().toISOString(),
   };
 
-  document.getElementById('setup-panel').style.display = 'none';
+  // Save initial utkast immediately
+  await saveUtkast(true);
+
+  document.getElementById('setup-panel').style.display   = 'none';
   document.getElementById('session-panel').style.display = '';
   document.getElementById('fab-save').classList.add('show');
 
+  scheduleAutosave();
   renderPlatser();
 }
 
@@ -534,6 +708,33 @@ function onAvlasInput(plats, val) {
   }
   var btn = document.getElementById('btn-spara-'+plats);
   if (btn) btn.disabled = avlast==null;
+  scheduleAutosave();
+}
+
+async function saveUtkast(silent) {
+  if (!_session) return;
+  var path = EL_BASE+'/campingar/'+_session.campingId+'/utkast.json';
+  var ok   = await ghPut(path, _session, 'Elavläsning utkast '+_session.datum);
+  var lbl  = document.getElementById('autosave-lbl');
+  if (lbl) {
+    if (ok) {
+      var t = new Date().toLocaleTimeString('sv-SE',{hour:'2-digit',minute:'2-digit'});
+      lbl.innerHTML = '<i class="ti ti-cloud-check" style="color:var(--accent)"></i> '+t;
+    } else {
+      lbl.innerHTML = '<i class="ti ti-cloud-off" style="color:var(--red)"></i> Ej sparat';
+    }
+  }
+  if (!silent && ok) toast('Utkast sparat','ok');
+  if (!silent && !ok) toast('Kunde ej spara','err');
+  return ok;
+}
+
+function scheduleAutosave() {
+  if (_autoSaveTimer) clearTimeout(_autoSaveTimer);
+  _autoSaveTimer = setTimeout(async function(){
+    await saveUtkast(true);
+    scheduleAutosave(); // reschedule every 10s while active
+  }, 10000);
 }
 
 function sparaPlats(plats) {
@@ -596,16 +797,39 @@ async function saveSession() {
   toast('Sparat ('+done+' platser)','ok');
 }
 
-async function avslutaSession() {
+async function avlasningKlar() {
+  var done  = Object.keys(_session.avlasningar||{}).length;
+  var total = _session.totalPlatser || (_campingData.platser||[]).length;
+  var kvar  = total - done;
+
+  var msg = 'Markera avläsningen som klar?';
+  if (kvar > 0) {
+    msg = kvar+' platser är inte avlästa ännu.\n\nVill du ändå avsluta och spara de '+done+' platser som avlästs?';
+  } else {
+    msg = 'Alla '+done+' platser är avlästa.\n\nSpara och avsluta avläsningen?';
+  }
+  if (!confirm(msg)) return;
+
+  // Save final session
   await saveSession();
-  _session    = null;
-  _openPlats  = null;
+
+  // Clear utkast
+  var emptyUtkast = {datum:null, avlasningar:{}, avslutad:true,
+    avslutadAv:_user.name, avslutadTs:new Date().toISOString()};
+  await ghPut(EL_BASE+'/campingar/'+_session.campingId+'/utkast.json',
+    emptyUtkast, 'Utkast avslutat '+_session.datum);
+
+  if (_autoSaveTimer) clearTimeout(_autoSaveTimer);
+  _session   = null;
+  _openPlats = null;
+
   document.getElementById('session-panel').style.display = 'none';
   document.getElementById('setup-panel').style.display   = '';
   document.getElementById('fab-save').classList.remove('show');
+  document.getElementById('utkast-card').style.display   = 'none';
   document.getElementById('btn-start').disabled = false;
   document.getElementById('btn-start').innerHTML = '<i class="ti ti-bolt"></i> Starta avläsning';
-  toast('Session avslutad','ok');
+  toast('Avläsning klar och sparad!','ok');
 }
 
 // ── HISTORIK ──────────────────────────────────────────────────────────────
