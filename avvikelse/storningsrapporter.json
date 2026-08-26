@@ -24,9 +24,6 @@
         "ts": "2026-06-16T20:25:39.413Z"
       }
     },
-    
-    
-    
     {
       "id": "SR-2608-B68P",
       "ts": "2026-08-24T18:44:22.802Z",
@@ -53,6 +50,26 @@
         "av": "Massimo Johansson",
         "ts": "2026-08-24T19:50:35.484Z"
       }
+    },
+    {
+      "id": "SR-2608-K45B",
+      "ts": "2026-08-26T20:21:30.886Z",
+      "anläggning": "CC Östnora Camping",
+      "platsOmråde": "Campingtomt",
+      "datum": "2026-08-26",
+      "tid": "",
+      "rapportör": "Reception Östnora <reception.ostnora@cc-camping.se>",
+      "risk": "Medel",
+      "riskNivå": 2,
+      "ccNr": "129365",
+      "platsNr": "27",
+      "gästTyp": "Säsongsgäst",
+      "gästNamn": "John Nilsson",
+      "personal": "Johan Eriksson",
+      "överlämnas": "John Nilsson",
+      "beskrivning": "Detta gäller en säsongsgäst som på olika sätt inte följt de trivselregler Caravan Club har satt upp. Säsongaren har, trots flera påminnelser, fortfarande inte inkommit med ett giltigt gasolintyg. Kravet på gasolintyg framgår tydligt av campingens trivselregler och gäller samtliga säsongare.\n\nDetta är inte första gången som upprepade påminnelser har behövts för att regler och rutiner ska följas. Ritning för altanen lämnades exempelvis in först efter flera påminnelser och efter cirka 1,5 år.\nÄven när det gäller betalningar har påminnelser behövt göras vid flera tillfällen.\n\nSammantaget visar detta på återkommande brister i att följa de regler, tidsramar och rutiner som gäller för säsongsplatsen. Trots upprepade påminnelser har efterfrågade handlingar och betalningar inte inkommit inom utsatt tid. Det är viktigt att samma regler gäller för samtliga säsongare och att de efterlevs utan att upprepade påminnelser ska behöva göras.",
+      "status": "ny",
+      "beslut": null
     }
   ]
 }
