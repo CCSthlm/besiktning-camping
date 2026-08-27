@@ -221,6 +221,27 @@
       "budgetEnhet": "bo_camp",
       "created": "2026-08-24",
       "elCamping": "bo_camp"
+    },
+    {
+      "id": "umtbvs4yvmvyd",
+      "name": "Marie Olén",
+      "email": "marie.olen@cc-camping.se",
+      "pin": "8888",
+      "pnr": "",
+      "adminRoles": [
+        "personal",
+        "nyckel-admin"
+      ],
+      "role": "Användare",
+      "active": true,
+      "apps": [],
+      "plCampingId": "",
+      "godkannarcamping": "",
+      "sbaCamping": "",
+      "nyckelCamping": "c2",
+      "budgetEnhet": "",
+      "elCamping": "",
+      "created": "2026-08-27"
     }
   ],
   "campings": [
