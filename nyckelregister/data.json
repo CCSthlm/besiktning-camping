@@ -1,24 +1,5 @@
 {
-  "nycklar": [
-    {
-      "id": "msxokn7kk4csm",
-      "innehavarId": "",
-      "utlamnadTs": "",
-      "lostTs": "",
-      "lostAvId": "",
-      "nyckelId": "A21",
-      "beskrivning": "Larm Restaurang / Reception",
-      "camping": "c2",
-      "typ": "Tagg",
-      "plats": "",
-      "tillvnr": "",
-      "kopior": 1,
-      "anteckning": "",
-      "status": "inne",
-      "lostLas": "",
-      "lostAtgard": ""
-    }
-  ],
+  "nycklar": [],
   "personal": [
     {
       "id": "msxnjjrhipinb",
@@ -133,6 +114,18 @@
       "detail": "Tog bort nyckel E11",
       "nyckelDbId": "msxnexm3plrgy",
       "nyckelId": "E11",
+      "personId": "",
+      "personNamn": "",
+      "utfordAv": "Marie Olén",
+      "anteckning": ""
+    },
+    {
+      "id": "mtbvubtmjmdgg",
+      "ts": "2026-08-27T18:55:08.890Z",
+      "action": "edit",
+      "detail": "Tog bort nyckel A21",
+      "nyckelDbId": "msxokn7kk4csm",
+      "nyckelId": "A21",
       "personId": "",
       "personNamn": "",
       "utfordAv": "Marie Olén",
