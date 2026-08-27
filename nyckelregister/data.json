@@ -20,8 +20,8 @@
     },
     {
       "id": "msxokn7kk4csm",
-      "innehavarId": "msxojk8s5nreh",
-      "utlamnadTs": "2026-08-17T20:20",
+      "innehavarId": "",
+      "utlamnadTs": "",
       "lostTs": "",
       "lostAvId": "",
       "nyckelId": "A21",
@@ -32,7 +32,7 @@
       "tillvnr": "",
       "kopior": 1,
       "anteckning": "",
-      "status": "ute",
+      "status": "inne",
       "lostLas": "",
       "lostAtgard": ""
     }
@@ -129,6 +129,18 @@
       "nyckelId": "E11",
       "personId": "msxnjjrhipinb",
       "personNamn": "Massimo Johansson",
+      "utfordAv": "Marie Olén",
+      "anteckning": ""
+    },
+    {
+      "id": "mtbvtmjd0i4gj",
+      "ts": "2026-08-27T18:54:36.121Z",
+      "action": "in",
+      "detail": "A21 återlämnad av Joachim Säfqvist",
+      "nyckelDbId": "msxokn7kk4csm",
+      "nyckelId": "A21",
+      "personId": "msxojk8s5nreh",
+      "personNamn": "Joachim Säfqvist",
       "utfordAv": "Marie Olén",
       "anteckning": ""
     }
