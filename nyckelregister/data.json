@@ -17,6 +17,24 @@
       "status": "ute",
       "lostLas": "",
       "lostAtgard": ""
+    },
+    {
+      "id": "mtbvy9a0np846",
+      "innehavarId": "",
+      "utlamnadTs": "",
+      "lostTs": "",
+      "lostAvId": "",
+      "nyckelId": "AM756",
+      "beskrivning": "Huvudnyckel",
+      "camping": "c2",
+      "typ": "Nyckel",
+      "plats": "",
+      "tillvnr": "",
+      "kopior": 1,
+      "anteckning": "",
+      "status": "inne",
+      "lostLas": "",
+      "lostAtgard": ""
     }
   ],
   "personal": [
@@ -171,6 +189,18 @@
       "nyckelId": "0R593",
       "personId": "msxnjjrhipinb",
       "personNamn": "Massimo Johansson",
+      "utfordAv": "Marie Olén",
+      "anteckning": ""
+    },
+    {
+      "id": "mtbvy9a0tyfx2",
+      "ts": "2026-08-27T18:58:12.216Z",
+      "action": "edit",
+      "detail": "Lade till nyckel AM756",
+      "nyckelDbId": "",
+      "nyckelId": "",
+      "personId": "",
+      "personNamn": "",
       "utfordAv": "Marie Olén",
       "anteckning": ""
     }
