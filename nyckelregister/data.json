@@ -1,5 +1,24 @@
 {
-  "nycklar": [],
+  "nycklar": [
+    {
+      "id": "mtbvwgcu5ubeb",
+      "innehavarId": "",
+      "utlamnadTs": "",
+      "lostTs": "",
+      "lostAvId": "",
+      "nyckelId": "0R593",
+      "beskrivning": "Huvudnyckel",
+      "camping": "c2",
+      "typ": "Nyckel",
+      "plats": "",
+      "tillvnr": "",
+      "kopior": 1,
+      "anteckning": "",
+      "status": "inne",
+      "lostLas": "",
+      "lostAtgard": ""
+    }
+  ],
   "personal": [
     {
       "id": "msxnjjrhipinb",
@@ -126,6 +145,18 @@
       "detail": "Tog bort nyckel A21",
       "nyckelDbId": "msxokn7kk4csm",
       "nyckelId": "A21",
+      "personId": "",
+      "personNamn": "",
+      "utfordAv": "Marie Olén",
+      "anteckning": ""
+    },
+    {
+      "id": "mtbvwgcuac24x",
+      "ts": "2026-08-27T18:56:48.078Z",
+      "action": "edit",
+      "detail": "Lade till nyckel 0R593",
+      "nyckelDbId": "",
+      "nyckelId": "",
       "personId": "",
       "personNamn": "",
       "utfordAv": "Marie Olén",
