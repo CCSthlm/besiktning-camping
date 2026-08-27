@@ -1,24 +1,6 @@
 {
   "nycklar": [
     {
-      "id": "msxnexm3plrgy",
-      "innehavarId": "",
-      "utlamnadTs": "",
-      "lostTs": "",
-      "lostAvId": "",
-      "nyckelId": "E11",
-      "beskrivning": "Huvudnyckel",
-      "camping": "c2",
-      "typ": "Nyckel",
-      "plats": "",
-      "tillvnr": "E111",
-      "kopior": 1,
-      "anteckning": "",
-      "status": "inne",
-      "lostLas": "",
-      "lostAtgard": ""
-    },
-    {
       "id": "msxokn7kk4csm",
       "innehavarId": "",
       "utlamnadTs": "",
@@ -141,6 +123,18 @@
       "nyckelId": "A21",
       "personId": "msxojk8s5nreh",
       "personNamn": "Joachim Säfqvist",
+      "utfordAv": "Marie Olén",
+      "anteckning": ""
+    },
+    {
+      "id": "mtbvua3bcs5xv",
+      "ts": "2026-08-27T18:55:06.647Z",
+      "action": "edit",
+      "detail": "Tog bort nyckel E11",
+      "nyckelDbId": "msxnexm3plrgy",
+      "nyckelId": "E11",
+      "personId": "",
+      "personNamn": "",
       "utfordAv": "Marie Olén",
       "anteckning": ""
     }
