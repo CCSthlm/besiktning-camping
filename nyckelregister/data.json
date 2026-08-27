@@ -20,8 +20,8 @@
     },
     {
       "id": "mtbvy9a0np846",
-      "innehavarId": "",
-      "utlamnadTs": "",
+      "innehavarId": "mtbvzj1iik6ho",
+      "utlamnadTs": "2026-08-27T18:53",
       "lostTs": "",
       "lostAvId": "",
       "nyckelId": "AM756",
@@ -32,7 +32,7 @@
       "tillvnr": "",
       "kopior": 1,
       "anteckning": "",
-      "status": "inne",
+      "status": "ute",
       "lostLas": "",
       "lostAtgard": ""
     }
@@ -211,6 +211,18 @@
       "nyckelId": "",
       "personId": "",
       "personNamn": "",
+      "utfordAv": "Marie Olén",
+      "anteckning": ""
+    },
+    {
+      "id": "mtbvztv1841yn",
+      "ts": "2026-08-27T18:59:25.549Z",
+      "action": "ut",
+      "detail": "AM756 lämnad ut till Marie Olén",
+      "nyckelDbId": "mtbvy9a0np846",
+      "nyckelId": "AM756",
+      "personId": "mtbvzj1iik6ho",
+      "personNamn": "Marie Olén",
       "utfordAv": "Marie Olén",
       "anteckning": ""
     }
