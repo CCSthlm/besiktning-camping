@@ -57,6 +57,16 @@
       "camping": "c2",
       "typ": "Ideell",
       "aktiv": true
+    },
+    {
+      "id": "mtbvzj1iik6ho",
+      "fname": "Marie",
+      "lname": "Olén",
+      "email": "marie.olen@cc-camping.se",
+      "tel": "",
+      "camping": "c2",
+      "typ": "Ideell",
+      "aktiv": true
     }
   ],
   "händelser": [
