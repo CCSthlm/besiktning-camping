@@ -2,8 +2,8 @@
   "nycklar": [
     {
       "id": "mtbvwgcu5ubeb",
-      "innehavarId": "",
-      "utlamnadTs": "",
+      "innehavarId": "msxnjjrhipinb",
+      "utlamnadTs": "2026-08-27T18:53",
       "lostTs": "",
       "lostAvId": "",
       "nyckelId": "0R593",
@@ -14,7 +14,7 @@
       "tillvnr": "",
       "kopior": 1,
       "anteckning": "",
-      "status": "inne",
+      "status": "ute",
       "lostLas": "",
       "lostAtgard": ""
     }
@@ -159,6 +159,18 @@
       "nyckelId": "",
       "personId": "",
       "personNamn": "",
+      "utfordAv": "Marie Olén",
+      "anteckning": ""
+    },
+    {
+      "id": "mtbvwwnolc7t2",
+      "ts": "2026-08-27T18:57:09.204Z",
+      "action": "ut",
+      "detail": "0R593 lämnad ut till Massimo Johansson",
+      "nyckelDbId": "mtbvwgcu5ubeb",
+      "nyckelId": "0R593",
+      "personId": "msxnjjrhipinb",
+      "personNamn": "Massimo Johansson",
       "utfordAv": "Marie Olén",
       "anteckning": ""
     }
