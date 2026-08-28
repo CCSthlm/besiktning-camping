@@ -11,7 +11,19 @@
       "deadline": null,
       "status": "Klar",
       "skapad": "2026-07-02T08:41:21.620Z"
+    },
+    {
+      "id": "SBA-AT-1787926726708",
+      "kalla": "Manuell",
+      "kallaId": null,
+      "titel": "Kontrollera brandsläckare",
+      "beskrivning": "",
+      "camping": "CC Östnora Camping",
+      "ansvarig": "",
+      "deadline": "2026-09-01",
+      "status": "Öppen",
+      "skapad": "2026-08-28T14:18:46.708Z"
     }
   ],
-  "uppdaterad": "2026-07-02T08:41:55.680Z"
+  "uppdaterad": "2026-08-28T14:18:48.224Z"
 }
