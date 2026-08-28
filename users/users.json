@@ -984,6 +984,16 @@
           "phone": "",
           "type": "anställd",
           "active": true
+        },
+        {
+          "id": "mtcs9btvdjm4s",
+          "fname": "Evert",
+          "lname": "Olen",
+          "pnr": "196009060093",
+          "address": "Djuprennilen 313",
+          "phone": "0703049453",
+          "type": "anställd",
+          "active": true
         }
       ],
       "auditlog": [
@@ -1247,6 +1257,15 @@
           "detail": "Redigerade pass: Ingalill Nore (2026-08-28)",
           "oldVal": "{\"timeIn\":\"11:57\",\"timeOut\":\"\"}",
           "newVal": "{\"timeIn\":\"08:00\",\"timeOut\":\"\"}"
+        },
+        {
+          "id": "mtcs9btvojcz8",
+          "ts": "2026-08-28T10:02:36.451Z",
+          "user": "Marie Olén",
+          "action": "in",
+          "detail": "Lade till: Evert Olen",
+          "oldVal": "",
+          "newVal": ""
         }
       ]
     }
