@@ -328,7 +328,7 @@ tr:hover td{background:rgba(59,109,17,.03);}
     <div class="card">
       <div class="card-header">
         <span class="card-title"><i class="ti ti-users"></i> Personal – <span id="personal-camping-name">–</span></span>
-        <button class="btn-primary no-print" onclick="openPersonalModal(null)"><i class="ti ti-plus"></i> Lägg till person</button>
+        <button class="btn-primary no-print" id="btn-add-person" onclick="openPersonalModal(null)"><i class="ti ti-plus"></i> Lägg till person</button>
       </div>
       <div style="overflow-x:auto">
         <table>
@@ -493,12 +493,16 @@ var _data = { users:[], campings:[], inspectors:[], company:{}, personalliggare:
 var _myCampingId = '';
 var _myCampingName = '';
 var _selectedPersonId = null;  // currently selected person in stamp panel
+var _isPersonalAdmin = false;  // can edit personal list
 
 // ── INIT ──────────────────────────────────────────────────────────────────
 async function init() {
   var sess = sessionStorage.getItem('ccs_session') || sessionStorage.getItem('ccs_portal_user');
   if (!sess) { window.location.replace('index.html'); return; }
   try { _user = JSON.parse(sess); } catch(e) { window.location.replace('index.html'); return; }
+
+  var roles = _user.adminRoles || [];
+  _isPersonalAdmin = roles.includes('personal') || roles.includes('global');
 
   var initials = (_user.name||'?').split(' ').map(function(n){return n[0]||'';}).join('').slice(0,2).toUpperCase();
   document.getElementById('pb-avatar').textContent = initials;
@@ -512,6 +516,14 @@ async function init() {
 
   document.getElementById('pb-camping-badge').textContent = _myCampingName;
   document.getElementById('personal-camping-name').textContent = _myCampingName;
+
+  // Hide personallista tab for non-admins
+  var tabPersonal = document.getElementById('tab-personal');
+  if (tabPersonal) tabPersonal.style.display = _isPersonalAdmin ? '' : 'none';
+
+  // Hide add person button for non-admins
+  var btnAdd = document.getElementById('btn-add-person');
+  if (btnAdd) btnAdd.style.display = _isPersonalAdmin ? '' : 'none';
 
   var company = _data.company || {};
   document.getElementById('company-sub').textContent =
@@ -974,8 +986,10 @@ function renderPersonalLista() {
       + '<td style="font-size:12px;color:var(--text2)">' + (p.type||'–') + '</td>'
       + '<td>' + aktiv + '</td>'
       + '<td class="no-print"><div style="display:flex;gap:5px;justify-content:flex-end">'
-      + '<button class="btn-icon" onclick="openPersonalModal(' + JSON.stringify(p).replace(/"/g,'&quot;') + ')"><i class="ti ti-pencil"></i> Redigera</button>'
-      + '<button class="btn-icon red" onclick="confirmDeletePerson(\'' + p.id + '\',\'' + p.fname+' '+p.lname + '\')"><i class="ti ti-trash"></i> Ta bort</button>'
+      + (_isPersonalAdmin
+        ? '<button class="btn-icon" onclick="openPersonalModal(' + JSON.stringify(p).replace(/"/g,'&quot;') + ')"><i class="ti ti-pencil"></i> Redigera</button>'
+          + '<button class="btn-icon red" onclick="confirmDeletePerson(\'' + p.id + '\',\'' + p.fname+' '+p.lname + '\')"><i class="ti ti-trash"></i> Ta bort</button>'
+        : '')
       + '</div></td>'
       + '</tr>';
   }).join('');
