@@ -841,7 +841,7 @@
           "pnr": "19631009-6646",
           "date": "2026-08-28",
           "timeIn": "09:00",
-          "timeOut": "",
+          "timeOut": "23:56",
           "registeredBy": "Restaurang Östnora",
           "registeredAt": "2026-08-28T13:35:27.096Z",
           "manual": false,
@@ -883,7 +883,7 @@
           "pnr": "196009060093",
           "date": "2026-08-28",
           "timeIn": "18:17",
-          "timeOut": "",
+          "timeOut": "23:56",
           "registeredBy": "Restaurang Östnora",
           "registeredAt": "2026-08-28T16:17:29.165Z",
           "manual": false,
@@ -1434,6 +1434,24 @@
           "detail": "Bo Wahlund stämplade ut 23:55",
           "oldVal": "",
           "newVal": "23:55"
+        },
+        {
+          "id": "mtdhqro7fdjmd",
+          "ts": "2026-08-28T21:56:00.535Z",
+          "user": "Restaurang Östnora",
+          "action": "out",
+          "detail": "Evert Olen stämplade ut 23:56",
+          "oldVal": "",
+          "newVal": "23:56"
+        },
+        {
+          "id": "mtdhqt0okx7nv",
+          "ts": "2026-08-28T21:56:02.280Z",
+          "user": "Restaurang Östnora",
+          "action": "out",
+          "detail": "Sussi Törnander stämplade ut 23:56",
+          "oldVal": "",
+          "newVal": "23:56"
         }
       ]
     }
