@@ -804,13 +804,13 @@
           "name": "Ingalill Nore",
           "pnr": "19481117-0200",
           "date": "2026-08-28",
-          "timeIn": "11:57",
+          "timeIn": "08:00",
           "timeOut": "",
           "registeredBy": "Restaurang Östnora",
           "registeredAt": "2026-08-28T09:57:41.556Z",
           "manual": false,
-          "manualReason": "",
-          "edited": false,
+          "manualReason": "Glömde",
+          "edited": true,
           "campingId": "c8"
         }
       ],
@@ -1238,6 +1238,15 @@
           "detail": "Redigerade pass: Jan Törnander (2026-08-28)",
           "oldVal": "{\"timeIn\":\"11:57\",\"timeOut\":\"\"}",
           "newVal": "{\"timeIn\":\"09:00\",\"timeOut\":\"\"}"
+        },
+        {
+          "id": "mtcs6916k60ur",
+          "ts": "2026-08-28T10:00:12.858Z",
+          "user": "Restaurang Östnora",
+          "action": "edit",
+          "detail": "Redigerade pass: Ingalill Nore (2026-08-28)",
+          "oldVal": "{\"timeIn\":\"11:57\",\"timeOut\":\"\"}",
+          "newVal": "{\"timeIn\":\"08:00\",\"timeOut\":\"\"}"
         }
       ]
     }
