@@ -45,7 +45,30 @@
         "status": "Öppen",
         "skapad": "2026-08-28T14:21:18.184Z"
       }
+    },
+    {
+      "id": "LOG-1787929495719",
+      "tidpunkt": "2026-08-28T15:04:55.719Z",
+      "utforare": "Massimo Johansson",
+      "handelse": "Radering",
+      "objektTyp": "Åtgärd",
+      "objektId": "SBA-AT-1787926880371-dok",
+      "camping": "CC Östnora Camping",
+      "sammanfattning": "Rondavvikelse: Kontrollmärke ej utgånget",
+      "anledning": "tbort",
+      "raderadData": {
+        "id": "SBA-AT-1787926880371-dok",
+        "kalla": "Brandskyddsrond",
+        "kallaId": "SR-SBA-1787926880371",
+        "titel": "Rondavvikelse: Kontrollmärke ej utgånget",
+        "beskrivning": "Saknas i kökry",
+        "camping": "CC Östnora Camping",
+        "ansvarig": "",
+        "deadline": null,
+        "status": "Öppen",
+        "skapad": "2026-08-28T14:21:20.371Z"
+      }
     }
   ],
-  "uppdaterad": "2026-08-28T15:04:46.262Z"
+  "uppdaterad": "2026-08-28T15:04:55.719Z"
 }
