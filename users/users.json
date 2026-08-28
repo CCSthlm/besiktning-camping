@@ -869,7 +869,7 @@
           "pnr": "20081113-4303",
           "date": "2026-08-28",
           "timeIn": "17:00",
-          "timeOut": "",
+          "timeOut": "22:31",
           "registeredBy": "Restaurang Östnora",
           "registeredAt": "2026-08-28T15:00:00.050Z",
           "manual": false,
@@ -1405,6 +1405,15 @@
           "user": "Restaurang Östnora",
           "action": "out",
           "detail": "Alva Säfqvist stämplade ut 22:31",
+          "oldVal": "",
+          "newVal": "22:31"
+        },
+        {
+          "id": "mtdeprvyngu12",
+          "ts": "2026-08-28T20:31:15.310Z",
+          "user": "Restaurang Östnora",
+          "action": "out",
+          "detail": "Josefine Eriksson stämplade ut 22:31",
           "oldVal": "",
           "newVal": "22:31"
         }
