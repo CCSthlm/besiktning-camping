@@ -848,6 +848,20 @@
           "manualReason": "Glömde",
           "edited": true,
           "campingId": "c8"
+        },
+        {
+          "id": "mtd2vlxfahp5s",
+          "name": "Alva Säfqvist",
+          "pnr": "20070108-5409",
+          "date": "2026-08-28",
+          "timeIn": "16:59",
+          "timeOut": "",
+          "registeredBy": "Restaurang Östnora",
+          "registeredAt": "2026-08-28T14:59:52.131Z",
+          "manual": false,
+          "manualReason": "",
+          "edited": false,
+          "campingId": "c8"
         }
       ],
       "personal": [
@@ -1329,6 +1343,15 @@
           "detail": "Jan Törnander stämplade ut 15:40",
           "oldVal": "",
           "newVal": "15:40"
+        },
+        {
+          "id": "mtd2vlxf1rn1f",
+          "ts": "2026-08-28T14:59:52.131Z",
+          "user": "Restaurang Östnora",
+          "action": "in",
+          "detail": "Alva Säfqvist stämplade in 16:59",
+          "oldVal": "",
+          "newVal": "16:59"
         }
       ]
     }
