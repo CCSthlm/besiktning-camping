@@ -827,7 +827,7 @@
           "pnr": "19481117-0200",
           "date": "2026-08-28",
           "timeIn": "08:00",
-          "timeOut": "",
+          "timeOut": "22:50",
           "registeredBy": "Restaurang Östnora",
           "registeredAt": "2026-08-28T09:57:41.556Z",
           "manual": false,
@@ -1416,6 +1416,15 @@
           "detail": "Josefine Eriksson stämplade ut 22:31",
           "oldVal": "",
           "newVal": "22:31"
+        },
+        {
+          "id": "mtdfeqf8v578y",
+          "ts": "2026-08-28T20:50:39.812Z",
+          "user": "Restaurang Östnora",
+          "action": "out",
+          "detail": "Ingalill Nore stämplade ut 22:50",
+          "oldVal": "",
+          "newVal": "22:50"
         }
       ]
     }
