@@ -855,7 +855,7 @@
           "pnr": "20070108-5409",
           "date": "2026-08-28",
           "timeIn": "16:59",
-          "timeOut": "",
+          "timeOut": "22:31",
           "registeredBy": "Restaurang Östnora",
           "registeredAt": "2026-08-28T14:59:52.131Z",
           "manual": false,
@@ -1398,6 +1398,15 @@
           "detail": "Evert Olen stämplade in 18:17",
           "oldVal": "",
           "newVal": "18:17"
+        },
+        {
+          "id": "mtdepjmf665p0",
+          "ts": "2026-08-28T20:31:04.599Z",
+          "user": "Restaurang Östnora",
+          "action": "out",
+          "detail": "Alva Säfqvist stämplade ut 22:31",
+          "oldVal": "",
+          "newVal": "22:31"
         }
       ]
     }
