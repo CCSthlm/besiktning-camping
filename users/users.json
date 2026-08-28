@@ -791,7 +791,7 @@
           "pnr": "19590103-6615",
           "date": "2026-08-28",
           "timeIn": "09:00",
-          "timeOut": "",
+          "timeOut": "15:40",
           "registeredBy": "Restaurang Östnora",
           "registeredAt": "2026-08-28T09:57:36.765Z",
           "manual": false,
@@ -1298,6 +1298,15 @@
           "detail": "Redigerade pass: Sussi Törnander (2026-08-28)",
           "oldVal": "{\"timeIn\":\"15:35\",\"timeOut\":\"\"}",
           "newVal": "{\"timeIn\":\"09:00\",\"timeOut\":\"\"}"
+        },
+        {
+          "id": "mtd01fdod4x4k",
+          "ts": "2026-08-28T13:40:24.732Z",
+          "user": "Restaurang Östnora",
+          "action": "out",
+          "detail": "Jan Törnander stämplade ut 15:40",
+          "oldVal": "",
+          "newVal": "15:40"
         }
       ]
     }
