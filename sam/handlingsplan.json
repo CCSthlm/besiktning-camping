@@ -83,7 +83,19 @@
       "deadline": "2026-09-01",
       "status": "Öppen",
       "skapad": "2026-08-28T14:18:46.708Z"
+    },
+    {
+      "id": "SAM-SBA-1787926879541",
+      "kalla": "SBA",
+      "kallaId": "SR-SBA-1787926878184-Kontrollmärke ej utg",
+      "titel": "[SBA Rondavvikelse] Kontrollmärke ej utgånget",
+      "beskrivning": "Saknas i kökry",
+      "camping": "CC Östnora Camping",
+      "ansvarig": "",
+      "deadline": null,
+      "status": "Öppen",
+      "skapad": "2026-08-28T14:21:19.541Z"
     }
   ],
-  "uppdaterad": "2026-08-28T14:18:47.305Z"
+  "uppdaterad": "2026-08-28T14:21:19.541Z"
 }
