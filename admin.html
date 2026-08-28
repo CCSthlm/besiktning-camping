@@ -1287,9 +1287,9 @@ function renderUsers() {
       <td>${apps}</td>
       <td>${status}</td>
       <td><div style="display:flex;gap:5px;justify-content:flex-end">
-        <button class="btn-icon" onclick="openEditUser('${u.id}')"><i class="ti ti-pencil"></i></button>
+        <button class="btn-icon" onclick="openEditUser('${u.id}')"><i class="ti ti-pencil"></i> Redigera</button>
         <button class="btn-icon" onclick="openChangePIN('${u.id}')"><i class="ti ti-keypad"></i> PIN</button>
-        <button class="btn-icon danger" onclick="confirmDelete('user','${u.id}','${u.name}')"><i class="ti ti-trash"></i></button>
+        <button class="btn-icon danger" onclick="confirmDelete('user','${u.id}','${u.name}')"><i class="ti ti-trash"></i> Ta bort</button>
       </div></td>
     </tr>`;
   }).join('');
