@@ -770,6 +770,20 @@
           "manualReason": "Test",
           "edited": true,
           "campingId": "c8"
+        },
+        {
+          "id": "mtcs2pgfixio6",
+          "name": "Bo Wahlund",
+          "pnr": "19580412-0250",
+          "date": "2026-08-28",
+          "timeIn": "11:57",
+          "timeOut": "",
+          "registeredBy": "Restaurang Östnora",
+          "registeredAt": "2026-08-28T09:57:27.519Z",
+          "manual": false,
+          "manualReason": "",
+          "edited": false,
+          "campingId": "c8"
         }
       ],
       "personal": [
@@ -1151,6 +1165,15 @@
           "detail": "Lade till: Linda Wahlund",
           "oldVal": "",
           "newVal": ""
+        },
+        {
+          "id": "mtcs2pgfi4pk5",
+          "ts": "2026-08-28T09:57:27.519Z",
+          "user": "Restaurang Östnora",
+          "action": "in",
+          "detail": "Bo Wahlund stämplade in 11:57",
+          "oldVal": "",
+          "newVal": "11:57"
         }
       ]
     }
