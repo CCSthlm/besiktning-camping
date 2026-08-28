@@ -251,7 +251,9 @@
       "email": "restaurang.ostnora@cc-camping.se",
       "pin": "1234",
       "pnr": "",
-      "adminRoles": [],
+      "adminRoles": [
+        "personal"
+      ],
       "role": "Användare",
       "active": true,
       "apps": [
