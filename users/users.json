@@ -776,13 +776,13 @@
           "name": "Bo Wahlund",
           "pnr": "19580412-0250",
           "date": "2026-08-28",
-          "timeIn": "11:57",
+          "timeIn": "09:00",
           "timeOut": "",
           "registeredBy": "Restaurang Östnora",
           "registeredAt": "2026-08-28T09:57:27.519Z",
           "manual": false,
-          "manualReason": "",
-          "edited": false,
+          "manualReason": "Glömde",
+          "edited": true,
           "campingId": "c8"
         },
         {
@@ -1220,6 +1220,15 @@
           "detail": "Ingalill Nore stämplade in 11:57",
           "oldVal": "",
           "newVal": "11:57"
+        },
+        {
+          "id": "mtcs3zhq1xaau",
+          "ts": "2026-08-28T09:58:27.182Z",
+          "user": "Restaurang Östnora",
+          "action": "edit",
+          "detail": "Redigerade pass: Bo Wahlund (2026-08-28)",
+          "oldVal": "{\"timeIn\":\"11:57\",\"timeOut\":\"\"}",
+          "newVal": "{\"timeIn\":\"09:00\",\"timeOut\":\"\"}"
         }
       ]
     }
