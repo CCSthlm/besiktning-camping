@@ -790,13 +790,13 @@
           "name": "Jan Törnander",
           "pnr": "19590103-6615",
           "date": "2026-08-28",
-          "timeIn": "11:57",
+          "timeIn": "09:00",
           "timeOut": "",
           "registeredBy": "Restaurang Östnora",
           "registeredAt": "2026-08-28T09:57:36.765Z",
           "manual": false,
-          "manualReason": "",
-          "edited": false,
+          "manualReason": "Glömde",
+          "edited": true,
           "campingId": "c8"
         },
         {
@@ -1227,6 +1227,15 @@
           "user": "Restaurang Östnora",
           "action": "edit",
           "detail": "Redigerade pass: Bo Wahlund (2026-08-28)",
+          "oldVal": "{\"timeIn\":\"11:57\",\"timeOut\":\"\"}",
+          "newVal": "{\"timeIn\":\"09:00\",\"timeOut\":\"\"}"
+        },
+        {
+          "id": "mtcs4no4hmymr",
+          "ts": "2026-08-28T09:58:58.516Z",
+          "user": "Restaurang Östnora",
+          "action": "edit",
+          "detail": "Redigerade pass: Jan Törnander (2026-08-28)",
           "oldVal": "{\"timeIn\":\"11:57\",\"timeOut\":\"\"}",
           "newVal": "{\"timeIn\":\"09:00\",\"timeOut\":\"\"}"
         }
