@@ -14,7 +14,22 @@
       "status": "Kontroll behövs",
       "link": null,
       "anteckningar": ""
+    },
+    {
+      "id": "U-1787926651115",
+      "typ": "Brandsläckare",
+      "camping": "CC Östnora Camping",
+      "plats": "Servicebyggnaden",
+      "marke": "DAFO",
+      "modell": "6 Kg Pulver",
+      "serienr": "1",
+      "senastKontroll": null,
+      "nastaKontroll": null,
+      "ansvarig": "Campingansvarig",
+      "status": "OK",
+      "link": null,
+      "anteckningar": ""
     }
   ],
-  "uppdaterad": "2026-07-02T08:36:55.213Z"
+  "uppdaterad": "2026-08-28T14:17:31.115Z"
 }
