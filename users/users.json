@@ -264,28 +264,6 @@
       "budgetEnhet": "",
       "elCamping": "",
       "created": "2026-08-28"
-    },
-    {
-      "id": "umtcy8ibskco4",
-      "name": "Evert Olén",
-      "email": "evert.olen@cc-camping.se",
-      "pin": "9999",
-      "pnr": "",
-      "adminRoles": [
-        "sba-lokal"
-      ],
-      "role": "Användare",
-      "active": true,
-      "apps": [
-        "personalliggare"
-      ],
-      "plCampingId": "c8",
-      "godkannarcamping": "",
-      "sbaCamping": "CC Östnora Camping",
-      "nyckelCamping": "",
-      "budgetEnhet": "",
-      "elCamping": "",
-      "created": "2026-08-28"
     }
   ],
   "campings": [
@@ -834,6 +812,20 @@
           "manualReason": "Glömde",
           "edited": true,
           "campingId": "c8"
+        },
+        {
+          "id": "mtczv1q0i2q7z",
+          "name": "Sussi Törnander",
+          "pnr": "19631009-6646",
+          "date": "2026-08-28",
+          "timeIn": "15:35",
+          "timeOut": "",
+          "registeredBy": "Restaurang Östnora",
+          "registeredAt": "2026-08-28T13:35:27.096Z",
+          "manual": false,
+          "manualReason": "",
+          "edited": false,
+          "campingId": "c8"
         }
       ],
       "personal": [
@@ -1288,6 +1280,15 @@
           "detail": "Lade till: Evert Olen",
           "oldVal": "",
           "newVal": ""
+        },
+        {
+          "id": "mtczv1q0u71ur",
+          "ts": "2026-08-28T13:35:27.096Z",
+          "user": "Restaurang Östnora",
+          "action": "in",
+          "detail": "Sussi Törnander stämplade in 15:35",
+          "oldVal": "",
+          "newVal": "15:35"
         }
       ]
     }
