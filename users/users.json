@@ -890,20 +890,6 @@
           "manualReason": "",
           "edited": false,
           "campingId": "c8"
-        },
-        {
-          "id": "mtdhs7m8sihjt",
-          "name": "Evert Olen",
-          "pnr": "196009060093",
-          "date": "2026-08-28",
-          "timeIn": "23:57",
-          "timeOut": "23:57",
-          "registeredBy": "Restaurang Östnora",
-          "registeredAt": "2026-08-28T21:57:07.857Z",
-          "manual": false,
-          "manualReason": "",
-          "edited": false,
-          "campingId": "c8"
         }
       ],
       "personal": [
@@ -1484,6 +1470,15 @@
           "detail": "Evert Olen stämplade ut 23:57",
           "oldVal": "",
           "newVal": "23:57"
+        },
+        {
+          "id": "mtdhsx0i8ouol",
+          "ts": "2026-08-28T21:57:40.770Z",
+          "user": "Restaurang Östnora",
+          "action": "delete",
+          "detail": "Tog bort pass: Evert Olen 2026-08-28",
+          "oldVal": "{\"id\":\"mtdhs7m8sihjt\",\"name\":\"Evert Olen\",\"pnr\":\"196009060093\",\"date\":\"2026-08-28\",\"timeIn\":\"23:57\",\"timeOut\":\"23:57\",\"registeredBy\":\"Restaurang Östnora\",\"registeredAt\":\"2026-08-28T21:57:07.857Z\",\"manual\":false,\"manualReason\":\"\",\"edited\":false,\"campingId\":\"c8\"}",
+          "newVal": ""
         }
       ]
     }
