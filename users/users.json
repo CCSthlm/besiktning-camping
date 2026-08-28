@@ -876,6 +876,20 @@
           "manualReason": "",
           "edited": false,
           "campingId": "c8"
+        },
+        {
+          "id": "mtd5nfbhcbnzw",
+          "name": "Evert Olen",
+          "pnr": "196009060093",
+          "date": "2026-08-28",
+          "timeIn": "18:17",
+          "timeOut": "",
+          "registeredBy": "Restaurang Östnora",
+          "registeredAt": "2026-08-28T16:17:29.165Z",
+          "manual": false,
+          "manualReason": "",
+          "edited": false,
+          "campingId": "c8"
         }
       ],
       "personal": [
@@ -1375,6 +1389,15 @@
           "detail": "Josefine Eriksson stämplade in 17:00",
           "oldVal": "",
           "newVal": "17:00"
+        },
+        {
+          "id": "mtd5nfbhf5c7x",
+          "ts": "2026-08-28T16:17:29.165Z",
+          "user": "Restaurang Östnora",
+          "action": "in",
+          "detail": "Evert Olen stämplade in 18:17",
+          "oldVal": "",
+          "newVal": "18:17"
         }
       ]
     }
