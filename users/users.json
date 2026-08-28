@@ -799,7 +799,7 @@
           "pnr": "19580412-0250",
           "date": "2026-08-28",
           "timeIn": "09:00",
-          "timeOut": "",
+          "timeOut": "23:55",
           "registeredBy": "Restaurang Östnora",
           "registeredAt": "2026-08-28T09:57:27.519Z",
           "manual": false,
@@ -1425,6 +1425,15 @@
           "detail": "Ingalill Nore stämplade ut 22:50",
           "oldVal": "",
           "newVal": "22:50"
+        },
+        {
+          "id": "mtdhqq5ij3znz",
+          "ts": "2026-08-28T21:55:58.566Z",
+          "user": "Restaurang Östnora",
+          "action": "out",
+          "detail": "Bo Wahlund stämplade ut 23:55",
+          "oldVal": "",
+          "newVal": "23:55"
         }
       ]
     }
