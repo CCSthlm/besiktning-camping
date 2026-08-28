@@ -1045,6 +1045,10 @@ function renderApps() {
   const isGlobalAdmin = userRoles.includes('global') || (u.role === 'Admin' && userRoles.length === 0);
   const hasAdminRole  = userRoles.some(r => ['global','sektions'].includes(r));
 
+  // Debug banner - visas bara om inga appar hittas
+  const debugInfo = () => `<div style="font-size:11px;color:var(--text3);background:var(--bg3);padding:8px 12px;border-radius:8px;margin-top:10px;text-align:left">
+    <strong>Debug:</strong> adminRoles=${JSON.stringify(userRoles)} · apps=${JSON.stringify(userApps)} · role=${u.role}</div>`;
+
   const accessible = ALL_APPS.filter(app => {
     // requiredRoles — visas om användaren har exakt den rollen i adminRoles
     if (app.requiredRoles) {
@@ -1066,7 +1070,7 @@ function renderApps() {
   });
   const el = document.getElementById('app-launcher-content');
   if (!accessible.length) {
-    el.innerHTML = '<div class="no-access"><i class="ti ti-lock"></i><p>Du har inte tillgång till några applikationer.<br>Kontakta administratören.</p></div>';
+    el.innerHTML = '<div class="no-access"><i class="ti ti-lock"></i><p>Du har inte tillgång till några applikationer.<br>Kontakta administratören.</p>'+debugInfo()+'</div>';
     return;
   }
 
