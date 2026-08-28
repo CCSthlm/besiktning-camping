@@ -173,7 +173,355 @@
       "signeradAv": null,
       "signeradTs": null,
       "skapad": "2026-07-02T08:39:45.792Z"
+    },
+    {
+      "id": "SR-SBA-1787926878184",
+      "camping": "CC Östnora Camping",
+      "datum": "2026-08-28",
+      "genomfordAv": "Evert",
+      "punkter": [
+        {
+          "sektion": "Brandvarnare & detektorer",
+          "punkt": "Alla brandvarnare testade och fungerar",
+          "status": "Ej kontrollerad",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Brandvarnare & detektorer",
+          "punkt": "Batterier OK / anslutna till elnät",
+          "status": "Ej kontrollerad",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Brandvarnare & detektorer",
+          "punkt": "Inga brandvarnare blockerade eller övertäckta",
+          "status": "Ej kontrollerad",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Brandvarnare & detektorer",
+          "punkt": "Larmsignal hörbar i hela byggnaden",
+          "status": "Ej kontrollerad",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Brandsläckare & filtar",
+          "punkt": "Brandsläckare på angiven plats och monterade",
+          "status": "Ej kontrollerad",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Brandsläckare & filtar",
+          "punkt": "Kontrollmärke ej utgånget",
+          "status": "Avvikelse",
+          "anteckning": "Saknas i kökry"
+        },
+        {
+          "sektion": "Brandsläckare & filtar",
+          "punkt": "Brandfiltar på plats och i godkänt skick",
+          "status": "Ej kontrollerad",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Brandsläckare & filtar",
+          "punkt": "Personal vet hur utrustningen används",
+          "status": "Ej kontrollerad",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Utrymningsvägar & skyltar",
+          "punkt": "Utrymningsvägar fria från hinder",
+          "status": "Ej kontrollerad",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Utrymningsvägar & skyltar",
+          "punkt": "Nödutgångsskyltar belysta och synliga",
+          "status": "Ej kontrollerad",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Utrymningsvägar & skyltar",
+          "punkt": "Utrymningsplan uppsatt och läsbar",
+          "status": "Ej kontrollerad",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Utrymningsvägar & skyltar",
+          "punkt": "Samlingspunkt tydligt markerad",
+          "status": "Ej kontrollerad",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Elcentraler & elanläggning",
+          "punkt": "Elcentral fri från brandfarligt material",
+          "status": "Ej kontrollerad",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Elcentraler & elanläggning",
+          "punkt": "Inga synliga skador på kablar eller uttag",
+          "status": "Ej kontrollerad",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Elcentraler & elanläggning",
+          "punkt": "Inga lösa anslutningar",
+          "status": "Ej kontrollerad",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Elcentraler & elanläggning",
+          "punkt": "Utomhuselanläggning i godkänt skick",
+          "status": "Ej kontrollerad",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Gasol",
+          "punkt": "Gasolanläggning besiktigad inom giltig period",
+          "status": "Ej kontrollerad",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Gasol",
+          "punkt": "Slangar och kopplingar utan synliga skador",
+          "status": "Ej kontrollerad",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Gasol",
+          "punkt": "Ventilation i gasolförvaringsutrymme OK",
+          "status": "Ej kontrollerad",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Gasol",
+          "punkt": "Varningsskylt för gasol uppsatt",
+          "status": "Ej kontrollerad",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Gästinformation & kommunikation",
+          "punkt": "Brandregler synliga på campingen",
+          "status": "Ej kontrollerad",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Gästinformation & kommunikation",
+          "punkt": "Gästerna informeras om brandrisker vid incheckning",
+          "status": "Ej kontrollerad",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Gästinformation & kommunikation",
+          "punkt": "Telefonnummer till nödnummer (112) synligt",
+          "status": "Ej kontrollerad",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Personalutrymmen & kök",
+          "punkt": "Köket fritt från brandrisker vid slutet av arbetsdag",
+          "status": "Ej kontrollerad",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Personalutrymmen & kök",
+          "punkt": "Fläktar och ventilation rena (ingen fettansamling)",
+          "status": "Ej kontrollerad",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Personalutrymmen & kök",
+          "punkt": "Eluttag inte överlastade",
+          "status": "Ej kontrollerad",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Personalutrymmen & kök",
+          "punkt": "Brandsläckare i eller vid kök",
+          "status": "Ej kontrollerad",
+          "anteckning": ""
+        }
+      ],
+      "signerad": false,
+      "signeradAv": null,
+      "signeradTs": null,
+      "skapad": "2026-08-28T14:21:18.184Z"
+    },
+    {
+      "id": "SR-SBA-1787926880371",
+      "camping": "CC Östnora Camping",
+      "datum": "2026-08-28",
+      "genomfordAv": "Evert",
+      "punkter": [
+        {
+          "sektion": "Brandvarnare & detektorer",
+          "punkt": "Alla brandvarnare testade och fungerar",
+          "status": "Ej kontrollerad",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Brandvarnare & detektorer",
+          "punkt": "Batterier OK / anslutna till elnät",
+          "status": "Ej kontrollerad",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Brandvarnare & detektorer",
+          "punkt": "Inga brandvarnare blockerade eller övertäckta",
+          "status": "Ej kontrollerad",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Brandvarnare & detektorer",
+          "punkt": "Larmsignal hörbar i hela byggnaden",
+          "status": "Ej kontrollerad",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Brandsläckare & filtar",
+          "punkt": "Brandsläckare på angiven plats och monterade",
+          "status": "Ej kontrollerad",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Brandsläckare & filtar",
+          "punkt": "Kontrollmärke ej utgånget",
+          "status": "Avvikelse",
+          "anteckning": "Saknas i kökry"
+        },
+        {
+          "sektion": "Brandsläckare & filtar",
+          "punkt": "Brandfiltar på plats och i godkänt skick",
+          "status": "Ej kontrollerad",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Brandsläckare & filtar",
+          "punkt": "Personal vet hur utrustningen används",
+          "status": "Ej kontrollerad",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Utrymningsvägar & skyltar",
+          "punkt": "Utrymningsvägar fria från hinder",
+          "status": "Ej kontrollerad",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Utrymningsvägar & skyltar",
+          "punkt": "Nödutgångsskyltar belysta och synliga",
+          "status": "Ej kontrollerad",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Utrymningsvägar & skyltar",
+          "punkt": "Utrymningsplan uppsatt och läsbar",
+          "status": "Ej kontrollerad",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Utrymningsvägar & skyltar",
+          "punkt": "Samlingspunkt tydligt markerad",
+          "status": "Ej kontrollerad",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Elcentraler & elanläggning",
+          "punkt": "Elcentral fri från brandfarligt material",
+          "status": "Ej kontrollerad",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Elcentraler & elanläggning",
+          "punkt": "Inga synliga skador på kablar eller uttag",
+          "status": "Ej kontrollerad",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Elcentraler & elanläggning",
+          "punkt": "Inga lösa anslutningar",
+          "status": "Ej kontrollerad",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Elcentraler & elanläggning",
+          "punkt": "Utomhuselanläggning i godkänt skick",
+          "status": "Ej kontrollerad",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Gasol",
+          "punkt": "Gasolanläggning besiktigad inom giltig period",
+          "status": "Ej kontrollerad",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Gasol",
+          "punkt": "Slangar och kopplingar utan synliga skador",
+          "status": "Ej kontrollerad",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Gasol",
+          "punkt": "Ventilation i gasolförvaringsutrymme OK",
+          "status": "Ej kontrollerad",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Gasol",
+          "punkt": "Varningsskylt för gasol uppsatt",
+          "status": "Ej kontrollerad",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Gästinformation & kommunikation",
+          "punkt": "Brandregler synliga på campingen",
+          "status": "Ej kontrollerad",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Gästinformation & kommunikation",
+          "punkt": "Gästerna informeras om brandrisker vid incheckning",
+          "status": "Ej kontrollerad",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Gästinformation & kommunikation",
+          "punkt": "Telefonnummer till nödnummer (112) synligt",
+          "status": "Ej kontrollerad",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Personalutrymmen & kök",
+          "punkt": "Köket fritt från brandrisker vid slutet av arbetsdag",
+          "status": "Ej kontrollerad",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Personalutrymmen & kök",
+          "punkt": "Fläktar och ventilation rena (ingen fettansamling)",
+          "status": "Ej kontrollerad",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Personalutrymmen & kök",
+          "punkt": "Eluttag inte överlastade",
+          "status": "Ej kontrollerad",
+          "anteckning": ""
+        },
+        {
+          "sektion": "Personalutrymmen & kök",
+          "punkt": "Brandsläckare i eller vid kök",
+          "status": "Ej kontrollerad",
+          "anteckning": ""
+        }
+      ],
+      "signerad": false,
+      "signeradAv": null,
+      "signeradTs": null,
+      "skapad": "2026-08-28T14:21:20.371Z"
     }
   ],
-  "uppdaterad": "2026-07-02T08:39:46.047Z"
+  "uppdaterad": "2026-08-28T14:21:22.339Z"
 }
