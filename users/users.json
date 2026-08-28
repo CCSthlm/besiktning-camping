@@ -242,6 +242,26 @@
       "budgetEnhet": "",
       "elCamping": "",
       "created": "2026-08-27"
+    },
+    {
+      "id": "umtcnud1t29mc",
+      "name": "Restaurang Östnora",
+      "email": "restaurang.ostnora@cc-camping.se",
+      "pin": "1234",
+      "pnr": "",
+      "adminRoles": [],
+      "role": "Användare",
+      "active": true,
+      "apps": [
+        "personalliggare"
+      ],
+      "plCampingId": "c8",
+      "godkannarcamping": "",
+      "sbaCamping": "",
+      "nyckelCamping": "",
+      "budgetEnhet": "",
+      "elCamping": "",
+      "created": "2026-08-28"
     }
   ],
   "campings": [
