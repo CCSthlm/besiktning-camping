@@ -284,6 +284,19 @@ tr:hover td{background:rgba(59,109,17,.025);}
   </div>
 </div>
 
+<!-- RADERINGSLOGG MODAL -->
+<div class="modal-overlay" id="modal-logg" onclick="if(event.target===this)closeModal('modal-logg')">
+  <div class="modal" style="max-height:92vh">
+    <div class="modal-handle"></div>
+    <div class="modal-header"><span class="modal-title"><i class="ti ti-history"></i> Raderingslogg</span><button class="modal-close" onclick="closeModal('modal-logg')"><i class="ti ti-x"></i></button></div>
+    <div class="modal-body" id="logg-body"></div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="exportLogg()"><i class="ti ti-table-export"></i> Excel</button>
+      <button class="btn-secondary" onclick="closeModal('modal-logg')">Stäng</button>
+    </div>
+  </div>
+</div>
+
 <!-- ROND MODAL -->
 <div class="modal-overlay" id="modal-rond" onclick="if(event.target===this)closeModal('modal-rond')">
   <div class="modal" style="max-height:96vh">
@@ -301,7 +314,7 @@ tr:hover td{background:rgba(59,109,17,.025);}
 <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
 <script>
 const GH_REPO  = 'CCSthlm/besiktning-camping';
-const PATHS    = { utrust:'sba/utrustning.json', ronder:'sba/ronder.json', atg:'sba/atgarder.json', avv:'avvikelse/data.json' };
+const PATHS    = { utrust:'sba/utrustning.json', ronder:'sba/ronder.json', atg:'sba/atgarder.json', avv:'avvikelse/data.json', logg:'sba/logg.json' };
 const CAMPINGAR = ['CC Björkö Örns Camping','CC Östnora Camping','CC Kapellskärs Camping','CC Mista Camping','CC Storsveds Camping','CC Örstigs Camping','Gräddös Pärla Kök & Bar','Östnora Kök & Bar'];
 
 const UTR_INTERVALL = { 'Brandsläckare':12,'Brandfiltar':36,'Brandvarnare':12,'Elcentral':60,'Hjärtstartare':12,'Förstahjälpen':12,'Nödbelysning':12,'Riskområde':null };
@@ -355,8 +368,8 @@ let _user    = null;
 let _isAdmin = false;  // sba-ansvarig eller global
 let _isLokal = false;  // sba-lokal (begränsad till sbaCamping)
 let _myCamp  = null;   // camping för sba-lokal
-let _data    = { utrust:null, ronder:null, atg:null, avv:null };
-let _sha     = { utrust:null, ronder:null, atg:null };
+let _data    = { utrust:null, ronder:null, atg:null, avv:null, logg:null };
+let _sha     = { utrust:null, ronder:null, atg:null, logg:null };
 let _view    = 'dash';
 let _rondState = {};
 
@@ -411,7 +424,33 @@ async function loadJSON(key, path) {
 }
 
 function defData(key) {
-  return { utrust:{utrustning:[]}, ronder:{ronder:[]}, atg:{atgarder:[]}, avv:{ärenden:[]} }[key] || {};
+  return { utrust:{utrustning:[]}, ronder:{ronder:[]}, atg:{atgarder:[]}, avv:{ärenden:[]}, logg:{handelser:[]} }[key] || {};
+}
+
+// ── RADERINGSLOGG ────────────────────────────────────────────────────────────
+// Varje radering (rond eller åtgärd) skrivs till sba/logg.json innan den
+// raderade posten tas bort, så att det alltid går att se vem som tog bort
+// vad, när, och varför — även efter att posten själv är borta.
+async function loggRadering(objektTyp, objekt, anledning) {
+  if (!_data.logg) _data.logg = { handelser: [] };
+  const utforare = _user?.namn || _user?.name || _user?.email || _user?.username || 'Okänd användare';
+  _data.logg.handelser.push({
+    id: 'LOG-' + Date.now(),
+    tidpunkt: nowISO(),
+    utforare,
+    handelse: 'Radering',
+    objektTyp,          // 'Rond' | 'Åtgärd'
+    objektId: objekt?.id || null,
+    camping: objekt?.camping || null,
+    sammanfattning: objektTyp === 'Rond'
+      ? (objekt?.camping || '–') + ' · ' + fmtDate(objekt?.datum) + ' · genomförd av ' + (objekt?.genomfordAv || '–')
+      : objektTyp === 'Utrustning'
+      ? (objekt?.typ || '–') + ' – ' + (objekt?.plats || '–') + ' (' + (objekt?.camping || '–') + ')'
+      : (objekt?.titel || '–'),
+    anledning: anledning || '',
+    raderadData: objekt || null   // full kopia av det raderade, för spårbarhet
+  });
+  await saveData('logg', 'Raderingslogg: ' + objektTyp + ' borttagen');
 }
 
 async function saveData(key, msg) {
@@ -577,10 +616,11 @@ function renderRond() {
         <div class="card-header">
           <div><div style="font-size:14px;font-weight:600">${r.camping||'–'}</div>
             <div style="font-size:12px;color:var(--text2);margin-top:2px">${fmtDate(r.datum)} · ${r.genomfordAv||'–'} · ${avv} avvikelse${avv!==1?'r':''}</div></div>
-          <div style="display:flex;gap:8px;align-items:center">
+          <div style="display:flex;gap:10px;align-items:center">
             ${r.signerad?`<span style="font-size:11px;color:var(--green-text);font-weight:600"><i class="ti ti-check-circle"></i> Signerad av ${r.signeradAv}</span>`
             :canSign?`<button class="btn-primary" style="font-size:12px;padding:7px 12px" onclick="signeraRond('${r.id}')"><i class="ti ti-pen"></i> Signera</button>`
             :`<span style="font-size:11px;color:var(--amber)"><i class="ti ti-clock"></i> Väntar signering</span>`}
+            ${canEdit?`<span onclick="deleteRond('${r.id}')" style="cursor:pointer;color:var(--red);font-size:12px" title="Ta bort rond"><i class="ti ti-trash"></i></span>`:''}
           </div>
         </div>
       </div>`;
@@ -668,7 +708,23 @@ async function saveRond() {
     await syncToSAM(avvikelser,camping,id);
   }
   const ok=await saveData('ronder','Brandskyddsrond '+datum+' '+camping);
-  if(ok){toast(`Rond sparad${avvikelser.length?' – '+avvikelser.length+' åtgärder skapade':''}','ok`,'ok');closeModal('modal-rond');renderRond();}
+  if(ok){toast(`Rond sparad${avvikelser.length?' – '+avvikelser.length+' åtgärder skapade':''}`,'ok');closeModal('modal-rond');renderRond();}
+}
+
+async function deleteRond(id){
+  const r = _data.ronder?.ronder?.find(x=>x.id===id);
+  if(!r){toast('Hittade inte ronden','err');return;}
+  const anledning = prompt('Anledning till att ronden ('+(r.camping||'–')+' · '+fmtDate(r.datum)+') tas bort (obligatoriskt, loggas):');
+  if(anledning===null) return;               // avbrutet
+  if(!anledning.trim()){toast('Anledning krävs för att radera en rond','warn');return;}
+  if(!confirm('Ta bort ronden från '+fmtDate(r.datum)+' ('+r.camping+')? Detta går inte att ångra.'))return;
+  _data.ronder.ronder = _data.ronder.ronder.filter(x=>x.id!==id);
+  const ok = await saveData('ronder','Tog bort rond '+id);
+  if(ok){
+    await loggRadering('Rond', r, anledning.trim());
+    toast('Rond borttagen (loggad)','ok');
+    renderRond();
+  }
 }
 
 async function signeraRond(id){
@@ -794,10 +850,19 @@ async function saveUtrust(){
 }
 
 async function deleteUtrust(id){
+  const u=_data.utrust?.utrustning?.find(x=>x.id===id);
+  if(!u){toast('Hittade inte utrustningen','err');return;}
+  const anledning=prompt('Anledning till att utrustningen ("'+u.typ+' – '+(u.plats||'–')+'") tas bort (obligatoriskt, loggas):');
+  if(anledning===null) return;               // avbrutet
+  if(!anledning.trim()){toast('Anledning krävs för att radera utrustning','warn');return;}
   if(!confirm('Ta bort utrustningen?'))return;
   _data.utrust.utrustning=_data.utrust.utrustning.filter(x=>x.id!==id);
   const ok=await saveData('utrust','Tog bort utrustning');
-  if(ok){toast('Borttagen','ok');renderUtrustTable();}
+  if(ok){
+    await loggRadering('Utrustning', u, anledning.trim());
+    toast('Borttagen (loggad)','ok');
+    renderUtrustTable();
+  }
 }
 
 // ── ÅTGÄRDER ───────────────────────────────────────────────────────────────
@@ -894,10 +959,19 @@ async function saveAtg(){
 }
 
 async function deleteAtg(id){
+  const a=_data.atg?.atgarder?.find(x=>x.id===id);
+  if(!a){toast('Hittade inte åtgärden','err');return;}
+  const anledning=prompt('Anledning till att åtgärden ("'+a.titel+'") tas bort (obligatoriskt, loggas):');
+  if(anledning===null) return;               // avbrutet
+  if(!anledning.trim()){toast('Anledning krävs för att radera en åtgärd','warn');return;}
   if(!confirm('Ta bort åtgärden?'))return;
   _data.atg.atgarder=_data.atg.atgarder.filter(x=>x.id!==id);
   const ok=await saveData('atg','Tog bort åtgärd');
-  if(ok){toast('Borttagen','ok');renderAtgTable();}
+  if(ok){
+    await loggRadering('Åtgärd', a, anledning.trim());
+    toast('Borttagen (loggad)','ok');
+    renderAtgTable();
+  }
 }
 
 function exportAtg(){
@@ -910,6 +984,21 @@ function exportAtg(){
     ws['!cols']=[{wch:36},{wch:18},{wch:24},{wch:18},{wch:12},{wch:12},{wch:40}];
     XLSX.utils.book_append_sheet(wb,ws,'SBA Åtgärder');
     XLSX.writeFile(wb,'SBA_Atgarder_'+new Date().toISOString().slice(0,10)+'.xlsx');
+    toast('Excel exporterad','ok');
+  }catch(e){toast('Fel: '+e.message,'err');}
+}
+
+function exportLogg(){
+  try{
+    const handelser=(_data.logg?.handelser||[]).slice().sort((a,b)=>(b.tidpunkt||'').localeCompare(a.tidpunkt||''));
+    const wb=XLSX.utils.book_new();
+    const rows=[['RADERINGSLOGG – SBA, CCSthlm'],['Exporterad:',new Date().toLocaleString('sv-SE')],[],
+      ['Tidpunkt','Typ','Sammanfattning','Camping','Utförd av','Anledning'],
+      ...handelser.map(h=>[new Date(h.tidpunkt).toLocaleString('sv-SE'),h.objektTyp||'',h.sammanfattning||'',h.camping||'',h.utforare||'',h.anledning||''])];
+    const ws=XLSX.utils.aoa_to_sheet(rows);
+    ws['!cols']=[{wch:20},{wch:14},{wch:44},{wch:24},{wch:20},{wch:36}];
+    XLSX.utils.book_append_sheet(wb,ws,'Raderingslogg');
+    XLSX.writeFile(wb,'SBA_Raderingslogg_'+new Date().toISOString().slice(0,10)+'.xlsx');
     toast('Excel exporterad','ok');
   }catch(e){toast('Fel: '+e.message,'err');}
 }
@@ -975,6 +1064,7 @@ function renderRapport(){
         <div style="font-size:12px;color:var(--text2)">Systematiskt brandskyddsarbete – sammanfattning</div>
       </div>
       <div style="display:flex;gap:7px">
+        ${_isAdmin?`<button class="btn-secondary" onclick="openLoggModal()"><i class="ti ti-history"></i> Raderingslogg</button>`:''}
         <button class="btn-secondary" onclick="window.print()"><i class="ti ti-printer"></i> Skriv ut</button>
         <button class="btn-secondary" onclick="exportRapport()"><i class="ti ti-file-type-doc"></i> Word</button>
       </div>
@@ -1063,6 +1153,28 @@ async function loadGasolWidget() {
       </div>`;
     }).join('')+'</div>';
   } catch(e) { console.warn('gasol widget:', e.message); }
+}
+
+function openLoggModal(){
+  const handelser=(_data.logg?.handelser||[]).slice().sort((a,b)=>(b.tidpunkt||'').localeCompare(a.tidpunkt||''));
+  const body=document.getElementById('logg-body');
+  if(!handelser.length){
+    body.innerHTML='<div class="empty"><i class="ti ti-history"></i>Inga raderingar loggade ännu</div>';
+  } else {
+    body.innerHTML=handelser.map(h=>`
+      <div class="card" style="margin:10px 0">
+        <div class="card-body">
+          <div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap">
+            <span class="sbadge sb-open">${h.objektTyp} borttagen</span>
+            <span style="font-size:11px;color:var(--text3)">${new Date(h.tidpunkt).toLocaleString('sv-SE')}</span>
+          </div>
+          <div style="font-size:13px;font-weight:600;margin-top:8px">${h.sammanfattning||'–'}</div>
+          <div style="font-size:12px;color:var(--text2);margin-top:4px"><strong>Utförd av:</strong> ${h.utforare||'–'}</div>
+          <div style="font-size:12px;color:var(--text2);margin-top:2px"><strong>Anledning:</strong> ${h.anledning||'–'}</div>
+        </div>
+      </div>`).join('');
+  }
+  openModal('modal-logg');
 }
 
 function openModal(id){document.getElementById(id).classList.add('show');}
