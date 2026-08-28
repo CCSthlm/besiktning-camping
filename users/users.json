@@ -264,6 +264,28 @@
       "budgetEnhet": "",
       "elCamping": "",
       "created": "2026-08-28"
+    },
+    {
+      "id": "umtd1861szfyb",
+      "name": "Evert Olén",
+      "email": "evert.olen@cc-camping.se",
+      "pin": "9988",
+      "pnr": "",
+      "adminRoles": [
+        "sba-lokal"
+      ],
+      "role": "Användare",
+      "active": true,
+      "apps": [
+        "personalliggare"
+      ],
+      "plCampingId": "c8",
+      "godkannarcamping": "",
+      "sbaCamping": "CC Östnora Camping",
+      "nyckelCamping": "",
+      "budgetEnhet": "",
+      "elCamping": "",
+      "created": "2026-08-28"
     }
   ],
   "campings": [
