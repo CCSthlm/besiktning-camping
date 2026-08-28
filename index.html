@@ -622,7 +622,7 @@ const ALL_APPS = [
   // ── Specifika applikationer (kräver tilldelning) ──
   {id:'it-arenden', name:'IT-ärendehantering', desc:'Hantera och följa upp IT-ärenden. Se öppna ärenden, ärenden hos leverantör och historik.', icon:'ti-ticket', color:'app-icon-blue', url:'it-arenden.html', roles:['Admin','Besiktningsman','Granskare'], badge:'', newTab:false, group:'specifik'},
   {id:'besiktning',     name:'Besiktningsprotokoll',   desc:'Genomför och dokumentera campingbesiktningar. Generera intyg och spara historik.',     icon:'ti-certificate',    color:'app-icon-blue',  url:'besiktning.html',        roles:['Admin','Besiktningsman','Granskare'], badge:'', newTab:false, group:'specifik'},
-  {id:'personalliggare',name:'Personalliggare',        desc:'Digital personalliggare enligt Skatteverkets krav. Stämpla in/ut, ändringslogg.',      icon:'ti-id-badge-2',     color:'app-icon-green', url:'personalliggare.html',   roles:[], badge:'', newTab:false, group:'specifik', requiredRoles:['personal','global']},
+  {id:'personalliggare',name:'Personalliggare',        desc:'Digital personalliggare enligt Skatteverkets krav. Stämpla in/ut, ändringslogg.',      icon:'ti-id-badge-2',     color:'app-icon-green', url:'personalliggare.html',   roles:[], badge:'', newTab:false, group:'specifik', requiredRoles:['personal','global'], appCheck: u => (u.apps||[]).includes('personalliggare') || (u.adminRoles||[]).includes('personal') || (u.adminRoles||[]).includes('global')},
   {id:'lon',            name:'Löneadministration',      desc:'Löneunderlag, tidrapportering och BL-export. Importerar tider från personalliggaren.',  icon:'ti-cash-register',  color:'app-icon-blue',  url:'lon.html',               roles:[], badge:'', newTab:false, group:'admin', adminRolesRequired:['lon-admin','global']},
   {id:'nyckel', name:'Nyckelregister', desc:'Hantera nycklar och taggar, utlämning, återlämning, inventering och historik per camping.', icon:'ti-key', color:'app-icon-amber', url:'nyckel.html', roles:[], badge:'', newTab:false, group:'specifik', requiredRoles:['nyckel-admin','global']},
   {id:'elavlasning', name:'Elavläsning', desc:'Läs av elmätare per plats på mobilen. Beräknar förbrukning och belopp automatiskt. Excel-export.', icon:'ti-bolt', color:'app-icon-amber', url:'elavlasning.html', roles:[], badge:'', newTab:false, group:'specifik', requiredRoles:['el-admin','el-avlasning','global']},
@@ -854,8 +854,11 @@ async function loginMS_continue(account) {
   const email = (account.username || '').toLowerCase();
   const name  = account.name || email.split('@')[0];
 
-  // Check if user exists in list
-  const user = _users.find(u => u.email && u.email.toLowerCase() === email);
+  // Check if user exists in list — match on email OR msEmail, case-insensitive
+  const user = _users.find(u =>
+    (u.email && u.email.toLowerCase() === email) ||
+    (u.msEmail && u.msEmail.toLowerCase() === email)
+  );
 
   if (user) {
     // Known user — full access per their settings
@@ -1050,6 +1053,8 @@ function renderApps() {
     <strong>Debug:</strong> adminRoles=${JSON.stringify(userRoles)} · apps=${JSON.stringify(userApps)} · role=${u.role}</div>`;
 
   const accessible = ALL_APPS.filter(app => {
+    // Custom appCheck function overrides everything
+    if (app.appCheck) return app.appCheck(u);
     // requiredRoles — visas om användaren har exakt den rollen i adminRoles
     if (app.requiredRoles) {
       return userRoles.some(r => app.requiredRoles.includes(r));
