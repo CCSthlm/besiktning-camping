@@ -234,8 +234,10 @@
       ],
       "role": "Användare",
       "active": true,
-      "apps": [],
-      "plCampingId": "",
+      "apps": [
+        "personalliggare"
+      ],
+      "plCampingId": "c8",
       "godkannarcamping": "",
       "sbaCamping": "",
       "nyckelCamping": "c2",
