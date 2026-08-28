@@ -68,7 +68,30 @@
         "status": "Öppen",
         "skapad": "2026-08-28T14:21:20.371Z"
       }
+    },
+    {
+      "id": "LOG-1787929547933",
+      "tidpunkt": "2026-08-28T15:05:47.933Z",
+      "utforare": "Massimo Johansson",
+      "handelse": "Radering",
+      "objektTyp": "Åtgärd",
+      "objektId": "SBA-AVV-AV-2607-V29H",
+      "camping": "CC Björkö Örns Camping",
+      "sammanfattning": "Brandincident: Brandtillbud / SBA",
+      "anledning": "test",
+      "raderadData": {
+        "id": "SBA-AVV-AV-2607-V29H",
+        "kalla": "Avvikelse",
+        "kallaId": "AV-2607-V29H",
+        "titel": "Brandincident: Brandtillbud / SBA",
+        "beskrivning": "Gasolgrill som tog eld.",
+        "camping": "CC Björkö Örns Camping",
+        "ansvarig": "Massimo Johansson",
+        "deadline": null,
+        "status": "Öppen",
+        "skapad": "2026-08-28T15:05:21.297Z"
+      }
     }
   ],
-  "uppdaterad": "2026-08-28T15:04:55.719Z"
+  "uppdaterad": "2026-08-28T15:05:47.933Z"
 }
