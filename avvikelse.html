@@ -169,6 +169,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
   </div>
   <div class="pb-sep"></div>
   <button class="pb-btn" id="btn-mina" onclick="toggleMina()"><i class="ti ti-list-check"></i> Mina avvikelser</button>
+  <button class="pb-btn" id="btn-mina-storning" onclick="toggleMinaStorning()"><i class="ti ti-file-alert"></i> Mina störningsrapporter</button>
   <a href="index.html" class="pb-btn"><i class="ti ti-arrow-left"></i> Portal</a>
   <button class="pb-btn pb-btn-logout" onclick="portalLogout()"><i class="ti ti-logout"></i> Logga ut</button>
 </div>
@@ -186,6 +187,20 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
       <button class="pb-btn" onclick="toggleMina()"><i class="ti ti-x"></i> Stäng</button>
     </div>
     <div id="mina-list"></div>
+  </div>
+</div>
+
+<!-- MINA STÖRNINGSRAPPORTER -->
+<div id="view-mina-storning" style="display:none;position:fixed;inset:0;z-index:50;background:var(--bg3);overflow-y:auto">
+  <div style="max-width:720px;margin:0 auto;padding:16px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px">
+      <div>
+        <h2 style="font-size:18px;font-weight:700;display:flex;align-items:center;gap:8px"><i class="ti ti-file-alert" style="color:#7c3aed"></i> Mina störningsrapporter</h2>
+        <p style="font-size:12px;color:var(--text2);margin-top:2px">Störningsrapporter du har skapat</p>
+      </div>
+      <button class="pb-btn" onclick="toggleMinaStorning()"><i class="ti ti-x"></i> Stäng</button>
+    </div>
+    <div id="mina-storning-list"></div>
   </div>
 </div>
 
@@ -825,10 +840,9 @@ async function saveStörning() {
   showPrintView(rapport);
 }
 
-function showPrintView(r) {
+function buildStorningHTML(r) {
   const riskColor = {1:'#27500A',2:'#854F0B',3:'#c2410c',4:'#A32D2D'}[r.riskNivå] || '#5a5a57';
-  const printWin = window.open('','_blank','width=800,height:900');
-  printWin.document.write(`<!DOCTYPE html>
+  return `<!DOCTYPE html>
 <html lang="sv"><head><meta charset="UTF-8">
 <title>Störningsrapport ${r.id}</title>
 <style>
@@ -914,7 +928,12 @@ ${r.beslut ? `
   <button onclick="window.close()" style="padding:10px 24px;background:#f5f5f3;color:#1a1a18;border:1px solid #ccc;border-radius:8px;font-size:14px;cursor:pointer;font-family:inherit">Stäng</button>
 </div>
 
-</body></html>`);
+</body></html>`;
+}
+
+function showPrintView(r) {
+  const printWin = window.open('','_blank','width=800,height:900');
+  printWin.document.write(buildStorningHTML(r));
   printWin.document.close();
   // Reset form and show success
   hide('view-s2');
@@ -924,6 +943,14 @@ ${r.beslut ? `
   show('view-success');
   document.getElementById('view-success').style.display='';
   hide('view-s3');
+}
+
+function visaStorningById(id) {
+  var r = (window._storningListCache||[]).find(function(x){ return x.id === id; });
+  if (!r) { toast('Hittade inte rapporten','err'); return; }
+  const printWin = window.open('','_blank','width=800,height:900');
+  printWin.document.write(buildStorningHTML(r));
+  printWin.document.close();
 }
 
 async function submitForm() {
@@ -1162,6 +1189,74 @@ function renderMina() {
       + '<span><i class="ti ti-calendar" style="font-size:10px"></i> ' + datum + '</span>'
       + '<span><i class="ti ti-tent" style="font-size:10px"></i> ' + anl + '</span>'
       + (aid ? '<span style="font-family:monospace;font-size:10px;color:var(--text3)">' + aid + '</span>' : '')
+      + '</div>'
+      + '</div>';
+  }).join('');
+}
+
+// ── MINA STÖRNINGSRAPPORTER ────────────────────────────────────────────────
+// Störningsrapporter sparas separat (STORNING_PATH / _storningData.rapporter)
+// och läggs aldrig till i _avData.ärenden, så "Mina avvikelser" ovan aldrig
+// visar dem. Den här knappen och vyn läser istället direkt från rätt fil.
+var _minaStorningOpen = false;
+
+function toggleMinaStorning() {
+  _minaStorningOpen = !_minaStorningOpen;
+  var view = document.getElementById('view-mina-storning');
+  var btn  = document.getElementById('btn-mina-storning');
+  view.style.display = _minaStorningOpen ? '' : 'none';
+  btn.classList.toggle('pb-btn-mina-active', _minaStorningOpen);
+  if (_minaStorningOpen) renderMinaStorning();
+}
+
+async function renderMinaStorning() {
+  var wrap = document.getElementById('mina-storning-list');
+  wrap.innerHTML = '<div style="text-align:center;padding:40px 20px;color:var(--text3)">Laddar…</div>';
+
+  const token = localStorage.getItem('gh_token') || '';
+  var rapporter = [];
+  if (token) {
+    try {
+      const res = await fetch('https://api.github.com/repos/'+GH_REPO+'/contents/'+STORNING_PATH, {headers:{'Authorization':'token '+token}});
+      if (res.ok) {
+        const d = await res.json();
+        const bytes = Uint8Array.from(atob(d.content.replace(/\n/g,'')), c=>c.charCodeAt(0));
+        const data = JSON.parse(new TextDecoder('utf-8').decode(bytes));
+        rapporter = data.rapporter || [];
+      }
+    } catch(e) { console.warn('renderMinaStorning:', e); }
+  }
+
+  var userName = (_user && _user.name) || '';
+  var mina = rapporter.filter(function(r) {
+    return r.rapportör && userName && r.rapportör.indexOf(userName) === 0;
+  }).slice().sort(function(a,b) {
+    return ((b.ts||'')).localeCompare((a.ts||''));
+  });
+
+  window._storningListCache = mina;
+
+  if (!mina.length) {
+    wrap.innerHTML = '<div style="text-align:center;padding:40px 20px;color:var(--text3)"><i class="ti ti-file-alert" style="font-size:36px;display:block;margin-bottom:10px"></i>Du har inte skapat några störningsrapporter ännu.</div>';
+    return;
+  }
+
+  wrap.innerHTML = mina.map(function(r) {
+    var datum = r.ts ? new Date(r.ts).toLocaleDateString('sv-SE') : '–';
+    var rid   = (r.id||'').replace(/"/g,'&quot;');
+    return '<div class="mina-card" style="cursor:pointer" data-srid="' + rid + '" onclick="visaStorningById(this.dataset.srid)">'
+      + '<div class="mina-card-top">'
+      + '<div class="mina-card-kat"><i class="ti ti-file-alert" style="font-size:13px;color:#7c3aed"></i> Störningsrapport</div>'
+      + '<div style="display:flex;align-items:center;gap:8px">'
+      + '<span class="mina-status ' + (r.status === 'klar' ? 'ms-klar' : 'ms-ny') + '">' + (r.status === 'klar' ? 'Klar' : 'Ny') + '</span>'
+      + '<i class="ti ti-chevron-right" style="font-size:13px;color:var(--text3)"></i>'
+      + '</div>'
+      + '</div>'
+      + '<div style="font-size:12px;color:var(--text2);margin-bottom:6px">' + (r.beskrivning||'').slice(0,120) + ((r.beskrivning||'').length>120?'…':'') + '</div>'
+      + '<div class="mina-card-meta">'
+      + '<span><i class="ti ti-calendar" style="font-size:10px"></i> ' + datum + '</span>'
+      + '<span><i class="ti ti-tent" style="font-size:10px"></i> ' + (r.anläggning||'–') + '</span>'
+      + (r.id ? '<span style="font-family:monospace;font-size:10px;color:var(--text3)">' + r.id + '</span>' : '')
       + '</div>'
       + '</div>';
   }).join('');
