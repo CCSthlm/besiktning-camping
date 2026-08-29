@@ -897,7 +897,7 @@
           "pnr": "20070108-5409",
           "date": "2026-08-29",
           "timeIn": "10:02",
-          "timeOut": "",
+          "timeOut": "10:02",
           "registeredBy": "Restaurang Östnora",
           "registeredAt": "2026-08-29T08:02:08.647Z",
           "manual": false,
@@ -1500,6 +1500,15 @@
           "user": "Restaurang Östnora",
           "action": "in",
           "detail": "Alva Säfqvist stämplade in 10:02",
+          "oldVal": "",
+          "newVal": "10:02"
+        },
+        {
+          "id": "mte3ed5y0kd0t",
+          "ts": "2026-08-29T08:02:13.414Z",
+          "user": "Restaurang Östnora",
+          "action": "out",
+          "detail": "Alva Säfqvist stämplade ut 10:02",
           "oldVal": "",
           "newVal": "10:02"
         }
