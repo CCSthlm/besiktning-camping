@@ -286,6 +286,24 @@
       "budgetEnhet": "",
       "elCamping": "",
       "created": "2026-08-28"
+    },
+    {
+      "id": "umteacfm7f0nf",
+      "name": "Reception Östnora",
+      "email": "reception.ostnora@cc-camping.se",
+      "pin": "0000",
+      "pnr": "",
+      "adminRoles": [],
+      "role": "Användare",
+      "active": true,
+      "apps": [],
+      "plCampingId": "",
+      "godkannarcamping": "",
+      "sbaCamping": "",
+      "nyckelCamping": "",
+      "budgetEnhet": "",
+      "elCamping": "",
+      "created": "2026-08-29"
     }
   ],
   "campings": [
