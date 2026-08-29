@@ -286,24 +286,6 @@
       "budgetEnhet": "",
       "elCamping": "",
       "created": "2026-08-28"
-    },
-    {
-      "id": "umteacfm7f0nf",
-      "name": "Reception Östnora",
-      "email": "reception.ostnora@cc-camping.se",
-      "pin": "0000",
-      "pnr": "",
-      "adminRoles": [],
-      "role": "Användare",
-      "active": true,
-      "apps": [],
-      "plCampingId": "",
-      "godkannarcamping": "",
-      "sbaCamping": "",
-      "nyckelCamping": "",
-      "budgetEnhet": "",
-      "elCamping": "",
-      "created": "2026-08-29"
     }
   ],
   "campings": [
@@ -915,7 +897,7 @@
           "pnr": "19481117-0200",
           "date": "2026-08-29",
           "timeIn": "10:02",
-          "timeOut": "",
+          "timeOut": "19:09",
           "registeredBy": "Restaurang Östnora",
           "registeredAt": "2026-08-29T08:02:20.011Z",
           "manual": false,
@@ -1602,6 +1584,15 @@
           "detail": "Evert Olen stämplade ut 11:57",
           "oldVal": "",
           "newVal": "11:57"
+        },
+        {
+          "id": "mtemyg219yeca",
+          "ts": "2026-08-29T17:09:42.985Z",
+          "user": "Restaurang Östnora",
+          "action": "out",
+          "detail": "Ingalill Nore stämplade ut 19:09",
+          "oldVal": "",
+          "newVal": "19:09"
         }
       ]
     }
