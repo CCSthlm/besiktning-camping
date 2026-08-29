@@ -925,7 +925,7 @@
           "pnr": "19631009-6646",
           "date": "2026-08-29",
           "timeIn": "10:37",
-          "timeOut": "",
+          "timeOut": "19:09",
           "registeredBy": "Restaurang Östnora",
           "registeredAt": "2026-08-29T08:37:22.628Z",
           "manual": false,
@@ -1591,6 +1591,15 @@
           "user": "Restaurang Östnora",
           "action": "out",
           "detail": "Ingalill Nore stämplade ut 19:09",
+          "oldVal": "",
+          "newVal": "19:09"
+        },
+        {
+          "id": "mtemyslz0pou8",
+          "ts": "2026-08-29T17:09:59.255Z",
+          "user": "Restaurang Östnora",
+          "action": "out",
+          "detail": "Sussi Törnander stämplade ut 19:09",
           "oldVal": "",
           "newVal": "19:09"
         }
