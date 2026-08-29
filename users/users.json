@@ -890,6 +890,20 @@
           "manualReason": "",
           "edited": false,
           "campingId": "c8"
+        },
+        {
+          "id": "mte3e9hj8dz0o",
+          "name": "Alva Säfqvist",
+          "pnr": "20070108-5409",
+          "date": "2026-08-29",
+          "timeIn": "10:02",
+          "timeOut": "",
+          "registeredBy": "Restaurang Östnora",
+          "registeredAt": "2026-08-29T08:02:08.647Z",
+          "manual": false,
+          "manualReason": "",
+          "edited": false,
+          "campingId": "c8"
         }
       ],
       "personal": [
@@ -1479,6 +1493,15 @@
           "detail": "Tog bort pass: Evert Olen 2026-08-28",
           "oldVal": "{\"id\":\"mtdhs7m8sihjt\",\"name\":\"Evert Olen\",\"pnr\":\"196009060093\",\"date\":\"2026-08-28\",\"timeIn\":\"23:57\",\"timeOut\":\"23:57\",\"registeredBy\":\"Restaurang Östnora\",\"registeredAt\":\"2026-08-28T21:57:07.857Z\",\"manual\":false,\"manualReason\":\"\",\"edited\":false,\"campingId\":\"c8\"}",
           "newVal": ""
+        },
+        {
+          "id": "mte3e9hjizmyv",
+          "ts": "2026-08-29T08:02:08.647Z",
+          "user": "Restaurang Östnora",
+          "action": "in",
+          "detail": "Alva Säfqvist stämplade in 10:02",
+          "oldVal": "",
+          "newVal": "10:02"
         }
       ]
     }
