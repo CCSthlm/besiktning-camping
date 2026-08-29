@@ -892,20 +892,6 @@
           "campingId": "c8"
         },
         {
-          "id": "mte3e9hj8dz0o",
-          "name": "Alva Säfqvist",
-          "pnr": "20070108-5409",
-          "date": "2026-08-29",
-          "timeIn": "10:02",
-          "timeOut": "10:02",
-          "registeredBy": "Restaurang Östnora",
-          "registeredAt": "2026-08-29T08:02:08.647Z",
-          "manual": false,
-          "manualReason": "",
-          "edited": false,
-          "campingId": "c8"
-        },
-        {
           "id": "mte3ei97om3tv",
           "name": "Ingalill Nore",
           "pnr": "19481117-0200",
@@ -1534,6 +1520,15 @@
           "detail": "Ingalill Nore stämplade in 10:02",
           "oldVal": "",
           "newVal": "10:02"
+        },
+        {
+          "id": "mte3uswc2kc0m",
+          "ts": "2026-08-29T08:15:00.300Z",
+          "user": "Restaurang Östnora",
+          "action": "delete",
+          "detail": "Tog bort pass: Alva Säfqvist 2026-08-29",
+          "oldVal": "{\"id\":\"mte3e9hj8dz0o\",\"name\":\"Alva Säfqvist\",\"pnr\":\"20070108-5409\",\"date\":\"2026-08-29\",\"timeIn\":\"10:02\",\"timeOut\":\"10:02\",\"registeredBy\":\"Restaurang Östnora\",\"registeredAt\":\"2026-08-29T08:02:08.647Z\",\"manual\":false,\"manualReason\":\"\",\"edited\":false,\"campingId\":\"c8\"}",
+          "newVal": ""
         }
       ]
     }
