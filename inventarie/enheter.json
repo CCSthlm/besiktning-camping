@@ -300,6 +300,31 @@
       "skapadAv": "Joachim Säfqvist",
       "andrad": "2026-08-30T08:21:03.295Z",
       "andradAv": "Joachim Säfqvist"
+    },
+    {
+      "id": "INV-2608-8MF0",
+      "namn": "Lenovo ThinkCentre M720Q",
+      "kategori": "Datorer & surfplattor",
+      "funktion": "Bokning",
+      "status": "Aktiv",
+      "marke": "Lenovo",
+      "modell": " Lenovo ThinkCentre M720Q - 256/16",
+      "serienr": "",
+      "anlaggning": "CC Kapellskärs Camping",
+      "placering": "Reception",
+      "ansvarig": "Elisabeth Terol",
+      "inkopDatum": "2026-08-06",
+      "inkopPris": 2992.5,
+      "garantiTill": "2028-08-06",
+      "leverantor": "NetOnNet",
+      "anteckningar": "",
+      "iptyp": "Dynamisk",
+      "ip": "",
+      "mac": "",
+      "skapad": "2026-08-30T08:23:17.386Z",
+      "skapadAv": "Joachim Säfqvist",
+      "andrad": "2026-08-30T08:23:17.386Z",
+      "andradAv": "Joachim Säfqvist"
     }
   ]
 }
