@@ -16,7 +16,7 @@
       "beskrivning": "Bilat upp, nytt golv och väggar med pisoar.",
       "ovrigt": "Vi får använda resultatpengar.",
       "id": "mtfu428xhdzat",
-      "status": "inskickad",
+      "status": "komplettering",
       "projektNr": null,
       "skapadAv": "Receptionen Björkö Örn",
       "skapadTs": "2026-08-30T13:17:48.513Z",
@@ -29,9 +29,19 @@
           "kommentar": "",
           "av": "Receptionen Björkö Örn",
           "ts": "2026-08-30T13:17:48.513Z"
+        },
+        {
+          "status": "komplettering",
+          "text": "Begäran om komplettering från campingansvarig",
+          "kommentar": "Hur mycket är resultatet? Lägg till det.",
+          "av": "Morten Hagebö",
+          "ts": "2026-08-30T13:33:23.396Z"
         }
-      ]
+      ],
+      "godkandTs": "2026-08-30T13:33:23.396Z",
+      "godkandAv": "Morten Hagebö",
+      "ansvarigKommentar": "Hur mycket är resultatet? Lägg till det."
     }
   ],
-  "uppdaterad": "2026-08-30T13:17:48.513Z"
+  "uppdaterad": "2026-08-30T13:33:23.396Z"
 }
