@@ -187,7 +187,8 @@
       "nyckelCamping": "",
       "budgetEnhet": "bo_camp",
       "created": "2026-08-23",
-      "elCamping": ""
+      "elCamping": "",
+      "projektCampingId": "bo_camp"
     },
     {
       "id": "umt6wq07xhe6r",
