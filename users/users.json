@@ -96,7 +96,7 @@
         "avvikelse-admin",
         "avvikelse-brand",
         "sba-ansvarig",
-        "projekt-ansvarig"
+        "projekt-admin"
       ],
       "role": "Användare",
       "active": true,
