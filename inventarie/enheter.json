@@ -178,6 +178,28 @@
       "skapadAv": "Joachim Säfqvist",
       "andrad": "2026-08-30T08:08:37.844Z",
       "andradAv": "Joachim Säfqvist"
+    },
+    {
+      "id": "INV-2608-AZ1N",
+      "namn": "MSI Bildskärm",
+      "kategori": "Skärmar & tillbehör",
+      "funktion": "Reception",
+      "status": "Aktiv",
+      "marke": "MSI",
+      "modell": "MSI MAG 342CQR E2",
+      "serienr": "",
+      "anlaggning": "CC Mista Camping",
+      "placering": "",
+      "ansvarig": "Mikael Edstedt",
+      "inkopDatum": "2027-08-17",
+      "inkopPris": 242.5,
+      "garantiTill": "2030-08-17",
+      "leverantor": "NetOnNet",
+      "anteckningar": "",
+      "skapad": "2026-08-30T08:10:23.880Z",
+      "skapadAv": "Joachim Säfqvist",
+      "andrad": "2026-08-30T08:10:23.880Z",
+      "andradAv": "Joachim Säfqvist"
     }
   ]
 }
