@@ -275,6 +275,31 @@
       "skapadAv": "Joachim Säfqvist",
       "andrad": "2026-08-30T08:19:30.989Z",
       "andradAv": "Joachim Säfqvist"
+    },
+    {
+      "id": "INV-2608-WBZD",
+      "namn": "Lenovo ThinkCentre M720Q",
+      "kategori": "Datorer & surfplattor",
+      "funktion": "Bokning",
+      "status": "Aktiv",
+      "marke": "Lenovo",
+      "modell": "Lenovo ThinkCentre M720Q - 256/16",
+      "serienr": "",
+      "anlaggning": "CC Mista Camping",
+      "placering": "Reception",
+      "ansvarig": "Mikael Edstedt",
+      "inkopDatum": "2026-08-17",
+      "inkopPris": 2992.5,
+      "garantiTill": "2028-08-17",
+      "leverantor": "NetOnNet",
+      "anteckningar": "",
+      "iptyp": "Dynamisk",
+      "ip": "",
+      "mac": "",
+      "skapad": "2026-08-30T08:21:03.295Z",
+      "skapadAv": "Joachim Säfqvist",
+      "andrad": "2026-08-30T08:21:03.295Z",
+      "andradAv": "Joachim Säfqvist"
     }
   ]
 }
