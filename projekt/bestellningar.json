@@ -1,4 +1,37 @@
 {
-  "projekt": [],
-  "uppdaterad": null
+  "projekt": [
+    {
+      "campingId": "bo_camp",
+      "campingNamn": "Björkö Örns Camping",
+      "projektnamn": "Utslagsrum",
+      "projektledare": "Jeanette",
+      "kontaktperson": "Hans",
+      "startDatum": "2026-08-31",
+      "slutDatum": "2026-10-31",
+      "isBudget": "nej",
+      "kostnad": 150000,
+      "prioritet": "medel",
+      "kategori": "Underhåll",
+      "bakgrund": "Måste renovera utslagsrummet på grund av svart mögel.",
+      "beskrivning": "Bilat upp, nytt golv och väggar med pisoar.",
+      "ovrigt": "Vi får använda resultatpengar.",
+      "id": "mtfu428xhdzat",
+      "status": "inskickad",
+      "projektNr": null,
+      "skapadAv": "Receptionen Björkö Örn",
+      "skapadTs": "2026-08-30T13:17:48.513Z",
+      "inskickadTs": "2026-08-30T13:17:48.513Z",
+      "uppdateradTs": "2026-08-30T13:17:48.513Z",
+      "logg": [
+        {
+          "status": "inskickad",
+          "text": "Skickad in för godkännande",
+          "kommentar": "",
+          "av": "Receptionen Björkö Örn",
+          "ts": "2026-08-30T13:17:48.513Z"
+        }
+      ]
+    }
+  ],
+  "uppdaterad": "2026-08-30T13:17:48.513Z"
 }
