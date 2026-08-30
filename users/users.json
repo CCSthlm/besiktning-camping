@@ -175,6 +175,7 @@
       "pin": "2222",
       "pnr": "",
       "adminRoles": [
+        "projekt-camping",
         "budget-camping"
       ],
       "role": "Användare",
@@ -185,7 +186,8 @@
       "sbaCamping": "",
       "nyckelCamping": "",
       "budgetEnhet": "bo_camp",
-      "created": "2026-08-23"
+      "created": "2026-08-23",
+      "elCamping": ""
     },
     {
       "id": "umt6wq07xhe6r",
