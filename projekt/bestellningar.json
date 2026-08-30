@@ -67,8 +67,11 @@
       "handlaggare": "Morten Hagebö",
       "adminKommentar": "Måste ske under året 2026",
       "behandladTs": "2026-08-30T13:37:32.121Z",
-      "behandladAv": "Morten Hagebö"
+      "behandladAv": "Morten Hagebö",
+      "raderad": true,
+      "raderadAv": "Massimo Johansson",
+      "raderadTs": "2026-08-30T14:15:29.773Z"
     }
   ],
-  "uppdaterad": "2026-08-30T13:37:32.121Z"
+  "uppdaterad": "2026-08-30T14:15:29.773Z"
 }
