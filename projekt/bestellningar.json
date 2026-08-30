@@ -16,7 +16,7 @@
       "beskrivning": "Bilat upp, nytt golv och väggar med pisoar.",
       "ovrigt": "Vi får använda resultatpengar. 200 000kr",
       "id": "mtfu428xhdzat",
-      "status": "inskickad",
+      "status": "godkänd",
       "projektNr": null,
       "skapadAv": "Receptionen Björkö Örn",
       "skapadTs": "2026-08-30T13:17:48.513Z",
@@ -43,12 +43,19 @@
           "kommentar": "",
           "av": "Receptionen Björkö Örn",
           "ts": "2026-08-30T13:34:24.243Z"
+        },
+        {
+          "status": "godkänd",
+          "text": "Godkänd av campingansvarig",
+          "kommentar": "Dett är ok och finns pengar.",
+          "av": "Morten Hagebö",
+          "ts": "2026-08-30T13:35:21.242Z"
         }
       ],
-      "godkandTs": "2026-08-30T13:33:23.396Z",
+      "godkandTs": "2026-08-30T13:35:21.242Z",
       "godkandAv": "Morten Hagebö",
-      "ansvarigKommentar": "Hur mycket är resultatet? Lägg till det."
+      "ansvarigKommentar": "Dett är ok och finns pengar."
     }
   ],
-  "uppdaterad": "2026-08-30T13:34:24.243Z"
+  "uppdaterad": "2026-08-30T13:35:21.242Z"
 }
