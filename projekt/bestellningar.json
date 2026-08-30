@@ -1,8 +1,8 @@
 {
   "projekt": [
     {
-      "campingId": "bo_camp",
-      "campingNamn": "Björkö Örns Camping",
+      "campingId": "ostnora",
+      "campingNamn": "Östnora",
       "projektnamn": "Utslagsrum",
       "projektledare": "Jeanette",
       "kontaktperson": "Hans",
@@ -14,13 +14,13 @@
       "kategori": "Underhåll",
       "bakgrund": "Måste renovera utslagsrummet på grund av svart mögel.",
       "beskrivning": "Bilat upp, nytt golv och väggar med pisoar.",
-      "ovrigt": "Vi får använda resultatpengar.",
+      "ovrigt": "Vi får använda resultatpengar. 200 000kr",
       "id": "mtfu428xhdzat",
-      "status": "komplettering",
+      "status": "inskickad",
       "projektNr": null,
       "skapadAv": "Receptionen Björkö Örn",
       "skapadTs": "2026-08-30T13:17:48.513Z",
-      "inskickadTs": "2026-08-30T13:17:48.513Z",
+      "inskickadTs": "2026-08-30T13:34:24.243Z",
       "uppdateradTs": "2026-08-30T13:17:48.513Z",
       "logg": [
         {
@@ -36,6 +36,13 @@
           "kommentar": "Hur mycket är resultatet? Lägg till det.",
           "av": "Morten Hagebö",
           "ts": "2026-08-30T13:33:23.396Z"
+        },
+        {
+          "status": "inskickad",
+          "text": "Skickad in för godkännande",
+          "kommentar": "",
+          "av": "Receptionen Björkö Örn",
+          "ts": "2026-08-30T13:34:24.243Z"
         }
       ],
       "godkandTs": "2026-08-30T13:33:23.396Z",
@@ -43,5 +50,5 @@
       "ansvarigKommentar": "Hur mycket är resultatet? Lägg till det."
     }
   ],
-  "uppdaterad": "2026-08-30T13:33:23.396Z"
+  "uppdaterad": "2026-08-30T13:34:24.243Z"
 }
