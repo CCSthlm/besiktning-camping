@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Projektbeställning – CCSthlm</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/tabler-icons.min.css">
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f5f5f3;--bg2:#fff;--bg3:#eeede8;--bg4:#e5e4de;
+  --text:#1a1a18;--text2:#5a5a57;--text3:#909088;
+  --accent:#3B6D11;--accent2:#27500A;--glow:rgba(59,109,17,.1);
+  --blue:#1a4f7a;--blue-bg:rgba(26,79,122,.08);
+  --red:#A32D2D;--red-bg:#FCEBEB;--red-text:#501313;
+  --amber:#854F0B;--amber-bg:#FAEEDA;--amber-text:#412402;
+  --green-bg:#EAF3DE;--green-text:#27500A;
+  --purple:#5b21b6;--purple-bg:rgba(91,33,182,.08);--purple-text:#3b0764;
+  --border:rgba(0,0,0,.09);--border2:rgba(0,0,0,.16);
+  --radius:10px;--radius-lg:16px;--shadow:0 2px 12px rgba(0,0,0,.08);
+}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
+  background:var(--bg3);color:var(--text);min-height:100vh;}
+
+/* TOPBAR */
+#topbar{position:sticky;top:0;z-index:100;background:var(--bg2);
+  border-bottom:1px solid var(--border2);display:flex;align-items:center;
+  padding:0 16px;height:48px;gap:8px;}
+.tb-logo{font-size:15px;font-weight:700;display:flex;align-items:center;gap:7px;}
+.tb-logo i{color:var(--accent);font-size:20px;}
+.tb-sep{width:1px;height:22px;background:var(--border2);flex-shrink:0;}
+.tb-spacer{flex:1;}
+.tb-role{font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;
+  background:var(--green-bg);color:var(--green-text);}
+.tb-btn{display:flex;align-items:center;gap:5px;padding:7px 12px;border-radius:8px;
+  border:1px solid var(--border2);background:none;color:var(--text2);font-size:13px;
+  font-weight:500;cursor:pointer;font-family:inherit;text-decoration:none;}
+.tb-btn:hover{background:var(--bg3);}
+.tb-btn-danger{background:var(--red-bg);color:var(--red);border-color:rgba(163,45,45,.25);}
+.tb-avatar{width:28px;height:28px;border-radius:50%;background:var(--accent);
+  color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+
+/* TABS */
+.tabs{display:flex;background:var(--bg2);border-bottom:1px solid var(--border2);}
+.tab{padding:13px 16px;font-size:13px;font-weight:500;color:var(--text3);
+  border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;
+  font-family:inherit;display:flex;align-items:center;gap:6px;white-space:nowrap;}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent);}
+.tab-badge{font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;
+  background:var(--red-bg);color:var(--red);margin-left:2px;}
+
+/* PAGE */
+.page{max-width:900px;margin:0 auto;padding:20px 16px 80px;}
+
+/* CARD */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);
+  overflow:hidden;box-shadow:var(--shadow);margin-bottom:14px;}
+.card-header{padding:14px 18px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+.card-title{font-size:14px;font-weight:600;display:flex;align-items:center;gap:7px;}
+.card-body{padding:18px;}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;
+  border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap;}
+.badge-utkast   {background:var(--bg3);color:var(--text2);}
+.badge-inskickad{background:var(--purple-bg);color:var(--purple-text);}
+.badge-väntar   {background:var(--purple-bg);color:var(--purple-text);}
+.badge-komplette{background:var(--amber-bg);color:var(--amber-text);}
+.badge-godkänd  {background:var(--blue-bg);color:var(--blue);}
+.badge-avslagen {background:var(--red-bg);color:var(--red-text);}
+.badge-registrerat{background:var(--green-bg);color:var(--green-text);}
+
+/* STATUS DOT */
+.dot{width:6px;height:6px;border-radius:50%;background:currentColor;flex-shrink:0;}
+
+/* PROJECT LIST */
+.proj-item{padding:16px 18px;border-bottom:1px solid var(--border);
+  display:flex;align-items:flex-start;gap:14px;cursor:pointer;transition:background .12s;}
+.proj-item:hover{background:var(--bg3);}
+.proj-item:last-child{border-bottom:none;}
+.proj-nr{font-size:12px;font-weight:700;color:var(--text3);min-width:60px;margin-top:2px;}
+.proj-info{flex:1;min-width:0;}
+.proj-name{font-size:14px;font-weight:600;margin-bottom:3px;}
+.proj-meta{font-size:12px;color:var(--text3);display:flex;gap:12px;flex-wrap:wrap;}
+.proj-status{flex-shrink:0;text-align:right;}
+
+/* FORM */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
+.form-grid.full{grid-template-columns:1fr;}
+.form-grid.trio{grid-template-columns:1fr 1fr 1fr;}
+.form-field{display:flex;flex-direction:column;gap:5px;}
+.form-field label{font-size:11px;font-weight:600;color:var(--text2);
+  text-transform:uppercase;letter-spacing:.04em;}
+.form-field input,.form-field select,.form-field textarea{
+  padding:10px 14px;background:var(--bg3);border:1px solid var(--border2);
+  border-radius:var(--radius);font-size:14px;color:var(--text);font-family:inherit;}
+.form-field input:focus,.form-field select:focus,.form-field textarea:focus{
+  outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--glow);}
+.form-field textarea{resize:vertical;min-height:80px;}
+.form-section{font-size:11px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.06em;color:var(--text3);border-bottom:1px solid var(--border);
+  padding-bottom:6px;margin:20px 0 14px;}
+.req{color:var(--red);}
+.form-help{font-size:11px;color:var(--text3);margin-top:3px;}
+
+/* BUTTONS */
+.btn{padding:9px 16px;border-radius:var(--radius);font-size:13px;font-weight:500;
+  cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px;
+  border:1px solid var(--border2);background:var(--bg3);color:var(--text2);transition:all .12s;}
+.btn:hover{background:var(--bg4);}
+.btn-primary{background:var(--accent);color:#fff;border-color:transparent;}
+.btn-primary:hover{background:var(--accent2);}
+.btn-blue{background:var(--blue-bg);color:var(--blue);border-color:rgba(26,79,122,.2);}
+.btn-amber{background:var(--amber-bg);color:var(--amber-text);border-color:rgba(133,79,11,.2);}
+.btn-danger{background:var(--red-bg);color:var(--red);border-color:rgba(163,45,45,.2);}
+.btn-sm{padding:6px 12px;font-size:12px;}
+.btn-lg{padding:12px 24px;font-size:15px;font-weight:600;}
+
+/* DETAIL TABS */
+.detail-tabs{display:flex;gap:2px;background:var(--bg3);border-radius:var(--radius-lg);
+  padding:4px;margin-bottom:18px;width:fit-content;}
+.detail-tab{padding:7px 16px;border-radius:var(--radius);border:none;background:none;
+  font-size:13px;color:var(--text2);cursor:pointer;font-family:inherit;}
+.detail-tab.active{background:var(--bg2);color:var(--text);font-weight:500;
+  box-shadow:0 1px 4px rgba(0,0,0,.08);}
+
+/* LOG */
+.log-item{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);}
+.log-item:last-child{border-bottom:none;}
+.log-icon{width:32px;height:32px;border-radius:50%;background:var(--bg3);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px;}
+.log-body{flex:1;}
+.log-text{font-size:13px;font-weight:500;}
+.log-meta{font-size:11px;color:var(--text3);margin-top:2px;}
+
+/* KPI ROW */
+.kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:16px;}
+.kpi{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px;}
+.kpi-val{font-size:24px;font-weight:700;}
+.kpi-lbl{font-size:11px;color:var(--text3);margin-top:3px;text-transform:uppercase;letter-spacing:.04em;}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);
+  z-index:500;align-items:flex-start;justify-content:center;padding:40px 16px;overflow-y:auto;}
+.modal-overlay.show{display:flex;}
+.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius-lg);
+  width:100%;max-width:520px;box-shadow:0 8px 40px rgba(0,0,0,.18);margin:auto;}
+.modal-header{padding:16px 20px;border-bottom:1px solid var(--border);
+  display:flex;justify-content:space-between;align-items:center;}
+.modal-title{font-size:15px;font-weight:600;}
+.modal-close{background:none;border:none;cursor:pointer;color:var(--text3);font-size:18px;}
+.modal-body{padding:18px 20px;}
+.modal-footer{padding:12px 20px;border-top:1px solid var(--border);
+  display:flex;justify-content:flex-end;gap:8px;}
+
+/* EMPTY */
+.empty{text-align:center;padding:60px 20px;color:var(--text3);}
+.empty i{font-size:48px;display:block;margin-bottom:12px;}
+.empty p{font-size:14px;line-height:1.6;}
+
+/* TOAST */
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(10px);
+  background:var(--text);color:#fff;border-radius:var(--radius-lg);padding:12px 20px;
+  font-size:13px;z-index:999;opacity:0;transition:all .25s;pointer-events:none;
+  display:flex;align-items:center;gap:8px;white-space:nowrap;box-shadow:var(--shadow);}
+
+/* DETAIL */
+.detail-field{margin-bottom:12px;}
+.detail-label{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px;}
+.detail-val{font-size:14px;color:var(--text);}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;}
+
+/* FILTER */
+.filter-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;align-items:center;}
+.filter-row select,.filter-row input{padding:8px 12px;background:var(--bg2);
+  border:1px solid var(--border2);border-radius:var(--radius);font-size:13px;
+  color:var(--text);font-family:inherit;}
+
+@media(max-width:600px){
+  .form-grid{grid-template-columns:1fr;}
+  .form-grid.trio{grid-template-columns:1fr 1fr;}
+  .detail-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div id="topbar">
+  <div class="tb-logo"><i class="ti ti-clipboard-list"></i> Projektbeställning</div>
+  <div class="tb-sep"></div>
+  <div class="tb-spacer"></div>
+  <span class="tb-role" id="tb-role">–</span>
+  <div class="tb-avatar" id="tb-avatar">?</div>
+  <a href="index.html" class="tb-btn"><i class="ti ti-arrow-left"></i> Portal</a>
+  <button class="tb-btn tb-btn-danger" onclick="portalLogout()"><i class="ti ti-logout"></i> Logga ut</button>
+</div>
+
+<!-- TABS -->
+<div class="tabs" id="main-tabs">
+  <button class="tab active" id="tab-mina" data-tab="mina" onclick="showTab(this.dataset.tab)">
+    <i class="ti ti-list"></i> Mina beställningar
+  </button>
+  <button class="tab" id="tab-ny" data-tab="ny" onclick="showTab(this.dataset.tab)">
+    <i class="ti ti-plus"></i> Ny beställning
+  </button>
+  <button class="tab" id="tab-godkann" data-tab="godkann" onclick="showTab(this.dataset.tab)" style="display:none">
+    <i class="ti ti-check"></i> Att godkänna
+    <span class="tab-badge" id="badge-godkann" style="display:none">0</span>
+  </button>
+  <button class="tab" id="tab-admin" data-tab="admin" onclick="showTab(this.dataset.tab)" style="display:none">
+    <i class="ti ti-settings"></i> Projektadmin
+    <span class="tab-badge" id="badge-admin" style="display:none">0</span>
+  </button>
+  <button class="tab" id="tab-alla" data-tab="alla" onclick="showTab(this.dataset.tab)" style="display:none">
+    <i class="ti ti-table"></i> Alla projekt
+  </button>
+</div>
+
+<!-- VIEWS -->
+<div id="view-mina" class="page"></div>
+<div id="view-ny" class="page" style="display:none"></div>
+<div id="view-godkann" class="page" style="display:none"></div>
+<div id="view-admin" class="page" style="display:none"></div>
+<div id="view-alla" class="page" style="display:none"></div>
+<div id="view-detalj" class="page" style="display:none;max-width:860px"></div>
+
+<!-- MODAL: GODKÄNN/AVSLÅ -->
+<div class="modal-overlay" id="modal-beslut">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="modal-beslut-title">Beslut</span>
+      <button class="modal-close" onclick="closeModal('modal-beslut')">&#x2715;</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-field">
+        <label id="modal-beslut-lbl">Kommentar</label>
+        <textarea id="modal-beslut-kommentar" rows="4" placeholder="Ange kommentar…"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('modal-beslut')">Avbryt</button>
+      <button class="btn btn-primary" id="modal-beslut-confirm" onclick="execBeslut()">Bekräfta</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: REGISTRERA PROJEKT -->
+<div class="modal-overlay" id="modal-registrera">
+  <div class="modal" style="max-width:560px">
+    <div class="modal-header">
+      <span class="modal-title">Registrera projekt</span>
+      <button class="modal-close" onclick="closeModal('modal-registrera')">&#x2715;</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid trio">
+        <div class="form-field">
+          <label>Projektnummer <span class="req">*</span></label>
+          <input type="text" id="reg-nr" placeholder="26-001" readonly style="background:var(--blue-bg);font-weight:600;color:var(--blue)">
+        </div>
+        <div class="form-field">
+          <label>KST <span class="req">*</span></label>
+          <input type="text" id="reg-kst" placeholder="50">
+        </div>
+        <div class="form-field">
+          <label>KB</label>
+          <input type="text" id="reg-kb" placeholder="60">
+        </div>
+      </div>
+      <div class="form-grid full">
+        <div class="form-field">
+          <label>Ansvarig handläggare</label>
+          <input type="text" id="reg-handlaggare" placeholder="Namn på handläggare">
+        </div>
+      </div>
+      <div class="form-grid full">
+        <div class="form-field">
+          <label>Villkor / Kommentar till campingen</label>
+          <textarea id="reg-kommentar" rows="3" placeholder="Eventuella villkor, restriktioner eller kommentarer…"></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-danger btn-sm" data-ab="komplettering" onclick="execAdminBeslut(this.dataset.ab)""><i class="ti ti-arrow-back-up"></i> Begär komplettering</button>
+      <button class="btn btn-danger btn-sm" data-ab="avslagen" onclick="execAdminBeslut(this.dataset.ab)""><i class="ti ti-x"></i> Avslå</button>
+      <button class="btn btn-primary" data-ab="registrerat" onclick="execAdminBeslut(this.dataset.ab)""><i class="ti ti-check"></i> Registrera projekt</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+var GH_REPO   = 'CCSthlm/besiktning-camping';
+var PROJ_PATH = 'projekt/bestellningar.json';
+var PROJ_SETTINGS_PATH = 'projekt/settings.json';
+
+var _user     = null;
+var _roles    = [];
+var _isCampingAnsvarig = false;
+var _isProjektAdmin    = false;
+var _isGlobal          = false;
+var _projekt   = [];   // all projects
+var _settings  = {nextNr: 1, currentYear: new Date().getFullYear()};
+var _beslutCtx = {id:null, action:null};
+var _detaljId  = null;
+var _prevTab   = 'mina';
+
+var CAMPINGAR = [
+  {id:'ostnora',    namn:'Östnora'},
+  {id:'orstig',     namn:'Örstig'},
+  {id:'mista',      namn:'Mista'},
+  {id:'storsved',   namn:'Storsved'},
+  {id:'kapellskar', namn:'Kapellskär'},
+  {id:'bo_camp',    namn:'Björkö Örns Camping'},
+  {id:'graddos',    namn:'Gräddös Pärla'},
+  {id:'angsudden',  namn:'Ängsudden'},
+  {id:'sektionsgem',namn:'Sektionsgemensamt'},
+];
+
+var STATUS_INFO = {
+  utkast:      {label:'Utkast',        cls:'badge-utkast',    icon:'ti-pencil',       color:'var(--text3)'},
+  inskickad:   {label:'Väntar godkännande',cls:'badge-inskickad',icon:'ti-clock',     color:'var(--purple)'},
+  godkänd:     {label:'Hos projektadmin', cls:'badge-godkänd',  icon:'ti-thumb-up',   color:'var(--blue)'},
+  komplettering:{label:'Komplettering', cls:'badge-komplette', icon:'ti-alert-triangle',color:'var(--amber)'},
+  avslagen:    {label:'Avslagen',       cls:'badge-avslagen',  icon:'ti-x',           color:'var(--red)'},
+  registrerat: {label:'Registrerat',    cls:'badge-registrerat',icon:'ti-check',      color:'var(--accent)'},
+};
+
+// ── GITHUB ────────────────────────────────────────────────────────────────
+async function ghGet(path) {
+  var token = localStorage.getItem('gh_token')||'';
+  if (!token) return null;
+  try {
+    var r = await fetch('https://api.github.com/repos/'+GH_REPO+'/contents/'+path,
+      {headers:{'Authorization':'token '+token}});
+    if (!r.ok) return null;
+    var g = await r.json();
+    var b = Uint8Array.from(atob(g.content.split('\n').join('')), function(c){return c.charCodeAt(0);});
+    return {data:JSON.parse(new TextDecoder('utf-8').decode(b)), sha:g.sha};
+  } catch(e) { return null; }
+}
+
+async function ghPut(path, data, msg) {
+  var token = localStorage.getItem('gh_token')||'';
+  if (!token) { toast('Token saknas','err'); return false; }
+  var chk = await fetch('https://api.github.com/repos/'+GH_REPO+'/contents/'+path,
+    {headers:{'Authorization':'token '+token}});
+  var sha = chk.ok ? (await chk.json()).sha : null;
+  var content = btoa(unescape(encodeURIComponent(JSON.stringify(data,null,2))));
+  var payload = {message:msg||'Projekt update', content, branch:'main'};
+  if (sha) payload.sha = sha;
+  var r = await fetch('https://api.github.com/repos/'+GH_REPO+'/contents/'+path,
+    {method:'PUT', headers:{'Authorization':'token '+token,'Content-Type':'application/json'},
+     body:JSON.stringify(payload)});
+  return r.ok;
+}
+
+// ── LOAD / SAVE ────────────────────────────────────────────────────────────
+async function loadProjekt() {
+  var r = await ghGet(PROJ_PATH);
+  _projekt = (r && r.data && r.data.projekt) ? r.data.projekt : [];
+  var rs   = await ghGet(PROJ_SETTINGS_PATH);
+  if (rs && rs.data) _settings = Object.assign(_settings, rs.data);
+}
+
+async function saveProjekt(msg) {
+  return ghPut(PROJ_PATH, {projekt:_projekt, uppdaterad:new Date().toISOString()}, msg||'Projekt uppdaterat');
+}
+
+async function saveSettings() {
+  return ghPut(PROJ_SETTINGS_PATH, _settings, 'Projektinställningar');
+}
+
+function nextProjektNr() {
+  var year = new Date().getFullYear().toString().slice(-2);
+  if (String(_settings.currentYear).slice(-2) !== year) {
+    _settings.nextNr = 1;
+    _settings.currentYear = new Date().getFullYear();
+  }
+  var nr = year+'-'+String(_settings.nextNr).padStart(3,'0');
+  _settings.nextNr++;
+  return nr;
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────
+async function init() {
+  var sess = sessionStorage.getItem('ccs_session') || sessionStorage.getItem('ccs_portal_user');
+  if (!sess) { window.location.replace('index.html'); return; }
+  try { _user = JSON.parse(sess); } catch(e) { window.location.replace('index.html'); return; }
+
+  _roles             = _user.adminRoles || [];
+  _isCampingAnsvarig = _roles.includes('projekt-ansvarig') || _roles.includes('global');
+  _isProjektAdmin    = _roles.includes('projekt-admin')    || _roles.includes('global');
+  _isGlobal          = _roles.includes('global');
+
+  var initials = (_user.name||'?').split(' ').map(function(n){return n[0]||'';}).join('').slice(0,2).toUpperCase();
+  document.getElementById('tb-avatar').textContent = initials;
+  var roleLabel = _isProjektAdmin ? 'Projektadmin' : _isCampingAnsvarig ? 'Ansvarig' : 'Camping';
+  document.getElementById('tb-role').textContent = roleLabel;
+
+  if (_isCampingAnsvarig) document.getElementById('tab-godkann').style.display = '';
+  if (_isProjektAdmin)    { document.getElementById('tab-admin').style.display = ''; document.getElementById('tab-alla').style.display = ''; }
+
+  await loadProjekt();
+  updateBadges();
+  showTab('mina');
+}
+
+function userCampingId() {
+  return _user.projektCampingId || _user.elCamping || _user.budgetEnhet || '';
+}
+
+function campingNamn(id) {
+  var c = CAMPINGAR.find(function(x){return x.id===id;});
+  return c ? c.namn : id;
+}
+
+function updateBadges() {
+  var vantarGodkannande = _projekt.filter(function(p){return p.status==='inskickad' && !p.raderad;}).length;
+  var vantarAdmin       = _projekt.filter(function(p){return p.status==='godkänd'   && !p.raderad;}).length;
+  var bg = document.getElementById('badge-godkann');
+  var ba = document.getElementById('badge-admin');
+  if (bg) { bg.textContent=vantarGodkannande; bg.style.display=vantarGodkannande?'':'none'; }
+  if (ba) { ba.textContent=vantarAdmin;        ba.style.display=vantarAdmin?'':'none'; }
+}
+
+// ── TABS ──────────────────────────────────────────────────────────────────
+function showTab(tab) {
+  ['mina','ny','godkann','admin','alla','detalj'].forEach(function(t){
+    document.getElementById('view-'+t).style.display = t===tab?'':'none';
+  });
+  document.querySelectorAll('.tab').forEach(function(el){el.classList.remove('active');});
+  var tabEl = document.getElementById('tab-'+tab);
+  if (tabEl) tabEl.classList.add('active');
+  var renders = {mina:renderMina, ny:renderNy, godkann:renderGodkann, admin:renderAdmin, alla:renderAlla};
+  if (renders[tab]) renders[tab]();
+}
+
+// ── STATUS BADGE ──────────────────────────────────────────────────────────
+function statusBadge(status) {
+  var info = STATUS_INFO[status] || {label:status, cls:'badge-utkast'};
+  return '<span class="badge '+info.cls+'"><span class="dot"></span>'+info.label+'</span>';
+}
+
+// ── VIEW: MINA ────────────────────────────────────────────────────────────
+function renderMina() {
+  var campId = userCampingId();
+  var mina   = _projekt.filter(function(p){
+    return !p.raderad && (p.campingId===campId || p.skapadAv===_user.name || _isGlobal);
+  }).sort(function(a,b){return b.skapadTs.localeCompare(a.skapadTs);});
+
+  var kpi = ['utkast','inskickad','godkänd','komplettering','avslagen','registrerat']
+    .map(function(s){ return mina.filter(function(p){return p.status===s;}).length; });
+
+  var rows = mina.map(function(p){
+    var si = STATUS_INFO[p.status]||{label:p.status,cls:'badge-utkast'};
+    return '<div class="proj-item" data-id="'+p.id+'" onclick="openDetalj(this.dataset.id)">'
+      +'<div class="proj-nr">'+(p.projektNr||'–')+'</div>'
+      +'<div class="proj-info">'
+      +'<div class="proj-name">'+p.projektnamn+'</div>'
+      +'<div class="proj-meta">'
+      +'<span><i class="ti ti-building" style="font-size:11px"></i> '+campingNamn(p.campingId)+'</span>'
+      +'<span><i class="ti ti-user" style="font-size:11px"></i> '+p.projektledare+'</span>'
+      +'<span><i class="ti ti-calendar" style="font-size:11px"></i> '+p.skapadTs.slice(0,10)+'</span>'
+      +'</div></div>'
+      +'<div class="proj-status">'+statusBadge(p.status)+'</div>'
+      +'</div>';
+  }).join('');
+
+  document.getElementById('view-mina').innerHTML =
+    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px">'
+    +'<div><h2 style="font-size:18px;font-weight:700">Mina beställningar</h2>'
+    +'<div style="font-size:13px;color:var(--text2);margin-top:3px">'+(_user.name)+'</div></div>'
+    +'<button class="btn btn-primary" data-tab="ny" onclick="showTab(this.dataset.tab)"><i class="ti ti-plus"></i> Ny beställning</button>'
+    +'</div>'
+    +(mina.length ? '<div class="card"><div>'+rows+'</div></div>'
+      : '<div class="empty"><i class="ti ti-clipboard-list"></i><p>Inga beställningar ännu.<br>Klicka "Ny beställning" för att komma igång.</p></div>');
+}
+
+// ── VIEW: NY ───────────────────────────────────────────────────────────────
+function renderNy(editProj) {
+  var campId   = userCampingId();
+  var campOpts = CAMPINGAR.map(function(c){
+    return '<option value="'+c.id+'"'+(c.id===campId?' selected':'')+'>'+c.namn+'</option>';
+  }).join('');
+
+  var p = editProj || {};
+  var isEdit = !!editProj;
+
+  document.getElementById('view-ny').innerHTML =
+    '<div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;flex-wrap:wrap">'
+    +'<button class="btn btn-sm" data-tab="mina" onclick="showTab(this.dataset.tab)"><i class="ti ti-arrow-left"></i> Tillbaka</button>'
+    +'<h2 style="font-size:18px;font-weight:700">'+(isEdit?'Redigera beställning':'Ny projektbeställning')+'</h2>'
+    +'</div>'
+
+    +'<div class="card"><div class="card-body">'
+    +'<div class="form-section">Grunduppgifter</div>'
+    +'<div class="form-grid">'
+    +'<div class="form-field"><label>Camping <span class="req">*</span></label>'
+    +'<select id="f-camping">'+campOpts+'</select></div>'
+    +'<div class="form-field"><label>Projektnamn <span class="req">*</span></label>'
+    +'<input type="text" id="f-namn" value="'+(p.projektnamn||'')+'" placeholder="Namn på projektet"></div>'
+    +'</div>'
+    +'<div class="form-grid">'
+    +'<div class="form-field"><label>Projektledare <span class="req">*</span></label>'
+    +'<input type="text" id="f-pl" value="'+(p.projektledare||'')+'" placeholder="Namn"></div>'
+    +'<div class="form-field"><label>Kontaktperson (om annan)</label>'
+    +'<input type="text" id="f-kontakt" value="'+(p.kontaktperson||'')+'" placeholder="Namn + telefon/e-post"></div>'
+    +'</div>'
+
+    +'<div class="form-section">Tidplan</div>'
+    +'<div class="form-grid">'
+    +'<div class="form-field"><label>Önskat startdatum <span class="req">*</span></label>'
+    +'<input type="date" id="f-start" value="'+(p.startDatum||'')+'"></div>'
+    +'<div class="form-field"><label>Önskat slutdatum <span class="req">*</span></label>'
+    +'<input type="date" id="f-slut" value="'+(p.slutDatum||'')+'"></div>'
+    +'</div>'
+
+    +'<div class="form-section">Ekonomi och prioritet</div>'
+    +'<div class="form-grid trio">'
+    +'<div class="form-field"><label>Finns i budget? <span class="req">*</span></label>'
+    +'<select id="f-budget">'
+    +'<option value="ja"'+(p.isBudget==='ja'?' selected':'')+'>Ja</option>'
+    +'<option value="nej"'+(p.isBudget==='nej'?' selected':'')+'>Nej</option>'
+    +'</select></div>'
+    +'<div class="form-field"><label>Uppskattad kostnad (kr)</label>'
+    +'<input type="number" id="f-kostnad" value="'+(p.kostnad||'')+'" placeholder="0"></div>'
+    +'<div class="form-field"><label>Prioritet <span class="req">*</span></label>'
+    +'<select id="f-prio">'
+    +'<option value="hög"'+(p.prioritet==='hög'?' selected':'')+'>Hög</option>'
+    +'<option value="medel"'+(p.prioritet==='medel'||!p.prioritet?' selected':'')+'>Medel</option>'
+    +'<option value="låg"'+(p.prioritet==='låg'?' selected':'')+'>Låg</option>'
+    +'</select></div>'
+    +'</div>'
+    +'<div class="form-field" style="margin-bottom:14px"><label>Kategori <span class="req">*</span></label>'
+    +'<select id="f-kategori">'
+    +'<option value="Underhåll"'+(p.kategori==='Underhåll'?' selected':'')+'>Underhåll</option>'
+    +'<option value="Investering"'+(p.kategori==='Investering'?' selected':'')+'>Investering</option>'
+    +'<option value="Nybyggnation"'+(p.kategori==='Nybyggnation'?' selected':'')+'>Nybyggnation</option>'
+    +'<option value="Säkerhet"'+(p.kategori==='Säkerhet'?' selected':'')+'>Säkerhet</option>'
+    +'<option value="Övrigt"'+(p.kategori==='Övrigt'?' selected':'')+'>Övrigt</option>'
+    +'</select></div>'
+
+    +'<div class="form-section">Beskrivning</div>'
+    +'<div class="form-field" style="margin-bottom:14px"><label>Bakgrund och motivering <span class="req">*</span></label>'
+    +'<textarea id="f-bakgrund" rows="4" placeholder="Varför behövs projektet? Vad är bakgrunden?">'+(p.bakgrund||'')+'</textarea></div>'
+    +'<div class="form-field" style="margin-bottom:14px"><label>Beskrivning av projektet <span class="req">*</span></label>'
+    +'<textarea id="f-beskrivning" rows="4" placeholder="Vad ska göras? Hur ska det genomföras?">'+(p.beskrivning||'')+'</textarea></div>'
+    +'<div class="form-field" style="margin-bottom:0"><label>Alternativ finansiering / övrigt</label>'
+    +'<textarea id="f-ovrigt" rows="2" placeholder="Om projektet inte finns i budget – hur föreslår du att det finansieras?">'+(p.ovrigt||'')+'</textarea>'
+    +'<div class="form-help">Fyll i om projektet inte finns i budget.</div></div>'
+    +'</div></div>'
+
+    +'<div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap">'
+    +(isEdit ? '<input type="hidden" id="f-edit-id" value="'+p.id+'">' : '')
+     +'<button class="btn btn-lg" data-action="spara" onclick="handleFormAction(this)"><i class="ti ti-device-floppy"></i> Spara utkast</button>'
+     +'<button class="btn btn-primary btn-lg" data-action="skicka" onclick="handleFormAction(this)"><i class="ti ti-send"></i> Skicka in beställning</button>'
+    +'</div>';
+}
+
+function collectForm() {
+  var f = function(id){ return (document.getElementById(id)||{}).value||''; };
+  var required = ['f-camping','f-namn','f-pl','f-start','f-slut','f-budget','f-prio','f-kategori','f-bakgrund','f-beskrivning'];
+  var missing  = required.filter(function(id){ return !f(id).trim(); });
+  if (missing.length) { toast('Fyll i alla obligatoriska fält','warn'); return null; }
+  return {
+    campingId:      f('f-camping'),
+    campingNamn:    campingNamn(f('f-camping')),
+    projektnamn:    f('f-namn'),
+    projektledare:  f('f-pl'),
+    kontaktperson:  f('f-kontakt'),
+    startDatum:     f('f-start'),
+    slutDatum:      f('f-slut'),
+    isBudget:       f('f-budget'),
+    kostnad:        parseFloat(f('f-kostnad'))||0,
+    prioritet:      f('f-prio'),
+    kategori:       f('f-kategori'),
+    bakgrund:       f('f-bakgrund'),
+    beskrivning:    f('f-beskrivning'),
+    ovrigt:         f('f-ovrigt'),
+  };
+}
+
+async function sparaUtkast(editId) {
+  var data = collectForm(); if (!data) return;
+  if (editId) {
+    var i = _projekt.findIndex(function(p){return p.id===editId;});
+    if (i>=0) _projekt[i] = Object.assign(_projekt[i], data, {uppdateradTs:new Date().toISOString()});
+  } else {
+    var proj = Object.assign(data, {
+      id:uid(), status:'utkast', projektNr:null,
+      skapadAv:_user.name, skapadTs:new Date().toISOString(),
+      uppdateradTs:new Date().toISOString(), logg:[]
+    });
+    addLog(proj, 'utkast', 'Utkast skapat');
+    _projekt.push(proj);
+  }
+  var ok = await saveProjekt('Utkast sparat');
+  if (ok) { toast('Utkast sparat','ok'); showTab('mina'); }
+  else toast('Kunde ej spara','err');
+}
+
+async function skickaIn(editId) {
+  var data = collectForm(); if (!data) return;
+  if (!confirm('Skicka in beställningen till campingansvarig för godkännande?')) return;
+  if (editId) {
+    var i = _projekt.findIndex(function(p){return p.id===editId;});
+    if (i>=0) {
+      _projekt[i] = Object.assign(_projekt[i], data, {status:'inskickad', inskickadTs:new Date().toISOString()});
+      addLog(_projekt[i], 'inskickad', 'Skickad in för godkännande');
+    }
+  } else {
+    var proj = Object.assign(data, {
+      id:uid(), status:'inskickad', projektNr:null,
+      skapadAv:_user.name, skapadTs:new Date().toISOString(),
+      inskickadTs:new Date().toISOString(), uppdateradTs:new Date().toISOString(), logg:[]
+    });
+    addLog(proj, 'inskickad', 'Skickad in för godkännande');
+    _projekt.push(proj);
+  }
+  var ok = await saveProjekt('Beställning inskickad');
+  if (ok) { toast('Beställning inskickad!','ok'); updateBadges(); showTab('mina'); }
+  else toast('Kunde ej spara','err');
+}
+
+// ── VIEW: GODKÄNN ─────────────────────────────────────────────────────────
+function renderGodkann() {
+  var lista = _projekt.filter(function(p){return p.status==='inskickad' && !p.raderad;})
+    .sort(function(a,b){return a.prioritetSort()-b.prioritetSort() || b.inskickadTs.localeCompare(a.inskickadTs);});
+
+  var rows = lista.map(function(p){
+    return '<div class="proj-item" data-id="'+p.id+'" onclick="openDetalj(this.dataset.id,"godkann")">'
+      +'<div class="proj-nr"><span style="font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px">'+p.prioritet+'</span></div>'
+      +'<div class="proj-info">'
+      +'<div class="proj-name">'+p.projektnamn+'</div>'
+      +'<div class="proj-meta">'
+      +'<span><i class="ti ti-building" style="font-size:11px"></i> '+p.campingNamn+'</span>'
+      +'<span><i class="ti ti-user" style="font-size:11px"></i> '+p.projektledare+'</span>'
+      +'<span><i class="ti ti-calendar" style="font-size:11px"></i> '+p.startDatum+' – '+p.slutDatum+'</span>'
+      +'<span>'+(p.isBudget==='ja'?'<span style="color:var(--accent)"><i class="ti ti-check" style="font-size:11px"></i> I budget</span>':'<span style="color:var(--amber)"><i class="ti ti-alert-triangle" style="font-size:11px"></i> Ej i budget</span>')+'</span>'
+      +'</div></div>'
+      +'<div class="proj-status" style="display:flex;flex-direction:column;gap:6px;align-items:flex-end">'
+      +'<button class="btn btn-primary btn-sm" data-id="'+p.id+'" data-beslut="godkänd" onclick="event.stopPropagation();openBeslut(this.dataset.id,this.dataset.beslut)""><i class="ti ti-thumb-up"></i> Godkänn</button>'
+      +'<button class="btn btn-danger btn-sm" data-id="'+p.id+'" data-beslut="avslagen" onclick="event.stopPropagation();openBeslut(this.dataset.id,this.dataset.beslut)""><i class="ti ti-thumb-down"></i> Avslå</button>'
+      +'</div>'
+      +'</div>';
+  }).join('');
+
+  document.getElementById('view-godkann').innerHTML =
+    '<h2 style="font-size:18px;font-weight:700;margin-bottom:16px">Att godkänna</h2>'
+    +(lista.length ? '<div class="card">'+rows+'</div>'
+      : '<div class="empty"><i class="ti ti-check"></i><p>Inga beställningar väntar på godkännande.</p></div>');
+}
+
+// ── VIEW: ADMIN ───────────────────────────────────────────────────────────
+function renderAdmin() {
+  var lista = _projekt.filter(function(p){return p.status==='godkänd' && !p.raderad;})
+    .sort(function(a,b){return b.godkandTs.localeCompare(a.godkandTs);});
+
+  var rows = lista.map(function(p){
+    return '<div class="proj-item" data-id="'+p.id+'" data-ft="admin" onclick="openDetalj(this.dataset.id,this.dataset.ft)">'
+      +'<div class="proj-nr">–</div>'
+      +'<div class="proj-info">'
+      +'<div class="proj-name">'+p.projektnamn+'</div>'
+      +'<div class="proj-meta">'
+      +'<span><i class="ti ti-building" style="font-size:11px"></i> '+p.campingNamn+'</span>'
+      +'<span><i class="ti ti-tag" style="font-size:11px"></i> '+p.kategori+'</span>'
+      +'<span><i class="ti ti-coin" style="font-size:11px"></i> '+(p.kostnad?p.kostnad.toLocaleString('sv-SE')+' kr':'–')+'</span>'
+      +'</div></div>'
+      +'<div class="proj-status">'
+      +'<button class="btn btn-primary btn-sm" data-id="'+p.id+'" onclick="event.stopPropagation();openRegistrera(this.dataset.id)"><i class="ti ti-clipboard-check"></i> Behandla</button>'
+      +'</div>'
+      +'</div>';
+  }).join('');
+
+  document.getElementById('view-admin').innerHTML =
+    '<h2 style="font-size:18px;font-weight:700;margin-bottom:16px">Att behandla – Projektadmin</h2>'
+    +(lista.length ? '<div class="card">'+rows+'</div>'
+      : '<div class="empty"><i class="ti ti-settings"></i><p>Inga beställningar att behandla.</p></div>');
+}
+
+// ── VIEW: ALLA ────────────────────────────────────────────────────────────
+function renderAlla() {
+  var lista = _projekt.filter(function(p){return !p.raderad;})
+    .sort(function(a,b){return b.skapadTs.localeCompare(a.skapadTs);});
+
+  var totals = {};
+  Object.keys(STATUS_INFO).forEach(function(s){ totals[s]=0; });
+  lista.forEach(function(p){ if (totals[p.status]!==undefined) totals[p.status]++; });
+
+  var filterHtml =
+    '<div class="filter-row">'
+    +'<select id="filter-status" onchange="renderAlla()">'
+    +'<option value="">Alla statusar</option>'
+    +Object.keys(STATUS_INFO).map(function(s){return '<option value="'+s+'">'+STATUS_INFO[s].label+'</option>';}).join('')
+    +'</select>'
+    +'<select id="filter-camping" onchange="renderAlla()">'
+    +'<option value="">Alla campingar</option>'
+    +CAMPINGAR.map(function(c){return '<option value="'+c.id+'">'+c.namn+'</option>';}).join('')
+    +'</select>'
+    +'<input type="text" id="filter-sok" oninput="renderAlla()" placeholder="Sök projekt…" style="flex:1;min-width:150px">'
+    +'<button class="btn btn-blue" onclick="exportExcel()"><i class="ti ti-download"></i> Excel</button>'
+    +'</div>';
+
+  // Apply filters
+  var fs = (document.getElementById('filter-status')||{}).value||'';
+  var fc = (document.getElementById('filter-camping')||{}).value||'';
+  var fq = ((document.getElementById('filter-sok')||{}).value||'').toLowerCase();
+  if (fs) lista = lista.filter(function(p){return p.status===fs;});
+  if (fc) lista = lista.filter(function(p){return p.campingId===fc;});
+  if (fq) lista = lista.filter(function(p){return (p.projektnamn+p.projektledare+p.campingNamn).toLowerCase().includes(fq);});
+
+  var rows = lista.map(function(p){
+    return '<div class="proj-item" data-id="'+p.id+'" data-ft="alla" onclick="openDetalj(this.dataset.id,this.dataset.ft)">'
+      +'<div class="proj-nr" style="font-size:13px;font-weight:700;color:var(--blue)">'+(p.projektNr||'–')+'</div>'
+      +'<div class="proj-info">'
+      +'<div class="proj-name">'+p.projektnamn+'</div>'
+      +'<div class="proj-meta">'
+      +'<span>'+p.campingNamn+'</span>'
+      +'<span>'+p.kategori+'</span>'
+      +'<span>'+p.projektledare+'</span>'
+      +'<span>'+(p.kostnad?p.kostnad.toLocaleString('sv-SE')+' kr':'–')+'</span>'
+      +'</div></div>'
+      +'<div class="proj-status">'+statusBadge(p.status)+'</div>'
+      +'</div>';
+  }).join('');
+
+  document.getElementById('view-alla').innerHTML =
+    '<h2 style="font-size:18px;font-weight:700;margin-bottom:14px">Alla projekt</h2>'
+    +'<div class="kpi-row">'
+    +['inskickad','godkänd','registrerat','avslagen'].map(function(s){
+      return '<div class="kpi"><div class="kpi-val">'+( totals[s]||0)+'</div><div class="kpi-lbl">'+STATUS_INFO[s].label+'</div></div>';
+    }).join('')
+    +'</div>'
+    +filterHtml
+    +(lista.length ? '<div class="card">'+rows+'</div>'
+      : '<div class="empty"><i class="ti ti-search"></i><p>Inga projekt matchar filtret.</p></div>');
+}
+
+// ── DETALJ ────────────────────────────────────────────────────────────────
+function openDetalj(id, fromTab) {
+  _detaljId = id;
+  _prevTab  = fromTab || 'mina';
+  var p     = _projekt.find(function(x){return x.id===id;});
+  if (!p) return;
+
+  var loggRows = (p.logg||[]).slice().reverse().map(function(l){
+    var si = STATUS_INFO[l.status]||{label:l.status,icon:'ti-dot',color:'var(--text3)'};
+    return '<div class="log-item">'
+      +'<div class="log-icon" style="color:'+si.color+'"><i class="ti '+si.icon+'"></i></div>'
+      +'<div class="log-body"><div class="log-text">'+l.text+'</div>'
+      +'<div class="log-meta">'+l.av+' · '+l.ts.replace('T',' ').slice(0,16)+'</div>'
+      +(l.kommentar?'<div style="font-size:13px;color:var(--text2);margin-top:4px;background:var(--bg3);padding:7px 10px;border-radius:8px">'+l.kommentar+'</div>':'')
+      +'</div></div>';
+  }).join('');
+
+  var canEdit = (p.status==='utkast'||p.status==='komplettering') && p.skapadAv===_user.name;
+
+  document.getElementById('view-detalj').innerHTML =
+    '<div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;flex-wrap:wrap">'
+    +'<button class="btn btn-sm" onclick="showTab(_prevTab)"><i class="ti ti-arrow-left"></i> Tillbaka</button>'
+    +'<h2 style="font-size:18px;font-weight:700;flex:1">'+p.projektnamn+'</h2>'
+    +statusBadge(p.status)
+    +(p.projektNr?'<span style="font-size:16px;font-weight:700;color:var(--blue)">'+p.projektNr+'</span>':'')
+    +'</div>'
+
+    +'<div class="card" style="margin-bottom:14px"><div class="card-body">'
+    +'<div class="detail-grid">'
+    +'<div class="detail-field"><div class="detail-label">Camping</div><div class="detail-val">'+p.campingNamn+'</div></div>'
+    +'<div class="detail-field"><div class="detail-label">Projektledare</div><div class="detail-val">'+p.projektledare+'</div></div>'
+    +'<div class="detail-field"><div class="detail-label">Kontaktperson</div><div class="detail-val">'+(p.kontaktperson||'–')+'</div></div>'
+    +'<div class="detail-field"><div class="detail-label">Kategori</div><div class="detail-val">'+p.kategori+'</div></div>'
+    +'<div class="detail-field"><div class="detail-label">Prioritet</div><div class="detail-val">'+p.prioritet+'</div></div>'
+    +'<div class="detail-field"><div class="detail-label">I budget</div><div class="detail-val">'+(p.isBudget==='ja'?'✓ Ja':'✗ Nej')+'</div></div>'
+    +'<div class="detail-field"><div class="detail-label">Uppskattad kostnad</div><div class="detail-val">'+(p.kostnad?p.kostnad.toLocaleString('sv-SE')+' kr':'–')+'</div></div>'
+    +'<div class="detail-field"><div class="detail-label">Tidplan</div><div class="detail-val">'+p.startDatum+' – '+p.slutDatum+'</div></div>'
+    +(p.kst?'<div class="detail-field"><div class="detail-label">KST</div><div class="detail-val">'+p.kst+'</div></div>':'')
+    +(p.kb?'<div class="detail-field"><div class="detail-label">KB</div><div class="detail-val">'+p.kb+'</div></div>':'')
+    +(p.handlaggare?'<div class="detail-field"><div class="detail-label">Handläggare</div><div class="detail-val">'+p.handlaggare+'</div></div>':'')
+    +'</div>'
+    +'<div class="detail-field"><div class="detail-label">Bakgrund och motivering</div><div class="detail-val" style="white-space:pre-wrap">'+p.bakgrund+'</div></div>'
+    +'<div class="detail-field" style="margin-top:12px"><div class="detail-label">Beskrivning</div><div class="detail-val" style="white-space:pre-wrap">'+p.beskrivning+'</div></div>'
+    +(p.ovrigt?'<div class="detail-field" style="margin-top:12px"><div class="detail-label">Övrigt</div><div class="detail-val" style="white-space:pre-wrap">'+p.ovrigt+'</div></div>':'')
+    +(p.adminKommentar?'<div style="margin-top:12px;background:var(--blue-bg);border-radius:var(--radius);padding:12px 14px"><div class="detail-label">Kansliets kommentar</div><div style="font-size:14px;margin-top:4px">'+p.adminKommentar+'</div></div>':'')
+    +'</div></div>'
+
+    +'<div class="card"><div class="card-header"><span class="card-title"><i class="ti ti-history"></i> Historik</span></div>'
+    +'<div class="card-body">'+(loggRows||'<div style="color:var(--text3);font-size:13px">Ingen historik</div>')+'</div></div>'
+
+    +'<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:4px">'
+    +(canEdit?'<button class="btn btn-primary" onclick="editProj(_detaljId)"><i class="ti ti-pencil"></i> Redigera och skicka in</button>':'')
+    +(_isCampingAnsvarig && p.status==='inskickad' ? '<button class="btn btn-primary" data-bact="godkänd" onclick="openBeslut(_detaljId,this.dataset.bact)"><i class="ti ti-thumb-up"></i> Godkänn</button><button class="btn btn-danger" data-bact="avslagen" onclick="openBeslut(_detaljId,this.dataset.bact)"><i class="ti ti-thumb-down"></i> Avslå</button>':'')
+    +(_isProjektAdmin && p.status==='godkänd' ? '<button class="btn btn-primary" onclick="openRegistrera(_detaljId)"><i class="ti ti-clipboard-check"></i> Behandla</button>':'')
+    +(_isProjektAdmin ? '<button class="btn btn-danger" onclick="raderaProj(_detaljId)"><i class="ti ti-trash"></i> Radera</button>':'')
+    +'</div>';
+
+  ['mina','ny','godkann','admin','alla'].forEach(function(t){
+    document.getElementById('view-'+t).style.display='none';
+  });
+  document.querySelectorAll('.tab').forEach(function(el){el.classList.remove('active');});
+  document.getElementById('view-detalj').style.display='';
+}
+
+function editProj(id) {
+  var p = _projekt.find(function(x){return x.id===id;});
+  if (!p) return;
+  document.getElementById('view-detalj').style.display='none';
+  document.getElementById('view-ny').style.display='';
+  document.getElementById('tab-ny').classList.add('active');
+  renderNy(p);
+}
+
+// ── BESLUT ────────────────────────────────────────────────────────────────
+function openBeslut(id, action) {
+  _beslutCtx = {id:id, action:action};
+  var labels = {godkänd:'Godkänn beställning', avslagen:'Avslå beställning'};
+  document.getElementById('modal-beslut-title').textContent = labels[action]||action;
+  document.getElementById('modal-beslut-lbl').textContent   = action==='avslagen' ? 'Anledning (obligatorisk):' : 'Kommentar (valfri):';
+  document.getElementById('modal-beslut-kommentar').value   = '';
+  document.getElementById('modal-beslut-confirm').textContent = action==='godkänd' ? '✓ Godkänn' : '✗ Avslå';
+  document.getElementById('modal-beslut-confirm').className = action==='godkänd' ? 'btn btn-primary' : 'btn btn-danger';
+  openModal('modal-beslut');
+}
+
+async function execBeslut() {
+  var kommentar = document.getElementById('modal-beslut-kommentar').value.trim();
+  var ctx = _beslutCtx;
+  if (ctx.action==='avslagen' && !kommentar) { alert('Ange anledning vid avslag.'); return; }
+  var i = _projekt.findIndex(function(p){return p.id===ctx.id;});
+  if (i<0) return;
+  _projekt[i].status    = ctx.action;
+  _projekt[i].godkandTs = new Date().toISOString();
+  _projekt[i].godkandAv = _user.name;
+  addLog(_projekt[i], ctx.action, ctx.action==='godkänd' ? 'Godkänd av campingansvarig' : 'Avslagen av campingansvarig', kommentar);
+  var ok = await saveProjekt('Beslut: '+ctx.action);
+  closeModal('modal-beslut');
+  if (ok) { toast(ctx.action==='godkänd'?'Godkänd!':'Avslagen','ok'); updateBadges(); showTab(_prevTab||'godkann'); }
+  else toast('Kunde ej spara','err');
+}
+
+// ── REGISTRERA ────────────────────────────────────────────────────────────
+function openRegistrera(id) {
+  _beslutCtx = {id:id, action:null};
+  var nr = nextProjektNr();
+  document.getElementById('reg-nr').value            = nr;
+  document.getElementById('reg-kst').value           = '';
+  document.getElementById('reg-kb').value            = '';
+  document.getElementById('reg-handlaggare').value   = _user.name;
+  document.getElementById('reg-kommentar').value     = '';
+  // Pre-fill KST from camping
+  var p = _projekt.find(function(x){return x.id===id;});
+  var kstMap = {ostnora:'50',orstig:'55',mista:'65',storsved:'70',kapellskar:'80',bo_camp:'60',graddos:'60',angsudden:'85',sektionsgem:'10'};
+  if (p) document.getElementById('reg-kst').value = kstMap[p.campingId]||'';
+  openModal('modal-registrera');
+}
+
+async function execAdminBeslut(action) {
+  var id          = _beslutCtx.id;
+  var nr          = document.getElementById('reg-nr').value.trim();
+  var kst         = document.getElementById('reg-kst').value.trim();
+  var kb          = document.getElementById('reg-kb').value.trim();
+  var handlaggare = document.getElementById('reg-handlaggare').value.trim();
+  var kommentar   = document.getElementById('reg-kommentar').value.trim();
+
+  if (action==='registrerat' && (!kst)) { alert('KST krävs för registrering.'); return; }
+  if (action==='komplettering' && !kommentar) { alert('Ange vad som behöver kompletteras.'); return; }
+
+  var i = _projekt.findIndex(function(p){return p.id===id;});
+  if (i<0) return;
+
+  if (action==='registrerat') {
+    _projekt[i].projektNr    = nr;
+    _projekt[i].kst          = kst;
+    _projekt[i].kb           = kb;
+    _projekt[i].handlaggare  = handlaggare;
+    _projekt[i].adminKommentar = kommentar;
+    await saveSettings(); // persist next nr
+  } else if (action==='avslagen') {
+    _settings.nextNr--; // release nr
+  } else {
+    _settings.nextNr--;
+  }
+
+  _projekt[i].status           = action;
+  _projekt[i].behandladTs      = new Date().toISOString();
+  _projekt[i].behandladAv      = _user.name;
+  _projekt[i].adminKommentar   = kommentar || _projekt[i].adminKommentar;
+
+  var logText = {registrerat:'Projekt registrerat', avslagen:'Avslagen av projektadmin', komplettering:'Begäran om komplettering'}[action];
+  addLog(_projekt[i], action, logText, kommentar);
+
+  var ok = await saveProjekt('Projektadmin: '+action);
+  closeModal('modal-registrera');
+  if (ok) { toast(logText,'ok'); updateBadges(); showTab('admin'); }
+  else toast('Kunde ej spara','err');
+}
+
+// ── EXCEL ─────────────────────────────────────────────────────────────────
+function exportExcel() {
+  if (!window.XLSX) { toast('Excel laddas','warn'); return; }
+  var lista = _projekt.filter(function(p){return !p.raderad;});
+  var data  = [['Projektnr','Status','Camping','Projektnamn','Projektledare','Kategori','Prioritet','I budget','Kostnad','Start','Slut','KST','KB','Handläggare','Skapad av','Skapad']];
+  lista.forEach(function(p){
+    data.push([p.projektNr||'–', (STATUS_INFO[p.status]||{}).label||p.status,
+      p.campingNamn, p.projektnamn, p.projektledare, p.kategori, p.prioritet,
+      p.isBudget==='ja'?'Ja':'Nej', p.kostnad||0, p.startDatum, p.slutDatum,
+      p.kst||'–', p.kb||'–', p.handlaggare||'–', p.skapadAv, p.skapadTs.slice(0,10)]);
+  });
+  var ws = XLSX.utils.aoa_to_sheet(data);
+  ws['!cols']=[{wch:10},{wch:18},{wch:22},{wch:30},{wch:20},{wch:16},{wch:8},{wch:8},{wch:12},{wch:12},{wch:12},{wch:6},{wch:6},{wch:20},{wch:20},{wch:12}];
+  var wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,ws,'Projekt');
+  XLSX.writeFile(wb,'Projektbestellningar_'+todayStr()+'.xlsx');
+  toast('Excel exporterad','ok');
+}
+
+// ── RADERA ────────────────────────────────────────────────────────────────
+async function raderaProj(id) {
+  var p = _projekt.find(function(x){return x.id===id;});
+  if (!confirm('Radera beställning "'+( p?p.projektnamn:id)+'"?')) return;
+  var i = _projekt.findIndex(function(x){return x.id===id;});
+  if (i>=0) { _projekt[i].raderad=true; _projekt[i].raderadAv=_user.name; _projekt[i].raderadTs=new Date().toISOString(); }
+  var ok = await saveProjekt('Raderad: '+id);
+  if (ok) { toast('Raderad','ok'); showTab('mina'); }
+  else toast('Kunde ej radera','err');
+}
+
+// ── LOG ────────────────────────────────────────────────────────────────────
+function addLog(proj, status, text, kommentar) {
+  if (!proj.logg) proj.logg = [];
+  proj.logg.push({status:status, text:text, kommentar:kommentar||'', av:_user.name, ts:new Date().toISOString()});
+}
+
+// ── HELPERS ───────────────────────────────────────────────────────────────
+Object.defineProperty(Object.prototype,'prioritetSort',{value:function(){
+  var m={hög:0,medel:1,låg:2};
+  return m[this.prioritet]!==undefined?m[this.prioritet]:1;
+},enumerable:false,writable:true,configurable:true});
+
+function handleFormAction(btn) {
+  var editId = (document.getElementById('f-edit-id')||{}).value||'';
+  if (btn.dataset.action==='spara') sparaUtkast(editId);
+  else skickaIn(editId);
+}
+
+function todayStr(){ return new Date().toISOString().slice(0,10); }
+function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
+function openModal(id)  { document.getElementById(id).classList.add('show'); }
+function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+document.addEventListener('click',function(e){ if(e.target.classList.contains('modal-overlay')) e.target.classList.remove('show'); });
+document.addEventListener('keydown',function(e){ if(e.key==='Escape') document.querySelectorAll('.modal-overlay.show').forEach(function(m){m.classList.remove('show');}); });
+function toast(msg,type){
+  var t=document.getElementById('toast');
+  var bg=type==='err'?'var(--red)':type==='warn'?'var(--amber)':'var(--accent)';
+  var ic=type==='err'?'ti-x':type==='warn'?'ti-alert-triangle':'ti-check';
+  t.innerHTML='<i class="ti '+ic+'"></i> '+msg;
+  t.style.background=bg;
+  t.style.opacity='1';t.style.transform='translateX(-50%) translateY(0)';
+  setTimeout(function(){t.style.opacity='0';t.style.transform='translateX(-50%) translateY(10px)';},3500);
+}
+function portalLogout(){
+  sessionStorage.setItem('ccs_logged_out','1');
+  sessionStorage.removeItem('ccs_session');
+  sessionStorage.removeItem('ccs_portal_user');
+  window.location.replace('index.html');
+}
+
+init();
+</script>
+</body>
+</html>
