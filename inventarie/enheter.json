@@ -200,6 +200,31 @@
       "skapadAv": "Joachim Säfqvist",
       "andrad": "2026-08-30T08:10:23.880Z",
       "andradAv": "Joachim Säfqvist"
+    },
+    {
+      "id": "INV-2608-X5NX",
+      "namn": "Lenovo ThinkPad T14",
+      "kategori": "Datorer & surfplattor",
+      "funktion": "Restaurang",
+      "status": "Aktiv",
+      "marke": "Lenovo",
+      "modell": "Lenovo ThinkPad T14 G1/i5/16GB RAM/256GB",
+      "serienr": "",
+      "anlaggning": "Östnora Kök & Bar",
+      "placering": "Restaurangansvarig",
+      "ansvarig": "Marie Olén",
+      "inkopDatum": "2026-08-17",
+      "inkopPris": 3742.5,
+      "garantiTill": "2028-08-17",
+      "leverantor": "NetOnNet",
+      "anteckningar": "",
+      "iptyp": "Dynamisk",
+      "ip": "",
+      "mac": "",
+      "skapad": "2026-08-30T08:14:18.382Z",
+      "skapadAv": "Joachim Säfqvist",
+      "andrad": "2026-08-30T08:14:18.382Z",
+      "andradAv": "Joachim Säfqvist"
     }
   ]
 }
