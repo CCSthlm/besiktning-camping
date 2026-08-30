@@ -71,6 +71,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-seri
 .badge-godkänd  {background:var(--blue-bg);color:var(--blue);}
 .badge-avslagen {background:var(--red-bg);color:var(--red-text);}
 .badge-registrerat{background:var(--green-bg);color:var(--green-text);}
+.badge-avslutat   {background:#d1fae5;color:#065f46;border:1px solid #6ee7b7;}
+.chip{padding:6px 12px;border-radius:20px;font-size:12px;font-weight:500;
+  border:1px solid var(--border2);background:var(--bg2);color:var(--text2);cursor:pointer;
+  display:inline-flex;align-items:center;gap:5px;}
+.chip:hover{background:var(--bg3);}
+.chip-active{background:var(--accent);color:#fff;border-color:transparent;}
 
 /* STATUS DOT */
 .dot{width:6px;height:6px;border-radius:50%;background:currentColor;flex-shrink:0;}
@@ -327,6 +333,7 @@ var STATUS_INFO = {
   komplettering:{label:'Komplettering', cls:'badge-komplette', icon:'ti-alert-triangle',color:'var(--amber)'},
   avslagen:    {label:'Avslagen',       cls:'badge-avslagen',  icon:'ti-x',           color:'var(--red)'},
   registrerat: {label:'Registrerat',    cls:'badge-registrerat',icon:'ti-check',      color:'var(--accent)'},
+  avslutat:    {label:'Avslutat',         cls:'badge-avslutat',   icon:'ti-circle-check',color:'var(--green-text)'},
 };
 
 // ── GITHUB ────────────────────────────────────────────────────────────────
@@ -420,11 +427,14 @@ function campingNamn(id) {
 
 function updateBadges() {
   var vantarGodkannande = _projekt.filter(function(p){return p.status==='inskickad' && !p.raderad;}).length;
-  var vantarAdmin       = _projekt.filter(function(p){return p.status==='godkänd'   && !p.raderad;}).length;
+  var vantarAdmin       = _projekt.filter(function(p){return (p.status==='godkänd'||p.status==='avslutat') && !p.raderad;}).length;
+  var nyaAvslutade      = _projekt.filter(function(p){return p.status==='avslutat' && !p.raderad && !p.avslutadSedd;}).length;
   var bg = document.getElementById('badge-godkann');
   var ba = document.getElementById('badge-admin');
   if (bg) { bg.textContent=vantarGodkannande; bg.style.display=vantarGodkannande?'':'none'; }
-  if (ba) { ba.textContent=vantarAdmin;        ba.style.display=vantarAdmin?'':'none'; }
+  if (ba) { ba.textContent=vantarAdmin; ba.style.display=vantarAdmin?'':'none'; }
+  // Also notify godkann-tab about newly closed projects
+  if (bg && nyaAvslutade) { bg.textContent=(vantarGodkannande+nyaAvslutade); bg.style.display=''; }
 }
 
 // ── TABS ──────────────────────────────────────────────────────────────────
@@ -448,15 +458,31 @@ function statusBadge(status) {
 // ── VIEW: MINA ────────────────────────────────────────────────────────────
 function renderMina() {
   var campId = userCampingId();
-  var mina   = _projekt.filter(function(p){
+  // Show all projects for user's camping + their own from other campings
+  var alla = _projekt.filter(function(p){
     return !p.raderad && (p.campingId===campId || p.skapadAv===_user.name || _isGlobal);
   }).sort(function(a,b){return b.skapadTs.localeCompare(a.skapadTs);});
 
-  var kpi = ['utkast','inskickad','godkänd','komplettering','avslagen','registrerat']
-    .map(function(s){ return mina.filter(function(p){return p.status===s;}).length; });
+  // Active filter from chip
+  var activeFilter = _minaFilter || '';
+  var mina = activeFilter ? alla.filter(function(p){return p.status===activeFilter;}) : alla;
+
+  // Count per status for chips
+  var counts = {};
+  Object.keys(STATUS_INFO).forEach(function(s){ counts[s]=0; });
+  alla.forEach(function(p){ if(counts[p.status]!==undefined) counts[p.status]++; });
+
+  var chips = Object.keys(STATUS_INFO).filter(function(s){ return counts[s]>0; }).map(function(s){
+    var info = STATUS_INFO[s];
+    var active = activeFilter===s;
+    return '<button class="chip'+(active?' chip-active':'')+'" data-s="'+s+'" onclick="setMinaFilter(this.dataset.s)">'
+      +'<span class="dot" style="color:'+info.color+'"></span>'
+      +info.label
+      +' <span style="font-size:10px;opacity:.7">'+counts[s]+'</span>'
+      +'</button>';
+  }).join('');
 
   var rows = mina.map(function(p){
-    var si = STATUS_INFO[p.status]||{label:p.status,cls:'badge-utkast'};
     return '<div class="proj-item" data-id="'+p.id+'" onclick="openDetalj(this.dataset.id)">'
       +'<div class="proj-nr">'+(p.projektNr||'–')+'</div>'
       +'<div class="proj-info">'
@@ -470,14 +496,34 @@ function renderMina() {
       +'</div>';
   }).join('');
 
+  var campNamn = campId ? campingNamn(campId) : 'Alla campingar';
+
   document.getElementById('view-mina').innerHTML =
-    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px">'
-    +'<div><h2 style="font-size:18px;font-weight:700">Mina beställningar</h2>'
-    +'<div style="font-size:13px;color:var(--text2);margin-top:3px">'+(_user.name)+'</div></div>'
+    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;flex-wrap:wrap;gap:10px">'
+    +'<div>'
+    +'<h2 style="font-size:18px;font-weight:700">Projektbeställningar</h2>'
+    +'<div style="font-size:13px;color:var(--text2);margin-top:3px">'
+    +'<i class="ti ti-building" style="font-size:12px"></i> '+campNamn
+    +' &nbsp;·&nbsp; <i class="ti ti-user" style="font-size:12px"></i> '+_user.name
+    +'</div>'
+    +'</div>'
     +'<button class="btn btn-primary" data-tab="ny" onclick="showTab(this.dataset.tab)"><i class="ti ti-plus"></i> Ny beställning</button>'
     +'</div>'
+    // Status chips
+    +(chips ? '<div style="display:flex;gap:6px;flex-wrap:wrap;margin:12px 0">'
+      +'<button class="chip'+(activeFilter===''?' chip-active':'')+'" onclick="setMinaFilter(\'\')">Alla <span style="font-size:10px;opacity:.7">'+alla.length+'</span></button>'
+      +chips+'</div>' : '')
     +(mina.length ? '<div class="card"><div>'+rows+'</div></div>'
-      : '<div class="empty"><i class="ti ti-clipboard-list"></i><p>Inga beställningar ännu.<br>Klicka "Ny beställning" för att komma igång.</p></div>');
+      : '<div class="empty"><i class="ti ti-clipboard-list"></i><p>'
+        +(activeFilter?'Inga projekt med status "'+STATUS_INFO[activeFilter].label+'"':'Inga beställningar ännu.')
+        +(activeFilter?'':' Klicka "Ny beställning" för att komma igång.')+'</p></div>');
+}
+
+var _minaFilter = '';
+
+function setMinaFilter(s) {
+  _minaFilter = s;
+  renderMina();
 }
 
 // ── VIEW: NY ───────────────────────────────────────────────────────────────
@@ -628,10 +674,22 @@ async function skickaIn(editId) {
 
 // ── VIEW: GODKÄNN ─────────────────────────────────────────────────────────
 function renderGodkann() {
-  var lista = _projekt.filter(function(p){return p.status==='inskickad' && !p.raderad;})
+  var lista = _projekt.filter(function(p){return (p.status==='inskickad'||p.status==='avslutat') && !p.raderad;})
     .sort(function(a,b){return a.prioritetSort()-b.prioritetSort() || b.inskickadTs.localeCompare(a.inskickadTs);});
 
   var rows = lista.map(function(p){
+    if (p.status==='avslutat') {
+      return '<div class="proj-item" data-id="'+p.id+'" data-ft="godkann" onclick="openDetalj(this.dataset.id,this.dataset.ft)" style="border-left:3px solid var(--accent);background:rgba(59,109,17,.02)">'
+        +'<div class="proj-nr" style="font-size:13px;font-weight:700;color:var(--accent)">'+p.projektNr+'</div>'
+        +'<div class="proj-info">'
+        +'<div class="proj-name">'+p.projektnamn+'</div>'
+        +'<div class="proj-meta"><span><i class="ti ti-building" style="font-size:11px"></i> '+p.campingNamn+'</span>'
+        +'<span><i class="ti ti-user" style="font-size:11px"></i> '+p.avslutadAv+' markerade som klart</span>'
+        +'<span><i class="ti ti-calendar" style="font-size:11px"></i> '+(p.avslutadTs?p.avslutadTs.slice(0,10):'')+'</span>'
+        +'</div></div>'
+        +'<div class="proj-status">'+statusBadge('avslutat')+'</div>'
+        +'</div>';
+    }
     return '<div class="proj-item" data-id="'+p.id+'" data-ft="godkann" onclick="openDetalj(this.dataset.id,this.dataset.ft)">'
       +'<div class="proj-nr"><span style="font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px">'+p.prioritet+'</span></div>'
       +'<div class="proj-info">'
@@ -657,12 +715,12 @@ function renderGodkann() {
 
 // ── VIEW: ADMIN ───────────────────────────────────────────────────────────
 function renderAdmin() {
-  var lista = _projekt.filter(function(p){return p.status==='godkänd' && !p.raderad;})
+  var lista = _projekt.filter(function(p){return (p.status==='godkänd'||p.status==='avslutat') && !p.raderad;})
     .sort(function(a,b){return b.godkandTs.localeCompare(a.godkandTs);});
 
   var rows = lista.map(function(p){
-    return '<div class="proj-item" data-id="'+p.id+'" data-ft="admin" onclick="openDetalj(this.dataset.id,this.dataset.ft)">'
-      +'<div class="proj-nr">–</div>'
+    return '<div class="proj-item" data-id="'+p.id+'" data-ft="admin" onclick="openDetalj(this.dataset.id,this.dataset.ft)" style="'+(p.status==='avslutat'?'border-left:3px solid var(--accent)':'')+'">'
+      +'<div class="proj-nr">'+(p.projektNr||'–')+'</div>'
       +'<div class="proj-info">'
       +'<div class="proj-name">'+p.projektnamn+'</div>'
       +'<div class="proj-meta">'
@@ -670,8 +728,11 @@ function renderAdmin() {
       +'<span><i class="ti ti-tag" style="font-size:11px"></i> '+p.kategori+'</span>'
       +'<span><i class="ti ti-coin" style="font-size:11px"></i> '+(p.kostnad?p.kostnad.toLocaleString('sv-SE')+' kr':'–')+'</span>'
       +'</div></div>'
-      +'<div class="proj-status">'
-      +'<button class="btn btn-primary btn-sm" data-id="'+p.id+'" onclick="event.stopPropagation();openRegistrera(this.dataset.id)"><i class="ti ti-clipboard-check"></i> Behandla</button>'
+      +'<div class="proj-status" style="display:flex;flex-direction:column;gap:5px;align-items:flex-end">'
+      +(p.status==='avslutat'
+        ? statusBadge('avslutat')
+        : '<button class="btn btn-primary btn-sm" data-id="'+p.id+'" onclick="event.stopPropagation();openRegistrera(this.dataset.id)"><i class="ti ti-clipboard-check"></i> Behandla</button>')
+      +'<button class="btn btn-danger btn-sm" data-id="'+p.id+'" onclick="event.stopPropagation();raderaProj(this.dataset.id)"><i class="ti ti-trash"></i> Radera</button>'
       +'</div>'
       +'</div>';
   }).join('');
@@ -731,7 +792,7 @@ function renderAlla() {
   document.getElementById('view-alla').innerHTML =
     '<h2 style="font-size:18px;font-weight:700;margin-bottom:14px">Alla projekt</h2>'
     +'<div class="kpi-row">'
-    +['inskickad','godkänd','registrerat','avslagen'].map(function(s){
+    +['inskickad','godkänd','registrerat','avslutat','avslagen'].map(function(s){
       return '<div class="kpi"><div class="kpi-val">'+( totals[s]||0)+'</div><div class="kpi-lbl">'+STATUS_INFO[s].label+'</div></div>';
     }).join('')
     +'</div>'
@@ -815,6 +876,9 @@ function openDetalj(id, fromTab) {
       : '')
     +(_isProjektAdmin && p.status==='godkänd' ? '<button class="btn btn-primary" onclick="openRegistrera(_detaljId)"><i class="ti ti-clipboard-check"></i> Behandla</button>':'')
     +(_isProjektAdmin ? '<button class="btn btn-danger" onclick="raderaProj(_detaljId)"><i class="ti ti-trash"></i> Radera</button>':'')
+    +(p.status==='registrerat' && (p.skapadAv===_user.name || p.campingId===userCampingId() || _isGlobal)
+      ? '<button class="btn" style="background:var(--green-bg);color:var(--green-text);border-color:rgba(59,109,17,.25)" onclick="avslutaProjekt(_detaljId)"><i class="ti ti-circle-check"></i> Markera som klart</button>'
+      : '')
     +'</div>';
 
   ['mina','ny','godkann','admin','alla'].forEach(function(t){
@@ -949,13 +1013,28 @@ function exportExcel() {
 }
 
 // ── RADERA ────────────────────────────────────────────────────────────────
+async function avslutaProjekt(id) {
+  var p = _projekt.find(function(x){return x.id===id;});
+  if (!confirm('Markera "'+( p?p.projektnamn:id)+'" som avslutat?\n\nProjektansvarig och projektadmin notifieras.')) return;
+  var i = _projekt.findIndex(function(x){return x.id===id;});
+  if (i<0) return;
+  _projekt[i].status      = 'avslutat';
+  _projekt[i].avslutadAv  = _user.name;
+  _projekt[i].avslutadTs  = new Date().toISOString();
+  _projekt[i].avslutadSedd= false; // flag for notification badge
+  addLog(_projekt[i], 'avslutat', 'Projekt markerat som avslutat', '');
+  var ok = await saveProjekt('Projekt avslutat: '+id);
+  if (ok) { toast('Projekt avslutat – projektansvarig och admin notifieras','ok'); updateBadges(); openDetalj(id, _prevTab); }
+  else toast('Kunde ej spara','err');
+}
+
 async function raderaProj(id) {
   var p = _projekt.find(function(x){return x.id===id;});
   if (!confirm('Radera beställning "'+( p?p.projektnamn:id)+'"?')) return;
   var i = _projekt.findIndex(function(x){return x.id===id;});
   if (i>=0) { _projekt[i].raderad=true; _projekt[i].raderadAv=_user.name; _projekt[i].raderadTs=new Date().toISOString(); }
   var ok = await saveProjekt('Raderad: '+id);
-  if (ok) { toast('Raderad','ok'); showTab('mina'); }
+  if (ok) { toast('Raderad','ok'); showTab(_prevTab==='detalj'?'admin':(_prevTab||'admin')); }
   else toast('Kunde ej radera','err');
 }
 
