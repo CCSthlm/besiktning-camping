@@ -95,7 +95,8 @@
       "adminRoles": [
         "avvikelse-admin",
         "avvikelse-brand",
-        "sba-ansvarig"
+        "sba-ansvarig",
+        "projekt-ansvarig"
       ],
       "role": "Användare",
       "active": true,
@@ -105,7 +106,10 @@
       "plCampingId": "",
       "godkannarcamping": "",
       "sbaCamping": "",
-      "created": "2026-07-02"
+      "created": "2026-07-02",
+      "nyckelCamping": "",
+      "budgetEnhet": "",
+      "elCamping": ""
     },
     {
       "id": "ums5ysv2emd8s",
