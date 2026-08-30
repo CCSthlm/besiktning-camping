@@ -757,7 +757,7 @@ function openDetalj(id, fromTab) {
       +'</div></div>';
   }).join('');
 
-  var canEdit = (p.status==='utkast'||p.status==='komplettering') && p.skapadAv===_user.name;
+  var canEdit = (p.status==='utkast'||p.status==='komplettering') && (p.skapadAv===_user.name || p.campingId===userCampingId() || _isGlobal);
 
   document.getElementById('view-detalj').innerHTML =
     '<div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;flex-wrap:wrap">'
@@ -784,6 +784,7 @@ function openDetalj(id, fromTab) {
     +'<div class="detail-field"><div class="detail-label">Bakgrund och motivering</div><div class="detail-val" style="white-space:pre-wrap">'+p.bakgrund+'</div></div>'
     +'<div class="detail-field" style="margin-top:12px"><div class="detail-label">Beskrivning</div><div class="detail-val" style="white-space:pre-wrap">'+p.beskrivning+'</div></div>'
     +(p.ovrigt?'<div class="detail-field" style="margin-top:12px"><div class="detail-label">Övrigt</div><div class="detail-val" style="white-space:pre-wrap">'+p.ovrigt+'</div></div>':'')
+    +(p.ansvarigKommentar?'<div style="margin-top:12px;background:var(--amber-bg);border-radius:var(--radius);padding:12px 14px"><div class="detail-label">Kommentar från ansvarig</div><div style="font-size:14px;margin-top:4px">'+p.ansvarigKommentar+'</div></div>':'')
     +(p.adminKommentar?'<div style="margin-top:12px;background:var(--blue-bg);border-radius:var(--radius);padding:12px 14px"><div class="detail-label">Kansliets kommentar</div><div style="font-size:14px;margin-top:4px">'+p.adminKommentar+'</div></div>':'')
     +'</div></div>'
 
@@ -792,7 +793,11 @@ function openDetalj(id, fromTab) {
 
     +'<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:4px">'
     +(canEdit?'<button class="btn btn-primary" onclick="editProj(_detaljId)"><i class="ti ti-pencil"></i> Redigera och skicka in</button>':'')
-    +(_isCampingAnsvarig && p.status==='inskickad' ? '<button class="btn btn-primary" data-bact="godkänd" onclick="openBeslut(_detaljId,this.dataset.bact)"><i class="ti ti-thumb-up"></i> Godkänn</button><button class="btn btn-danger" data-bact="avslagen" onclick="openBeslut(_detaljId,this.dataset.bact)"><i class="ti ti-thumb-down"></i> Avslå</button>':'')
+    +(_isCampingAnsvarig && p.status==='inskickad'
+      ? '<button class="btn btn-primary" data-bact="godkänd" onclick="openBeslut(_detaljId,this.dataset.bact)"><i class="ti ti-thumb-up"></i> Godkänn</button>'
+        +'<button class="btn btn-amber" data-bact="komplettering" onclick="openBeslut(_detaljId,this.dataset.bact)"><i class="ti ti-arrow-back-up"></i> Begär komplettering</button>'
+        +'<button class="btn btn-danger" data-bact="avslagen" onclick="openBeslut(_detaljId,this.dataset.bact)"><i class="ti ti-thumb-down"></i> Avslå</button>'
+      : '')
     +(_isProjektAdmin && p.status==='godkänd' ? '<button class="btn btn-primary" onclick="openRegistrera(_detaljId)"><i class="ti ti-clipboard-check"></i> Behandla</button>':'')
     +(_isProjektAdmin ? '<button class="btn btn-danger" onclick="raderaProj(_detaljId)"><i class="ti ti-trash"></i> Radera</button>':'')
     +'</div>';
@@ -816,25 +821,36 @@ function editProj(id) {
 // ── BESLUT ────────────────────────────────────────────────────────────────
 function openBeslut(id, action) {
   _beslutCtx = {id:id, action:action};
-  var labels = {godkänd:'Godkänn beställning', avslagen:'Avslå beställning'};
+  var labels = {godkänd:'Godkänn beställning', avslagen:'Avslå beställning', komplettering:'Begär komplettering'};
   document.getElementById('modal-beslut-title').textContent = labels[action]||action;
-  document.getElementById('modal-beslut-lbl').textContent   = action==='avslagen' ? 'Anledning (obligatorisk):' : 'Kommentar (valfri):';
+  document.getElementById('modal-beslut-lbl').textContent   =
+    action==='avslagen'      ? 'Anledning (obligatorisk):' :
+    action==='komplettering' ? 'Vad behöver kompletteras? (obligatorisk):' :
+                               'Kommentar (valfri):';
   document.getElementById('modal-beslut-kommentar').value   = '';
-  document.getElementById('modal-beslut-confirm').textContent = action==='godkänd' ? '✓ Godkänn' : '✗ Avslå';
-  document.getElementById('modal-beslut-confirm').className = action==='godkänd' ? 'btn btn-primary' : 'btn btn-danger';
+  document.getElementById('modal-beslut-confirm').textContent =
+    action==='godkänd' ? '✓ Godkänn' : action==='komplettering' ? '↩ Skicka tillbaka' : '✗ Avslå';
+  document.getElementById('modal-beslut-confirm').className =
+    action==='godkänd' ? 'btn btn-primary' : action==='komplettering' ? 'btn btn-amber' : 'btn btn-danger';
   openModal('modal-beslut');
 }
 
 async function execBeslut() {
   var kommentar = document.getElementById('modal-beslut-kommentar').value.trim();
   var ctx = _beslutCtx;
-  if (ctx.action==='avslagen' && !kommentar) { alert('Ange anledning vid avslag.'); return; }
+  if ((ctx.action==='avslagen'||ctx.action==='komplettering') && !kommentar) {
+    alert('Ange kommentar/anledning.'); return;
+  }
   var i = _projekt.findIndex(function(p){return p.id===ctx.id;});
   if (i<0) return;
   _projekt[i].status    = ctx.action;
   _projekt[i].godkandTs = new Date().toISOString();
   _projekt[i].godkandAv = _user.name;
-  addLog(_projekt[i], ctx.action, ctx.action==='godkänd' ? 'Godkänd av campingansvarig' : 'Avslagen av campingansvarig', kommentar);
+  if (kommentar) _projekt[i].ansvarigKommentar = kommentar;
+  var logText = ctx.action==='godkänd' ? 'Godkänd av campingansvarig'
+    : ctx.action==='komplettering' ? 'Begäran om komplettering från campingansvarig'
+    : 'Avslagen av campingansvarig';
+  addLog(_projekt[i], ctx.action, logText, kommentar);
   var ok = await saveProjekt('Beslut: '+ctx.action);
   closeModal('modal-beslut');
   if (ok) { toast(ctx.action==='godkänd'?'Godkänd!':'Avslagen','ok'); updateBadges(); showTab(_prevTab||'godkann'); }
