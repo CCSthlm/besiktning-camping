@@ -59,11 +59,15 @@
       "created": "2026-06-13",
       "pnr": "",
       "adminRoles": [
-        "gasol-kontrollant"
+        "gasol-kontrollant",
+        "projekt-camping"
       ],
       "plCampingId": "",
       "godkannarcamping": "",
-      "sbaCamping": ""
+      "sbaCamping": "",
+      "nyckelCamping": "",
+      "budgetEnhet": "",
+      "elCamping": ""
     },
     {
       "id": "umquxld7f6twr",
