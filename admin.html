@@ -538,7 +538,22 @@ tr:hover td{background:var(--bg3);}
             </div>
             <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin:10px 0 6px;padding-top:8px;border-top:1px solid var(--border)">Projektbeställning</div>
           <div class="role-section" style="padding:9px 12px;border-left:3px solid #1a4f7a;">
-            <label class="checkbox-item"><input type="checkbox" id="role-projekt-camping"> <i class="ti ti-clipboard-list" style="font-size:14px;color:#1a4f7a"></i> <span><strong>Projektbeställning</strong> – kan skapa och följa upp projektbeställningar</span></label>
+            <label class="checkbox-item"><input type="checkbox" id="role-projekt-camping" onchange="toggleProjektCamping()"> <i class="ti ti-clipboard-list" style="font-size:14px;color:#1a4f7a"></i> <span><strong>Projektbeställning</strong> – kan skapa och följa upp projektbeställningar</span></label>
+            <div id="projekt-camping-wrap" style="display:none;margin-top:8px;padding-left:22px">
+              <label style="font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.04em;display:block;margin-bottom:4px">Camping <span style="color:var(--red)">*</span></label>
+              <select id="projekt-camping" style="padding:7px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius);font-size:12px;font-family:inherit;width:100%;max-width:300px">
+                <option value="">– Välj camping –</option>
+                <option value="ostnora">Östnora</option>
+                <option value="orstig">Örstig</option>
+                <option value="mista">Mista</option>
+                <option value="storsved">Storsved</option>
+                <option value="kapellskar">Kapellskär</option>
+                <option value="bo_camp">Björkö Örns Camping</option>
+                <option value="graddos">Gräddös Pärla</option>
+                <option value="angsudden">Ängsudden</option>
+                <option value="sektionsgem">Sektionsgemensamt</option>
+              </select>
+            </div>
             <label class="checkbox-item"><input type="checkbox" id="role-projekt-ansvarig"> <i class="ti ti-clipboard-check" style="font-size:14px;color:#27500A"></i> <span><strong>Projekt – Ansvarig</strong> – godkänner/avslår beställningar från campingarna</span></label>
             <label class="checkbox-item"><input type="checkbox" id="role-projekt-admin"> <i class="ti ti-settings-2" style="font-size:14px;color:#5b21b6"></i> <span><strong>Projektadmin</strong> – registrerar projektnummer, KST och KB (kansliet)</span></label>
           </div>
@@ -1358,6 +1373,9 @@ function openEditUser(id) {
   const elCampingEl = document.getElementById('el-camping');
   if (elCampingEl) elCampingEl.value = u.elCamping || '';
   toggleElCamping();
+  const projektCampingEl = document.getElementById('projekt-camping');
+  if (projektCampingEl) projektCampingEl.value = u.projektCampingId || '';
+  toggleProjektCamping();
   openModal('modal-user');
 }
 
@@ -1373,6 +1391,13 @@ function toggleElCamping() {
   var wrap = document.getElementById('el-camping-wrap');
   if (wrap) wrap.style.display = checked ? '' : 'none';
   if (!checked) { var sel = document.getElementById('el-camping'); if(sel) sel.value=''; }
+}
+
+function toggleProjektCamping() {
+  var checked = document.getElementById('role-projekt-camping')?.checked;
+  var wrap = document.getElementById('projekt-camping-wrap');
+  if (wrap) wrap.style.display = checked ? '' : 'none';
+  if (!checked) { var sel = document.getElementById('projekt-camping'); if(sel) sel.value=''; }
 }
 
 function toggleBudgetEnhet() {
@@ -1452,6 +1477,7 @@ function saveUser() {
     nyckelCamping: adminRoles.includes('nyckel-admin') ? (document.getElementById('nyckel-camping')?.value || '') : '',
     budgetEnhet: adminRoles.includes('budget-camping') ? (document.getElementById('budget-enhet')?.value || '') : '',
     elCamping: adminRoles.includes('el-avlasning') ? (document.getElementById('el-camping')?.value || '') : '',
+    projektCampingId: adminRoles.includes('projekt-camping') ? (document.getElementById('projekt-camping')?.value || '') : '',
   };
   if (editId) {
     const i = _data.users.findIndex(u=>u.id===editId);
