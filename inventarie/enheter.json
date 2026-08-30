@@ -225,6 +225,31 @@
       "skapadAv": "Joachim Säfqvist",
       "andrad": "2026-08-30T08:14:18.382Z",
       "andradAv": "Joachim Säfqvist"
+    },
+    {
+      "id": "INV-2608-OX8Y",
+      "namn": "Lenovo ThinkPad T14",
+      "kategori": "Datorer & surfplattor",
+      "funktion": "Administration",
+      "status": "Aktiv",
+      "marke": "Lenovo",
+      "modell": "Lenovo ThinkPad T14 G1/i5/16GB RAM/256GB",
+      "serienr": "",
+      "anlaggning": "CC Östnora Camping",
+      "placering": "Campingansvarig",
+      "ansvarig": "Madelene Erikson",
+      "inkopDatum": "2026-08-29",
+      "inkopPris": 3742.5,
+      "garantiTill": "2029-08-29",
+      "leverantor": "NetOnNEt",
+      "anteckningar": "",
+      "iptyp": "Dynamisk",
+      "ip": "",
+      "mac": "",
+      "skapad": "2026-08-30T08:16:12.606Z",
+      "skapadAv": "Joachim Säfqvist",
+      "andrad": "2026-08-30T08:16:12.606Z",
+      "andradAv": "Joachim Säfqvist"
     }
   ]
 }
