@@ -632,7 +632,7 @@ function renderGodkann() {
     .sort(function(a,b){return a.prioritetSort()-b.prioritetSort() || b.inskickadTs.localeCompare(a.inskickadTs);});
 
   var rows = lista.map(function(p){
-    return '<div class="proj-item" data-id="'+p.id+'" onclick="openDetalj(this.dataset.id,"godkann")">'
+    return '<div class="proj-item" data-id="'+p.id+'" data-ft="godkann" onclick="openDetalj(this.dataset.id,this.dataset.ft)">'
       +'<div class="proj-nr"><span style="font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px">'+p.prioritet+'</span></div>'
       +'<div class="proj-info">'
       +'<div class="proj-name">'+p.projektnamn+'</div>'
