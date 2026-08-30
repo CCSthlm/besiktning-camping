@@ -458,9 +458,14 @@ function statusBadge(status) {
 // ── VIEW: MINA ────────────────────────────────────────────────────────────
 function renderMina() {
   var campId = userCampingId();
+
   // Show all projects for user's camping + their own from other campings
   var alla = _projekt.filter(function(p){
-    return !p.raderad && (p.campingId===campId || p.skapadAv===_user.name || _isGlobal);
+    if (p.raderad) return false;
+    if (_isGlobal) return true;
+    if (campId && p.campingId === campId) return true; // same camping
+    if (p.skapadAv === _user.name) return true;        // own projects
+    return false;
   }).sort(function(a,b){return b.skapadTs.localeCompare(a.skapadTs);});
 
   // Active filter from chip
@@ -496,7 +501,7 @@ function renderMina() {
       +'</div>';
   }).join('');
 
-  var campNamn = campId ? campingNamn(campId) : 'Alla campingar';
+  var campNamn = campId ? campingNamn(campId) : '(ingen camping tilldelad)';
 
   document.getElementById('view-mina').innerHTML =
     '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;flex-wrap:wrap;gap:10px">'
