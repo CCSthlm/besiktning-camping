@@ -250,6 +250,31 @@
       "skapadAv": "Joachim Säfqvist",
       "andrad": "2026-08-30T08:16:12.606Z",
       "andradAv": "Joachim Säfqvist"
+    },
+    {
+      "id": "INV-2608-RPTK",
+      "namn": "Lenovo ThinkCentre M720Q",
+      "kategori": "Datorer & surfplattor",
+      "funktion": "Bokning",
+      "status": "Aktiv",
+      "marke": "Lenovo",
+      "modell": "Lenovo ThinkCentre M720Q - 256/16",
+      "serienr": "",
+      "anlaggning": "CC Storsveds Camping",
+      "placering": "Reception",
+      "ansvarig": "Fredrik Smedin",
+      "inkopDatum": "2026-08-17",
+      "inkopPris": 2992.5,
+      "garantiTill": "2028-08-17",
+      "leverantor": "NetOnNet",
+      "anteckningar": "",
+      "iptyp": "Dynamisk",
+      "ip": "",
+      "mac": "",
+      "skapad": "2026-08-30T08:19:30.989Z",
+      "skapadAv": "Joachim Säfqvist",
+      "andrad": "2026-08-30T08:19:30.989Z",
+      "andradAv": "Joachim Säfqvist"
     }
   ]
 }
