@@ -16,8 +16,8 @@
       "beskrivning": "Bilat upp, nytt golv och väggar med pisoar.",
       "ovrigt": "Vi får använda resultatpengar. 200 000kr",
       "id": "mtfu428xhdzat",
-      "status": "godkänd",
-      "projektNr": null,
+      "status": "registrerat",
+      "projektNr": "26-001",
       "skapadAv": "Receptionen Björkö Örn",
       "skapadTs": "2026-08-30T13:17:48.513Z",
       "inskickadTs": "2026-08-30T13:34:24.243Z",
@@ -50,12 +50,25 @@
           "kommentar": "Dett är ok och finns pengar.",
           "av": "Morten Hagebö",
           "ts": "2026-08-30T13:35:21.242Z"
+        },
+        {
+          "status": "registrerat",
+          "text": "Projekt registrerat",
+          "kommentar": "Måste ske under året 2026",
+          "av": "Morten Hagebö",
+          "ts": "2026-08-30T13:37:32.121Z"
         }
       ],
       "godkandTs": "2026-08-30T13:35:21.242Z",
       "godkandAv": "Morten Hagebö",
-      "ansvarigKommentar": "Dett är ok och finns pengar."
+      "ansvarigKommentar": "Dett är ok och finns pengar.",
+      "kst": "60",
+      "kb": "63",
+      "handlaggare": "Morten Hagebö",
+      "adminKommentar": "Måste ske under året 2026",
+      "behandladTs": "2026-08-30T13:37:32.121Z",
+      "behandladAv": "Morten Hagebö"
     }
   ],
-  "uppdaterad": "2026-08-30T13:35:21.242Z"
+  "uppdaterad": "2026-08-30T13:37:32.121Z"
 }
