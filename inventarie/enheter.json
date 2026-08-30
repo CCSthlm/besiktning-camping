@@ -131,6 +131,30 @@
       "skapadAv": "Joachim Säfqvist",
       "andrad": "2026-08-24T06:29:03.638Z",
       "andradAv": "Joachim Säfqvist"
+    },
+    {
+      "id": "INV-2608-XK7H",
+      "namn": "MSI Bildskärm",
+      "kategori": "Datorer & surfplattor",
+      "funktion": "Reception",
+      "status": "Aktiv",
+      "marke": "MSI",
+      "modell": "MSI MAG 342CQR E2",
+      "serienr": "",
+      "anlaggning": "CC Kapellskärs Camping",
+      "placering": "Reception",
+      "ansvarig": "Elisabeth Terol",
+      "inkopDatum": "2026-08-17",
+      "garantiTill": "2029-08-17",
+      "leverantor": "NetOnNet",
+      "anteckningar": "",
+      "iptyp": "Dynamisk",
+      "ip": "",
+      "mac": "",
+      "skapad": "2026-08-30T08:06:43.293Z",
+      "skapadAv": "Joachim Säfqvist",
+      "andrad": "2026-08-30T08:06:43.293Z",
+      "andradAv": "Joachim Säfqvist"
     }
   ]
 }
