@@ -1,0 +1,17 @@
+{
+  "anlaggningId": "graddos_rest",
+  "punkter": [
+    {
+      "id": "mthamdg6ogcx",
+      "namn": "Huvudkyl",
+      "kategori": "Temperatur",
+      "typ": "temp",
+      "min": "2",
+      "max": "6",
+      "intervall": "dagligen",
+      "referens": "",
+      "instr": "Ta kolla tempen som hänger i kylen",
+      "aktiv": true
+    }
+  ]
+}
