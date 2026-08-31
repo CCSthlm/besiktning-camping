@@ -566,8 +566,64 @@ tr:hover td{background:var(--bg3);}
               </select>
               <input type="hidden" id="kontroll-anlaggning-namn">
             </div>
-            <label class="checkbox-item" style="margin-top:6px"><input type="checkbox" id="role-kontroll-ansvarig"> <i class="ti ti-clipboard-check" style="font-size:14px;color:#27500A"></i> <span><strong>Kontroll – Ansvarig</strong> – månadsrapport och signering</span></label>
-            <label class="checkbox-item" style="margin-top:6px"><input type="checkbox" id="role-kontroll-admin"> <i class="ti ti-settings-2" style="font-size:14px;color:#5b21b6"></i> <span><strong>Kontroll – Admin</strong> – bygger kontrollprogram och administrerar</span></label>
+            <label class="checkbox-item" style="margin-top:6px"><input type="checkbox" id="role-kontroll-ansvarig" onchange="toggleKontrollAnsvarigAnlaggning()"> <i class="ti ti-clipboard-check" style="font-size:14px;color:#27500A"></i> <span><strong>Kontroll – Ansvarig</strong> – månadsrapport och signering</span></label>
+            <div id="kontroll-ansvarig-wrap" style="display:none;margin-top:8px;padding-left:22px">
+              <label style="font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.04em;display:block;margin-bottom:4px">Anläggning</label>
+              <select id="kontroll-ansvarig-anlaggning-id" onchange="updateKontrollAnsvarigNamn()" style="padding:7px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius);font-size:12px;font-family:inherit;width:100%;max-width:300px">
+                <option value="">– Alla anläggningar –</option>
+                <optgroup label="Campingar">
+                  <option value="ostnora">Östnora</option>
+                  <option value="orstig">Örstig</option>
+                  <option value="mista">Mista</option>
+                  <option value="storsved">Storsved</option>
+                  <option value="kapellskar">Kapellskär</option>
+                  <option value="bo_camp">Björkö Örns Camping</option>
+                  <option value="graddos">Gräddös Pärla</option>
+                  <option value="angsudden">Ängsudden</option>
+                </optgroup>
+                <optgroup label="Restauranger &amp; Kök">
+                  <option value="ostnora_rest">Östnora Kök &amp; Bar</option>
+                  <option value="graddos_rest">Gräddös Pärla Kök &amp; Bar</option>
+                  <option value="bo_camp_rest">Björkö Örns Restaurang</option>
+                  <option value="kapellskar_rest">Kapellskärs Café</option>
+                  <option value="orstig_rest">Örstigs Kiosk</option>
+                  <option value="mista_rest">Mista Kiosk</option>
+                  <option value="storsved_rest">Storsveds Kiosk</option>
+                  <option value="angsudden_rest">Ängsuddens Kiosk</option>
+                </optgroup>
+              </select>
+              <input type="hidden" id="kontroll-ansvarig-anlaggning-namn">
+              <div style="font-size:11px;color:var(--text3);margin-top:4px">Lämna tomt för åtkomst till alla anläggningar.</div>
+            </div>
+            <label class="checkbox-item" style="margin-top:6px"><input type="checkbox" id="role-kontroll-admin" onchange="toggleKontrollAdminAnlaggning()"> <i class="ti ti-settings-2" style="font-size:14px;color:#5b21b6"></i> <span><strong>Kontroll – Admin</strong> – bygger kontrollprogram och administrerar</span></label>
+            <div id="kontroll-admin-wrap" style="display:none;margin-top:8px;padding-left:22px">
+              <label style="font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.04em;display:block;margin-bottom:4px">Anläggning</label>
+              <select id="kontroll-admin-anlaggning-id" onchange="updateKontrollAdminNamn()" style="padding:7px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius);font-size:12px;font-family:inherit;width:100%;max-width:300px">
+                <option value="">– Alla anläggningar –</option>
+                <optgroup label="Campingar">
+                  <option value="ostnora">Östnora</option>
+                  <option value="orstig">Örstig</option>
+                  <option value="mista">Mista</option>
+                  <option value="storsved">Storsved</option>
+                  <option value="kapellskar">Kapellskär</option>
+                  <option value="bo_camp">Björkö Örns Camping</option>
+                  <option value="graddos">Gräddös Pärla</option>
+                  <option value="angsudden">Ängsudden</option>
+                </optgroup>
+                <optgroup label="Restauranger &amp; Kök">
+                  <option value="ostnora_rest">Östnora Kök &amp; Bar</option>
+                  <option value="graddos_rest">Gräddös Pärla Kök &amp; Bar</option>
+                  <option value="bo_camp_rest">Björkö Örns Restaurang</option>
+                  <option value="kapellskar_rest">Kapellskärs Café</option>
+                  <option value="orstig_rest">Örstigs Kiosk</option>
+                  <option value="mista_rest">Mista Kiosk</option>
+                  <option value="storsved_rest">Storsveds Kiosk</option>
+                  <option value="angsudden_rest">Ängsuddens Kiosk</option>
+                </optgroup>
+              </select>
+              <input type="hidden" id="kontroll-admin-anlaggning-namn">
+              <div style="font-size:11px;color:var(--text3);margin-top:4px">Lämna tomt för åtkomst till alla anläggningar.</div>
+            </div>
           </div>
           <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin:10px 0 6px;padding-top:8px;border-top:1px solid var(--border)">Projektbeställning</div>
           <div class="role-section" style="padding:9px 12px;border-left:3px solid #1a4f7a;">
@@ -1417,9 +1473,19 @@ function openEditUser(id) {
   const kontrollNamnEl = document.getElementById('kontroll-anlaggning-namn');
   if (kontrollNamnEl) kontrollNamnEl.value = u.kontrollAnlaggningNamn || '';
   if (document.getElementById('role-kontroll-personal')) document.getElementById('role-kontroll-personal').checked = roles.includes('kontroll-personal');
-  if (document.getElementById('role-kontroll-ansvarig')) document.getElementById('role-kontroll-ansvarig').checked = roles.includes('kontroll-ansvarig');
-  if (document.getElementById('role-kontroll-admin')) document.getElementById('role-kontroll-admin').checked = roles.includes('kontroll-admin');
   toggleKontrollAnlaggning();
+  const kontrollAnsEl = document.getElementById('kontroll-ansvarig-anlaggning-id');
+  if (kontrollAnsEl) kontrollAnsEl.value = u.kontrollAnsvarigAnlaggningId || '';
+  const kontrollAnsNEl = document.getElementById('kontroll-ansvarig-anlaggning-namn');
+  if (kontrollAnsNEl) kontrollAnsNEl.value = u.kontrollAnsvarigAnlaggningNamn || '';
+  if (document.getElementById('role-kontroll-ansvarig')) document.getElementById('role-kontroll-ansvarig').checked = roles.includes('kontroll-ansvarig');
+  toggleKontrollAnsvarigAnlaggning();
+  const kontrollAdmEl = document.getElementById('kontroll-admin-anlaggning-id');
+  if (kontrollAdmEl) kontrollAdmEl.value = u.kontrollAdminAnlaggningId || '';
+  const kontrollAdmNEl = document.getElementById('kontroll-admin-anlaggning-namn');
+  if (kontrollAdmNEl) kontrollAdmNEl.value = u.kontrollAdminAnlaggningNamn || '';
+  if (document.getElementById('role-kontroll-admin')) document.getElementById('role-kontroll-admin').checked = roles.includes('kontroll-admin');
+  toggleKontrollAdminAnlaggning();
   openModal('modal-user');
 }
 
@@ -1440,10 +1506,17 @@ function toggleElCamping() {
 function updateKontrollNamn() {
   var sel = document.getElementById('kontroll-anlaggning-id');
   var hidden = document.getElementById('kontroll-anlaggning-namn');
-  if (sel && hidden) {
-    var opt = sel.options[sel.selectedIndex];
-    hidden.value = opt ? opt.text : '';
-  }
+  if (sel && hidden) { var opt = sel.options[sel.selectedIndex]; hidden.value = opt ? opt.text : ''; }
+}
+function updateKontrollAnsvarigNamn() {
+  var sel = document.getElementById('kontroll-ansvarig-anlaggning-id');
+  var hidden = document.getElementById('kontroll-ansvarig-anlaggning-namn');
+  if (sel && hidden) { var opt = sel.options[sel.selectedIndex]; hidden.value = (opt && opt.value) ? opt.text : ''; }
+}
+function updateKontrollAdminNamn() {
+  var sel = document.getElementById('kontroll-admin-anlaggning-id');
+  var hidden = document.getElementById('kontroll-admin-anlaggning-namn');
+  if (sel && hidden) { var opt = sel.options[sel.selectedIndex]; hidden.value = (opt && opt.value) ? opt.text : ''; }
 }
 
 function toggleKontrollAnlaggning() {
@@ -1451,10 +1524,26 @@ function toggleKontrollAnlaggning() {
   var wrap = document.getElementById('kontroll-anlaggning-wrap');
   if (wrap) wrap.style.display = checked ? '' : 'none';
   if (!checked) {
-    var sel = document.getElementById('kontroll-anlaggning-id');
-    if (sel) sel.value = '';
-    var hidden = document.getElementById('kontroll-anlaggning-namn');
-    if (hidden) hidden.value = '';
+    var sel = document.getElementById('kontroll-anlaggning-id'); if (sel) sel.value = '';
+    var h = document.getElementById('kontroll-anlaggning-namn'); if (h) h.value = '';
+  }
+}
+function toggleKontrollAnsvarigAnlaggning() {
+  var checked = document.getElementById('role-kontroll-ansvarig')?.checked;
+  var wrap = document.getElementById('kontroll-ansvarig-wrap');
+  if (wrap) wrap.style.display = checked ? '' : 'none';
+  if (!checked) {
+    var sel = document.getElementById('kontroll-ansvarig-anlaggning-id'); if (sel) sel.value = '';
+    var h = document.getElementById('kontroll-ansvarig-anlaggning-namn'); if (h) h.value = '';
+  }
+}
+function toggleKontrollAdminAnlaggning() {
+  var checked = document.getElementById('role-kontroll-admin')?.checked;
+  var wrap = document.getElementById('kontroll-admin-wrap');
+  if (wrap) wrap.style.display = checked ? '' : 'none';
+  if (!checked) {
+    var sel = document.getElementById('kontroll-admin-anlaggning-id'); if (sel) sel.value = '';
+    var h = document.getElementById('kontroll-admin-anlaggning-namn'); if (h) h.value = '';
   }
 }
 
@@ -1545,6 +1634,10 @@ function saveUser() {
     projektCampingId: adminRoles.includes('projekt-camping') ? (document.getElementById('projekt-camping')?.value || '') : '',
     kontrollAnlaggningId: adminRoles.includes('kontroll-personal') ? (document.getElementById('kontroll-anlaggning-id')?.value || '') : '',
     kontrollAnlaggningNamn: adminRoles.includes('kontroll-personal') ? (document.getElementById('kontroll-anlaggning-namn')?.value || '') : '',
+    kontrollAnsvarigAnlaggningId: adminRoles.includes('kontroll-ansvarig') ? (document.getElementById('kontroll-ansvarig-anlaggning-id')?.value || '') : '',
+    kontrollAnsvarigAnlaggningNamn: adminRoles.includes('kontroll-ansvarig') ? (document.getElementById('kontroll-ansvarig-anlaggning-namn')?.value || '') : '',
+    kontrollAdminAnlaggningId: adminRoles.includes('kontroll-admin') ? (document.getElementById('kontroll-admin-anlaggning-id')?.value || '') : '',
+    kontrollAdminAnlaggningNamn: adminRoles.includes('kontroll-admin') ? (document.getElementById('kontroll-admin-anlaggning-namn')?.value || '') : '',
   };
   if (editId) {
     const i = _data.users.findIndex(u=>u.id===editId);
