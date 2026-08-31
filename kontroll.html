@@ -421,8 +421,21 @@ async function init(){
   _roles=_user.adminRoles||[];
   _isAnsvarig=_roles.includes('kontroll-ansvarig')||_roles.includes('global');
   _isAdmin=_roles.includes('kontroll-admin')||_roles.includes('global');
-  _anlaggningId=_user.kontrollAnlaggningId||'';
-  _anlaggningNamn=_user.kontrollAnlaggningNamn||_anlaggningId;
+
+  // Determine anlaggning based on role — global gets all, others get assigned
+  if (_roles.includes('global')) {
+    _anlaggningId = ''; // global sees all — handled in UI
+    _anlaggningNamn = 'Alla anläggningar';
+  } else if (_roles.includes('kontroll-personal')) {
+    _anlaggningId = _user.kontrollAnlaggningId || '';
+    _anlaggningNamn = _user.kontrollAnlaggningNamn || _anlaggningId;
+  } else if (_roles.includes('kontroll-ansvarig')) {
+    _anlaggningId = _user.kontrollAnsvarigAnlaggningId || '';
+    _anlaggningNamn = _user.kontrollAnsvarigAnlaggningNamn || _anlaggningId || 'Alla anläggningar';
+  } else if (_roles.includes('kontroll-admin')) {
+    _anlaggningId = _user.kontrollAdminAnlaggningId || '';
+    _anlaggningNamn = _user.kontrollAdminAnlaggningNamn || _anlaggningId || 'Alla anläggningar';
+  }
 
   var roleLabel=_isAdmin?'Admin':_isAnsvarig?'Ansvarig':'Personal';
   document.getElementById('tb-role').textContent=roleLabel;
