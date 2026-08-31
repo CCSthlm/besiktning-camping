@@ -63,6 +63,15 @@
           "ersattning": 540,
           "syfte": "Avslutning - månadsmöte",
           "ts": "2026-08-31T22:24:23.185Z"
+        },
+        {
+          "datum": "2026-08-31",
+          "fordonstyp": "husbil",
+          "stracka": "Hässelby - Björkö örn",
+          "km": 240,
+          "ersattning": 1080,
+          "syfte": "Ledningsmöte - tenovering",
+          "ts": "2026-08-31T22:28:34.426Z"
         }
       ],
       "status": "utkast",
