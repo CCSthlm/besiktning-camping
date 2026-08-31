@@ -541,8 +541,30 @@ tr:hover td{background:var(--bg3);}
             <label class="checkbox-item"><input type="checkbox" id="role-kontroll-personal" onchange="toggleKontrollAnlaggning()"> <i class="ti ti-clipboard-check" style="font-size:14px;color:#3B6D11"></i> <span><strong>Kontroll – Personal</strong> – utför dagliga kontroller på tilldelad anläggning</span></label>
             <div id="kontroll-anlaggning-wrap" style="display:none;margin-top:8px;padding-left:22px">
               <label style="font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.04em;display:block;margin-bottom:4px">Anläggning <span style="color:var(--red)">*</span></label>
-              <input type="text" id="kontroll-anlaggning-id" placeholder="Anläggnings-ID (t.ex. ostnora_rest)" style="padding:7px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius);font-size:12px;font-family:inherit;width:100%;max-width:300px;margin-bottom:6px">
-              <input type="text" id="kontroll-anlaggning-namn" placeholder="Visningsnamn (t.ex. Östnora Restaurang)" style="padding:7px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius);font-size:12px;font-family:inherit;width:100%;max-width:300px">
+              <select id="kontroll-anlaggning-id" onchange="updateKontrollNamn()" style="padding:7px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius);font-size:12px;font-family:inherit;width:100%;max-width:300px">
+                <option value="">– Välj anläggning –</option>
+                <optgroup label="Campingar">
+                  <option value="ostnora">Östnora</option>
+                  <option value="orstig">Örstig</option>
+                  <option value="mista">Mista</option>
+                  <option value="storsved">Storsved</option>
+                  <option value="kapellskar">Kapellskär</option>
+                  <option value="bo_camp">Björkö Örns Camping</option>
+                  <option value="graddos">Gräddös Pärla</option>
+                  <option value="angsudden">Ängsudden</option>
+                </optgroup>
+                <optgroup label="Restauranger &amp; Kök">
+                  <option value="ostnora_rest">Östnora Kök &amp; Bar</option>
+                  <option value="graddos_rest">Gräddös Pärla Kök &amp; Bar</option>
+                  <option value="bo_camp_rest">Björkö Örns Restaurang</option>
+                  <option value="kapellskar_rest">Kapellskärs Café</option>
+                  <option value="orstig_rest">Örstigs Kiosk</option>
+                  <option value="mista_rest">Mista Kiosk</option>
+                  <option value="storsved_rest">Storsveds Kiosk</option>
+                  <option value="angsudden_rest">Ängsuddens Kiosk</option>
+                </optgroup>
+              </select>
+              <input type="hidden" id="kontroll-anlaggning-namn">
             </div>
             <label class="checkbox-item" style="margin-top:6px"><input type="checkbox" id="role-kontroll-ansvarig"> <i class="ti ti-clipboard-check" style="font-size:14px;color:#27500A"></i> <span><strong>Kontroll – Ansvarig</strong> – månadsrapport och signering</span></label>
             <label class="checkbox-item" style="margin-top:6px"><input type="checkbox" id="role-kontroll-admin"> <i class="ti ti-settings-2" style="font-size:14px;color:#5b21b6"></i> <span><strong>Kontroll – Admin</strong> – bygger kontrollprogram och administrerar</span></label>
@@ -1415,10 +1437,25 @@ function toggleElCamping() {
   if (!checked) { var sel = document.getElementById('el-camping'); if(sel) sel.value=''; }
 }
 
+function updateKontrollNamn() {
+  var sel = document.getElementById('kontroll-anlaggning-id');
+  var hidden = document.getElementById('kontroll-anlaggning-namn');
+  if (sel && hidden) {
+    var opt = sel.options[sel.selectedIndex];
+    hidden.value = opt ? opt.text : '';
+  }
+}
+
 function toggleKontrollAnlaggning() {
   var checked = document.getElementById('role-kontroll-personal')?.checked;
   var wrap = document.getElementById('kontroll-anlaggning-wrap');
   if (wrap) wrap.style.display = checked ? '' : 'none';
+  if (!checked) {
+    var sel = document.getElementById('kontroll-anlaggning-id');
+    if (sel) sel.value = '';
+    var hidden = document.getElementById('kontroll-anlaggning-namn');
+    if (hidden) hidden.value = '';
+  }
 }
 
 function toggleProjektCamping() {
