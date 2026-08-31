@@ -38,6 +38,15 @@
       "syfte": "Körningar mellan campingar",
       "resor": [
         {
+          "datum": "2026-05-31",
+          "fordonstyp": "husbil",
+          "stracka": "Hässelby Östnora BÖ hässelby",
+          "km": 300,
+          "ersattning": 1350,
+          "syfte": "Månadsmöte Östnora och BÖ",
+          "ts": "2026-08-31T22:49:38.044Z"
+        },
+        {
           "datum": "2026-06-18",
           "fordonstyp": "husbil",
           "stracka": "Hässelby -BÖ",
