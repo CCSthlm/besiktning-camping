@@ -47,6 +47,15 @@
           "ts": "2026-08-31T22:51:34.711Z"
         },
         {
+          "datum": "2026-05-15",
+          "fordonstyp": "husbil",
+          "stracka": "Hässelby BÖ",
+          "km": 240,
+          "ersattning": 1080,
+          "syfte": "Start av ledningsgrupp CA",
+          "ts": "2026-08-31T22:52:39.332Z"
+        },
+        {
           "datum": "2026-05-31",
           "fordonstyp": "husbil",
           "stracka": "Hässelby Östnora BÖ hässelby",
