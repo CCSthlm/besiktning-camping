@@ -36,7 +36,17 @@
       "camping": "CC Björkö Örns Camping",
       "period": "Juni",
       "syfte": "Körningar mellan campingar",
-      "resor": [],
+      "resor": [
+        {
+          "datum": "2026-08-28",
+          "fordonstyp": "husbil",
+          "stracka": "Hässelby - östnora",
+          "km": 120,
+          "ersattning": 540,
+          "syfte": "Avslutning - månadsmöte",
+          "ts": "2026-08-31T22:24:23.185Z"
+        }
+      ],
       "status": "utkast",
       "skapad": "2026-06-26T12:42:33.302Z",
       "skapadAv": "Massimo Johansson"
