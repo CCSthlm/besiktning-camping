@@ -451,12 +451,19 @@ async function init(){
   showTab('dag');
 }
 
+var _igårUtfall = {};
+
 async function loadAll(){
   var prog=await ghGet(KBASE+'/settings/program_'+_anlaggningId+'.json');
   _program=(prog&&prog.data&&prog.data.punkter)||[];
   var today=todayStr();
   var utfall=await ghGet(KBASE+'/utfall/'+_anlaggningId+'/'+today+'.json');
   _utfall=(utfall&&utfall.data)||{};
+  // Load yesterday to detect missed daily kontroller
+  var yd=new Date(); yd.setDate(yd.getDate()-1);
+  var ydStr=yd.toISOString().slice(0,10);
+  var igår=await ghGet(KBASE+'/utfall/'+_anlaggningId+'/'+ydStr+'.json');
+  _igårUtfall=(igår&&igår.data)||{};
   var levR=await ghGet(KBASE+'/leverans/'+_anlaggningId+'/'+today+'.json');
   _leveranser=(levR&&levR.data&&levR.data.leveranser)||[];
   var anlR=await ghGet(KBASE+'/settings/anlaggningar.json');
@@ -481,18 +488,18 @@ function showTab(tab){
 // ── DAGENS KONTROLLER ─────────────────────────────────────────────────────
 function getPunktStatus(p){
   if(_utfall[p.id]) return _utfall[p.id].forSent?'late':'done';
-  var now=new Date(),hour=now.getHours();
+  var hour=new Date().getHours();
   if(p.intervall==='dagligen'){
-    // Missad om det är sent på dagen och ej gjord
-    if(hour>=12)return 'red';
-    return 'amber';
+    // Red = was not done yesterday (and today's not done either)
+    if(_igårUtfall && !_igårUtfall[p.id]) return 'red';
+    if(hour<10) return 'gray';   // Before 10:00 — not yet required
+    return 'amber';              // 10:00–23:59 — should be done today
   }
   if(p.intervall==='veckovis'){
-    var day=now.getDay();
-    if(day===1)return 'amber'; // måndag = göra-dag
-    return 'gray';
+    return new Date().getDay()===1 ? 'amber' : 'gray';
   }
-  return 'amber';
+  if(p.intervall==='varje_anvandning') return 'amber';
+  return 'gray';
 }
 
 function renderDag(){
@@ -746,14 +753,16 @@ async function saveKontroll(){
     if(!varde.trim()){toast('Ange ett värde','warn');return;}
   }
 
-  // Check if late
-  var isMissed=getPunktStatus(p)==='red'&&!_utfall[p.id];
-  var forsentMinutter=0;
+  // Sen = kontrollen var röd (missad från igår) och görs nu idag
+  var isMissed = getPunktStatus(p) === 'red';
+  var forsentMinutter = 0;
   if(isMissed){
-    var now=new Date();
-    // Assume should have been done by 10:00
-    var due=new Date(now);due.setHours(10,0,0,0);
-    forsentMinutter=Math.round((now-due)/60000);
+    // Late since yesterday midnight
+    var now4 = new Date();
+    var startOfYesterday = new Date(now4);
+    startOfYesterday.setDate(startOfYesterday.getDate()-1);
+    startOfYesterday.setHours(23,59,0,0);
+    forsentMinutter = Math.round((now4 - startOfYesterday) / 60000);
   }
 
   var entry={
