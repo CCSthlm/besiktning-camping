@@ -38,6 +38,15 @@
       "syfte": "Körningar mellan campingar",
       "resor": [
         {
+          "datum": "2026-06-18",
+          "fordonstyp": "husbil",
+          "stracka": "Hässelby -BÖ",
+          "km": 240,
+          "ersattning": 1080,
+          "syfte": "Jobbade i restaurang - stöttade CV",
+          "ts": "2026-08-31T22:45:06.403Z"
+        },
+        {
           "datum": "2026-07-03",
           "fordonstyp": "husbil",
           "stracka": "Hässelby - BÖ -Hässelby",
