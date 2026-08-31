@@ -38,6 +38,15 @@
       "syfte": "Körningar mellan campingar",
       "resor": [
         {
+          "datum": "2026-08-21",
+          "fordonstyp": "husbil",
+          "stracka": "Hässelby - Björkö örn",
+          "km": 240,
+          "ersattning": 1080,
+          "syfte": "Avslutning - möte",
+          "ts": "2026-08-31T22:25:54.391Z"
+        },
+        {
           "datum": "2026-08-28",
           "fordonstyp": "husbil",
           "stracka": "Hässelby - östnora",
