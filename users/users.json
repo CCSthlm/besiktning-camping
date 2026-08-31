@@ -59,15 +59,11 @@
       "created": "2026-06-13",
       "pnr": "",
       "adminRoles": [
-        "gasol-kontrollant",
-        "projekt-camping"
+        "gasol-kontrollant"
       ],
       "plCampingId": "",
       "godkannarcamping": "",
-      "sbaCamping": "",
-      "nyckelCamping": "",
-      "budgetEnhet": "",
-      "elCamping": ""
+      "sbaCamping": ""
     },
     {
       "id": "umquxld7f6twr",
@@ -75,9 +71,7 @@
       "email": "dorry.johansson@cc-camping.se",
       "pin": "1212",
       "pnr": "",
-      "adminRoles": [
-        "kontroll-personal"
-      ],
+      "adminRoles": [],
       "role": "Användare",
       "active": true,
       "apps": [],
@@ -86,11 +80,7 @@
       "created": "2026-06-26",
       "sbaCamping": "",
       "nyckelCamping": "",
-      "budgetEnhet": "",
-      "elCamping": "",
-      "projektCampingId": "",
-      "kontrollAnlaggningId": "graddos_rest",
-      "kontrollAnlaggningNamn": "Gräddös Pärla Kök & Bar"
+      "budgetEnhet": ""
     },
     {
       "id": "umr39tsqhqx74",
@@ -101,8 +91,7 @@
       "adminRoles": [
         "avvikelse-admin",
         "avvikelse-brand",
-        "sba-ansvarig",
-        "projekt-admin"
+        "sba-ansvarig"
       ],
       "role": "Användare",
       "active": true,
@@ -112,10 +101,7 @@
       "plCampingId": "",
       "godkannarcamping": "",
       "sbaCamping": "",
-      "created": "2026-07-02",
-      "nyckelCamping": "",
-      "budgetEnhet": "",
-      "elCamping": ""
+      "created": "2026-07-02"
     },
     {
       "id": "ums5ysv2emd8s",
@@ -162,9 +148,6 @@
       "pnr": "",
       "adminRoles": [
         "personal",
-        "kontroll-personal",
-        "kontroll-ansvarig",
-        "kontroll-admin",
         "budget-camping"
       ],
       "role": "Användare",
@@ -175,15 +158,7 @@
       "sbaCamping": "",
       "nyckelCamping": "",
       "budgetEnhet": "graddos",
-      "created": "2026-08-22",
-      "elCamping": "",
-      "projektCampingId": "",
-      "kontrollAnlaggningId": "graddos_rest",
-      "kontrollAnlaggningNamn": "Gräddös Pärla Kök & Bar",
-      "kontrollAnsvarigAnlaggningId": "graddos_rest",
-      "kontrollAnsvarigAnlaggningNamn": "Gräddös Pärla Kök & Bar",
-      "kontrollAdminAnlaggningId": "graddos_rest",
-      "kontrollAdminAnlaggningNamn": "Gräddös Pärla Kök & Bar"
+      "created": "2026-08-22"
     },
     {
       "id": "umt5v3lw7ktmh",
@@ -192,7 +167,6 @@
       "pin": "2222",
       "pnr": "",
       "adminRoles": [
-        "projekt-camping",
         "budget-camping"
       ],
       "role": "Användare",
@@ -203,9 +177,7 @@
       "sbaCamping": "",
       "nyckelCamping": "",
       "budgetEnhet": "bo_camp",
-      "created": "2026-08-23",
-      "elCamping": "",
-      "projektCampingId": "bo_camp"
+      "created": "2026-08-23"
     },
     {
       "id": "umt6wq07xhe6r",
@@ -960,6 +932,20 @@
           "manualReason": "",
           "edited": false,
           "campingId": "c8"
+        },
+        {
+          "id": "mth6htxiqzjek",
+          "name": "Ingalill Nore",
+          "pnr": "19481117-0200",
+          "date": "2026-08-31",
+          "timeIn": "13:52",
+          "timeOut": "16:28",
+          "registeredBy": "Restaurang Östnora",
+          "registeredAt": "2026-08-31T11:52:12.487Z",
+          "manual": false,
+          "manualReason": "",
+          "edited": false,
+          "campingId": "c8"
         }
       ],
       "personal": [
@@ -1630,6 +1616,24 @@
           "detail": "Sussi Törnander stämplade ut 19:09",
           "oldVal": "",
           "newVal": "19:09"
+        },
+        {
+          "id": "mth6htxjsrru8",
+          "ts": "2026-08-31T11:52:12.487Z",
+          "user": "Restaurang Östnora",
+          "action": "in",
+          "detail": "Ingalill Nore stämplade in 13:52",
+          "oldVal": "",
+          "newVal": "13:52"
+        },
+        {
+          "id": "mthc2ty4t411w",
+          "ts": "2026-08-31T14:28:30.364Z",
+          "user": "Restaurang Östnora",
+          "action": "out",
+          "detail": "Ingalill Nore stämplade ut 16:28",
+          "oldVal": "",
+          "newVal": "16:28"
         }
       ]
     }
