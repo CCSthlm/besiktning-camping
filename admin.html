@@ -536,7 +536,18 @@ tr:hover td{background:var(--bg3);}
                 <option value="">Alla campingar</option>
               </select>
             </div>
-            <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin:10px 0 6px;padding-top:8px;border-top:1px solid var(--border)">Projektbeställning</div>
+            <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin:10px 0 6px;padding-top:8px;border-top:1px solid var(--border)">Kontrollprogram</div>
+          <div class="role-section" style="padding:9px 12px;border-left:3px solid #3B6D11;">
+            <label class="checkbox-item"><input type="checkbox" id="role-kontroll-personal" onchange="toggleKontrollAnlaggning()"> <i class="ti ti-clipboard-check" style="font-size:14px;color:#3B6D11"></i> <span><strong>Kontroll – Personal</strong> – utför dagliga kontroller på tilldelad anläggning</span></label>
+            <div id="kontroll-anlaggning-wrap" style="display:none;margin-top:8px;padding-left:22px">
+              <label style="font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.04em;display:block;margin-bottom:4px">Anläggning <span style="color:var(--red)">*</span></label>
+              <input type="text" id="kontroll-anlaggning-id" placeholder="Anläggnings-ID (t.ex. ostnora_rest)" style="padding:7px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius);font-size:12px;font-family:inherit;width:100%;max-width:300px;margin-bottom:6px">
+              <input type="text" id="kontroll-anlaggning-namn" placeholder="Visningsnamn (t.ex. Östnora Restaurang)" style="padding:7px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius);font-size:12px;font-family:inherit;width:100%;max-width:300px">
+            </div>
+            <label class="checkbox-item" style="margin-top:6px"><input type="checkbox" id="role-kontroll-ansvarig"> <i class="ti ti-clipboard-check" style="font-size:14px;color:#27500A"></i> <span><strong>Kontroll – Ansvarig</strong> – månadsrapport och signering</span></label>
+            <label class="checkbox-item" style="margin-top:6px"><input type="checkbox" id="role-kontroll-admin"> <i class="ti ti-settings-2" style="font-size:14px;color:#5b21b6"></i> <span><strong>Kontroll – Admin</strong> – bygger kontrollprogram och administrerar</span></label>
+          </div>
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin:10px 0 6px;padding-top:8px;border-top:1px solid var(--border)">Projektbeställning</div>
           <div class="role-section" style="padding:9px 12px;border-left:3px solid #1a4f7a;">
             <label class="checkbox-item"><input type="checkbox" id="role-projekt-camping" onchange="toggleProjektCamping()"> <i class="ti ti-clipboard-list" style="font-size:14px;color:#1a4f7a"></i> <span><strong>Projektbeställning</strong> – kan skapa och följa upp projektbeställningar</span></label>
             <div id="projekt-camping-wrap" style="display:none;margin-top:8px;padding-left:22px">
@@ -764,6 +775,9 @@ const ADMIN_ROLES = {
   'el-admin':               { key:'el-admin',                label:'Elavläsning-admin',            icon:'ti-bolt',           color:'#854F0B', badge:'badge-global' },
   'el-avlasning':           { key:'el-avlasning',            label:'Elavläsning',                  icon:'ti-bolt',           color:'#3B6D11', badge:'badge-personal' },
   'swish-admin':            { key:'swish-admin',             label:'Swish-admin',                  icon:'ti-brand-cashapp',  color:'#3B6D11', badge:'badge-global' },
+  'kontroll-personal':      { key:'kontroll-personal',  label:'Kontroll – Personal',  icon:'ti-clipboard-check', color:'#3B6D11', badge:'badge-personal' },
+  'kontroll-ansvarig':      { key:'kontroll-ansvarig',  label:'Kontroll – Ansvarig',  icon:'ti-clipboard-check', color:'#27500A', badge:'badge-global'   },
+  'kontroll-admin':         { key:'kontroll-admin',     label:'Kontroll – Admin',      icon:'ti-settings-2',      color:'#5b21b6', badge:'badge-global'   },
   'projekt-camping':        { key:'projekt-camping',   label:'Projektbeställning',  icon:'ti-clipboard-list', color:'#1a4f7a', badge:'badge-personal' },
   'projekt-ansvarig':       { key:'projekt-ansvarig',  label:'Projekt – Ansvarig',   icon:'ti-clipboard-check',color:'#27500A', badge:'badge-global' },
   'projekt-admin':          { key:'projekt-admin',     label:'Projektadmin',          icon:'ti-settings-2',    color:'#5b21b6', badge:'badge-global' },
@@ -1329,7 +1343,7 @@ function openAddUser() {
   document.getElementById('user-pin').value = '';
   document.getElementById('user-pnr').value = '';
   document.getElementById('user-active').value = 'true';
-  ['global','sektions','besiktnings','personal','avvikelse-admin','avvikelse-ledning','avvikelse-anlaggning','avvikelse-brand','nyhetsadmin','störningsadmin','kontoadmin','inventarieadmin','gasol-kontrollant','sba-ansvarig','sba-lokal','sam-ansvarig','arshjul-admin','reserakning-admin','reserakning-godkannare','reserakning-utbetalare','nyckel-admin','lon-admin','el-admin','el-avlasning','swish-admin','projekt-camping','projekt-ansvarig','projekt-admin','budget-camping','budget-ekonomi','budget-styrelse'].forEach(r => { const el=document.getElementById('role-'+r); if(el) el.checked=false; });
+  ['global','sektions','besiktnings','personal','avvikelse-admin','avvikelse-ledning','avvikelse-anlaggning','avvikelse-brand','nyhetsadmin','störningsadmin','kontoadmin','inventarieadmin','gasol-kontrollant','sba-ansvarig','sba-lokal','sam-ansvarig','arshjul-admin','reserakning-admin','reserakning-godkannare','reserakning-utbetalare','nyckel-admin','lon-admin','el-admin','el-avlasning','swish-admin','kontroll-personal','kontroll-ansvarig','kontroll-admin','projekt-camping','projekt-ansvarig','projekt-admin','budget-camping','budget-ekonomi','budget-styrelse'].forEach(r => { const el=document.getElementById('role-'+r); if(el) el.checked=false; });
   buildAppCheckboxes([]);
   populatePLCampingSelect('');
   toggleGodkannarcamping();
@@ -1351,7 +1365,7 @@ function openEditUser(id) {
   document.getElementById('user-active').value = u.active===false?'false':'true';
   // Set admin role checkboxes
   const roles = u.adminRoles || (u.role==='Admin'?['global']:[]);
-  ['global','sektions','besiktnings','personal','avvikelse-admin','avvikelse-ledning','avvikelse-anlaggning','avvikelse-brand','nyhetsadmin','störningsadmin','kontoadmin','inventarieadmin','gasol-kontrollant','sba-ansvarig','sba-lokal','sam-ansvarig','arshjul-admin','reserakning-admin','reserakning-godkannare','reserakning-utbetalare','nyckel-admin','lon-admin','el-admin','el-avlasning','swish-admin','projekt-camping','projekt-ansvarig','projekt-admin','budget-camping','budget-ekonomi','budget-styrelse'].forEach(r => {
+  ['global','sektions','besiktnings','personal','avvikelse-admin','avvikelse-ledning','avvikelse-anlaggning','avvikelse-brand','nyhetsadmin','störningsadmin','kontoadmin','inventarieadmin','gasol-kontrollant','sba-ansvarig','sba-lokal','sam-ansvarig','arshjul-admin','reserakning-admin','reserakning-godkannare','reserakning-utbetalare','nyckel-admin','lon-admin','el-admin','el-avlasning','swish-admin','kontroll-personal','kontroll-ansvarig','kontroll-admin','projekt-camping','projekt-ansvarig','projekt-admin','budget-camping','budget-ekonomi','budget-styrelse'].forEach(r => {
     const el=document.getElementById('role-'+r);
     if(el) el.checked = roles.includes(r);
   });
@@ -1376,6 +1390,14 @@ function openEditUser(id) {
   const projektCampingEl = document.getElementById('projekt-camping');
   if (projektCampingEl) projektCampingEl.value = u.projektCampingId || '';
   toggleProjektCamping();
+  const kontrollIdEl = document.getElementById('kontroll-anlaggning-id');
+  if (kontrollIdEl) kontrollIdEl.value = u.kontrollAnlaggningId || '';
+  const kontrollNamnEl = document.getElementById('kontroll-anlaggning-namn');
+  if (kontrollNamnEl) kontrollNamnEl.value = u.kontrollAnlaggningNamn || '';
+  if (document.getElementById('role-kontroll-personal')) document.getElementById('role-kontroll-personal').checked = adminRoles.includes('kontroll-personal');
+  if (document.getElementById('role-kontroll-ansvarig')) document.getElementById('role-kontroll-ansvarig').checked = adminRoles.includes('kontroll-ansvarig');
+  if (document.getElementById('role-kontroll-admin')) document.getElementById('role-kontroll-admin').checked = adminRoles.includes('kontroll-admin');
+  toggleKontrollAnlaggning();
   openModal('modal-user');
 }
 
@@ -1391,6 +1413,12 @@ function toggleElCamping() {
   var wrap = document.getElementById('el-camping-wrap');
   if (wrap) wrap.style.display = checked ? '' : 'none';
   if (!checked) { var sel = document.getElementById('el-camping'); if(sel) sel.value=''; }
+}
+
+function toggleKontrollAnlaggning() {
+  var checked = document.getElementById('role-kontroll-personal')?.checked;
+  var wrap = document.getElementById('kontroll-anlaggning-wrap');
+  if (wrap) wrap.style.display = checked ? '' : 'none';
 }
 
 function toggleProjektCamping() {
@@ -1457,7 +1485,7 @@ function saveUser() {
   const pin = document.getElementById('user-pin').value.trim();
   if (!name) { alert('Namn krävs.'); return; }
   if (!pin || !/^\d{4}$/.test(pin)) { alert('PIN-kod måste vara 4 siffror.'); return; }
-  const adminRoles = ['global','sektions','besiktnings','personal','avvikelse-admin','avvikelse-ledning','avvikelse-anlaggning','avvikelse-brand','nyhetsadmin','störningsadmin','kontoadmin','inventarieadmin','gasol-kontrollant','sba-ansvarig','sba-lokal','sam-ansvarig','arshjul-admin','reserakning-admin','reserakning-godkannare','reserakning-utbetalare','nyckel-admin','lon-admin','el-admin','el-avlasning','swish-admin','projekt-camping','projekt-ansvarig','projekt-admin','budget-camping','budget-ekonomi','budget-styrelse'].filter(r => document.getElementById('role-'+r)?.checked);
+  const adminRoles = ['global','sektions','besiktnings','personal','avvikelse-admin','avvikelse-ledning','avvikelse-anlaggning','avvikelse-brand','nyhetsadmin','störningsadmin','kontoadmin','inventarieadmin','gasol-kontrollant','sba-ansvarig','sba-lokal','sam-ansvarig','arshjul-admin','reserakning-admin','reserakning-godkannare','reserakning-utbetalare','nyckel-admin','lon-admin','el-admin','el-avlasning','swish-admin','kontroll-personal','kontroll-ansvarig','kontroll-admin','projekt-camping','projekt-ansvarig','projekt-admin','budget-camping','budget-ekonomi','budget-styrelse'].filter(r => document.getElementById('role-'+r)?.checked);
   const apps = Array.from(document.querySelectorAll('#user-apps-check input:checked')).map(e=>e.value);
   const editId = document.getElementById('user-edit-id').value;
   const godkannarcamping = adminRoles.includes('reserakning-godkannare')
@@ -1478,6 +1506,8 @@ function saveUser() {
     budgetEnhet: adminRoles.includes('budget-camping') ? (document.getElementById('budget-enhet')?.value || '') : '',
     elCamping: adminRoles.includes('el-avlasning') ? (document.getElementById('el-camping')?.value || '') : '',
     projektCampingId: adminRoles.includes('projekt-camping') ? (document.getElementById('projekt-camping')?.value || '') : '',
+    kontrollAnlaggningId: adminRoles.includes('kontroll-personal') ? (document.getElementById('kontroll-anlaggning-id')?.value || '') : '',
+    kontrollAnlaggningNamn: adminRoles.includes('kontroll-personal') ? (document.getElementById('kontroll-anlaggning-namn')?.value || '') : '',
   };
   if (editId) {
     const i = _data.users.findIndex(u=>u.id===editId);
