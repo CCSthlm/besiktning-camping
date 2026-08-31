@@ -1394,9 +1394,9 @@ function openEditUser(id) {
   if (kontrollIdEl) kontrollIdEl.value = u.kontrollAnlaggningId || '';
   const kontrollNamnEl = document.getElementById('kontroll-anlaggning-namn');
   if (kontrollNamnEl) kontrollNamnEl.value = u.kontrollAnlaggningNamn || '';
-  if (document.getElementById('role-kontroll-personal')) document.getElementById('role-kontroll-personal').checked = adminRoles.includes('kontroll-personal');
-  if (document.getElementById('role-kontroll-ansvarig')) document.getElementById('role-kontroll-ansvarig').checked = adminRoles.includes('kontroll-ansvarig');
-  if (document.getElementById('role-kontroll-admin')) document.getElementById('role-kontroll-admin').checked = adminRoles.includes('kontroll-admin');
+  if (document.getElementById('role-kontroll-personal')) document.getElementById('role-kontroll-personal').checked = roles.includes('kontroll-personal');
+  if (document.getElementById('role-kontroll-ansvarig')) document.getElementById('role-kontroll-ansvarig').checked = roles.includes('kontroll-ansvarig');
+  if (document.getElementById('role-kontroll-admin')) document.getElementById('role-kontroll-admin').checked = roles.includes('kontroll-admin');
   toggleKontrollAnlaggning();
   openModal('modal-user');
 }
