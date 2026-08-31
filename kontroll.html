@@ -1,0 +1,1242 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Kontrollprogram – CCSthlm</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/tabler-icons.min.css">
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f5f5f3;--bg2:#fff;--bg3:#eeede8;--bg4:#e5e4de;
+  --text:#1a1a18;--text2:#5a5a57;--text3:#909088;
+  --green:#3B6D11;--green2:#27500A;--green-bg:#EAF3DE;
+  --blue:#1a4f7a;--blue-bg:rgba(26,79,122,.08);
+  --red:#A32D2D;--red-bg:#FCEBEB;
+  --amber:#854F0B;--amber-bg:#FAEEDA;
+  --purple:#5b21b6;--purple-bg:rgba(91,33,182,.08);
+  --border:rgba(0,0,0,.09);--border2:rgba(0,0,0,.16);
+  --radius:10px;--shadow:0 2px 12px rgba(0,0,0,.08);
+}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
+  background:var(--bg3);color:var(--text);min-height:100vh;overscroll-behavior:none;}
+
+#topbar{position:sticky;top:0;z-index:100;background:var(--bg2);
+  border-bottom:1px solid var(--border2);display:flex;align-items:center;
+  padding:0 14px;height:48px;gap:8px;}
+.tb-logo{font-size:15px;font-weight:700;display:flex;align-items:center;gap:7px;}
+.tb-logo i{color:var(--green);font-size:20px;}
+.tb-spacer{flex:1;}
+.tb-role{font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;
+  background:var(--green-bg);color:var(--green2);}
+.tb-btn{display:flex;align-items:center;gap:5px;padding:7px 12px;border-radius:8px;
+  border:1px solid var(--border2);background:none;color:var(--text2);font-size:13px;
+  font-weight:500;cursor:pointer;font-family:inherit;text-decoration:none;}
+.tb-btn:hover{background:var(--bg3);}
+.tb-btn-danger{background:var(--red-bg);color:var(--red);border-color:rgba(163,45,45,.25);}
+
+.tabs{display:flex;background:var(--bg2);border-bottom:1px solid var(--border2);overflow-x:auto;scrollbar-width:none;}
+.tabs::-webkit-scrollbar{display:none;}
+.tab{flex-shrink:0;padding:13px 14px;font-size:13px;font-weight:500;color:var(--text3);
+  border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;
+  font-family:inherit;display:flex;align-items:center;gap:5px;white-space:nowrap;}
+.tab.active{color:var(--green);border-bottom-color:var(--green);}
+.tab-badge{font-size:10px;font-weight:700;padding:2px 6px;border-radius:20px;
+  background:var(--red-bg);color:var(--red);}
+
+.view{display:none;padding:14px 14px 80px;}
+.view.active{display:block;}
+
+.card{background:var(--bg2);border-radius:12px;border:1px solid var(--border);
+  overflow:hidden;box-shadow:var(--shadow);margin-bottom:12px;}
+.card-header{padding:12px 16px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.card-title{font-size:14px;font-weight:600;display:flex;align-items:center;gap:7px;}
+
+/* STATUS DOTS */
+.dot-red{width:9px;height:9px;border-radius:50%;background:var(--red);flex-shrink:0;}
+.dot-amber{width:9px;height:9px;border-radius:50%;background:var(--amber);flex-shrink:0;}
+.dot-green{width:9px;height:9px;border-radius:50%;background:var(--green);flex-shrink:0;}
+.dot-gray{width:9px;height:9px;border-radius:50%;background:var(--text3);flex-shrink:0;}
+
+/* KONTROLL ITEM */
+.kontroll-item{padding:12px 14px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:10px;cursor:pointer;transition:background .1s;}
+.kontroll-item:hover{background:var(--bg3);}
+.kontroll-item:last-child{border-bottom:none;}
+.kontroll-item.status-red{background:rgba(163,45,45,.03);}
+.kontroll-item.status-amber{background:rgba(133,79,11,.03);}
+.kontroll-name{font-size:14px;font-weight:500;flex:1;}
+.kontroll-sub{font-size:11px;color:var(--text3);margin-top:2px;}
+
+/* LATE BADGE */
+.late-badge{font-size:10px;font-weight:600;padding:2px 7px;border-radius:20px;
+  background:var(--amber-bg);color:var(--amber);white-space:nowrap;}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);
+  z-index:200;align-items:flex-end;justify-content:center;}
+.modal-overlay.show{display:flex;}
+.modal{background:var(--bg2);border-radius:16px 16px 0 0;width:100%;
+  max-width:520px;max-height:92vh;overflow-y:auto;padding-bottom:env(safe-area-inset-bottom);}
+.modal-handle{width:36px;height:4px;background:var(--border2);border-radius:2px;
+  margin:10px auto 4px;}
+.modal-header{padding:10px 18px 14px;border-bottom:1px solid var(--border);}
+.modal-title{font-size:16px;font-weight:600;}
+.modal-sub{font-size:12px;color:var(--text3);margin-top:3px;}
+.modal-body{padding:18px;}
+.modal-footer{padding:12px 18px;border-top:1px solid var(--border);
+  display:flex;gap:8px;}
+
+/* FORM */
+.form-field{margin-bottom:14px;}
+.form-field label{display:block;font-size:11px;font-weight:600;color:var(--text2);
+  text-transform:uppercase;letter-spacing:.04em;margin-bottom:5px;}
+.form-field input,.form-field select,.form-field textarea{width:100%;
+  padding:11px 14px;background:var(--bg3);border:1px solid var(--border2);
+  border-radius:var(--radius);font-size:15px;color:var(--text);font-family:inherit;}
+.form-field input:focus,.form-field select:focus,.form-field textarea:focus{
+  outline:none;border-color:var(--green);box-shadow:0 0 0 3px rgba(59,109,17,.1);}
+.form-field textarea{resize:vertical;min-height:70px;}
+
+/* BUTTONS */
+.btn{padding:10px 16px;border-radius:var(--radius);font-size:14px;font-weight:500;
+  cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px;
+  border:1px solid var(--border2);background:var(--bg3);color:var(--text2);}
+.btn-primary{background:var(--green);color:#fff;border-color:transparent;}
+.btn-primary:active{background:var(--green2);}
+.btn-danger{background:var(--red-bg);color:var(--red);border-color:rgba(163,45,45,.2);}
+.btn-full{width:100%;justify-content:center;padding:13px;}
+
+/* DRUM PICKER */
+.drum-wrap{display:flex;align-items:center;justify-content:center;gap:8px;padding:10px 0;}
+.drum-col{display:flex;flex-direction:column;align-items:center;}
+.drum-label{font-size:11px;color:var(--text3);margin-bottom:6px;font-weight:500;text-transform:uppercase;}
+.drum{width:88px;height:160px;overflow:hidden;position:relative;border-radius:12px;
+  background:var(--bg3);border:1px solid var(--border2);}
+.drum-inner{position:relative;}
+.drum-item{height:40px;display:flex;align-items:center;justify-content:center;
+  font-size:22px;font-weight:500;color:var(--text3);transition:none;user-select:none;}
+.drum-item.selected{color:var(--text);font-size:28px;font-weight:600;}
+.drum-select{position:absolute;top:50%;left:0;right:0;height:40px;
+  transform:translateY(-50%);border-top:2px solid var(--green);
+  border-bottom:2px solid var(--green);pointer-events:none;border-radius:0;}
+.drum-fade-top{position:absolute;top:0;left:0;right:0;height:60px;
+  background:linear-gradient(to bottom,var(--bg3),transparent);pointer-events:none;z-index:1;}
+.drum-fade-bot{position:absolute;bottom:0;left:0;right:0;height:60px;
+  background:linear-gradient(to top,var(--bg3),transparent);pointer-events:none;z-index:1;}
+
+/* TEMP RESULT */
+.temp-result{text-align:center;padding:12px;margin-bottom:14px;border-radius:var(--radius);}
+.temp-result.ok{background:var(--green-bg);}
+.temp-result.warn{background:var(--red-bg);}
+.temp-result-val{font-size:32px;font-weight:700;}
+.temp-result.ok .temp-result-val{color:var(--green);}
+.temp-result.warn .temp-result-val{color:var(--red);}
+.temp-result-lbl{font-size:13px;color:var(--text2);margin-top:4px;}
+
+/* AVVIKELSE */
+.avvik-field{display:none;background:var(--red-bg);border-radius:var(--radius);
+  padding:12px;margin-bottom:14px;}
+.avvik-field.show{display:block;}
+.avvik-field label{color:var(--red);font-size:12px;font-weight:600;
+  text-transform:uppercase;letter-spacing:.04em;display:block;margin-bottom:6px;}
+.avvik-field textarea{width:100%;padding:10px;border:1px solid rgba(163,45,45,.3);
+  border-radius:8px;font-size:14px;font-family:inherit;resize:vertical;min-height:60px;
+  background:var(--bg2);}
+
+/* GRAPH */
+.graph-wrap{padding:12px 14px 4px;}
+.graph-svg{width:100%;overflow:visible;}
+
+/* HISTORIK */
+.hist-row{padding:10px 14px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:10px;}
+.hist-row:last-child{border-bottom:none;}
+.hist-val{font-size:16px;font-weight:600;min-width:56px;}
+.hist-info{flex:1;}
+.hist-name{font-size:13px;font-weight:500;}
+.hist-meta{font-size:11px;color:var(--text3);margin-top:2px;}
+
+/* MÅNADSÖVERSIKT */
+.manad-row{padding:10px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;}
+.manad-row:last-child{border-bottom:none;}
+.prog-bar{flex:1;height:6px;background:var(--border2);border-radius:3px;overflow:hidden;}
+.prog-fill{height:100%;border-radius:3px;background:var(--green);}
+.prog-fill.warn{background:var(--amber);}
+.prog-fill.danger{background:var(--red);}
+
+/* ADMIN */
+.prog-item{padding:10px 14px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:10px;}
+.prog-item:last-child{border-bottom:none;}
+.type-icon{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;
+  justify-content:center;font-size:15px;flex-shrink:0;}
+.type-temp{background:var(--blue-bg);color:var(--blue);}
+.type-janej{background:var(--green-bg);color:var(--green);}
+.type-text{background:var(--amber-bg);color:var(--amber);}
+.type-lev{background:var(--purple-bg);color:var(--purple);}
+
+/* SIGNERING */
+.sign-box{background:var(--blue-bg);border:1px solid rgba(26,79,122,.2);
+  border-radius:12px;padding:16px;margin-bottom:14px;}
+
+/* CHIPS */
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
+.chip{padding:5px 12px;border-radius:20px;font-size:12px;font-weight:500;
+  border:1px solid var(--border2);background:var(--bg2);color:var(--text2);cursor:pointer;}
+.chip.active{background:var(--green);color:#fff;border-color:transparent;}
+
+/* KPI */
+.kpi-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;}
+.kpi{background:var(--bg2);border:1px solid var(--border);border-radius:12px;
+  padding:12px;text-align:center;}
+.kpi-val{font-size:22px;font-weight:700;}
+.kpi-lbl{font-size:11px;color:var(--text3);margin-top:2px;}
+
+/* TOAST */
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(10px);
+  background:var(--text);color:#fff;border-radius:12px;padding:12px 20px;
+  font-size:13px;z-index:999;opacity:0;transition:all .25s;pointer-events:none;
+  display:flex;align-items:center;gap:8px;white-space:nowrap;box-shadow:var(--shadow);}
+
+@media(min-width:600px){.view{padding:18px 20px 80px;}}
+</style>
+</head>
+<body>
+
+<div id="topbar">
+  <div class="tb-logo"><i class="ti ti-clipboard-check"></i> Kontrollprogram</div>
+  <div class="tb-spacer"></div>
+  <span class="tb-role" id="tb-role">Personal</span>
+  <a href="index.html" class="tb-btn"><i class="ti ti-arrow-left"></i> Portal</a>
+  <button class="tb-btn tb-btn-danger" onclick="portalLogout()"><i class="ti ti-logout"></i> Logga ut</button>
+</div>
+
+<div class="tabs" id="main-tabs">
+  <button class="tab active" id="tab-dag" onclick="showTab('dag')"><i class="ti ti-checklist"></i> Dagens kontroller</button>
+  <button class="tab" id="tab-lev" onclick="showTab('lev')"><i class="ti ti-truck"></i> Leverans</button>
+  <button class="tab" id="tab-hist" onclick="showTab('hist')"><i class="ti ti-history"></i> Historik</button>
+  <button class="tab" id="tab-manad" onclick="showTab('manad')" style="display:none"><i class="ti ti-calendar-stats"></i> Månadsrapport</button>
+  <button class="tab" id="tab-admin" onclick="showTab('admin')" style="display:none"><i class="ti ti-settings"></i> Admin</button>
+</div>
+
+<div class="view active" id="view-dag"></div>
+<div class="view" id="view-lev"></div>
+<div class="view" id="view-hist"></div>
+<div class="view" id="view-manad"></div>
+<div class="view" id="view-admin"></div>
+
+<!-- MODAL: UTFÖRA KONTROLL -->
+<div class="modal-overlay" id="modal-kontroll">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <div class="modal-title" id="mk-title">Kontroll</div>
+      <div class="modal-sub" id="mk-sub"></div>
+    </div>
+    <div class="modal-body" id="mk-body"></div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('modal-kontroll')" style="flex:1;justify-content:center">Avbryt</button>
+      <button class="btn btn-primary" id="mk-save" onclick="saveKontroll()" style="flex:2;justify-content:center"><i class="ti ti-check"></i> Spara</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: LEVERANSKONTROLL -->
+<div class="modal-overlay" id="modal-lev">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <div class="modal-title">Leveranskontroll</div>
+      <div class="modal-sub" id="ml-anlaggning"></div>
+    </div>
+    <div class="modal-body">
+      <div class="form-field">
+        <label>Leverantör</label>
+        <select id="lev-leverantor"></select>
+      </div>
+      <div class="form-field">
+        <label>Produkt</label>
+        <input type="text" id="lev-produkt" placeholder="T.ex. kycklingfilé">
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="form-field">
+          <label>Bäst-före</label>
+          <input type="date" id="lev-bast">
+        </div>
+        <div class="form-field">
+          <label>Temp (°C)</label>
+          <input type="number" id="lev-temp" step="0.1" placeholder="+3">
+        </div>
+      </div>
+      <div class="form-field">
+        <label>Förpackning</label>
+        <div style="display:flex;gap:14px;margin-top:6px">
+          <label style="display:flex;align-items:center;gap:6px;font-size:15px;text-transform:none;letter-spacing:0"><input type="radio" name="lev-fp" value="hel" checked> Hel</label>
+          <label style="display:flex;align-items:center;gap:6px;font-size:15px;text-transform:none;letter-spacing:0"><input type="radio" name="lev-fp" value="skadad"> Skadad</label>
+        </div>
+      </div>
+      <div class="form-field">
+        <label>Godkänd</label>
+        <div style="display:flex;gap:14px;margin-top:6px">
+          <label style="display:flex;align-items:center;gap:6px;font-size:15px;text-transform:none;letter-spacing:0"><input type="radio" name="lev-gk" value="ja" checked> Ja</label>
+          <label style="display:flex;align-items:center;gap:6px;font-size:15px;text-transform:none;letter-spacing:0"><input type="radio" name="lev-gk" value="nej"> Nej</label>
+        </div>
+      </div>
+      <div class="form-field">
+        <label>Kommentar</label>
+        <textarea id="lev-kommentar" placeholder="Valfri kommentar…" rows="2"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('modal-lev')" style="flex:1;justify-content:center">Avbryt</button>
+      <button class="btn btn-primary" onclick="saveLev()" style="flex:2;justify-content:center"><i class="ti ti-check"></i> Spara</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: SIGNERINGSÖVERSIKT -->
+<div class="modal-overlay" id="modal-sign">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <div class="modal-title" id="sign-title">Signera månad</div>
+      <div class="modal-sub" id="sign-sub"></div>
+    </div>
+    <div class="modal-body" id="sign-body"></div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('modal-sign')" style="flex:1;justify-content:center">Avbryt</button>
+      <button class="btn btn-primary" onclick="doSignera()" style="flex:2;justify-content:center"><i class="ti ti-writing-sign"></i> Signera</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: NY/REDIGERA KONTROLLPUNKT -->
+<div class="modal-overlay" id="modal-punkt">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <div class="modal-title" id="mp-title">Ny kontrollpunkt</div>
+    </div>
+    <div class="modal-body">
+      <div class="form-field"><label>Namn <span style="color:var(--red)">*</span></label><input type="text" id="mp-namn" placeholder="T.ex. Kyltempereratur disk 1"></div>
+      <div class="form-field"><label>Kategori</label>
+        <select id="mp-kategori">
+          <option value="Temperatur">Temperatur</option>
+          <option value="Hygien">Hygien</option>
+          <option value="Städning">Städning</option>
+          <option value="Skadedjur">Skadedjur</option>
+          <option value="Säkerhet">Säkerhet</option>
+          <option value="Övrigt">Övrigt</option>
+        </select>
+      </div>
+      <div class="form-field"><label>Typ</label>
+        <select id="mp-typ" onchange="updateTypFields()">
+          <option value="temp">Temperaturmätning (°C)</option>
+          <option value="janej">Ja / Nej</option>
+          <option value="fritext">Fritext</option>
+          <option value="numerisk">Numeriskt värde</option>
+        </select>
+      </div>
+      <div id="mp-grans-wrap" class="form-field">
+        <label>Gränsvärde</label>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div><input type="number" id="mp-min" placeholder="Min (lämna tomt)"></div>
+          <div><input type="number" id="mp-max" placeholder="Max (lämna tomt)"></div>
+        </div>
+        <div style="font-size:11px;color:var(--text3);margin-top:4px">Lämna tomt om ej tillämpligt</div>
+      </div>
+      <div class="form-field"><label>Intervall</label>
+        <select id="mp-intervall">
+          <option value="dagligen">Dagligen</option>
+          <option value="varje_anvandning">Varje användning</option>
+          <option value="veckovis">Veckovis</option>
+          <option value="manadsvis">Månadsvis</option>
+          <option value="vid_behov">Vid behov</option>
+        </select>
+      </div>
+      <div class="form-field"><label>Referens / HACCP-punkt</label><input type="text" id="mp-ref" placeholder="T.ex. HACCP kap 3.2"></div>
+      <div class="form-field"><label>Instruktion</label><textarea id="mp-instr" placeholder="Hur utförs kontrollen?" rows="2"></textarea></div>
+      <input type="hidden" id="mp-edit-id">
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('modal-punkt')" style="flex:1;justify-content:center">Avbryt</button>
+      <button class="btn btn-primary" onclick="savePunkt()" style="flex:2;justify-content:center"><i class="ti ti-check"></i> Spara</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+var GH_REPO = 'CCSthlm/besiktning-camping';
+var KBASE   = 'egenkontrollprogram';
+var _user   = null, _roles = [], _isAnsvarig = false, _isAdmin = false;
+var _anlaggningId = '', _anlaggningNamn = '';
+var _program = []; // kontrollpunkter
+var _utfall  = {}; // {punktId: {varde,ts,av,forSent,forsentMinuter,avvikelse}}
+var _leveranser = [];
+var _leverantorer = [];
+var _signaturer = {};
+var _currentPunktId = null;
+var _anlaggningar = [];
+var _drumValues = {}; // {drumId: currentValue}
+var _drumDrag  = {}; // touch drag state
+
+// ── GITHUB ────────────────────────────────────────────────────────────────
+async function ghGet(path){
+  var token=localStorage.getItem('gh_token')||'';
+  if(!token)return null;
+  try{
+    var r=await fetch('https://api.github.com/repos/'+GH_REPO+'/contents/'+path,
+      {headers:{'Authorization':'token '+token}});
+    if(!r.ok)return null;
+    var g=await r.json();
+    var b=Uint8Array.from(atob(g.content.split('\n').join('')),function(c){return c.charCodeAt(0);});
+    return{data:JSON.parse(new TextDecoder('utf-8').decode(b)),sha:g.sha};
+  }catch(e){return null;}
+}
+async function ghPut(path,data,msg){
+  var token=localStorage.getItem('gh_token')||'';
+  if(!token){toast('Token saknas','err');return false;}
+  var chk=await fetch('https://api.github.com/repos/'+GH_REPO+'/contents/'+path,
+    {headers:{'Authorization':'token '+token}});
+  var sha=chk.ok?(await chk.json()).sha:null;
+  var content=btoa(unescape(encodeURIComponent(JSON.stringify(data,null,2))));
+  var payload={message:msg||'Kontroll update',content,branch:'main'};
+  if(sha)payload.sha=sha;
+  var r=await fetch('https://api.github.com/repos/'+GH_REPO+'/contents/'+path,
+    {method:'PUT',headers:{'Authorization':'token '+token,'Content-Type':'application/json'},
+     body:JSON.stringify(payload)});
+  return r.ok;
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────
+async function init(){
+  var sess=sessionStorage.getItem('ccs_session')||sessionStorage.getItem('ccs_portal_user');
+  if(!sess){window.location.replace('index.html');return;}
+  try{_user=JSON.parse(sess);}catch(e){window.location.replace('index.html');return;}
+  _roles=_user.adminRoles||[];
+  _isAnsvarig=_roles.includes('kontroll-ansvarig')||_roles.includes('global');
+  _isAdmin=_roles.includes('kontroll-admin')||_roles.includes('global');
+  _anlaggningId=_user.kontrollAnlaggningId||'';
+  _anlaggningNamn=_user.kontrollAnlaggningNamn||_anlaggningId;
+
+  var roleLabel=_isAdmin?'Admin':_isAnsvarig?'Ansvarig':'Personal';
+  document.getElementById('tb-role').textContent=roleLabel;
+  if(_isAnsvarig)document.getElementById('tab-manad').style.display='';
+  if(_isAdmin)document.getElementById('tab-admin').style.display='';
+
+  if(!_anlaggningId&&!_isAdmin){
+    document.getElementById('view-dag').innerHTML='<div style="text-align:center;padding:48px 20px"><i class="ti ti-lock" style="font-size:48px;display:block;margin-bottom:12px;color:var(--text3)"></i><div style="font-size:16px;font-weight:600;margin-bottom:8px">Ingen anläggning tilldelad</div><p style="font-size:13px;color:var(--text2)">Kontakta administratören.</p></div>';
+    return;
+  }
+
+  await loadAll();
+  showTab('dag');
+}
+
+async function loadAll(){
+  var prog=await ghGet(KBASE+'/settings/program_'+_anlaggningId+'.json');
+  _program=(prog&&prog.data&&prog.data.punkter)||[];
+  var today=todayStr();
+  var utfall=await ghGet(KBASE+'/utfall/'+_anlaggningId+'/'+today+'.json');
+  _utfall=(utfall&&utfall.data)||{};
+  var levR=await ghGet(KBASE+'/leverans/'+_anlaggningId+'/'+today+'.json');
+  _leveranser=(levR&&levR.data&&levR.data.leveranser)||[];
+  var anlR=await ghGet(KBASE+'/settings/anlaggningar.json');
+  _anlaggningar=(anlR&&anlR.data&&anlR.data.anlaggningar)||[];
+  var levS=await ghGet(KBASE+'/settings/leverantorer.json');
+  _leverantorer=(levS&&levS.data&&levS.data.leverantorer)||['Menigo','Martin & Servera','Arla','Scan','ICA Maxi'];
+  var signs=await ghGet(KBASE+'/signaturer/'+_anlaggningId+'.json');
+  _signaturer=(signs&&signs.data)||{};
+}
+
+// ── TABS ──────────────────────────────────────────────────────────────────
+function showTab(tab){
+  ['dag','lev','hist','manad','admin'].forEach(function(t){
+    document.getElementById('view-'+t).classList.toggle('active',t===tab);
+    var el=document.getElementById('tab-'+t);
+    if(el)el.classList.toggle('active',t===tab);
+  });
+  var renders={dag:renderDag,lev:renderLev,hist:renderHist,manad:renderManad,admin:renderAdmin};
+  if(renders[tab])renders[tab]();
+}
+
+// ── DAGENS KONTROLLER ─────────────────────────────────────────────────────
+function getPunktStatus(p){
+  if(_utfall[p.id]) return _utfall[p.id].forSent?'late':'done';
+  var now=new Date(),hour=now.getHours();
+  if(p.intervall==='dagligen'){
+    // Missad om det är sent på dagen och ej gjord
+    if(hour>=12)return 'red';
+    return 'amber';
+  }
+  if(p.intervall==='veckovis'){
+    var day=now.getDay();
+    if(day===1)return 'amber'; // måndag = göra-dag
+    return 'gray';
+  }
+  return 'amber';
+}
+
+function renderDag(){
+  if(!_program.length){
+    document.getElementById('view-dag').innerHTML='<div style="text-align:center;padding:48px 20px;color:var(--text3)"><i class="ti ti-clipboard" style="font-size:48px;display:block;margin-bottom:12px"></i><p>Inga kontrollpunkter inlagda ännu.</p></div>';
+    return;
+  }
+  var done=_program.filter(function(p){return _utfall[p.id];}).length;
+  var pct=Math.round(done/_program.length*100);
+  var rows=_program.map(function(p){
+    var status=getPunktStatus(p);
+    var utfall=_utfall[p.id];
+    var dotClass='dot-gray';
+    var itemClass='';
+    var subText=p.intervall+' · '+p.kategori;
+    if(utfall){
+      dotClass='dot-green';
+      var valTxt=utfall.varde+(p.typ==='temp'?' °C':p.typ==='janej'?'':'');
+      subText=valTxt+' · '+utfall.av+' · '+utfall.ts.slice(11,16);
+      if(utfall.forSent){
+        subText+=' · ';
+      }
+    } else if(status==='red'){dotClass='dot-red';itemClass='status-red';}
+    else if(status==='amber'){dotClass='dot-amber';itemClass='status-amber';}
+
+    return '<div class="kontroll-item '+itemClass+'" onclick="openKontroll(\''+p.id+'\')">'
+      +'<div class="'+dotClass+'"></div>'
+      +'<div style="flex:1">'
+      +'<div class="kontroll-name">'+p.namn+'</div>'
+      +'<div class="kontroll-sub">'+subText+'</div>'
+      +'</div>'
+      +(utfall&&utfall.forSent?'<span class="late-badge">+'+utfall.forsentMinutter+'min sen</span>':'')
+      +(utfall?'<i class="ti ti-check" style="font-size:18px;color:var(--green)"></i>':'<i class="ti ti-chevron-right" style="font-size:18px;color:var(--text3)"></i>')
+      +'</div>';
+  }).join('');
+
+  document.getElementById('view-dag').innerHTML=
+    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">'
+    +'<div><div style="font-size:17px;font-weight:700">Idag</div>'
+    +'<div style="font-size:12px;color:var(--text2)">'+_anlaggningNamn+' · '+todayStr()+'</div></div>'
+    +'<div style="text-align:right"><div style="font-size:20px;font-weight:700;color:var(--green)">'+done+'/'+_program.length+'</div>'
+    +'<div style="font-size:11px;color:var(--text3)">klara</div></div>'
+    +'</div>'
+    +'<div style="height:6px;background:var(--border2);border-radius:3px;margin-bottom:14px;overflow:hidden">'
+    +'<div style="height:100%;width:'+pct+'%;background:var(--green);border-radius:3px;transition:width .3s"></div></div>'
+    +'<div class="card">'+rows+'</div>';
+}
+
+// ── DRUM PICKER ───────────────────────────────────────────────────────────
+function buildDrum(id, items, initial, label){
+  var idx=items.indexOf(initial);
+  if(idx<0)idx=Math.floor(items.length/2);
+  _drumValues[id]=items[idx];
+
+  var itemsHtml=items.map(function(v,i){
+    return '<div class="drum-item'+(i===idx?' selected':'')+'" data-val="'+v+'">'+v+'</div>';
+  }).join('');
+
+  var html='<div class="drum-col">'
+    +'<div class="drum-label">'+label+'</div>'
+    +'<div class="drum" id="drum-'+id+'" data-id="'+id+'" data-idx="'+idx+'" data-items="'+encodeURIComponent(JSON.stringify(items))+'">'
+    +'<div class="drum-fade-top"></div>'
+    +'<div class="drum-fade-bot"></div>'
+    +'<div class="drum-select"></div>'
+    +'<div class="drum-inner" id="drum-inner-'+id+'" style="transform:translateY('+(2-idx)*40+'px)">'+itemsHtml+'</div>'
+    +'</div>'
+    +'</div>';
+  return html;
+}
+
+function initDrums(){
+  document.querySelectorAll('.drum').forEach(function(drum){
+    var id=drum.dataset.id;
+    drum.addEventListener('touchstart',function(e){
+      _drumDrag[id]={startY:e.touches[0].clientY,startIdx:parseInt(drum.dataset.idx)};
+      e.preventDefault();
+    },{passive:false});
+    drum.addEventListener('touchmove',function(e){
+      if(!_drumDrag[id])return;
+      var dy=e.touches[0].clientY-_drumDrag[id].startY;
+      var items=JSON.parse(decodeURIComponent(drum.dataset.items));
+      var delta=Math.round(-dy/40);
+      var newIdx=Math.max(0,Math.min(items.length-1,_drumDrag[id].startIdx+delta));
+      setDrumIdx(drum,id,newIdx,items);
+      e.preventDefault();
+    },{passive:false});
+    drum.addEventListener('touchend',function(){_drumDrag[id]=null;});
+    // Mouse for desktop testing
+    drum.addEventListener('wheel',function(e){
+      var items=JSON.parse(decodeURIComponent(drum.dataset.items));
+      var idx=parseInt(drum.dataset.idx);
+      var newIdx=Math.max(0,Math.min(items.length-1,idx+(e.deltaY>0?1:-1)));
+      setDrumIdx(drum,id,newIdx,items);
+      e.preventDefault();
+    },{passive:false});
+  });
+}
+
+function setDrumIdx(drum,id,newIdx,items){
+  drum.dataset.idx=newIdx;
+  _drumValues[id]=items[newIdx];
+  var inner=document.getElementById('drum-inner-'+id);
+  inner.style.transform='translateY('+(2-newIdx)*40+'px)';
+  inner.querySelectorAll('.drum-item').forEach(function(el,i){
+    el.classList.toggle('selected',i===newIdx);
+  });
+  onDrumChange();
+}
+
+function onDrumChange(){
+  var sign=_drumValues['temp-sign']||'+';
+  var whole=parseInt(_drumValues['temp-whole']||0);
+  var dec=parseInt(_drumValues['temp-dec']||0);
+  var val=parseFloat(sign+''+whole+'.'+dec);
+  updateTempResult(val);
+}
+
+function updateTempResult(val){
+  var p=_program.find(function(x){return x.id===_currentPunktId;});
+  if(!p)return;
+  var ok=true;
+  var msg='Inom gränsvärde';
+  if(p.min!==undefined&&p.min!==null&&p.min!==''&&val<parseFloat(p.min)){ok=false;msg='Under min ('+p.min+'°C)';}
+  if(p.max!==undefined&&p.max!==null&&p.max!==''&&val>parseFloat(p.max)){ok=false;msg='Över max ('+p.max+'°C)';}
+  var res=document.getElementById('temp-result');
+  if(!res)return;
+  res.className='temp-result '+(ok?'ok':'warn');
+  res.querySelector('.temp-result-val').textContent=(val>0?'+':'')+val.toFixed(1)+'°C';
+  res.querySelector('.temp-result-lbl').textContent=ok?('✓ '+msg):('✗ '+msg);
+  var avvik=document.getElementById('avvik-field');
+  if(avvik)avvik.className='avvik-field'+(ok?'':' show');
+}
+
+// ── OPEN KONTROLL MODAL ───────────────────────────────────────────────────
+function openKontroll(punktId){
+  var p=_program.find(function(x){return x.id===punktId;});
+  if(!p)return;
+  _currentPunktId=punktId;
+  var utfall=_utfall[punktId];
+  var isMissed=!utfall&&getPunktStatus(p)==='red';
+
+  document.getElementById('mk-title').textContent=p.namn;
+  document.getElementById('mk-sub').textContent=
+    (p.referens?p.referens+' · ':'')+p.kategori+(isMissed?' · ⚠ Försenad':'');
+
+  var prevHtml='';
+  if(utfall){
+    prevHtml='<div style="background:var(--green-bg);border-radius:8px;padding:10px 12px;margin-bottom:14px;font-size:13px">'
+      +'<span style="color:var(--green2);font-weight:500">Redan utförd idag: </span>'
+      +utfall.varde+(p.typ==='temp'?' °C':'')+' · '+utfall.ts.slice(11,16)
+      +'</div>';
+  }
+
+  var forsenInfo=isMissed?'<div style="background:var(--amber-bg);border-radius:8px;padding:10px 12px;margin-bottom:14px;font-size:13px;color:var(--amber)"><i class="ti ti-clock" style="font-size:13px"></i> Missad kontroll – markeras som för sent utförd</div>':'';
+
+  var body='';
+  if(p.typ==='temp'){
+    // Initial value: last reading or 0
+    var initVal=utfall?parseFloat(utfall.varde):4;
+    var sign=initVal<0?'-':'+';
+    var abs=Math.abs(initVal);
+    var whole=Math.floor(abs);
+    var dec=Math.round((abs-whole)*10);
+
+    var signs=['-','+'];
+    var wholes=[];for(var i=0;i<=30;i++)wholes.push(String(i));
+    var decs=['0','1','2','3','4','5','6','7','8','9'];
+
+    body=forsenInfo+prevHtml
+      +'<div id="temp-result" class="temp-result ok">'
+      +'<div class="temp-result-val">+0.0°C</div>'
+      +'<div class="temp-result-lbl">–</div>'
+      +'</div>'
+      +'<div class="drum-wrap">'
+      +buildDrum('temp-sign',signs,sign,'Tecken')
+      +buildDrum('temp-whole',wholes,String(whole),'Grader')
+      +'<div style="font-size:28px;font-weight:300;color:var(--text3);padding-top:28px">,</div>'
+      +buildDrum('temp-dec',decs,String(dec),'Decimal')
+      +'<div style="font-size:22px;color:var(--text3);padding-top:28px">°C</div>'
+      +'</div>'
+      +'<div class="avvik-field" id="avvik-field">'
+      +'<label>Åtgärd (obligatorisk vid avvikelse)</label>'
+      +'<textarea id="avvik-text" placeholder="Beskriv vidtagen åtgärd…"></textarea>'
+      +'</div>';
+  } else if(p.typ==='janej'){
+    body=forsenInfo+prevHtml
+      +'<div style="display:flex;gap:12px;margin-bottom:14px">'
+      +'<button class="btn" id="btn-ja" onclick="setJaNej(true)" style="flex:1;justify-content:center;font-size:16px;padding:16px"><i class="ti ti-check" style="color:var(--green)"></i> Ja</button>'
+      +'<button class="btn" id="btn-nej" onclick="setJaNej(false)" style="flex:1;justify-content:center;font-size:16px;padding:16px"><i class="ti ti-x" style="color:var(--red)"></i> Nej</button>'
+      +'</div>'
+      +'<div class="avvik-field" id="avvik-field">'
+      +'<label>Kommentar (obligatorisk vid Nej)</label>'
+      +'<textarea id="avvik-text" placeholder="Beskriv åtgärd…"></textarea>'
+      +'</div>';
+  } else {
+    body=forsenInfo+prevHtml
+      +'<div class="form-field"><label>Värde</label>'
+      +'<input type="'+(p.typ==='numerisk'?'number':'text')+'" id="fritext-val" placeholder="'+(p.instr||'Ange värde')+'" style="font-size:18px">'
+      +'</div>';
+  }
+
+  if(p.instr)body+='<div style="font-size:12px;color:var(--text3);margin-top:4px"><i class="ti ti-info-circle" style="font-size:12px"></i> '+p.instr+'</div>';
+
+  document.getElementById('mk-body').innerHTML=body;
+  openModal('modal-kontroll');
+
+  if(p.typ==='temp'){
+    initDrums();
+    onDrumChange();
+  }
+}
+
+var _jaNejVal=null;
+function setJaNej(val){
+  _jaNejVal=val;
+  document.getElementById('btn-ja').style.background=val?'var(--green-bg)':'';
+  document.getElementById('btn-ja').style.borderColor=val?'var(--green)':'';
+  document.getElementById('btn-nej').style.background=!val?'var(--red-bg)':'';
+  document.getElementById('btn-nej').style.borderColor=!val?'var(--red)':'';
+  var avvik=document.getElementById('avvik-field');
+  if(avvik)avvik.className='avvik-field'+(val?'':' show');
+}
+
+async function saveKontroll(){
+  var p=_program.find(function(x){return x.id===_currentPunktId;});
+  if(!p)return;
+  var varde,avvikelse='',ok=true;
+
+  if(p.typ==='temp'){
+    var sign=_drumValues['temp-sign']||'+';
+    var whole=parseInt(_drumValues['temp-whole']||0);
+    var dec=parseInt(_drumValues['temp-dec']||0);
+    varde=parseFloat(sign+''+whole+'.'+dec);
+    if(p.min!==undefined&&p.min!==''&&p.min!==null&&varde<parseFloat(p.min))ok=false;
+    if(p.max!==undefined&&p.max!==''&&p.max!==null&&varde>parseFloat(p.max))ok=false;
+    if(!ok){
+      avvikelse=(document.getElementById('avvik-text')||{}).value||'';
+      if(!avvikelse.trim()){toast('Ange åtgärd vid avvikelse','warn');return;}
+    }
+    varde=varde.toFixed(1);
+  } else if(p.typ==='janej'){
+    if(_jaNejVal===null){toast('Välj Ja eller Nej','warn');return;}
+    varde=_jaNejVal?'Ja':'Nej';
+    ok=_jaNejVal;
+    if(!ok){
+      avvikelse=(document.getElementById('avvik-text')||{}).value||'';
+      if(!avvikelse.trim()){toast('Ange kommentar vid Nej','warn');return;}
+    }
+  } else {
+    varde=(document.getElementById('fritext-val')||{}).value||'';
+    if(!varde.trim()){toast('Ange ett värde','warn');return;}
+  }
+
+  // Check if late
+  var isMissed=getPunktStatus(p)==='red'&&!_utfall[p.id];
+  var forsentMinutter=0;
+  if(isMissed){
+    var now=new Date();
+    // Assume should have been done by 10:00
+    var due=new Date(now);due.setHours(10,0,0,0);
+    forsentMinutter=Math.round((now-due)/60000);
+  }
+
+  var entry={
+    varde:String(varde),
+    ts:new Date().toISOString(),
+    av:_user.name,
+    ok:ok,
+    avvikelse:avvikelse,
+    forSent:isMissed,
+    forsentMinutter:forsentMinutter
+  };
+
+  _utfall[_currentPunktId]=entry;
+  var today=todayStr();
+  var ok2=await ghPut(KBASE+'/utfall/'+_anlaggningId+'/'+today+'.json',_utfall,'Kontroll: '+p.namn);
+  closeModal('modal-kontroll');
+  if(ok2){
+    toast(isMissed?'Sparat – markerat som för sent':'Sparat','ok');
+    renderDag();
+  } else toast('Kunde ej spara','err');
+}
+
+// ── LEVERANSKONTROLL ──────────────────────────────────────────────────────
+function renderLev(){
+  var html='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">'
+    +'<div><div style="font-size:17px;font-weight:700">Leveranskontroll</div>'
+    +'<div style="font-size:12px;color:var(--text2)">'+_anlaggningNamn+'</div></div>'
+    +'<button class="btn btn-primary" onclick="openLev()"><i class="ti ti-plus"></i> Ny</button>'
+    +'</div>';
+
+  if(!_leveranser.length){
+    html+='<div style="text-align:center;padding:40px 20px;color:var(--text3)"><i class="ti ti-truck" style="font-size:40px;display:block;margin-bottom:10px"></i><p>Inga leveranskontroller idag.</p></div>';
+  } else {
+    var rows=_leveranser.map(function(l){
+      var ok=l.godkand==='ja';
+      return '<div class="hist-row">'
+        +'<div style="width:9px;height:9px;border-radius:50%;background:'+(ok?'var(--green)':'var(--red)')+';flex-shrink:0"></div>'
+        +'<div class="hist-info"><div class="hist-name">'+l.produkt+' · '+l.leverantor+'</div>'
+        +'<div class="hist-meta">'+l.temp+'°C · BB: '+l.bast+' · '+l.ts.slice(11,16)+' · '+l.av+'</div>'
+        +(l.kommentar?'<div style="font-size:11px;color:var(--text2);margin-top:2px">'+l.kommentar+'</div>':'')
+        +'</div>'
+        +'<span style="font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;background:'+(ok?'var(--green-bg)':'var(--red-bg)')+';color:'+(ok?'var(--green2)':'var(--red)')+';">'+(ok?'OK':'Ej OK')+'</span>'
+        +'</div>';
+    }).join('');
+    html+='<div class="card">'+rows+'</div>';
+  }
+  document.getElementById('view-lev').innerHTML=html;
+}
+
+function openLev(){
+  document.getElementById('ml-anlaggning').textContent=_anlaggningNamn+' · '+todayStr();
+  var sel=document.getElementById('lev-leverantor');
+  sel.innerHTML=_leverantorer.map(function(l){return'<option>'+l+'</option>';}).join('');
+  document.getElementById('lev-produkt').value='';
+  document.getElementById('lev-bast').value='';
+  document.getElementById('lev-temp').value='';
+  document.getElementById('lev-kommentar').value='';
+  document.querySelector('input[name="lev-fp"][value="hel"]').checked=true;
+  document.querySelector('input[name="lev-gk"][value="ja"]').checked=true;
+  openModal('modal-lev');
+}
+
+async function saveLev(){
+  var produkt=document.getElementById('lev-produkt').value.trim();
+  if(!produkt){toast('Ange produkt','warn');return;}
+  var entry={
+    id:uid(),
+    leverantor:document.getElementById('lev-leverantor').value,
+    produkt:produkt,
+    bast:document.getElementById('lev-bast').value,
+    temp:document.getElementById('lev-temp').value,
+    forpackning:document.querySelector('input[name="lev-fp"]:checked').value,
+    godkand:document.querySelector('input[name="lev-gk"]:checked').value,
+    kommentar:document.getElementById('lev-kommentar').value.trim(),
+    ts:new Date().toISOString(),av:_user.name
+  };
+  _leveranser.push(entry);
+  var today=todayStr();
+  var ok=await ghPut(KBASE+'/leverans/'+_anlaggningId+'/'+today+'.json',
+    {leveranser:_leveranser},'Leveranskontroll '+today);
+  closeModal('modal-lev');
+  if(ok){toast('Leveranskontroll sparad','ok');renderLev();}
+  else toast('Kunde ej spara','err');
+}
+
+// ── HISTORIK ──────────────────────────────────────────────────────────────
+async function renderHist(){
+  var el=document.getElementById('view-hist');
+  el.innerHTML='<div style="text-align:center;padding:30px;color:var(--text3)"><i class="ti ti-loader" style="font-size:32px"></i></div>';
+
+  // Load last 7 days
+  var days=[];
+  for(var i=0;i<7;i++){
+    var d=new Date();d.setDate(d.getDate()-i);
+    days.push(d.toISOString().slice(0,10));
+  }
+  var allEntries=[];
+  for(var di=0;di<days.length;di++){
+    var r=await ghGet(KBASE+'/utfall/'+_anlaggningId+'/'+days[di]+'.json');
+    if(r&&r.data){
+      Object.keys(r.data).forEach(function(pid){
+        var entry=r.data[pid];
+        var p=_program.find(function(x){return x.id===pid;});
+        allEntries.push({datum:days[di],punktNamn:p?p.namn:pid,typ:p?p.typ:'',
+          varde:entry.varde,ok:entry.ok,av:entry.av,ts:entry.ts,
+          forSent:entry.forSent,forsentMinutter:entry.forsentMinutter,avvikelse:entry.avvikelse});
+      });
+    }
+  }
+
+  // Temp graph for first temp punkt
+  var tempPunkt=_program.find(function(p){return p.typ==='temp';});
+  var graphHtml='';
+  if(tempPunkt){
+    var tempData=allEntries.filter(function(e){return e.punktNamn===tempPunkt.namn;})
+      .sort(function(a,b){return a.datum.localeCompare(b.datum);});
+    if(tempData.length>1){
+      var vals=tempData.map(function(e){return parseFloat(e.varde);});
+      var minV=Math.min.apply(null,vals)-2,maxV=Math.max.apply(null,vals)+2;
+      if(tempPunkt.max) maxV=Math.max(maxV,parseFloat(tempPunkt.max)+1);
+      var pts=tempData.map(function(e,i){
+        var x=30+i*(540/(tempData.length-1||1));
+        var y=130-((parseFloat(e.varde)-minV)/(maxV-minV))*110;
+        return x+','+y;
+      }).join(' ');
+      var maxLineY=tempPunkt.max?130-((parseFloat(tempPunkt.max)-minV)/(maxV-minV))*110:null;
+      var minLineY=tempPunkt.min?130-((parseFloat(tempPunkt.min)-minV)/(maxV-minV))*110:null;
+      graphHtml='<div class="card" style="margin-bottom:12px">'
+        +'<div class="card-header"><span class="card-title"><i class="ti ti-chart-line"></i> '+tempPunkt.namn+' – senaste '+tempData.length+' avl.</span></div>'
+        +'<div class="graph-wrap">'
+        +'<svg class="graph-svg" viewBox="0 0 600 150" style="height:120px">'
+        +(maxLineY?'<line x1="0" y1="'+maxLineY+'" x2="600" y2="'+maxLineY+'" stroke="#A32D2D" stroke-width="1" stroke-dasharray="4,3"/>':'')
+        +(minLineY?'<line x1="0" y1="'+minLineY+'" x2="600" y2="'+minLineY+'" stroke="#1a4f7a" stroke-width="1" stroke-dasharray="4,3"/>':'')
+        +'<polyline points="'+pts+'" fill="none" stroke="#1a4f7a" stroke-width="2.5" stroke-linejoin="round"/>'
+        +tempData.map(function(e,i){
+          var x=30+i*(540/(tempData.length-1||1));
+          var y=130-((parseFloat(e.varde)-minV)/(maxV-minV))*110;
+          var col=e.ok?'#1a4f7a':'#A32D2D';
+          return'<circle cx="'+x+'" cy="'+y+'" r="5" fill="'+col+'"/>'
+            +'<text x="'+x+'" y="'+(y-9)+'" text-anchor="middle" font-size="10" fill="'+col+'">'+(parseFloat(e.varde)>0?'+':'')+parseFloat(e.varde).toFixed(1)+'</text>'
+            +'<text x="'+x+'" y="145" text-anchor="middle" font-size="9" fill="var(--text3)">'+e.datum.slice(5)+'</text>';
+        }).join('')
+        +'</svg></div></div>';
+    }
+  }
+
+  var rows=allEntries.sort(function(a,b){return b.ts.localeCompare(a.ts);}).map(function(e){
+    var col=e.ok?'var(--green)':'var(--red)';
+    return'<div class="hist-row">'
+      +'<div style="width:9px;height:9px;border-radius:50%;background:'+col+';flex-shrink:0"></div>'
+      +'<div class="hist-info">'
+      +'<div class="hist-name">'+e.punktNamn+'</div>'
+      +'<div class="hist-meta">'+e.datum+' '+e.ts.slice(11,16)+' · '+e.av
+      +(e.forSent?'<span class="late-badge" style="margin-left:6px">+'+e.forsentMinutter+'min sen</span>':'')
+      +'</div>'
+      +(e.avvikelse?'<div style="font-size:11px;color:var(--red);margin-top:2px">↳ '+e.avvikelse+'</div>':'')
+      +'</div>'
+      +'<div style="font-size:16px;font-weight:600;color:'+col+'">'+e.varde+(e.typ==='temp'?' °C':'')+'</div>'
+      +'</div>';
+  }).join('');
+
+  el.innerHTML='<div style="font-size:17px;font-weight:700;margin-bottom:12px">Historik – senaste 7 dagar</div>'
+    +graphHtml
+    +(rows?'<div class="card">'+rows+'</div>':'<div style="text-align:center;padding:40px;color:var(--text3)">Ingen historik ännu.</div>');
+}
+
+// ── MÅNADSRAPPORT ─────────────────────────────────────────────────────────
+async function renderManad(){
+  var el=document.getElementById('view-manad');
+  el.innerHTML='<div style="text-align:center;padding:30px;color:var(--text3)"><i class="ti ti-loader" style="font-size:32px"></i></div>';
+
+  var now=new Date();
+  var year=now.getFullYear(),month=now.getMonth();
+  var daysInMonth=new Date(year,month+1,0).getDate();
+  var prefix=year+'-'+(month<9?'0':'')+(month+1)+'-';
+
+  // Load all days this month
+  var allUtfall={};
+  for(var d=1;d<=daysInMonth;d++){
+    var ds=prefix+(d<10?'0':'')+d;
+    var r=await ghGet(KBASE+'/utfall/'+_anlaggningId+'/'+ds+'.json');
+    if(r&&r.data)allUtfall[ds]=r.data;
+  }
+
+  // Stats per punkt
+  var monthKey=year+'-'+(month<9?'0':'')+(month+1);
+  var sign=_signaturer[monthKey];
+
+  var today=now.getDate();
+  var rows=_program.map(function(p){
+    var expected=p.intervall==='dagligen'?today:p.intervall==='veckovis'?Math.ceil(today/7):1;
+    var done=0,late=0,avvik=0;
+    Object.keys(allUtfall).forEach(function(ds){
+      if(allUtfall[ds][p.id]){
+        done++;
+        if(allUtfall[ds][p.id].forSent)late++;
+        if(!allUtfall[ds][p.id].ok)avvik++;
+      }
+    });
+    var pct=Math.min(100,Math.round(done/Math.max(expected,1)*100));
+     var fillClass=pct>=90?'':pct>=70?'warn':'danger';
+    return'<div class="manad-row">'
+      +'<div style="flex:1;min-width:0">'
+      +'<div style="font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+p.namn+'</div>'
+      +'<div style="font-size:11px;color:var(--text3)">'+done+'/'+expected+' utförda'+(late?' · <span style="color:var(--amber)">'+late+' sena</span>':'')+(avvik?' · <span style="color:var(--red)">'+avvik+' avvik.</span>':'')+'</div>'
+      +'</div>'
+      +'<div class="prog-bar"><div class="prog-fill'+(pct<70?' danger':pct<90?' warn':'')+'" style="width:'+pct+'%"></div></div>'
+      +'<div style="font-size:12px;font-weight:600;min-width:36px;text-align:right;color:'+(pct>=90?'var(--green)':pct>=70?'var(--amber)':'var(--red)')+'">'+pct+'%</div>'
+      +'</div>';
+  }).join('');
+
+  var totalDone=0,totalExp=0,totalAvvik=0;
+  _program.forEach(function(p){
+    var exp=p.intervall==='dagligen'?today:p.intervall==='veckovis'?Math.ceil(today/7):1;
+    totalExp+=exp;
+    Object.keys(allUtfall).forEach(function(ds){
+      if(allUtfall[ds][p.id]){totalDone++;if(!allUtfall[ds][p.id].ok)totalAvvik++;}
+    });
+  });
+
+  el.innerHTML='<div style="font-size:17px;font-weight:700;margin-bottom:12px">'
+    +['Januari','Februari','Mars','April','Maj','Juni','Juli','Augusti','September','Oktober','November','December'][month]+' '+year+'</div>'
+    +'<div class="kpi-row">'
+    +'<div class="kpi"><div class="kpi-val" style="color:var(--green)">'+Math.round(totalDone/Math.max(totalExp,1)*100)+'%</div><div class="kpi-lbl">Utfört</div></div>'
+    +'<div class="kpi"><div class="kpi-val" style="color:'+(totalAvvik>0?'var(--red)':'var(--green)')+'">'+totalAvvik+'</div><div class="kpi-lbl">Avvikelser</div></div>'
+    +'<div class="kpi"><div class="kpi-val" style="color:'+(sign?'var(--green)':'var(--text3)')+'"><i class="ti ti-'+(sign?'check':'clock')+'" style="font-size:20px"></i></div><div class="kpi-lbl">'+(sign?'Signerat':'Ej signerat')+'</div></div>'
+    +'</div>'
+    +'<div class="card" style="margin-bottom:14px">'+rows+'</div>'
+    +(sign
+      ?'<div class="sign-box"><div style="font-size:13px;font-weight:600;color:var(--blue);margin-bottom:4px"><i class="ti ti-writing-sign"></i> Signerad</div><div style="font-size:13px">'+sign.av+' · '+sign.ts.slice(0,10)+' '+sign.ts.slice(11,16)+'</div></div>'
+      :'<div class="sign-box"><div style="font-size:13px;font-weight:500;color:var(--blue);margin-bottom:8px">Signera månad</div><div style="font-size:12px;color:var(--text2);margin-bottom:12px">Granska alla kontroller ovan och signera om perioden är komplett och korrekt.</div>'
+      +'<button class="btn btn-primary btn-full" onclick="openSignering()"><i class="ti ti-writing-sign"></i> Granska och signera</button></div>');
+}
+
+function openSignering(){
+  var now=new Date();
+  var month=now.getMonth();
+  var monthName=['Januari','Februari','Mars','April','Maj','Juni','Juli','Augusti','September','Oktober','November','December'][month];
+  document.getElementById('sign-title').textContent='Signera '+monthName+' '+now.getFullYear();
+  document.getElementById('sign-sub').textContent=_anlaggningNamn;
+  document.getElementById('sign-body').innerHTML=
+    '<div style="font-size:14px;line-height:1.7;color:var(--text2);margin-bottom:16px">'
+    +'Jag bekräftar att dokumentationen för <strong>'+monthName+' '+now.getFullYear()+'</strong> är korrekt, komplett och att eventuella avvikelser är åtgärdade och dokumenterade.</div>'
+    +'<div style="background:var(--bg3);border-radius:var(--radius);padding:12px 14px;margin-bottom:4px">'
+    +'<div style="font-size:12px;color:var(--text3)">Signerar som</div>'
+    +'<div style="font-size:15px;font-weight:500;margin-top:2px">'+_user.name+'</div>'
+    +'<div style="font-size:12px;color:var(--text3);margin-top:2px">'+new Date().toLocaleString('sv-SE')+'</div>'
+    +'</div>';
+  openModal('modal-sign');
+}
+
+async function doSignera(){
+  var now=new Date();
+  var monthKey=now.getFullYear()+'-'+(now.getMonth()<9?'0':'')+(now.getMonth()+1);
+  _signaturer[monthKey]={av:_user.name,ts:now.toISOString(),anlaggning:_anlaggningId};
+  var ok=await ghPut(KBASE+'/signaturer/'+_anlaggningId+'.json',_signaturer,'Signering '+monthKey);
+  closeModal('modal-sign');
+  if(ok){toast('Månad signerad','ok');renderManad();}
+  else toast('Kunde ej signera','err');
+}
+
+// ── ADMIN ─────────────────────────────────────────────────────────────────
+var _adminTab = 'program';
+
+function renderAdmin(){
+  var chipHtml='<div class="chips">'
+    +'<div class="chip'+(_adminTab==='program'?' active':'')+'" data-at="program" onclick="setAdminTab(this.dataset.at)"><i class="ti ti-clipboard-check" style="font-size:12px"></i> Kontrollpunkter</div>'
+    +(_isAdmin?'<div class="chip'+(_adminTab==='anlaggningar'?' active':'')+'" data-at="anlaggningar" onclick="setAdminTab(this.dataset.at)"><i class="ti ti-building" style="font-size:12px"></i> Anläggningar</div>':'')
+    +(_isAdmin?'<div class="chip'+(_adminTab==='leverantorer'?' active':'')+'" data-at="leverantorer" onclick="setAdminTab(this.dataset.at)"><i class="ti ti-truck" style="font-size:12px"></i> Leverantörer</div>':'')
+    +'</div>';
+
+  var contentHtml='';
+  if(_adminTab==='program'){
+    var rows=_program.map(function(p){
+      var typeIcon={temp:'ti-thermometer',janej:'ti-check',fritext:'ti-text-size',numerisk:'ti-123'}[p.typ]||'ti-check';
+      var typeClass={temp:'type-temp',janej:'type-janej',fritext:'type-text',numerisk:'type-text'}[p.typ]||'type-janej';
+      return'<div class="prog-item">'
+        +'<div class="type-icon '+typeClass+'"><i class="ti '+typeIcon+'"></i></div>'
+        +'<div style="flex:1;min-width:0">'
+        +'<div style="font-size:14px;font-weight:500">'+p.namn+'</div>'
+        +'<div style="font-size:11px;color:var(--text3)">'+p.kategori+' · '+p.intervall+(p.max?' · max '+p.max+'°C':'')+(p.min?' · min '+p.min+'°C':'')+'</div>'
+        +'</div>'
+        +'<div style="display:flex;gap:6px">'
+        +'<button class="btn" style="padding:6px 10px;font-size:12px" data-id="'+p.id+'" onclick="editPunkt(this.dataset.id)"><i class="ti ti-pencil"></i></button>'
+        +'<button class="btn btn-danger" style="padding:6px 10px;font-size:12px" data-id="'+p.id+'" onclick="deletePunkt(this.dataset.id)"><i class="ti ti-trash"></i></button>'
+        +'</div>'
+        +'</div>';
+    }).join('');
+    contentHtml='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">'
+      +'<div style="font-size:14px;font-weight:500">'+_anlaggningNamn+'</div>'
+      +'<button class="btn btn-primary" onclick="newPunkt()"><i class="ti ti-plus"></i> Ny punkt</button>'
+      +'</div>'
+      +'<div class="card">'+(rows||'<div style="padding:24px;text-align:center;color:var(--text3)">Inga kontrollpunkter ännu.</div>')+'</div>';
+  }
+
+  else if(_adminTab==='anlaggningar'){
+    var aRows=(_anlaggningar||[]).map(function(a){
+      return'<div class="prog-item">'
+        +'<div class="type-icon type-temp"><i class="ti ti-building"></i></div>'
+        +'<div style="flex:1;min-width:0">'
+        +'<div style="font-size:14px;font-weight:500">'+a.namn+'</div>'
+        +'<div style="font-size:11px;color:var(--text3)">ID: '+a.id+'</div>'
+        +'</div>'
+        +'<div style="display:flex;gap:6px">'
+        +'<button class="btn" style="padding:6px 10px;font-size:12px" data-id="'+a.id+'" onclick="editAnlaggning(this.dataset.id)"><i class="ti ti-pencil"></i></button>'
+        +'<button class="btn btn-danger" style="padding:6px 10px;font-size:12px" data-id="'+a.id+'" onclick="deleteAnlaggning(this.dataset.id)"><i class="ti ti-trash"></i></button>'
+        +'</div>'
+        +'</div>';
+    }).join('');
+    contentHtml='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">'
+      +'<div style="font-size:14px;font-weight:500">Anläggningar</div>'
+      +'<button class="btn btn-primary" onclick="newAnlaggning()"><i class="ti ti-plus"></i> Ny anläggning</button>'
+      +'</div>'
+      +'<div class="card">'+(aRows||'<div style="padding:24px;text-align:center;color:var(--text3)">Inga anläggningar ännu.</div>')+'</div>';
+  }
+
+  else if(_adminTab==='leverantorer'){
+    var lRows=(_leverantorer||[]).map(function(l,i){
+      return'<div class="prog-item">'
+        +'<div class="type-icon type-lev"><i class="ti ti-truck"></i></div>'
+        +'<div style="flex:1">'+l+'</div>'
+        +'<button class="btn btn-danger" style="padding:6px 10px;font-size:12px" data-i="'+i+'" onclick="deleteLeverantor(parseInt(this.dataset.i))"><i class="ti ti-trash"></i></button>'
+        +'</div>';
+    }).join('');
+    contentHtml='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">'
+      +'<div style="font-size:14px;font-weight:500">Leverantörer</div>'
+      +'<button class="btn btn-primary" onclick="newLeverantor()"><i class="ti ti-plus"></i> Lägg till</button>'
+      +'</div>'
+      +'<div class="card">'+(lRows||'<div style="padding:24px;text-align:center;color:var(--text3)">Inga leverantörer ännu.</div>')+'</div>';
+  }
+
+  document.getElementById('view-admin').innerHTML=
+    '<div style="font-size:17px;font-weight:700;margin-bottom:12px">Administration</div>'
+    +chipHtml+contentHtml;
+}
+
+function setAdminTab(tab){ _adminTab=tab; renderAdmin(); }
+
+// ── ANLÄGGNINGAR ──────────────────────────────────────────────────────────
+
+async function loadAnlaggningar(){
+  var r=await ghGet(KBASE+'/settings/anlaggningar.json');
+  _anlaggningar=(r&&r.data&&r.data.anlaggningar)||[];
+}
+
+function newAnlaggning(){
+  var namn=prompt('Anläggningsnamn (t.ex. Östnora Restaurang):');
+  if(!namn)return;
+  var id=namn.toLowerCase().replace(/[åä]/g,'a').replace(/ö/g,'o').replace(/[^a-z0-9]/g,'_').replace(/_+/g,'_');
+  id=prompt('Anläggnings-ID (används som mappnamn):',id);
+  if(!id)return;
+  _anlaggningar.push({id:id.trim(),namn:namn.trim()});
+  saveAnlaggningar();
+}
+
+function editAnlaggning(id){
+  var a=_anlaggningar.find(function(x){return x.id===id;});
+  if(!a)return;
+  var namn=prompt('Nytt namn:',a.namn);
+  if(!namn)return;
+  a.namn=namn.trim();
+  saveAnlaggningar();
+}
+
+function deleteAnlaggning(id){
+  var a=_anlaggningar.find(function(x){return x.id===id;});
+  if(!confirm('Ta bort "'+( a?a.namn:id)+'"?'))return;
+  _anlaggningar=_anlaggningar.filter(function(x){return x.id!==id;});
+  saveAnlaggningar();
+}
+
+async function saveAnlaggningar(){
+  var ok=await ghPut(KBASE+'/settings/anlaggningar.json',
+    {anlaggningar:_anlaggningar},'Anläggningar uppdaterade');
+  if(ok){toast('Sparat','ok');renderAdmin();}
+  else toast('Kunde ej spara','err');
+}
+
+// ── LEVERANTÖRER ──────────────────────────────────────────────────────────
+function newLeverantor(){
+  var namn=prompt('Leverantörsnamn:');
+  if(!namn||!namn.trim())return;
+  _leverantorer.push(namn.trim());
+  saveLeverantorer();
+}
+
+function deleteLeverantor(i){
+  if(!confirm('Ta bort "'+_leverantorer[i]+'"?'))return;
+  _leverantorer.splice(i,1);
+  saveLeverantorer();
+}
+
+async function saveLeverantorer(){
+  var ok=await ghPut(KBASE+'/settings/leverantorer.json',
+    {leverantorer:_leverantorer},'Leverantörer uppdaterade');
+  if(ok){toast('Sparat','ok');renderAdmin();}
+  else toast('Kunde ej spara','err');
+}
+
+function newPunkt(){
+  document.getElementById('mp-title').textContent='Ny kontrollpunkt';
+  document.getElementById('mp-namn').value='';
+  document.getElementById('mp-min').value='';
+  document.getElementById('mp-max').value='';
+  document.getElementById('mp-ref').value='';
+  document.getElementById('mp-instr').value='';
+  document.getElementById('mp-edit-id').value='';
+  document.getElementById('mp-typ').value='temp';
+  document.getElementById('mp-intervall').value='dagligen';
+  updateTypFields();
+  openModal('modal-punkt');
+}
+
+function editPunkt(id){
+  var p=_program.find(function(x){return x.id===id;});
+  if(!p)return;
+  document.getElementById('mp-title').textContent='Redigera kontrollpunkt';
+  document.getElementById('mp-namn').value=p.namn||'';
+  document.getElementById('mp-kategori').value=p.kategori||'Temperatur';
+  document.getElementById('mp-typ').value=p.typ||'temp';
+  document.getElementById('mp-min').value=p.min||'';
+  document.getElementById('mp-max').value=p.max||'';
+  document.getElementById('mp-intervall').value=p.intervall||'dagligen';
+  document.getElementById('mp-ref').value=p.referens||'';
+  document.getElementById('mp-instr').value=p.instr||'';
+  document.getElementById('mp-edit-id').value=id;
+  updateTypFields();
+  openModal('modal-punkt');
+}
+
+function updateTypFields(){
+  var typ=document.getElementById('mp-typ').value;
+  document.getElementById('mp-grans-wrap').style.display=typ==='temp'||typ==='numerisk'?'':'none';
+}
+
+async function savePunkt(){
+  var namn=document.getElementById('mp-namn').value.trim();
+  if(!namn){toast('Ange namn','warn');return;}
+  var editId=document.getElementById('mp-edit-id').value;
+  var p={
+    id:editId||uid(),
+    namn:namn,
+    kategori:document.getElementById('mp-kategori').value,
+    typ:document.getElementById('mp-typ').value,
+    min:document.getElementById('mp-min').value,
+    max:document.getElementById('mp-max').value,
+    intervall:document.getElementById('mp-intervall').value,
+    referens:document.getElementById('mp-ref').value,
+    instr:document.getElementById('mp-instr').value,
+    aktiv:true
+  };
+  if(editId){
+    var i=_program.findIndex(function(x){return x.id===editId;});
+    if(i>=0)_program[i]=p;
+  } else {
+    _program.push(p);
+  }
+  var ok=await ghPut(KBASE+'/settings/program_'+_anlaggningId+'.json',
+    {anlaggningId:_anlaggningId,punkter:_program},'Program uppdaterat');
+  closeModal('modal-punkt');
+  if(ok){toast('Sparat','ok');renderAdmin();}
+  else toast('Kunde ej spara','err');
+}
+
+async function deletePunkt(id){
+  var p=_program.find(function(x){return x.id===id;});
+  if(!confirm('Ta bort "'+( p?p.namn:id)+'"?'))return;
+  _program=_program.filter(function(x){return x.id!==id;});
+  var ok=await ghPut(KBASE+'/settings/program_'+_anlaggningId+'.json',
+    {anlaggningId:_anlaggningId,punkter:_program},'Punkt borttagen');
+  if(ok){toast('Borttagen','ok');renderAdmin();}
+  else toast('Kunde ej spara','err');
+}
+
+// ── HELPERS ───────────────────────────────────────────────────────────────
+function todayStr(){return new Date().toISOString().slice(0,10);}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
+function openModal(id){document.getElementById(id).classList.add('show');}
+function closeModal(id){document.getElementById(id).classList.remove('show');}
+document.addEventListener('click',function(e){if(e.target.classList.contains('modal-overlay'))e.target.classList.remove('show');});
+function toast(msg,type){
+  var t=document.getElementById('toast');
+  var bg=type==='err'?'var(--red)':type==='warn'?'var(--amber)':'var(--green)';
+  var ic=type==='err'?'ti-x':type==='warn'?'ti-alert-triangle':'ti-check';
+  t.innerHTML='<i class="ti '+ic+'"></i> '+msg;
+  t.style.background=bg;t.style.opacity='1';t.style.transform='translateX(-50%) translateY(0)';
+  setTimeout(function(){t.style.opacity='0';t.style.transform='translateX(-50%) translateY(10px)';},3000);
+}
+function portalLogout(){
+  sessionStorage.setItem('ccs_logged_out','1');
+  sessionStorage.removeItem('ccs_session');
+  sessionStorage.removeItem('ccs_portal_user');
+  window.location.replace('index.html');
+}
+
+init();
+</script>
+</body>
+</html>
