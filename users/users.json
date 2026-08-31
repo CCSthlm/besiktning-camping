@@ -162,6 +162,9 @@
       "pnr": "",
       "adminRoles": [
         "personal",
+        "kontroll-personal",
+        "kontroll-ansvarig",
+        "kontroll-admin",
         "budget-camping"
       ],
       "role": "Användare",
@@ -172,7 +175,15 @@
       "sbaCamping": "",
       "nyckelCamping": "",
       "budgetEnhet": "graddos",
-      "created": "2026-08-22"
+      "created": "2026-08-22",
+      "elCamping": "",
+      "projektCampingId": "",
+      "kontrollAnlaggningId": "graddos_rest",
+      "kontrollAnlaggningNamn": "Gräddös Pärla Kök & Bar",
+      "kontrollAnsvarigAnlaggningId": "graddos_rest",
+      "kontrollAnsvarigAnlaggningNamn": "Gräddös Pärla Kök & Bar",
+      "kontrollAdminAnlaggningId": "graddos_rest",
+      "kontrollAdminAnlaggningNamn": "Gräddös Pärla Kök & Bar"
     },
     {
       "id": "umt5v3lw7ktmh",
