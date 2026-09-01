@@ -238,16 +238,16 @@
       "prioritet": "Normal",
       "anläggning": "Caravan Club Östnora Camping",
       "ansvarig": "Joachim Säfqvist",
-      "status": "leverantör",
+      "status": "löst",
       "leverantör": "CompuSoft",
       "leverantörDatum": "2026-07-04",
       "leverantörNr": "552923",
       "åtgärd": "Dator kommer. Dock har vi köpt en ny till receptionen. Den nya vi får önskar Mista ta som POS-dator i puben",
-      "lösning": "",
+      "lösning": "Ny dator levererad",
       "rapportör": "Joachim Säfqvist",
       "rapportörEmail": "joachim.safqvist@cc-camping.se",
       "skapad": "2026-08-03T12:52:56.383Z",
-      "uppdaterad": "2026-08-03T12:53:14.217Z",
+      "uppdaterad": "2026-09-01T14:57:23.308Z",
       "logg": [
         {
           "ts": "2026-08-03T12:52:56.383Z",
@@ -260,8 +260,15 @@
           "av": "Joachim Säfqvist",
           "typ": "status",
           "text": "Status ändrad: Pågående → Hos leverantör"
+        },
+        {
+          "ts": "2026-09-01T14:57:23.308Z",
+          "av": "Joachim Säfqvist",
+          "typ": "status",
+          "text": "Status ändrad: Hos leverantör → Löst"
         }
-      ]
+      ],
+      "stängd": "2026-09-01T14:57:23.308Z"
     },
     {
       "id": "IT-2608-2IGN",
