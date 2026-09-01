@@ -36,6 +36,18 @@
       "referens": "",
       "instr": "",
       "aktiv": true
+    },
+    {
+      "id": "mtieavags1gg",
+      "namn": "Buffé - Varm mat",
+      "kategori": "Temperatur",
+      "typ": "temp",
+      "min": "60",
+      "max": "",
+      "intervall": "vid_behov",
+      "referens": "",
+      "instr": "Tempa varm mat i kantinen",
+      "aktiv": true
     }
   ]
 }
