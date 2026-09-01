@@ -575,32 +575,93 @@ function renderDag(){
     document.getElementById('view-dag').innerHTML='<div style="text-align:center;padding:48px 20px;color:var(--text3)"><i class="ti ti-clipboard" style="font-size:48px;display:block;margin-bottom:12px"></i><p>Inga kontrollpunkter inlagda ännu.</p></div>';
     return;
   }
+
   var done=_program.filter(function(p){return _utfall[p.id];}).length;
   var pct=Math.round(done/_program.length*100);
-  var rows=_program.map(function(p){
-    var status=getPunktStatus(p);
-    var utfall=_utfall[p.id];
-    var dotClass='dot-gray';
-    var itemClass='';
-    var subText=p.intervall+' · '+p.kategori;
-    if(utfall){
-      dotClass='dot-green';
-      var valTxt=utfall.varde+(p.typ==='temp'?' °C':p.typ==='janej'?'':'');
-      subText=valTxt+' · '+utfall.av+' · '+utfall.ts.slice(11,16);
-      if(utfall.forSent){
-        subText+=' · ';
-      }
-    } else if(status==='red'){dotClass='dot-red';itemClass='status-red';}
-    else if(status==='amber'){dotClass='dot-amber';itemClass='status-amber';}
 
-    return '<div class="kontroll-item '+itemClass+'" onclick="openKontroll(\''+p.id+'\')">'
-      +'<div class="'+dotClass+'"></div>'
-      +'<div style="flex:1">'
-      +'<div class="kontroll-name">'+p.namn+'</div>'
-      +'<div class="kontroll-sub">'+subText+'</div>'
+  // Deadline text per intervall
+  function deadlineText(p){
+    var status=getPunktStatus(p);
+    if(_utfall[p.id]) return '';
+    if(p.intervall==='dagligen'){
+      if(status==='red') return 'Missad från igår';
+      if(status==='amber') return 'Senast idag 23:59';
+      return 'Kan göras från 10:00';
+    }
+    if(p.intervall==='varje_anvandning') return 'Utförs vid behov';
+    if(p.intervall==='veckovis'){
+      var days=['söndag','måndag','tisdag','onsdag','torsdag','fredag','lördag'];
+      var today=new Date().getDay();
+      // Find next Monday
+      var daysToMon=today===1?0:(8-today)%7||7;
+      if(daysToMon===0) return 'Senast idag';
+      return 'Senast om '+daysToMon+' dag'+(daysToMon===1?'':'ar')+' (måndag)';
+    }
+    if(p.intervall==='manadsvis'){
+      var now=new Date();
+      var lastDay=new Date(now.getFullYear(),now.getMonth()+1,0).getDate();
+      var daysLeft=lastDay-now.getDate();
+      return 'Senast '+lastDay+'/'+( now.getMonth()+1)+' ('+daysLeft+' dagar kvar)';
+    }
+    if(p.intervall==='vid_behov') return 'Utförs vid behov';
+    return '';
+  }
+
+  // Group order and labels
+  var GROUPS = [
+    {id:'varje_anvandning', label:'Varje användning',   icon:'ti-refresh'},
+    {id:'dagligen',         label:'Dagligen',            icon:'ti-sun'},
+    {id:'veckovis',         label:'Veckovis',            icon:'ti-calendar-week'},
+    {id:'manadsvis',        label:'Månadsvis',           icon:'ti-calendar-month'},
+    {id:'vid_behov',        label:'Vid behov',           icon:'ti-dots'},
+  ];
+
+  var groupsHtml = GROUPS.map(function(grp){
+    var punkter = _program.filter(function(p){ return p.intervall===grp.id; });
+    if(!punkter.length) return '';
+
+    var itemsHtml = punkter.map(function(p){
+      var status  = getPunktStatus(p);
+      var utfall  = _utfall[p.id];
+      var dotClass='dot-gray', itemClass='';
+      var mainSub='', deadlineSub='';
+
+      if(utfall){
+        dotClass='dot-green';
+        var valTxt=utfall.varde+(p.typ==='temp'?' °C':'');
+        mainSub=valTxt+' · '+utfall.av+' · '+utfall.ts.slice(11,16);
+      } else {
+        if(status==='red'){  dotClass='dot-red';   itemClass='status-red';   }
+        else if(status==='amber'){ dotClass='dot-amber'; itemClass='status-amber'; }
+        deadlineSub = deadlineText(p);
+      }
+
+      return '<div class="kontroll-item '+itemClass+'" onclick="openKontroll(\''+p.id+'\')">'
+        +'<div class="'+dotClass+'"></div>'
+        +'<div style="flex:1;min-width:0">'
+        +'<div class="kontroll-name">'+p.namn+'</div>'
+        +(mainSub?'<div class="kontroll-sub">'+mainSub+'</div>':'')
+        +(deadlineSub?'<div class="kontroll-sub" style="color:'+(status==='red'?'var(--red)':status==='amber'?'var(--amber)':'var(--text3)')+'"><i class="ti ti-clock" style="font-size:10px"></i> '+deadlineSub+'</div>':'')
+        +'</div>'
+        +(utfall&&utfall.forSent?'<span class="late-badge">+'+utfall.forsentMinutter+'min sen</span>':'')
+        +(utfall
+          ?'<i class="ti ti-check" style="font-size:18px;color:var(--green)"></i>'
+          :'<i class="ti ti-chevron-right" style="font-size:18px;color:var(--text3)"></i>')
+        +'</div>';
+    }).join('');
+
+    var groupDone  = punkter.filter(function(p){return _utfall[p.id];}).length;
+    var groupTotal = punkter.length;
+    var hasRed     = punkter.some(function(p){return getPunktStatus(p)==='red'&&!_utfall[p.id];});
+    var headerColor= hasRed ? 'var(--red)' : 'var(--text2)';
+
+    return '<div style="margin-bottom:12px">'
+      +'<div style="display:flex;align-items:center;gap:7px;padding:6px 4px;margin-bottom:4px">'
+      +'<i class="ti '+grp.icon+'" style="font-size:14px;color:'+headerColor+'"></i>'
+      +'<span style="font-size:12px;font-weight:600;color:'+headerColor+';text-transform:uppercase;letter-spacing:.05em">'+grp.label+'</span>'
+      +'<span style="font-size:11px;color:var(--text3);margin-left:auto">'+groupDone+'/'+groupTotal+'</span>'
       +'</div>'
-      +(utfall&&utfall.forSent?'<span class="late-badge">+'+utfall.forsentMinutter+'min sen</span>':'')
-      +(utfall?'<i class="ti ti-check" style="font-size:18px;color:var(--green)"></i>':'<i class="ti ti-chevron-right" style="font-size:18px;color:var(--text3)"></i>')
+      +'<div class="card">'+itemsHtml+'</div>'
       +'</div>';
   }).join('');
 
@@ -611,9 +672,9 @@ function renderDag(){
     +'<div style="text-align:right"><div style="font-size:20px;font-weight:700;color:var(--green)">'+done+'/'+_program.length+'</div>'
     +'<div style="font-size:11px;color:var(--text3)">klara</div></div>'
     +'</div>'
-    +'<div style="height:6px;background:var(--border2);border-radius:3px;margin-bottom:14px;overflow:hidden">'
+    +'<div style="height:6px;background:var(--border2);border-radius:3px;margin-bottom:16px;overflow:hidden">'
     +'<div style="height:100%;width:'+pct+'%;background:var(--green);border-radius:3px;transition:width .3s"></div></div>'
-    +'<div class="card">'+rows+'</div>';
+    +groupsHtml;
 }
 
 // ── DRUM PICKER ───────────────────────────────────────────────────────────
