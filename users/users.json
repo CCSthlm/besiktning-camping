@@ -167,6 +167,7 @@
       "pin": "2222",
       "pnr": "",
       "adminRoles": [
+        "projekt-camping",
         "budget-camping"
       ],
       "role": "Användare",
@@ -177,7 +178,15 @@
       "sbaCamping": "",
       "nyckelCamping": "",
       "budgetEnhet": "bo_camp",
-      "created": "2026-08-23"
+      "created": "2026-08-23",
+      "elCamping": "",
+      "projektCampingId": "bo_camp",
+      "kontrollAnlaggningId": "",
+      "kontrollAnlaggningNamn": "",
+      "kontrollAnsvarigAnlaggningId": "",
+      "kontrollAnsvarigAnlaggningNamn": "",
+      "kontrollAdminAnlaggningId": "",
+      "kontrollAdminAnlaggningNamn": ""
     },
     {
       "id": "umt6wq07xhe6r",
