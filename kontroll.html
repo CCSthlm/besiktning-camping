@@ -379,13 +379,54 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-seri
         <div style="font-size:11px;color:var(--text3);margin-top:4px">Lämna tomt om ej tillämpligt</div>
       </div>
       <div class="form-field"><label>Intervall</label>
-        <select id="mp-intervall">
+        <select id="mp-intervall" onchange="updateDeadlineFields()">
           <option value="dagligen">Dagligen</option>
           <option value="varje_anvandning">Varje användning</option>
           <option value="veckovis">Veckovis</option>
           <option value="manadsvis">Månadsvis</option>
           <option value="vid_behov">Vid behov</option>
         </select>
+      </div>
+      <!-- DEADLINE per intervall -->
+      <div id="dl-dagligen" class="form-field">
+        <label>Senast klockan (dagligen)</label>
+        <input type="time" id="mp-dl-tid" value="23:59">
+      </div>
+      <div id="dl-veckovis" class="form-field" style="display:none">
+        <label>Senast (veckovis)</label>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <select id="mp-dl-dag">
+            <option value="0">Söndag</option>
+            <option value="1">Måndag</option>
+            <option value="2">Tisdag</option>
+            <option value="3">Onsdag</option>
+            <option value="4">Torsdag</option>
+            <option value="5">Fredag</option>
+            <option value="6">Lördag</option>
+          </select>
+          <input type="time" id="mp-dl-vec-tid" value="22:00">
+        </div>
+      </div>
+      <div id="dl-manadsvis" class="form-field" style="display:none">
+        <label>Senast (månadsvis)</label>
+        <select id="mp-dl-manad-typ" onchange="updateDeadlineFields()">
+          <option value="dag">Specifikt datum (t.ex. den 30:e)</option>
+          <option value="sista_sun">Sista söndagen</option>
+        </select>
+        <div id="dl-manad-dag-wrap" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px">
+          <div>
+            <div style="font-size:11px;color:var(--text3);margin-bottom:4px">Dag i månaden</div>
+            <input type="number" id="mp-dl-manad-dag" value="30" min="1" max="31">
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--text3);margin-bottom:4px">Klockan</div>
+            <input type="time" id="mp-dl-manad-tid" value="23:00">
+          </div>
+        </div>
+        <div id="dl-manad-sun-wrap" style="display:none;margin-top:8px">
+          <div style="font-size:11px;color:var(--text3);margin-bottom:4px">Klockan</div>
+          <input type="time" id="mp-dl-sun-tid" value="23:00">
+        </div>
       </div>
       <div class="form-field"><label>Referens / HACCP-punkt</label><input type="text" id="mp-ref" placeholder="T.ex. HACCP kap 3.2"></div>
       <div class="form-field"><label>Instruktion</label><textarea id="mp-instr" placeholder="Hur utförs kontrollen?" rows="2"></textarea></div>
@@ -580,30 +621,45 @@ function renderDag(){
   var pct=Math.round(done/_program.length*100);
 
   // Deadline text per intervall
+  var DAYS=['söndag','måndag','tisdag','onsdag','torsdag','fredag','lördag'];
+
   function deadlineText(p){
-    var status=getPunktStatus(p);
     if(_utfall[p.id]) return '';
+    var dl=p.deadline||{};
+    var status=getPunktStatus(p);
+    var now=new Date();
+
     if(p.intervall==='dagligen'){
-      if(status==='red') return 'Missad från igår';
-      if(status==='amber') return 'Senast idag 23:59';
-      return 'Kan göras från 10:00';
+      var tid=dl.tid||'23:59';
+      if(status==='red') return 'Missad – borde gjorts igår senast '+tid;
+      if(status==='amber') return 'Senast idag '+tid;
+      return 'Kan göras från 10:00 (senast '+tid+')';
     }
-    if(p.intervall==='varje_anvandning') return 'Utförs vid behov';
+    if(p.intervall==='varje_anvandning'||p.intervall==='vid_behov') return '';
     if(p.intervall==='veckovis'){
-      var days=['söndag','måndag','tisdag','onsdag','torsdag','fredag','lördag'];
-      var today=new Date().getDay();
-      // Find next Monday
-      var daysToMon=today===1?0:(8-today)%7||7;
-      if(daysToMon===0) return 'Senast idag';
-      return 'Senast om '+daysToMon+' dag'+(daysToMon===1?'':'ar')+' (måndag)';
+      var dagNr=parseInt(dl.dag||'0');
+      var tid=dl.tid||'22:00';
+      var today=now.getDay();
+      var daysTo=(dagNr-today+7)%7;
+      if(daysTo===0) return 'Senast idag ('+DAYS[dagNr]+') '+tid;
+      return 'Senast '+DAYS[dagNr]+' '+tid+' (om '+daysTo+' dag'+(daysTo===1?'':'ar')+')';
     }
     if(p.intervall==='manadsvis'){
-      var now=new Date();
-      var lastDay=new Date(now.getFullYear(),now.getMonth()+1,0).getDate();
-      var daysLeft=lastDay-now.getDate();
-      return 'Senast '+lastDay+'/'+( now.getMonth()+1)+' ('+daysLeft+' dagar kvar)';
+      var tid=dl.tid||'23:00';
+      if(dl.typ==='sista_sun'){
+        // Find last sunday of month
+        var lastDay=new Date(now.getFullYear(),now.getMonth()+1,0);
+        while(lastDay.getDay()!==0) lastDay.setDate(lastDay.getDate()-1);
+        var dLeft=Math.round((lastDay-now)/86400000);
+        return 'Senast sista söndagen den '+lastDay.getDate()+'/'+(now.getMonth()+1)+' '+tid+(dLeft>=0?' ('+dLeft+' dagar kvar)':'');
+      } else {
+        var dag=parseInt(dl.dag||'30');
+        var lastInMonth=new Date(now.getFullYear(),now.getMonth()+1,0).getDate();
+        var actualDag=Math.min(dag,lastInMonth);
+        var dLeft=actualDag-now.getDate();
+        return 'Senast den '+actualDag+'/'+( now.getMonth()+1)+' '+tid+(dLeft>0?' ('+dLeft+' dagar kvar)':dLeft===0?' (idag)':' (passerat)');
+      }
     }
-    if(p.intervall==='vid_behov') return 'Utförs vid behov';
     return '';
   }
 
@@ -1301,7 +1357,9 @@ function newPunkt(){
   document.getElementById('mp-edit-id').value='';
   document.getElementById('mp-typ').value='temp';
   document.getElementById('mp-intervall').value='dagligen';
+  if(document.getElementById('mp-dl-tid')) document.getElementById('mp-dl-tid').value='23:59';
   updateTypFields();
+  updateDeadlineFields();
   openModal('modal-punkt');
 }
 
@@ -1318,8 +1376,38 @@ function editPunkt(id){
   document.getElementById('mp-ref').value=p.referens||'';
   document.getElementById('mp-instr').value=p.instr||'';
   document.getElementById('mp-edit-id').value=id;
+  // Load deadline
+  var dl=p.deadline||{};
+  if(p.intervall==='dagligen'){
+    var el=document.getElementById('mp-dl-tid'); if(el)el.value=dl.tid||'23:59';
+  } else if(p.intervall==='veckovis'){
+    var eld=document.getElementById('mp-dl-dag'); if(eld)eld.value=dl.dag||'0';
+    var elt=document.getElementById('mp-dl-vec-tid'); if(elt)elt.value=dl.tid||'22:00';
+  } else if(p.intervall==='manadsvis'){
+    var elmt=document.getElementById('mp-dl-manad-typ');
+    if(elmt)elmt.value=dl.typ||'dag';
+    if(dl.typ==='sista_sun'){
+      var elst=document.getElementById('mp-dl-sun-tid'); if(elst)elst.value=dl.tid||'23:00';
+    } else {
+      var elmd=document.getElementById('mp-dl-manad-dag'); if(elmd)elmd.value=dl.dag||'30';
+      var elmt2=document.getElementById('mp-dl-manad-tid'); if(elmt2)elmt2.value=dl.tid||'23:00';
+    }
+  }
   updateTypFields();
+  updateDeadlineFields();
   openModal('modal-punkt');
+}
+
+function updateDeadlineFields(){
+  var iv=document.getElementById('mp-intervall').value;
+  document.getElementById('dl-dagligen').style.display = iv==='dagligen'?'':'none';
+  document.getElementById('dl-veckovis').style.display = iv==='veckovis'?'':'none';
+  document.getElementById('dl-manadsvis').style.display= iv==='manadsvis'?'':'none';
+  if(iv==='manadsvis'){
+    var mtyp=(document.getElementById('mp-dl-manad-typ')||{}).value||'dag';
+    document.getElementById('dl-manad-dag-wrap').style.display=mtyp==='dag'?'':'none';
+    document.getElementById('dl-manad-sun-wrap').style.display=mtyp==='sista_sun'?'':'none';
+  }
 }
 
 function updateTypFields(){
@@ -1331,6 +1419,20 @@ async function savePunkt(){
   var namn=document.getElementById('mp-namn').value.trim();
   if(!namn){toast('Ange namn','warn');return;}
   var editId=document.getElementById('mp-edit-id').value;
+  var iv=document.getElementById('mp-intervall').value;
+  var deadline={};
+  if(iv==='dagligen'){
+    deadline={tid:document.getElementById('mp-dl-tid').value||'23:59'};
+  } else if(iv==='veckovis'){
+    deadline={dag:document.getElementById('mp-dl-dag').value,tid:document.getElementById('mp-dl-vec-tid').value||'22:00'};
+  } else if(iv==='manadsvis'){
+    var mtyp=document.getElementById('mp-dl-manad-typ').value;
+    if(mtyp==='sista_sun'){
+      deadline={typ:'sista_sun',tid:document.getElementById('mp-dl-sun-tid').value||'23:00'};
+    } else {
+      deadline={typ:'dag',dag:document.getElementById('mp-dl-manad-dag').value||'30',tid:document.getElementById('mp-dl-manad-tid').value||'23:00'};
+    }
+  }
   var p={
     id:editId||uid(),
     namn:namn,
@@ -1338,7 +1440,8 @@ async function savePunkt(){
     typ:document.getElementById('mp-typ').value,
     min:document.getElementById('mp-min').value,
     max:document.getElementById('mp-max').value,
-    intervall:document.getElementById('mp-intervall').value,
+    intervall:iv,
+    deadline:deadline,
     referens:document.getElementById('mp-ref').value,
     instr:document.getElementById('mp-instr').value,
     aktiv:true
