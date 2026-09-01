@@ -24,6 +24,18 @@
       "referens": "",
       "instr": "Kolla tempmätaren på diskmaskinen",
       "aktiv": true
+    },
+    {
+      "id": "mtie948xdo7w",
+      "namn": "Huvudfrysen",
+      "kategori": "Temperatur",
+      "typ": "temp",
+      "min": "",
+      "max": "-16",
+      "intervall": "veckovis",
+      "referens": "",
+      "instr": "",
+      "aktiv": true
     }
   ]
 }
