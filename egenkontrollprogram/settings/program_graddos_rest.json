@@ -48,6 +48,18 @@
       "referens": "",
       "instr": "Tempa varm mat i kantinen",
       "aktiv": true
+    },
+    {
+      "id": "mtiedoaxg7dh",
+      "namn": "Glassfrysen",
+      "kategori": "Temperatur",
+      "typ": "temp",
+      "min": "",
+      "max": "-15",
+      "intervall": "dagligen",
+      "referens": "",
+      "instr": "",
+      "aktiv": true
     }
   ]
 }
