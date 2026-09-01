@@ -734,25 +734,44 @@ function renderDag(){
 }
 
 // ── DRUM PICKER ───────────────────────────────────────────────────────────
+function buildDrumScale(id, items, initIdx){
+  _drumValues[id] = items[initIdx];
+  var itemsHtml = items.map(function(v,i){
+    var isSelected = i===initIdx;
+    var color = parseFloat(v)>=0 ? '' : 'color:#1a4f7a;';
+    return '<div class="drum-item'+(isSelected?' selected':'')+'" data-val="'+v+'" style="'+color+'">'
+      +(parseFloat(v)>0?'+':'')+v+'°C'
+      +'</div>';
+  }).join('');
+
+  return '<div class="drum-col">'
+    +'<div class="drum-label">Temperatur</div>'
+    +'<div class="drum" id="drum-'+id+'" data-id="'+id+'" data-idx="'+initIdx+'" '
+    +'data-items="'+encodeURIComponent(JSON.stringify(items))+'" '
+    +'style="width:130px">'
+    +'<div class="drum-fade-top"></div>'
+    +'<div class="drum-fade-bot"></div>'
+    +'<div class="drum-select"></div>'
+    +'<div class="drum-inner" id="drum-inner-'+id+'" style="transform:translateY('+(2-initIdx)*40+'px)">'+itemsHtml+'</div>'
+    +'</div>'
+    +'</div>';
+}
+
 function buildDrum(id, items, initial, label){
   var idx=items.indexOf(initial);
   if(idx<0)idx=Math.floor(items.length/2);
   _drumValues[id]=items[idx];
-
   var itemsHtml=items.map(function(v,i){
     return '<div class="drum-item'+(i===idx?' selected':'')+'" data-val="'+v+'">'+v+'</div>';
   }).join('');
-
-  var html='<div class="drum-col">'
+  return '<div class="drum-col">'
     +'<div class="drum-label">'+label+'</div>'
     +'<div class="drum" id="drum-'+id+'" data-id="'+id+'" data-idx="'+idx+'" data-items="'+encodeURIComponent(JSON.stringify(items))+'">'
-    +'<div class="drum-fade-top"></div>'
-    +'<div class="drum-fade-bot"></div>'
+    +'<div class="drum-fade-top"></div><div class="drum-fade-bot"></div>'
     +'<div class="drum-select"></div>'
     +'<div class="drum-inner" id="drum-inner-'+id+'" style="transform:translateY('+(2-idx)*40+'px)">'+itemsHtml+'</div>'
     +'</div>'
     +'</div>';
-  return html;
 }
 
 function initDrums(){
@@ -795,6 +814,13 @@ function setDrumIdx(drum,id,newIdx,items){
 }
 
 function onDrumChange(){
+  // Single scale drum
+  if(_drumValues['temp-scale']!==undefined){
+    var val=parseFloat(_drumValues['temp-scale']);
+    updateTempResult(val);
+    return;
+  }
+  // Legacy three-drum fallback
   var sign=_drumValues['temp-sign']||'+';
   var whole=parseInt(_drumValues['temp-whole']||0);
   var dec=parseInt(_drumValues['temp-dec']||0);
@@ -842,28 +868,66 @@ function openKontroll(punktId){
 
   var body='';
   if(p.typ==='temp'){
-    // Initial value: last reading or 0
-    var initVal=utfall?parseFloat(utfall.varde):4;
-    var sign=initVal<0?'-':'+';
-    var abs=Math.abs(initVal);
-    var whole=Math.floor(abs);
-    var dec=Math.round((abs-whole)*10);
+    var pMin = p.min!==undefined&&p.min!==''&&p.min!==null ? parseFloat(p.min) : null;
+    var pMax = p.max!==undefined&&p.max!==''&&p.max!==null ? parseFloat(p.max) : null;
 
-    var signs=['-','+'];
-    var wholes=[];for(var i=0;i<=30;i++)wholes.push(String(i));
-    var decs=['0','1','2','3','4','5','6','7','8','9'];
+    // Smart start value:
+    // 1. Last reading if exists
+    // 2. Midpoint if both min+max
+    // 3. Max if only max (e.g. kyl)
+    // 4. Min if only min (e.g. diskmaskin)
+    // 5. Fallback 4
+    var initVal;
+    if(utfall){
+      initVal = parseFloat(utfall.varde);
+    } else if(pMin!==null && pMax!==null){
+      initVal = Math.round((pMin+pMax)/2*10)/10; // midpoint
+    } else if(pMax!==null){
+      initVal = pMax - 2; // just below max (e.g. kyl: max 8 → start at 6)
+    } else if(pMin!==null){
+      initVal = pMin + 2; // just above min (e.g. disk: min 60 → start at 62)
+    } else {
+      initVal = 4;
+    }
+
+    // Scale: ±10 degrees around startVal, but also cover min/max
+    var scaleCenter = initVal;
+    var scaleMin = scaleCenter - 10;
+    var scaleMax = scaleCenter + 10;
+    if(pMin!==null) scaleMin = Math.min(scaleMin, pMin - 3);
+    if(pMax!==null) scaleMax = Math.max(scaleMax, pMax + 3);
+    // Round to integers
+    scaleMin = Math.floor(scaleMin);
+    scaleMax = Math.ceil(scaleMax);
+
+    // Build scale as 0.5-step values: e.g. -5.0, -4.5, ... +10.0
+    var scaleValues = [];
+    for(var sv=scaleMin*2; sv<=scaleMax*2; sv++){
+      scaleValues.push((sv/2).toFixed(1));
+    }
+
+    // Find initial index
+    var initStr = initVal.toFixed(1);
+    var initIdx = scaleValues.indexOf(initStr);
+    if(initIdx<0) initIdx = Math.floor(scaleValues.length/2);
+
+    // Show scale info
+    var scaleInfo = '';
+    if(pMin!==null||pMax!==null){
+      scaleInfo = '<div style="text-align:center;font-size:11px;color:var(--text3);margin-bottom:6px">'
+        +'Skala: '+(pMin!==null?'min '+pMin+'°C':'')+(pMin!==null&&pMax!==null?' – ':'')+(pMax!==null?'max '+pMax+'°C':'')
+        +' &nbsp;|&nbsp; Rulla för att välja'
+        +'</div>';
+    }
 
     body=forsenInfo+prevHtml
       +'<div id="temp-result" class="temp-result ok">'
       +'<div class="temp-result-val">+0.0°C</div>'
       +'<div class="temp-result-lbl">–</div>'
       +'</div>'
-      +'<div class="drum-wrap">'
-      +buildDrum('temp-sign',signs,sign,'Tecken')
-      +buildDrum('temp-whole',wholes,String(whole),'Grader')
-      +'<div style="font-size:28px;font-weight:300;color:var(--text3);padding-top:28px">,</div>'
-      +buildDrum('temp-dec',decs,String(dec),'Decimal')
-      +'<div style="font-size:22px;color:var(--text3);padding-top:28px">°C</div>'
+      +scaleInfo
+      +'<div class="drum-wrap" style="justify-content:center">'
+      +buildDrumScale('temp-scale', scaleValues, initIdx)
       +'</div>'
       +'<div class="avvik-field" id="avvik-field">'
       +'<label>Åtgärd (obligatorisk vid avvikelse)</label>'
@@ -914,10 +978,17 @@ async function saveKontroll(){
   var varde,avvikelse='',ok=true;
 
   if(p.typ==='temp'){
-    var sign=_drumValues['temp-sign']||'+';
-    var whole=parseInt(_drumValues['temp-whole']||0);
-    var dec=parseInt(_drumValues['temp-dec']||0);
-    varde=parseFloat(sign+''+whole+'.'+dec);
+    // Read value from single scale drum
+    var val;
+    if(_drumValues['temp-scale']!==undefined){
+      val = parseFloat(_drumValues['temp-scale']);
+    } else {
+      var sign2=_drumValues['temp-sign']||'+';
+      var whole2=parseInt(_drumValues['temp-whole']||0);
+      var dec2=parseInt(_drumValues['temp-dec']||0);
+      val=parseFloat(sign2+''+whole2+'.'+dec2);
+    }
+    varde=val;
     if(p.min!==undefined&&p.min!==''&&p.min!==null&&varde<parseFloat(p.min))ok=false;
     if(p.max!==undefined&&p.max!==''&&p.max!==null&&varde>parseFloat(p.max))ok=false;
     if(!ok){
