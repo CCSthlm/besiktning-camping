@@ -8,7 +8,7 @@
       "typ": "temp",
       "min": "2",
       "max": "6",
-      "intervall": "dagligen",
+      "intervall": "veckovis",
       "referens": "",
       "instr": "Ta kolla tempen som hänger i kylen",
       "aktiv": true
