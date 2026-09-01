@@ -319,7 +319,7 @@
       "prioritet": "Normal",
       "anläggning": "Caravan Club Östnora Camping",
       "ansvarig": "Joachim Säfqvist",
-      "status": "leverantör",
+      "status": "löst",
       "leverantör": "CompuSoft",
       "leverantörDatum": "2026-07-01",
       "leverantörNr": "552461, 552791",
@@ -328,7 +328,7 @@
       "rapportör": "Joachim Säfqvist",
       "rapportörEmail": "joachim.safqvist@cc-camping.se",
       "skapad": "2026-08-03T13:05:20.187Z",
-      "uppdaterad": "2026-08-03T13:07:23.108Z",
+      "uppdaterad": "2026-09-01T14:59:30.704Z",
       "logg": [
         {
           "ts": "2026-08-03T13:05:20.187Z",
@@ -341,8 +341,15 @@
           "av": "Joachim Säfqvist",
           "typ": "edit",
           "text": "Ärende uppdaterat"
+        },
+        {
+          "ts": "2026-09-01T14:59:30.704Z",
+          "av": "Joachim Säfqvist",
+          "typ": "status",
+          "text": "Status: Hos leverantör → Löst. The above means that we have not received a single measurement from the module from 24/7 at 1300 to 1/8 at 1000.\n\n That means that the entire useage for that period, has all been calculated at once. The above means that there has been used 51,1 kWh between 24/7 and 1/8.\n\n That is the way the system works. If we don't get measurements, then once we get a measurement, it will look as if there was a huge consumption that day."
         }
-      ]
+      ],
+      "stängd": "2026-09-01T14:59:30.704Z"
     },
     {
       "id": "IT-2608-8JHX",
