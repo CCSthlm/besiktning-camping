@@ -1221,26 +1221,70 @@ function renderAdmin(){
 
   var contentHtml='';
   if(_adminTab==='program'){
-    var rows=_program.map(function(p){
-      var typeIcon={temp:'ti-thermometer',janej:'ti-check',fritext:'ti-text-size',numerisk:'ti-123'}[p.typ]||'ti-check';
-      var typeClass={temp:'type-temp',janej:'type-janej',fritext:'type-text',numerisk:'type-text'}[p.typ]||'type-janej';
-      return'<div class="prog-item">'
-        +'<div class="type-icon '+typeClass+'"><i class="ti '+typeIcon+'"></i></div>'
-        +'<div style="flex:1;min-width:0">'
-        +'<div style="font-size:14px;font-weight:500">'+p.namn+'</div>'
-        +'<div style="font-size:11px;color:var(--text3)">'+p.kategori+' · '+p.intervall+(p.max?' · max '+p.max+'°C':'')+(p.min?' · min '+p.min+'°C':'')+'</div>'
+    var GROUPS=[
+      {id:'varje_anvandning',label:'Varje användning',icon:'ti-refresh'},
+      {id:'dagligen',        label:'Dagligen',         icon:'ti-sun'},
+      {id:'veckovis',        label:'Veckovis',         icon:'ti-calendar-week'},
+      {id:'manadsvis',       label:'Månadsvis',        icon:'ti-calendar-month'},
+      {id:'vid_behov',       label:'Vid behov',        icon:'ti-dots'},
+    ];
+    var typeIcon={temp:'ti-thermometer',janej:'ti-check',fritext:'ti-text-size',numerisk:'ti-123'};
+    var typeClass={temp:'type-temp',janej:'type-janej',fritext:'type-text',numerisk:'type-text'};
+
+    var groupsHtml=GROUPS.map(function(grp){
+      var punkter=_program.filter(function(p){return p.intervall===grp.id;});
+      if(!punkter.length) return '';
+
+      // Deadline summary text
+      function dlSummary(p){
+        var dl=p.deadline||{};
+        if(grp.id==='dagligen') return 'Senast '+(dl.tid||'23:59');
+        if(grp.id==='veckovis'){
+          var dagar=['Sön','Mån','Tis','Ons','Tor','Fre','Lör'];
+          return 'Senast '+dagar[parseInt(dl.dag||'0')]+' '+(dl.tid||'22:00');
+        }
+        if(grp.id==='manadsvis'){
+          if(dl.typ==='sista_sun') return 'Sista söndagen '+(dl.tid||'23:00');
+          return 'Senast den '+(dl.dag||'30')+':e '+(dl.tid||'23:00');
+        }
+        return '';
+      }
+
+      var items=punkter.map(function(p){
+        var tIcon=typeIcon[p.typ]||'ti-check';
+        var tClass=typeClass[p.typ]||'type-janej';
+        var dl=dlSummary(p);
+        return'<div class="prog-item">'
+          +'<div class="type-icon '+tClass+'"><i class="ti '+tIcon+'"></i></div>'
+          +'<div style="flex:1;min-width:0">'
+          +'<div style="font-size:14px;font-weight:500">'+p.namn+'</div>'
+          +'<div style="font-size:11px;color:var(--text3)">'+p.kategori
+          +(p.max?' · max '+p.max+'°C':'')+(p.min?' · min '+p.min+'°C':'')
+          +(dl?' · <span style="color:var(--blue)"><i class="ti ti-clock" style="font-size:10px"></i> '+dl+'</span>':'')
+          +'</div>'
+          +'</div>'
+          +'<div style="display:flex;gap:6px">'
+          +'<button class="btn" style="padding:6px 10px;font-size:12px" data-id="'+p.id+'" onclick="editPunkt(this.dataset.id)"><i class="ti ti-pencil"></i> Redigera</button>'
+          +'<button class="btn btn-danger" style="padding:6px 10px;font-size:12px" data-id="'+p.id+'" onclick="deletePunkt(this.dataset.id)"><i class="ti ti-trash"></i> Ta bort</button>'
+          +'</div>'
+          +'</div>';
+      }).join('');
+
+      return'<div style="margin-bottom:12px">'
+        +'<div style="display:flex;align-items:center;gap:7px;padding:6px 4px;margin-bottom:4px">'
+        +'<i class="ti '+grp.icon+'" style="font-size:14px;color:var(--text2)"></i>'
+        +'<span style="font-size:12px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.05em">'+grp.label+'</span>'
+        +'<span style="font-size:11px;color:var(--text3);margin-left:auto">'+punkter.length+' punkt'+(punkter.length===1?'':'er')+'</span>'
         +'</div>'
-        +'<div style="display:flex;gap:6px">'
-        +'<button class="btn" style="padding:6px 10px;font-size:12px" data-id="'+p.id+'" onclick="editPunkt(this.dataset.id)"><i class="ti ti-pencil"></i> Redigera</button>'
-        +'<button class="btn btn-danger" style="padding:6px 10px;font-size:12px" data-id="'+p.id+'" onclick="deletePunkt(this.dataset.id)"><i class="ti ti-trash"></i> Ta bort</button>'
-        +'</div>'
+        +'<div class="card">'+items+'</div>'
         +'</div>';
     }).join('');
+
     contentHtml='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">'
       +'<div style="font-size:14px;font-weight:500">'+_anlaggningNamn+'</div>'
       +'<button class="btn btn-primary" onclick="newPunkt()"><i class="ti ti-plus"></i> Ny punkt</button>'
       +'</div>'
-      +'<div class="card">'+(rows||'<div style="padding:24px;text-align:center;color:var(--text3)">Inga kontrollpunkter ännu.</div>')+'</div>';
+      +(groupsHtml||'<div style="padding:24px;text-align:center;color:var(--text3)">Inga kontrollpunkter ännu.</div>');
   }
 
   else if(_adminTab==='anlaggningar'){
