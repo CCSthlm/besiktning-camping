@@ -944,8 +944,8 @@ function renderNews() {
       <td>${statusLabel}</td>
       <td><div style="display:flex;gap:5px;justify-content:flex-end">
         <button class="btn-icon" onclick="toggleNewsActive(${i})" title="${n.active?'Inaktivera':'Aktivera'}">${n.active?'<i class="ti ti-eye-off"></i>':'<i class="ti ti-eye"></i>'}</button>
-        <button class="btn-icon" onclick="openEditNews(${i})"><i class="ti ti-pencil"></i></button>
-        <button class="btn-icon danger" onclick="confirmDelete('news','${i}','${n.title}')"><i class="ti ti-trash"></i></button>
+        <button class="btn-icon" onclick="openEditNews(${i})"><i class="ti ti-pencil"></i> Redigera</button>
+        <button class="btn-icon danger" onclick="confirmDelete('news','${i}','${n.title}')"><i class="ti ti-trash"></i> Ta bort</button>
       </div></td>
     </tr>`;
   }).join('');
@@ -1035,10 +1035,10 @@ function renderLinks() {
     <td style="font-size:12px;color:var(--text2);max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"><a href="${l.url}" target="_blank" style="color:var(--accent)">${l.url}</a></td>
     <td>${l.active!==false?'<span class="badge badge-ok">Synlig</span>':'<span class="badge badge-inactive">Dold</span>'}</td>
     <td><div style="display:flex;gap:5px;justify-content:flex-end">
-      <button class="btn-icon" onclick="moveLinkUp(${i})" title="Flytta upp"><i class="ti ti-arrow-up"></i></button>
-      <button class="btn-icon" onclick="moveLinkDown(${i})" title="Flytta ner"><i class="ti ti-arrow-down"></i></button>
-      <button class="btn-icon" onclick="openEditLink(${i})"><i class="ti ti-pencil"></i></button>
-      <button class="btn-icon danger" onclick="confirmDelete('link','${l.id||i}','${l.name}')"><i class="ti ti-trash"></i></button>
+      <button class="btn-icon" onclick="moveLinkUp(${i})"><i class="ti ti-arrow-up"></i> Upp</button>
+      <button class="btn-icon" onclick="moveLinkDown(${i})"><i class="ti ti-arrow-down"></i> Ner</button>
+      <button class="btn-icon" onclick="openEditLink(${i})"><i class="ti ti-pencil"></i> Redigera</button>
+      <button class="btn-icon danger" onclick="confirmDelete('link','${l.id||i}','${l.name}')"><i class="ti ti-trash"></i> Ta bort</button>
     </div></td>
   </tr>`).join('');
 }
@@ -1686,8 +1686,8 @@ function renderCampings() {
       <td>${c.srv?'<span class="badge badge-sektions">Ja</span>':'–'}</td>
       <td>${status}</td>
       <td><div style="display:flex;gap:5px;justify-content:flex-end">
-        <button class="btn-icon" onclick="openEditCamping('${c.id}')"><i class="ti ti-pencil"></i></button>
-        <button class="btn-icon danger" onclick="confirmDelete('camping','${c.id}','${c.name}')"><i class="ti ti-trash"></i></button>
+        <button class="btn-icon" onclick="openEditCamping('${c.id}')"><i class="ti ti-pencil"></i> Redigera</button>
+        <button class="btn-icon danger" onclick="confirmDelete('camping','${c.id}','${c.name}')"><i class="ti ti-trash"></i> Ta bort</button>
       </div></td>
     </tr>`;
   }).join('');
@@ -1761,8 +1761,8 @@ function renderInspectors() {
       <td style="color:var(--text2)">${i.email||'–'}</td>
       <td>${cert}</td><td>${status}</td>
       <td><div style="display:flex;gap:5px;justify-content:flex-end">
-        <button class="btn-icon" onclick="openEditInspector('${i.id}')"><i class="ti ti-pencil"></i></button>
-        <button class="btn-icon danger" onclick="confirmDelete('inspector','${i.id}','${i.name}')"><i class="ti ti-trash"></i></button>
+        <button class="btn-icon" onclick="openEditInspector('${i.id}')"><i class="ti ti-pencil"></i> Redigera</button>
+        <button class="btn-icon danger" onclick="confirmDelete('inspector','${i.id}','${i.name}')"><i class="ti ti-trash"></i> Ta bort</button>
       </div></td>
     </tr>`;
   }).join('');
