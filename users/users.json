@@ -953,7 +953,7 @@
           "pnr": "19481117-0200",
           "date": "2026-09-01",
           "timeIn": "14:08",
-          "timeOut": "",
+          "timeOut": "16:03",
           "registeredBy": "Restaurang Östnora",
           "registeredAt": "2026-09-01T12:08:34.361Z",
           "manual": false,
@@ -1657,6 +1657,15 @@
           "detail": "Ingalill Nore stämplade in 14:08",
           "oldVal": "",
           "newVal": "14:08"
+        },
+        {
+          "id": "mtiqm14s1zuad",
+          "ts": "2026-09-01T14:03:06.941Z",
+          "user": "Restaurang Östnora",
+          "action": "out",
+          "detail": "Ingalill Nore stämplade ut 16:03",
+          "oldVal": "",
+          "newVal": "16:03"
         }
       ]
     }
