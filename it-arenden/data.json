@@ -358,11 +358,11 @@
       "leverantörDatum": "2026-06-06",
       "leverantörNr": "553037",
       "åtgärd": "",
-      "lösning": "",
+      "lösning": "Passage installerad",
       "rapportör": "Joachim Säfqvist",
       "rapportörEmail": "joachim.safqvist@cc-camping.se",
       "skapad": "2026-08-05T08:10:27.262Z",
-      "uppdaterad": "2026-09-01T14:56:42.181Z",
+      "uppdaterad": "2026-09-01T14:57:33.392Z",
       "logg": [
         {
           "ts": "2026-08-05T08:10:27.262Z",
@@ -381,6 +381,12 @@
           "av": "Joachim Säfqvist",
           "typ": "status",
           "text": "Status ändrad: Hos leverantör → Löst"
+        },
+        {
+          "ts": "2026-09-01T14:57:33.392Z",
+          "av": "Joachim Säfqvist",
+          "typ": "edit",
+          "text": "Ärende uppdaterat"
         }
       ],
       "stängd": "2026-09-01T14:56:42.182Z"
