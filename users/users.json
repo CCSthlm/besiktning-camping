@@ -167,7 +167,6 @@
       "pin": "2222",
       "pnr": "",
       "adminRoles": [
-        "projekt-camping",
         "budget-camping"
       ],
       "role": "Användare",
@@ -178,15 +177,7 @@
       "sbaCamping": "",
       "nyckelCamping": "",
       "budgetEnhet": "bo_camp",
-      "created": "2026-08-23",
-      "elCamping": "",
-      "projektCampingId": "bo_camp",
-      "kontrollAnlaggningId": "",
-      "kontrollAnlaggningNamn": "",
-      "kontrollAnsvarigAnlaggningId": "",
-      "kontrollAnsvarigAnlaggningNamn": "",
-      "kontrollAdminAnlaggningId": "",
-      "kontrollAdminAnlaggningNamn": ""
+      "created": "2026-08-23"
     },
     {
       "id": "umt6wq07xhe6r",
@@ -295,34 +286,6 @@
       "budgetEnhet": "",
       "elCamping": "",
       "created": "2026-08-28"
-    },
-    {
-      "id": "umti8tsytxv94",
-      "name": "Ellinor Kallur",
-      "email": "elinore.kallur@cc-camping.se",
-      "pin": "9999",
-      "pnr": "",
-      "adminRoles": [
-        "projekt-camping",
-        "budget-camping"
-      ],
-      "role": "Användare",
-      "active": true,
-      "apps": [],
-      "plCampingId": "",
-      "godkannarcamping": "",
-      "sbaCamping": "",
-      "nyckelCamping": "",
-      "budgetEnhet": "storsved",
-      "elCamping": "",
-      "projektCampingId": "storsved",
-      "kontrollAnlaggningId": "",
-      "kontrollAnlaggningNamn": "",
-      "kontrollAnsvarigAnlaggningId": "",
-      "kontrollAnsvarigAnlaggningNamn": "",
-      "kontrollAdminAnlaggningId": "",
-      "kontrollAdminAnlaggningNamn": "",
-      "created": "2026-09-01"
     }
   ],
   "campings": [
@@ -979,6 +942,20 @@
           "timeOut": "16:28",
           "registeredBy": "Restaurang Östnora",
           "registeredAt": "2026-08-31T11:52:12.487Z",
+          "manual": false,
+          "manualReason": "",
+          "edited": false,
+          "campingId": "c8"
+        },
+        {
+          "id": "mtimiq7tlqg2a",
+          "name": "Ingalill Nore",
+          "pnr": "19481117-0200",
+          "date": "2026-09-01",
+          "timeIn": "14:08",
+          "timeOut": "",
+          "registeredBy": "Restaurang Östnora",
+          "registeredAt": "2026-09-01T12:08:34.361Z",
           "manual": false,
           "manualReason": "",
           "edited": false,
@@ -1671,6 +1648,15 @@
           "detail": "Ingalill Nore stämplade ut 16:28",
           "oldVal": "",
           "newVal": "16:28"
+        },
+        {
+          "id": "mtimiq7ugq93j",
+          "ts": "2026-09-01T12:08:34.362Z",
+          "user": "Restaurang Östnora",
+          "action": "in",
+          "detail": "Ingalill Nore stämplade in 14:08",
+          "oldVal": "",
+          "newVal": "14:08"
         }
       ]
     }
