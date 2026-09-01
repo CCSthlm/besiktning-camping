@@ -333,7 +333,7 @@
       "funktion": "Administration",
       "status": "Aktiv",
       "marke": "Lenovo",
-      "modell": "Lenovo ThinkPad T14 G1 Intel Core i7 24GB 512GB MX330",
+      "modell": "Lenovo ThinkPad T14/G1/i7/24GB/512GB/MX330",
       "serienr": "PF3C6JAJ",
       "anlaggning": "Sektionen",
       "placering": "IT Ansvarig",
@@ -348,7 +348,7 @@
       "mac": "",
       "skapad": "2026-09-01T15:06:33.073Z",
       "skapadAv": "Joachim Säfqvist",
-      "andrad": "2026-09-01T15:06:33.073Z",
+      "andrad": "2026-09-01T15:07:21.384Z",
       "andradAv": "Joachim Säfqvist"
     }
   ]
