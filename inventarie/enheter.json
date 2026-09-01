@@ -375,6 +375,30 @@
       "skapadAv": "Joachim Säfqvist",
       "andrad": "2026-09-01T15:12:38.993Z",
       "andradAv": "Joachim Säfqvist"
+    },
+    {
+      "id": "INV-2609-FFVN",
+      "namn": "AOC Bildskärm",
+      "kategori": "Datorer & surfplattor",
+      "funktion": "Reception",
+      "status": "Aktiv",
+      "marke": "AOC",
+      "modell": "AOC 34\" CU34B3E",
+      "serienr": "",
+      "anlaggning": "CC Örstigs Camping",
+      "placering": "Reception",
+      "ansvarig": "Madelene Erikson",
+      "inkopDatum": "2025-12-01",
+      "garantiTill": "",
+      "leverantor": "NetOnNet",
+      "anteckningar": "",
+      "iptyp": "Dynamisk",
+      "ip": "",
+      "mac": "",
+      "skapad": "2026-09-01T15:20:23.103Z",
+      "skapadAv": "Joachim Säfqvist",
+      "andrad": "2026-09-01T15:20:23.103Z",
+      "andradAv": "Joachim Säfqvist"
     }
   ]
 }
