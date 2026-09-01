@@ -1114,8 +1114,8 @@ function renderAdmin(){
         +'<div style="font-size:11px;color:var(--text3)">'+p.kategori+' · '+p.intervall+(p.max?' · max '+p.max+'°C':'')+(p.min?' · min '+p.min+'°C':'')+'</div>'
         +'</div>'
         +'<div style="display:flex;gap:6px">'
-        +'<button class="btn" style="padding:6px 10px;font-size:12px" data-id="'+p.id+'" onclick="editPunkt(this.dataset.id)"><i class="ti ti-pencil"></i></button>'
-        +'<button class="btn btn-danger" style="padding:6px 10px;font-size:12px" data-id="'+p.id+'" onclick="deletePunkt(this.dataset.id)"><i class="ti ti-trash"></i></button>'
+        +'<button class="btn" style="padding:6px 10px;font-size:12px" data-id="'+p.id+'" onclick="editPunkt(this.dataset.id)"><i class="ti ti-pencil"></i> Redigera</button>'
+        +'<button class="btn btn-danger" style="padding:6px 10px;font-size:12px" data-id="'+p.id+'" onclick="deletePunkt(this.dataset.id)"><i class="ti ti-trash"></i> Ta bort</button>'
         +'</div>'
         +'</div>';
     }).join('');
@@ -1135,8 +1135,8 @@ function renderAdmin(){
         +'<div style="font-size:11px;color:var(--text3)">ID: '+a.id+'</div>'
         +'</div>'
         +'<div style="display:flex;gap:6px">'
-        +'<button class="btn" style="padding:6px 10px;font-size:12px" data-id="'+a.id+'" onclick="editAnlaggning(this.dataset.id)"><i class="ti ti-pencil"></i></button>'
-        +'<button class="btn btn-danger" style="padding:6px 10px;font-size:12px" data-id="'+a.id+'" onclick="deleteAnlaggning(this.dataset.id)"><i class="ti ti-trash"></i></button>'
+        +'<button class="btn" style="padding:6px 10px;font-size:12px" data-id="'+a.id+'" onclick="editAnlaggning(this.dataset.id)"><i class="ti ti-pencil"></i> Redigera</button>'
+        +'<button class="btn btn-danger" style="padding:6px 10px;font-size:12px" data-id="'+a.id+'" onclick="deleteAnlaggning(this.dataset.id)"><i class="ti ti-trash"></i> Ta bort</button>'
         +'</div>'
         +'</div>';
     }).join('');
@@ -1152,7 +1152,7 @@ function renderAdmin(){
       return'<div class="prog-item">'
         +'<div class="type-icon type-lev"><i class="ti ti-truck"></i></div>'
         +'<div style="flex:1">'+l+'</div>'
-        +'<button class="btn btn-danger" style="padding:6px 10px;font-size:12px" data-i="'+i+'" onclick="deleteLeverantor(parseInt(this.dataset.i))"><i class="ti ti-trash"></i></button>'
+        +'<button class="btn btn-danger" style="padding:6px 10px;font-size:12px" data-i="'+i+'" onclick="deleteLeverantor(parseInt(this.dataset.i))"><i class="ti ti-trash"></i> Ta bort</button>'
         +'</div>';
     }).join('');
     contentHtml='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">'
