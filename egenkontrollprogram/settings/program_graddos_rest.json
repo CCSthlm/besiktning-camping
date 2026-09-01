@@ -20,7 +20,7 @@
       "typ": "temp",
       "min": "60",
       "max": "",
-      "intervall": "dagligen",
+      "intervall": "veckovis",
       "referens": "",
       "instr": "Kolla tempmätaren på diskmaskinen",
       "aktiv": true
