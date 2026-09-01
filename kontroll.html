@@ -222,6 +222,36 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-seri
   <button class="tab" id="tab-admin" onclick="showTab('admin')" style="display:none"><i class="ti ti-settings"></i> Admin</button>
 </div>
 
+<!-- GLOBAL ADMIN: ANLÄGGNINGSVÄLJARE -->
+<div id="anlaggning-picker" style="display:none;background:var(--bg2);border-bottom:1px solid var(--border2);padding:10px 14px">
+  <div style="display:flex;align-items:center;gap:10px;max-width:600px">
+    <i class="ti ti-building" style="color:var(--green);font-size:18px;flex-shrink:0"></i>
+    <select id="global-anlaggning-select" onchange="onGlobalAnlaggningChange()" style="flex:1;padding:9px 12px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius);font-size:14px;font-family:inherit;color:var(--text)">
+                <option value="">– Välj anläggning –</option>
+                <optgroup label="Campingar">
+                  <option value="ostnora">Östnora</option>
+                  <option value="orstig">Örstig</option>
+                  <option value="mista">Mista</option>
+                  <option value="storsved">Storsved</option>
+                  <option value="kapellskar">Kapellskär</option>
+                  <option value="bo_camp">Björkö Örns Camping</option>
+                  <option value="graddos">Gräddös Pärla</option>
+                  <option value="angsudden">Ängsudden</option>
+                </optgroup>
+                <optgroup label="Restauranger &amp; Kök">
+                  <option value="ostnora_rest">Östnora Kök &amp; Bar</option>
+                  <option value="graddos_rest">Gräddös Pärla Kök &amp; Bar</option>
+                  <option value="bo_camp_rest">Björkö Örns Restaurang</option>
+                  <option value="kapellskar_rest">Kapellskärs Café</option>
+                  <option value="orstig_rest">Örstigs Kiosk</option>
+                  <option value="mista_rest">Mista Kiosk</option>
+                  <option value="storsved_rest">Storsveds Kiosk</option>
+                  <option value="angsudden_rest">Ängsuddens Kiosk</option>
+                </optgroup>
+    </select>
+  </div>
+</div>
+
 <div class="view active" id="view-dag"></div>
 <div class="view" id="view-lev"></div>
 <div class="view" id="view-hist"></div>
@@ -442,7 +472,20 @@ async function init(){
   if(_isAnsvarig)document.getElementById('tab-manad').style.display='';
   if(_isAdmin)document.getElementById('tab-admin').style.display='';
 
-  if(!_anlaggningId&&!_isAdmin){
+  // Show global picker for global/admin with no assigned anlaggning
+  var needsPicker = _roles.includes('global') || (_isAdmin && !_anlaggningId) || (_isAnsvarig && !_anlaggningId);
+  if (needsPicker) {
+    document.getElementById('anlaggning-picker').style.display = '';
+    document.getElementById('view-dag').innerHTML =
+      '<div style="text-align:center;padding:60px 20px;color:var(--text3)">'
+      +'<i class="ti ti-building" style="font-size:48px;display:block;margin-bottom:12px"></i>'
+      +'<div style="font-size:16px;font-weight:600;color:var(--text);margin-bottom:6px">Välj anläggning</div>'
+      +'<p style="font-size:13px">Välj en anläggning i listan ovan för att se kontroller.</p>'
+      +'</div>';
+    return;
+  }
+
+  if(!_anlaggningId){
     document.getElementById('view-dag').innerHTML='<div style="text-align:center;padding:48px 20px"><i class="ti ti-lock" style="font-size:48px;display:block;margin-bottom:12px;color:var(--text3)"></i><div style="font-size:16px;font-weight:600;margin-bottom:8px">Ingen anläggning tilldelad</div><p style="font-size:13px;color:var(--text2)">Kontakta administratören.</p></div>';
     return;
   }
@@ -452,6 +495,31 @@ async function init(){
 }
 
 var _igårUtfall = {};
+
+var ANLAGGNING_NAMN_MAP = {
+  ostnora:'Östnora', orstig:'Örstig', mista:'Mista', storsved:'Storsved',
+  kapellskar:'Kapellskär', bo_camp:'Björkö Örns Camping', graddos:'Gräddös Pärla',
+  angsudden:'Ängsudden', ostnora_rest:'Östnora Kök & Bar',
+  graddos_rest:'Gräddös Pärla Kök & Bar', bo_camp_rest:'Björkö Örns Restaurang',
+  kapellskar_rest:'Kapellskärs Café', orstig_rest:'Örstigs Kiosk',
+  mista_rest:'Mista Kiosk', storsved_rest:'Storsveds Kiosk',
+  angsudden_rest:'Ängsuddens Kiosk'
+};
+
+async function onGlobalAnlaggningChange() {
+  var sel = document.getElementById('global-anlaggning-select');
+  var id  = sel ? sel.value : '';
+  if (!id) return;
+  _anlaggningId   = id;
+  _anlaggningNamn = ANLAGGNING_NAMN_MAP[id] || id;
+  // Show loading
+  ['dag','lev','hist','manad','admin'].forEach(function(t){
+    var el = document.getElementById('view-'+t);
+    if (el) el.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text3)"><i class="ti ti-loader" style="font-size:32px"></i></div>';
+  });
+  await loadAll();
+  showTab('dag');
+}
 
 async function loadAll(){
   var prog=await ghGet(KBASE+'/settings/program_'+_anlaggningId+'.json');
