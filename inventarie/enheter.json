@@ -350,6 +350,31 @@
       "skapadAv": "Joachim Säfqvist",
       "andrad": "2026-09-01T15:07:43.672Z",
       "andradAv": "Joachim Säfqvist"
+    },
+    {
+      "id": "INV-2609-VJIT",
+      "namn": "Lenovo ThinkCentre M720Q",
+      "kategori": "Datorer & surfplattor",
+      "funktion": "Bokning",
+      "status": "Aktiv",
+      "marke": "Lenovo",
+      "modell": "ThinkCentre M720Q- 256/16",
+      "serienr": "",
+      "anlaggning": "CC Östnora Camping",
+      "placering": "Reception",
+      "ansvarig": "Madelene Erikson",
+      "inkopDatum": "2026-07-28",
+      "inkopPris": 3192,
+      "garantiTill": "2028-07-28",
+      "leverantor": "NetOnNet",
+      "anteckningar": "",
+      "iptyp": "Dynamisk",
+      "ip": "",
+      "mac": "",
+      "skapad": "2026-09-01T15:12:38.992Z",
+      "skapadAv": "Joachim Säfqvist",
+      "andrad": "2026-09-01T15:12:38.993Z",
+      "andradAv": "Joachim Säfqvist"
     }
   ]
 }
