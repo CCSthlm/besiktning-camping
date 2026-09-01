@@ -12,6 +12,18 @@
       "referens": "",
       "instr": "Ta kolla tempen som hänger i kylen",
       "aktiv": true
+    },
+    {
+      "id": "mtie8f3qv4rl",
+      "namn": "DIskmaskin",
+      "kategori": "Temperatur",
+      "typ": "temp",
+      "min": "60",
+      "max": "",
+      "intervall": "dagligen",
+      "referens": "",
+      "instr": "Kolla tempmätaren på diskmaskinen",
+      "aktiv": true
     }
   ]
 }
