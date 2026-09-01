@@ -612,6 +612,15 @@
             "hours": 5,
             "obHours": 0,
             "note": ""
+          },
+          {
+            "id": "mtj040v8m9knd",
+            "date": "2026-08-28",
+            "timeIn": "17:00",
+            "timeOut": "22:30",
+            "hours": 5.5,
+            "obHours": 0,
+            "note": ""
           }
         ],
         "anteckning": ""
