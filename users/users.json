@@ -960,6 +960,20 @@
           "manualReason": "",
           "edited": false,
           "campingId": "c8"
+        },
+        {
+          "id": "mtk1yzzkkb6cl",
+          "name": "Ingalill Nore",
+          "pnr": "19481117-0200",
+          "date": "2026-09-02",
+          "timeIn": "14:08",
+          "timeOut": "",
+          "registeredBy": "Restaurang Östnora",
+          "registeredAt": "2026-09-02T12:08:53.936Z",
+          "manual": false,
+          "manualReason": "",
+          "edited": false,
+          "campingId": "c8"
         }
       ],
       "personal": [
@@ -1666,6 +1680,15 @@
           "detail": "Ingalill Nore stämplade ut 16:03",
           "oldVal": "",
           "newVal": "16:03"
+        },
+        {
+          "id": "mtk1yzzlwas0r",
+          "ts": "2026-09-02T12:08:53.937Z",
+          "user": "Restaurang Östnora",
+          "action": "in",
+          "detail": "Ingalill Nore stämplade in 14:08",
+          "oldVal": "",
+          "newVal": "14:08"
         }
       ]
     }
