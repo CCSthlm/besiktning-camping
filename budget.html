@@ -231,7 +231,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-seri
     <div class="tb-avatar" id="tb-avatar">?</div>
     <span id="tb-name">–</span>
   </div>
-  <button class="tb-btn" id="token-status-btn" onclick="openModal('modal-token')" title="GitHub-token"></button>
+  <button class="tb-btn" id="token-status-btn" data-modal="modal-token" onclick="openModal(this.dataset.modal)" title="GitHub-token"></button>
   <a href="index.html" class="tb-btn"><i class="ti ti-arrow-left"></i><span class="desktop-only"> Portal</span></a>
   <button class="tb-btn tb-btn-danger" onclick="portalLogout()"><i class="ti ti-logout"></i> Logga ut</button>
 </div>
@@ -240,22 +240,22 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-seri
 <div id="sidebar">
   <div class="nav-section">
     <div class="nav-label">Min budget</div>
-    <button class="nav-item active" id="nav-budget" onclick="showView('budget')"><i class="ti ti-table"></i> Budgetarbete</button>
-    <button class="nav-item" id="nav-param" onclick="showView('param')"><i class="ti ti-adjustments"></i> Parametrar</button>
-    <button class="nav-item" id="nav-invest" onclick="showView('invest')"><i class="ti ti-building-factory"></i> Investeringar</button>
-    <button class="nav-item" id="nav-versions" onclick="showView('versions')"><i class="ti ti-history"></i> Versioner</button>
+    <button class="nav-item active" id="nav-budget" data-view="budget" onclick="showView(this.dataset.view)"><i class="ti ti-table"></i> Budgetarbete</button>
+    <button class="nav-item" id="nav-param" data-view="param" onclick="showView(this.dataset.view)"><i class="ti ti-adjustments"></i> Parametrar</button>
+    <button class="nav-item" id="nav-invest" data-view="invest" onclick="showView(this.dataset.view)"><i class="ti ti-building-factory"></i> Investeringar</button>
+    <button class="nav-item" id="nav-versions" data-view="versions" onclick="showView(this.dataset.view)"><i class="ti ti-history"></i> Versioner</button>
   </div>
   <div class="nav-divider"></div>
   <div class="nav-section" id="nav-section-ekonomi" style="display:none">
     <div class="nav-label">Ekonomiansvarig</div>
-    <button class="nav-item" id="nav-oppna-budget" onclick="showView('oppna-budget')"><i class="ti ti-lock-open"></i> Öppna budgetår</button>
-    <button class="nav-item" id="nav-granskning" onclick="showView('granskning')"><i class="ti ti-clipboard-check"></i> Granskning</button>
-    <button class="nav-item" id="nav-konsolidering" onclick="showView('konsolidering')"><i class="ti ti-layout-columns"></i> Konsolidering</button>
-    <button class="nav-item" id="nav-prognos" onclick="showView('prognos')"><i class="ti ti-trending-up"></i> Prognos</button>
-    <button class="nav-item" id="nav-utfall" onclick="showView('utfall')"><i class="ti ti-arrow-bar-to-down"></i> Utfall</button>
-    <button class="nav-item" id="nav-kontoplan" onclick="showView('kontoplan')"><i class="ti ti-list-details"></i> Kontoplan</button>
-    <button class="nav-item" id="nav-param-admin" onclick="showView('param-admin')"><i class="ti ti-settings"></i> Parameteradmin</button>
-    <button class="nav-item" id="nav-enheter" onclick="showView('enheter')"><i class="ti ti-building"></i> Enheter</button>
+    <button class="nav-item" id="nav-oppna-budget" data-view="oppna-budget" onclick="showView(this.dataset.view)"><i class="ti ti-lock-open"></i> Öppna budgetår</button>
+    <button class="nav-item" id="nav-granskning" data-view="granskning" onclick="showView(this.dataset.view)"><i class="ti ti-clipboard-check"></i> Granskning</button>
+    <button class="nav-item" id="nav-konsolidering" data-view="konsolidering" onclick="showView(this.dataset.view)"><i class="ti ti-layout-columns"></i> Konsolidering</button>
+    <button class="nav-item" id="nav-prognos" data-view="prognos" onclick="showView(this.dataset.view)"><i class="ti ti-trending-up"></i> Prognos</button>
+    <button class="nav-item" id="nav-utfall" data-view="utfall" onclick="showView(this.dataset.view)"><i class="ti ti-arrow-bar-to-down"></i> Utfall</button>
+    <button class="nav-item" id="nav-kontoplan" data-view="kontoplan" onclick="showView(this.dataset.view)"><i class="ti ti-list-details"></i> Kontoplan</button>
+    <button class="nav-item" id="nav-param-admin" data-view="param-admin" onclick="showView(this.dataset.view)"><i class="ti ti-settings"></i> Parameteradmin</button>
+    <button class="nav-item" id="nav-enheter" data-view="enheter" onclick="showView(this.dataset.view)"><i class="ti ti-building"></i> Enheter</button>
   </div>
 </div>
 
@@ -269,7 +269,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-seri
   <div class="modal" style="max-width:440px">
     <div class="modal-header">
       <span class="modal-title" id="modal-comment-title">Kommentar</span>
-      <button class="modal-close" onclick="closeModal('modal-comment')">&#x2715;</button>
+      <button class="modal-close" data-modal="modal-comment" onclick="closeModal(this.dataset.modal)">&#x2715;</button>
     </div>
     <div class="modal-body">
       <div class="form-field">
@@ -282,7 +282,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-seri
       </div>
     </div>
     <div class="modal-footer">
-      <button class="btn" onclick="closeModal('modal-comment')">Avbryt</button>
+      <button class="btn" data-modal="modal-comment" onclick="closeModal(this.dataset.modal)">Avbryt</button>
       <button class="btn btn-primary" onclick="saveComment()"><i class="ti ti-check"></i> Spara</button>
     </div>
   </div>
@@ -293,7 +293,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-seri
   <div class="modal" style="max-width:440px">
     <div class="modal-header">
       <span class="modal-title">Skicka in budget</span>
-      <button class="modal-close" onclick="closeModal('modal-submit')">&#x2715;</button>
+      <button class="modal-close" data-modal="modal-submit" onclick="closeModal(this.dataset.modal)">&#x2715;</button>
     </div>
     <div class="modal-body">
       <p style="font-size:13px;color:var(--text2);margin-bottom:14px">Budgeten låses och blir synlig för ekonomiansvarig och styrelse. Du kan fortfarande skicka in en ny reviderad version.</p>
@@ -303,7 +303,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-seri
       </div>
     </div>
     <div class="modal-footer">
-      <button class="btn" onclick="closeModal('modal-submit')">Avbryt</button>
+      <button class="btn" data-modal="modal-submit" onclick="closeModal(this.dataset.modal)">Avbryt</button>
       <button class="btn btn-primary" onclick="submitVersion()"><i class="ti ti-send"></i> Skicka in</button>
     </div>
   </div>
@@ -314,7 +314,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-seri
   <div class="modal">
     <div class="modal-header">
       <span class="modal-title" id="modal-konto-title">Konto</span>
-      <button class="modal-close" onclick="closeModal('modal-konto')">&#x2715;</button>
+      <button class="modal-close" data-modal="modal-konto" onclick="closeModal(this.dataset.modal)">&#x2715;</button>
     </div>
     <div class="modal-body">
       <input type="hidden" id="konto-edit-id">
@@ -347,7 +347,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-seri
       </div>
     </div>
     <div class="modal-footer">
-      <button class="btn" onclick="closeModal('modal-konto')">Avbryt</button>
+      <button class="btn" data-modal="modal-konto" onclick="closeModal(this.dataset.modal)">Avbryt</button>
       <button class="btn btn-primary" onclick="saveKonto()"><i class="ti ti-check"></i> Spara</button>
     </div>
   </div>
@@ -358,7 +358,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-seri
   <div class="modal" style="max-width:620px">
     <div class="modal-header">
       <span class="modal-title" id="modal-invest-title">Investeringspost</span>
-      <button class="modal-close" onclick="closeModal('modal-invest')">&#x2715;</button>
+      <button class="modal-close" data-modal="modal-invest" onclick="closeModal(this.dataset.modal)">&#x2715;</button>
     </div>
     <div class="modal-body">
       <input type="hidden" id="invest-edit-id">
@@ -372,7 +372,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-seri
       <div class="form-grid full"><div class="form-field"><label>Kommentar</label><textarea id="inv-kommentar" rows="2" style="padding:8px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius);font-size:13px;font-family:inherit;"></textarea></div></div>
     </div>
     <div class="modal-footer">
-      <button class="btn" onclick="closeModal('modal-invest')">Avbryt</button>
+      <button class="btn" data-modal="modal-invest" onclick="closeModal(this.dataset.modal)">Avbryt</button>
       <button class="btn btn-primary" onclick="saveInvestRow()"><i class="ti ti-check"></i> Spara</button>
     </div>
   </div>
@@ -383,7 +383,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-seri
   <div class="modal" style="max-width:480px">
     <div class="modal-header">
       <span class="modal-title" id="modal-enhet-title">Ny enhet</span>
-      <button class="modal-close" onclick="closeModal('modal-enhet')">&#x2715;</button>
+      <button class="modal-close" data-modal="modal-enhet" onclick="closeModal(this.dataset.modal)">&#x2715;</button>
     </div>
     <div class="modal-body">
       <input type="hidden" id="enhet-edit-id">
@@ -403,7 +403,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-seri
       </div>
     </div>
     <div class="modal-footer">
-      <button class="btn" onclick="closeModal('modal-enhet')">Avbryt</button>
+      <button class="btn" data-modal="modal-enhet" onclick="closeModal(this.dataset.modal)">Avbryt</button>
       <button class="btn btn-primary" onclick="saveEnhet()"><i class="ti ti-check"></i> Spara</button>
     </div>
   </div>
@@ -414,7 +414,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-seri
   <div class="modal" style="max-width:460px">
     <div class="modal-header">
       <span class="modal-title"><i class="ti ti-lock-open" style="color:var(--accent)"></i> Öppna budget <span id="oppna-enhet-namn"></span></span>
-      <button class="modal-close" onclick="closeModal('modal-oppna')">&#x2715;</button>
+      <button class="modal-close" data-modal="modal-oppna" onclick="closeModal(this.dataset.modal)">&#x2715;</button>
     </div>
     <div class="modal-body">
       <p style="font-size:13px;color:var(--text2);margin-bottom:16px;line-height:1.6">
@@ -453,7 +453,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-seri
       </div>
     </div>
     <div class="modal-footer">
-      <button class="btn" onclick="closeModal('modal-oppna')">Avbryt</button>
+      <button class="btn" data-modal="modal-oppna" onclick="closeModal(this.dataset.modal)">Avbryt</button>
       <button class="btn btn-primary" onclick="sparaOppnaEnhet()"><i class="ti ti-lock-open"></i> Öppna budgetåret</button>
     </div>
   </div>
@@ -464,7 +464,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-seri
   <div class="modal" style="max-width:440px">
     <div class="modal-header">
       <span class="modal-title" id="modal-granskning-title">Granska budget</span>
-      <button class="modal-close" onclick="closeModal('modal-granskning')">&#x2715;</button>
+      <button class="modal-close" data-modal="modal-granskning" onclick="closeModal(this.dataset.modal)">&#x2715;</button>
     </div>
     <div class="modal-body">
       <div class="form-field">
@@ -475,7 +475,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-seri
       </div>
     </div>
     <div class="modal-footer">
-      <button class="btn" onclick="closeModal('modal-granskning')">Avbryt</button>
+      <button class="btn" data-modal="modal-granskning" onclick="closeModal(this.dataset.modal)">Avbryt</button>
       <button class="btn btn-primary" id="btn-granskning-confirm" onclick="confirmGranskning()">Bekräfta</button>
     </div>
   </div>
@@ -605,7 +605,8 @@ async function loadStatus() {
 }
 
 async function saveStatus() {
-  await ghPut(settingsPath('status.json'), _statusData, 'Status uppdaterad');
+  var okStatus = await ghPut(settingsPath('status.json'), _statusData, 'Status uppdaterad');
+    if (!okStatus) { toast('Kunde ej spara status','err'); return; }
 }
 
 function getEnhetStatus(enhetId) {
@@ -661,7 +662,8 @@ async function loadSettings() {
 }
 
 async function saveSettings() {
-  await ghPut(settingsPath('settings.json'), _settings, 'Inställningar uppdaterade');
+  var okSettings = await ghPut(settingsPath('settings.json'), _settings, 'Inställningar uppdaterade');
+    if (!okSettings) { toast('Kunde ej spara inställningar','err'); return; }
 }
 
 async function loadDraft(enhetId) {
@@ -944,7 +946,7 @@ async function renderBudget(container) {
       <div class="page-actions">
         <button class="btn" onclick="saveDraft(false)"><i class="ti ti-device-floppy"></i> Spara</button>
         <button class="btn" onclick="exportExcelBudget()"><i class="ti ti-download"></i> Excel</button>
-        <button class="btn btn-primary" onclick="openModal('modal-submit')"><i class="ti ti-send"></i> Skicka in version</button>
+        <button class="btn btn-primary" data-modal="modal-submit" onclick="openModal(this.dataset.modal)"><i class="ti ti-send"></i> Skicka in version</button>
       </div>
     </div>
     <div class="content no-pad">
@@ -1287,7 +1289,7 @@ async function renderVersions(container) {
           </div>
           <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
             <div style="font-size:14px;font-weight:700;${totals.resultat>=0?'color:var(--accent2)':'color:var(--red)'}">${fmtKr(totals.resultat)}</div>
-            <button class="btn btn-sm" onclick="showView('budget')">Redigera</button>
+            <button class="btn btn-sm" data-view="budget" onclick="showView(this.dataset.view)">Redigera</button>
           </div>
         </div>
         ${verCards || '<div style="text-align:center;color:var(--text3);font-size:13px;padding:20px"><i class="ti ti-history" style="font-size:24px;display:block;margin-bottom:8px"></i>Inga inskickade versioner ännu. Klicka "Skicka in version" i budgetvyn.</div>'}
@@ -1326,13 +1328,15 @@ async function submitVersion() {
     status: 'inkickad',
   });
 
-  var ok = await ghPut(versionPath(_currentEnhet.id, nextV), versionData, 'Budget v'+nextV+' inskickad – '+_currentEnhet.namn);
+  var okVer = await ghPut(versionPath(_currentEnhet.id, nextV), versionData, 'Budget v'+nextV+' inskickad – '+_currentEnhet.namn);
+    if (!okVer) { toast('Kunde ej spara version','err'); return; }
+  var ok = okVer;
   if (ok) {
     closeModal('modal-submit');
     toast('Budget v'+nextV+' inskickad','ok');
     showView('versions');
   } else {
-    toast('Kunde ej skicka in','err');
+    toast('Kunde ej skicka in','err'); return;
   }
 }
 
@@ -1840,12 +1844,14 @@ async function saveBudgetManuell(enhetId) {
   var payload = Object.assign({}, data, {
     _meta: { enhetId, ar: prevYear, sparadAv: _user.name, sparadTs: new Date().toISOString(), typ: 'manuell' }
   });
-  var ok = await ghPut(path, payload, 'Manuell budget '+prevYear+' – '+enhetId);
+  var okManuell = await ghPut(path, payload, 'Manuell budget '+prevYear+' – '+enhetId);
+    if (!okManuell) { toast('Kunde ej spara manuell budget','err'); return; }
+  var ok = okManuell;
   if (ok) {
     delete _referensData[enhetId]; // clear cache
     toast('Budget '+prevYear+' sparad','ok');
   } else {
-    toast('Kunde ej spara','err');
+    toast('Kunde ej spara return;','err');
   }
 }
 
@@ -1872,13 +1878,14 @@ async function saveUtfall() {
     _meta: { enhetId, period: parseInt(period), ar: BUDGET_YEAR, sparadAv: _user.name, sparadTs: new Date().toISOString() }
   });
   var savePath = BUDGET_BASE + '/' + BUDGET_YEAR + '/' + enhetId + '/utfall_p' + period + '.json';
-  var ok = await ghPut(savePath, payload, 'Utfall period '+period+' – '+enhetId);
-  if (ok) {
+  var okUtfall = await ghPut(savePath, payload, 'Utfall period '+period+' – '+enhetId);
+    if (!okUtfall) { toast('Kunde ej spara utfall','err'); return; }
+  if (okUtfall) {
     // Clear referens cache so budget view reloads it
     delete _referensData[enhetId];
     toast('Utfall sparat','ok');
   } else {
-    toast('Kunde ej spara utfall','err');
+    toast('Kunde ej spara utfall','err'); return;
   }
 }
 
@@ -1962,7 +1969,7 @@ async function sparaOppnaEnhet() {
 
   // Reset draft for this enhet
   var emptyDraft = {kontoVarden:{}, kommentarer:{}, paramVarden:{}, investeringar:[], autosparad:null};
-  await ghPut(draftPath(enhetId), emptyDraft, 'Nollställt utkast inför budget '+BUDGET_YEAR+' – '+enhetId);
+  var okNoll = await ghPut(draftPath(enhetId), emptyDraft, 'Nollställt utkast inför budget '+BUDGET_YEAR+' – '+enhetId);
 
   _statusData[yr][enhetId] = {
     status:          'öppen',
@@ -2010,7 +2017,7 @@ async function aterstallEnhet(enhetId, enhetNamn) {
     _meta:{aterstalld:true, aterstalldAv:_user.name, aterstalldTs:new Date().toISOString()}};
 
   // 1. Nollställ draft
-  await ghPut(draftPath(enhetId), emptyDraft, 'Återställt utkast '+enhetId+' '+BUDGET_YEAR);
+  var okAterDraft = await ghPut(draftPath(enhetId), emptyDraft, 'Återställt utkast '+enhetId+' '+BUDGET_YEAR);
 
   // 2. Nollställ versioner v1-v5
   var emptyVer = Object.assign({}, emptyDraft, {kontoVarden:{}, investeringar:[]});
@@ -2018,7 +2025,7 @@ async function aterstallEnhet(enhetId, enhetNamn) {
     var vPath = BUDGET_BASE+'/'+BUDGET_YEAR+'/'+enhetId+'/v'+v+'.json';
     var exists = await ghGet(vPath);
     if (exists) {
-      await ghPut(vPath, emptyVer, 'Återställd version v'+v+' '+enhetId);
+      var okAterVer = await ghPut(vPath, emptyVer, 'Återställd version v'+v+' '+enhetId);
     }
   }
 
@@ -2028,7 +2035,7 @@ async function aterstallEnhet(enhetId, enhetNamn) {
     var uPath = BUDGET_BASE+'/'+BUDGET_YEAR+'/'+enhetId+'/utfall_p'+p+'.json';
     var uExists = await ghGet(uPath);
     if (uExists) {
-      await ghPut(uPath, emptyUtfall, 'Återställt utfall p'+p+' '+enhetId);
+      var okAterUtfall = await ghPut(uPath, emptyUtfall, 'Återställt utfall p'+p+' '+enhetId);
     }
   }
 
