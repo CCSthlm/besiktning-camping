@@ -1602,7 +1602,11 @@ function renderAdmin(){
 
     contentHtml='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">'
       +'<div style="font-size:14px;font-weight:500">'+_anlaggningNamn+'</div>'
+      +'<div style="display:flex;gap:6px;flex-wrap:wrap">'
+      +'<button class="btn btn-sm" onclick="exportPunkterExcel()"><i class="ti ti-download"></i> Exportera Excel</button>'
+      +'<label class="btn btn-sm" style="cursor:pointer"><i class="ti ti-upload"></i> Importera Excel<input type="file" accept=".xlsx,.xls" style="display:none" onchange="importPunkterExcel(this)"></label>'
       +'<button class="btn btn-primary" onclick="newPunkt()"><i class="ti ti-plus"></i> Ny punkt</button>'
+      +'</div>'
       +'</div>'
       +(groupsHtml||'<div style="padding:24px;text-align:center;color:var(--text3)">Inga kontrollpunkter ännu.</div>');
   }
@@ -1777,6 +1781,178 @@ function updateDeadlineFields(){
 function updateTypFields(){
   var typ=document.getElementById('mp-typ').value;
   document.getElementById('mp-grans-wrap').style.display=typ==='temp'||typ==='numerisk'?'':'none';
+}
+
+function exportPunkterExcel(){
+  if(!window.XLSX){ toast('Excel laddas','warn'); return; }
+  var INTERVALL_LABELS = {
+    dagligen:'Dagligen', varje_anvandning:'Varje användning',
+    veckovis:'Veckovis', manadsvis:'Månadsvis', vid_behov:'Vid behov'
+  };
+  var DAYS = ['Söndag','Måndag','Tisdag','Onsdag','Torsdag','Fredag','Lördag'];
+  var TYP_LABELS = {temp:'Temperatur (°C)', janej:'Ja/Nej', fritext:'Fritext', numerisk:'Numeriskt'};
+
+  function deadlineStr(p){
+    var dl = p.deadline||{};
+    if(p.intervall==='dagligen') return dl.tid||'23:59';
+    if(p.intervall==='veckovis') return (DAYS[parseInt(dl.dag||0)])+' '+( dl.tid||'22:00');
+    if(p.intervall==='manadsvis'){
+      if(dl.typ==='sista_sun') return 'Sista söndagen '+( dl.tid||'23:00');
+      return 'Den '+(dl.dag||'30')+':e '+(dl.tid||'23:00');
+    }
+    return '';
+  }
+
+  var headers = ['Namn','Kategori','Typ','Min (°C)','Max (°C)','Intervall','Deadline','Referens','Instruktion','ID'];
+  var rows = [headers];
+  _program.forEach(function(p){
+    rows.push([
+      p.namn||'',
+      p.kategori||'',
+      TYP_LABELS[p.typ]||p.typ||'',
+      p.min!==undefined&&p.min!==''&&p.min!==null ? p.min : '',
+      p.max!==undefined&&p.max!==''&&p.max!==null ? p.max : '',
+      INTERVALL_LABELS[p.intervall]||p.intervall||'',
+      deadlineStr(p),
+      p.referens||'',
+      p.instr||'',
+      p.id||''
+    ]);
+  });
+
+  var ws = XLSX.utils.aoa_to_sheet(rows);
+  ws['!cols'] = [{wch:30},{wch:14},{wch:18},{wch:8},{wch:8},{wch:18},{wch:22},{wch:16},{wch:30},{wch:14}];
+
+  // Add a instructions sheet
+  var instr = [
+    ['INSTRUKTIONER FÖR IMPORT','',''],
+    ['','',''],
+    ['Kolumn','Tillåtna värden','Obligatorisk'],
+    ['Namn','Fritext','Ja'],
+    ['Kategori','Temperatur, Hygien, Städning, Skadedjur, Säkerhet, Övrigt','Nej'],
+    ['Typ','Temperatur (°C), Ja/Nej, Fritext, Numeriskt','Ja'],
+    ['Min (°C)','Tal (t.ex. -18)','Nej'],
+    ['Max (°C)','Tal (t.ex. 8)','Nej'],
+    ['Intervall','Dagligen, Varje användning, Veckovis, Månadsvis, Vid behov','Ja'],
+    ['Deadline','t.ex. 23:59 / Måndag 22:00 / Den 30:e 23:00 / Sista söndagen 23:00','Nej'],
+    ['Referens','Fritext (t.ex. HACCP 3.2)','Nej'],
+    ['Instruktion','Fritext','Nej'],
+    ['ID','Lämna tomt för nya punkter. Fyll i befintligt ID för att uppdatera.','Nej'],
+  ];
+  var ws2 = XLSX.utils.aoa_to_sheet(instr);
+  ws2['!cols'] = [{wch:16},{wch:50},{wch:14}];
+
+  var wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Kontrollpunkter');
+  XLSX.utils.book_append_sheet(wb, ws2, 'Instruktioner');
+  XLSX.writeFile(wb, 'Kontrollpunkter_'+_anlaggningId+'_'+todayStr()+'.xlsx');
+  toast('Excel exporterad','ok');
+}
+
+async function importPunkterExcel(input){
+  if(!window.XLSX||!input.files||!input.files[0]){ return; }
+  var file = input.files[0];
+  input.value = ''; // reset so same file can be re-imported
+
+  var reader = new FileReader();
+  reader.onload = async function(e){
+    try{
+      var wb   = XLSX.read(e.target.result, {type:'array'});
+      var ws   = wb.Sheets[wb.SheetNames[0]];
+      var data = XLSX.utils.sheet_to_json(ws, {header:1, defval:''});
+      if(!data||data.length<2){ toast('Tom fil eller ogiltigt format','warn'); return; }
+
+      var INTERVALL_MAP = {
+        'dagligen':'dagligen','varje användning':'varje_anvandning',
+        'veckovis':'veckovis','månadsvis':'manadsvis','vid behov':'vid_behov'
+      };
+      var TYP_MAP = {
+        'temperatur (°c)':'temp','temperatur':'temp',
+        'ja/nej':'janej','fritext':'fritext','numeriskt':'numerisk','numerisk':'numerisk'
+      };
+      var DAYS_MAP = {'söndag':0,'måndag':1,'tisdag':2,'onsdag':3,'torsdag':4,'fredag':5,'lördag':6};
+
+      function parseDeadline(str, intervall){
+        str = (str||'').trim();
+        if(!str) return {};
+        if(intervall==='dagligen') return {tid: str.match(/\d{2}:\d{2}/)?str:'23:59'};
+        if(intervall==='veckovis'){
+          var parts = str.toLowerCase().split(' ');
+          var dag = DAYS_MAP[parts[0]];
+          var tid = parts[1]||'22:00';
+          return {dag: dag!==undefined?String(dag):'1', tid:tid};
+        }
+        if(intervall==='manadsvis'){
+          if(str.toLowerCase().includes('sista söndag')){
+            var t = str.match(/\d{2}:\d{2}/);
+            return {typ:'sista_sun', tid:t?t[0]:'23:00'};
+          }
+          var dagMatch = str.match(/(\d+)/);
+          var tidMatch = str.match(/\d{2}:\d{2}/);
+          return {typ:'dag', dag:dagMatch?dagMatch[1]:'30', tid:tidMatch?tidMatch[0]:'23:00'};
+        }
+        return {};
+      }
+
+      var errors = [], imported = 0, updated = 0;
+      var newProgram = JSON.parse(JSON.stringify(_program)); // copy
+
+      for(var i=1;i<data.length;i++){
+        var row = data[i];
+        var namn = (row[0]||'').toString().trim();
+        if(!namn) continue;
+
+        var typRaw = (row[2]||'').toString().toLowerCase().trim();
+        var typ = TYP_MAP[typRaw];
+        if(!typ){ errors.push('Rad '+(i+1)+': Okänd typ "'+row[2]+'"'); continue; }
+
+        var intervallRaw = (row[5]||'').toString().toLowerCase().trim();
+        var intervall = INTERVALL_MAP[intervallRaw];
+        if(!intervall){ errors.push('Rad '+(i+1)+': Okänt intervall "'+row[5]+'"'); continue; }
+
+        var existingId = (row[9]||'').toString().trim();
+        var existingIdx = existingId ? newProgram.findIndex(function(p){return p.id===existingId;}) : -1;
+
+        var punkt = {
+          id:        existingIdx>=0 ? existingId : uid(),
+          namn:      namn,
+          kategori:  (row[1]||'Övrigt').toString().trim(),
+          typ:       typ,
+          min:       row[3]!==''&&row[3]!==undefined ? String(row[3]) : '',
+          max:       row[4]!==''&&row[4]!==undefined ? String(row[4]) : '',
+          intervall: intervall,
+          deadline:  parseDeadline(row[6], intervall),
+          referens:  (row[7]||'').toString().trim(),
+          instr:     (row[8]||'').toString().trim(),
+          aktiv:     true
+        };
+
+        if(existingIdx>=0){ newProgram[existingIdx]=punkt; updated++; }
+        else { newProgram.push(punkt); imported++; }
+      }
+
+      if(errors.length){
+        var msg = errors.slice(0,5).join('\n')+(errors.length>5?'\n...och '+(errors.length-5)+' till':'');
+        if(!confirm('Importfel:\n'+msg+'\n\nFortsätta med '+(imported+updated)+' giltiga rader?')) return;
+      }
+
+      // Sort by name
+      newProgram.sort(function(a,b){return a.namn.localeCompare(b.namn,'sv');});
+      _program = newProgram;
+
+      var ok = await ghPut(KBASE+'/settings/program_'+_anlaggningId+'.json',
+        {anlaggningId:_anlaggningId, punkter:_program}, 'Import: '+imported+' nya, '+updated+' uppdaterade');
+      if(ok){
+        toast('Import klar: '+imported+' nya, '+updated+' uppdaterade','ok');
+        renderAdmin();
+      } else {
+        toast('Kunde ej spara import','err');
+      }
+    } catch(err){
+      toast('Fel vid läsning av Excel: '+err.message,'err');
+    }
+  };
+  reader.readAsArrayBuffer(file);
 }
 
 async function savePunkt(){
