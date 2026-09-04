@@ -2077,8 +2077,9 @@ function renderKontoplan(container) {
       +'<td>'+typBadge+'</td>'
       +'<td style="text-align:center">'+(k.budgeterbar?'<i class="ti ti-check" style="color:var(--accent)"></i>':'<i class="ti ti-minus" style="color:var(--text3)"></i>')+'</td>'
       +'<td style="text-align:center">'+(k.param?'<i class="ti ti-link" style="color:var(--blue)"></i>':'')+'</td>'
-      +'<td class="no-print" style="text-align:right">'
+      +'<td class="no-print" style="text-align:right;display:flex;gap:6px;justify-content:flex-end">'
       +'<button class="btn btn-sm" data-knr="'+k.nr+'" onclick="openKontoModal(this.dataset.knr)"><i class="ti ti-pencil"></i> Redigera</button>'
+      +'<button class="btn btn-sm" style="background:var(--red-bg);color:var(--red);border-color:rgba(163,45,45,.2)" data-knr="'+k.nr+'" data-knamn="'+k.namn+'" onclick="deleteKonto(this.dataset.knr,this.dataset.knamn)"><i class="ti ti-trash"></i> Ta bort</button>'
       +'</td>'
       +'</tr>';
   }).join('');
@@ -2108,6 +2109,34 @@ function renderKontoplan(container) {
         </table>
       </div>
     </div>`;
+}
+
+async function deleteKonto(nr, namn) {
+  // Check if konto is linked to a parameter
+  var linkedParam = null;
+  (_settings.parametrar||[]).forEach(function(param) {
+    (param.fields||[]).forEach(function(f) {
+      if (f.kontoNr === nr || f.konto === nr) linkedParam = param.namn;
+    });
+    if (param.konto === nr || param.kontoNr === nr) linkedParam = param.namn;
+  });
+
+  var msg = 'Ta bort konto '+nr+' – '+namn+'?\n\nKontot tas bort ur kontoplanen. Redan budgeterade värden påverkas inte.';
+  if (linkedParam) {
+    msg = '⚠ Konto '+nr+' – '+namn+' är kopplat till parametern "'+linkedParam+'".\n\n'
+        + 'Om du tar bort kontot slutar parametern att skriva till det.\n\n'
+        + 'Vill du ändå ta bort kontot?';
+  }
+  if (!confirm(msg)) return;
+
+  _settings.kontoplan = _settings.kontoplan.filter(function(k){ return k.nr !== nr; });
+  var ok = await ghPut(settingsPath('settings.json'), _settings, 'Konto '+nr+' borttaget');
+  if (ok) {
+    toast('Konto '+nr+' borttaget','ok');
+    renderKontoplan(document.getElementById('view-content'));
+  } else {
+    toast('Kunde ej ta bort konto','err'); return;
+  }
 }
 
 function openKontoModal(nr) {
