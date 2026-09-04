@@ -972,7 +972,7 @@ async function renderBudget(container) {
                 var ref = _referensData[_currentEnhet&&_currentEnhet.id] || {};
                 var uP  = ref.utfallFoundPeriod || 0;
                 var MN  = ['','Jan','Feb','Mar','Apr','Maj','Jun','Jul','Aug','Sep','Okt','Nov','Dec'];
-                var utfLabel = uP ? 'Utfall '+(BUDGET_YEAR-1)+' t.o.m. '+MN[uP] : 'Utfall '+(BUDGET_YEAR-1)+' (ej inlagt)';
+                var utfLabel = uP ? 'Utfall '+BUDGET_YEAR+' t.o.m. '+MN[uP] : 'Utfall '+BUDGET_YEAR+' (ej inlagt)';
                 return '<th class="num" style="color:var(--text3);font-size:10px">'+utfLabel+'</th>'
                   +'<th class="num" style="color:var(--text3);font-size:10px">Budget '+(BUDGET_YEAR-1)+'</th>';
               })()}
@@ -1632,7 +1632,7 @@ async function loadReferensData(enhetId) {
 
   // Utfall: always current budget year, find latest saved period (12 → 1)
   for (var p = 12; p >= 1; p--) {
-    var utfPath = BUDGET_BASE+'/'+(BUDGET_YEAR-1)+'/'+enhetId+'/utfall_p'+p+'.json';
+    var utfPath = BUDGET_BASE+'/'+BUDGET_YEAR+'/'+enhetId+'/utfall_p'+p+'.json';
     var r1 = await ghGet(utfPath);
     if (r1 && r1.data) {
       var utfData = Object.assign({}, r1.data);
@@ -1729,7 +1729,7 @@ async function loadUtfallView() {
   _budgetManuellData[enhetId] = rMan ? Object.assign({}, rMan.data) : {};
   if (_budgetManuellData[enhetId]._meta) delete _budgetManuellData[enhetId]._meta;
 
-  var path = BUDGET_BASE + '/' + (BUDGET_YEAR-1) + '/' + enhetId + '/utfall_p' + period + '.json';
+  var path = BUDGET_BASE + '/' + BUDGET_YEAR + '/' + enhetId + '/utfall_p' + period + '.json';
   var r = await ghGet(path);
   _utfallData[key] = r ? r.data : {};
   // Strip _meta from loaded data before using as konto values
@@ -1814,7 +1814,7 @@ async function loadUtfallView() {
 
   document.getElementById('utfall-table-wrap').innerHTML = `
     <div style="font-size:12px;color:var(--text2);margin-bottom:8px">
-      <strong>${enhet.namn||enhetId}</strong> · t.o.m. ${periodLabel} ${BUDGET_YEAR-1}
+      <strong>${enhet.namn||enhetId}</strong> · t.o.m. ${periodLabel} ${BUDGET_YEAR}
     </div>
     <div class="budget-wrap">
       <table class="btable">
@@ -1823,7 +1823,7 @@ async function loadUtfallView() {
           <th class="sticky-col" style="width:220px">Namn</th>
           <th class="num">Budget ${BUDGET_YEAR}</th>
           <th class="num" style="color:var(--blue)">Budget ${prevYear} <span style="font-size:9px;opacity:.7">(manuell)</span></th>
-          <th class="num">Utfall ${BUDGET_YEAR-1} t.o.m. ${periodLabel}</th>
+          <th class="num">Utfall ${BUDGET_YEAR} t.o.m. ${periodLabel}</th>
           <th class="num">Avvikelse kr</th>
           <th class="num">Avvikelse %</th>
         </tr></thead>
@@ -1879,7 +1879,7 @@ async function saveUtfall() {
   var payload = Object.assign({}, kontoVarden, {
     _meta: { enhetId, period: parseInt(period), ar: BUDGET_YEAR, sparadAv: _user.name, sparadTs: new Date().toISOString() }
   });
-  var savePath = BUDGET_BASE + '/' + (BUDGET_YEAR-1) + '/' + enhetId + '/utfall_p' + period + '.json';
+  var savePath = BUDGET_BASE + '/' + BUDGET_YEAR + '/' + enhetId + '/utfall_p' + period + '.json';
   var okUtfall = await ghPut(savePath, payload, 'Utfall period '+period+' – '+enhetId);
     if (!okUtfall) { toast('Kunde ej spara utfall','err'); return; }
   if (okUtfall) {
@@ -1903,7 +1903,7 @@ function renderOppnaBudgetar(container) {
       ? '<span class="badge badge-approved"><span class="dot"></span> Öppen</span>'
       : '<span class="badge badge-draft"><span class="dot"></span> Stängd</span>';
     var refInfo = isOpen
-      ? 'Utfall '+(BUDGET_YEAR-1)+' (senaste period) · Ref.budget '+(BUDGET_YEAR-1)
+      ? 'Utfall '+BUDGET_YEAR+' (senaste period) · Ref.budget '+(BUDGET_YEAR-1)
       : '–';
     var actions = isOpen
       ? '<button class="btn btn-sm btn-danger" data-eid="'+e.id+'" onclick="stangEnhet(this.dataset.eid)"><i class="ti ti-lock"></i> Stäng</button>'
