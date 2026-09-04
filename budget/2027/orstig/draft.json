@@ -1,20 +1,7 @@
 {
   "kontoVarden": {},
   "kommentarer": {},
-  "paramVarden": {
-    "helarsplatser_antal": 77,
-    "helarsplatser_pris": 15625,
-    "gastavgift_antal": 810,
-    "gastavgift_pris": 339,
-    "el_intakt_sommar_kwh": 81000,
-    "el_kostnad_sommar_kwh": 135000,
-    "el_kostnad_vinter_kwh": 90000,
-    "el_intakt_vinter_kwh": 54000,
-    "loner_sommarvard": 3,
-    "loner_vintervard": 2,
-    "arvoden_antal": 1,
-    "arvoden_belopp": 30000
-  },
+  "paramVarden": {},
   "investeringar": [],
-  "autosparad": "2026-09-04T15:14:29.636Z"
+  "autosparad": null
 }
