@@ -1368,7 +1368,7 @@
     "el_intakt_vinter_del": 0.6,
     "el_kostnad_sommar_inpris": 2.5,
     "el_kostnad_vinter_inpris": 2.5,
-    "loner_arvodesats": 0.35,
+    "loner_arvodesats": 0.33,
     "loner_pbb": 59600,
     "soc_avg_sats": 31.42
   },
