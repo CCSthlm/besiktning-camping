@@ -1,9 +1,11 @@
 {
-  "kontoVarden": {},
+  "kontoVarden": {
+    "4011": 0
+  },
   "kommentarer": {},
   "paramVarden": {
-    "loner_sommarvard": 1
+    "loner_sommarvard": 0
   },
   "investeringar": [],
-  "autosparad": "2026-09-04T09:23:09.384Z"
+  "autosparad": "2026-09-04T09:34:45.981Z"
 }
