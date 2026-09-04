@@ -510,7 +510,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-seri
 <script>
 var GH_REPO = 'CCSthlm/besiktning-camping';
 var BUDGET_BASE = 'budget';
-var BUDGET_YEAR = 2026;
+var BUDGET_YEAR = 2026; // default — overridden from settings.json on load
 
 var _user = null;
 var _roles = [];
@@ -659,6 +659,8 @@ async function ghPut(path, data, msg) {
 async function loadSettings() {
   var r = await ghGet(settingsPath('settings.json'));
   if (r && r.data) _settings = Object.assign({kontoplan:[],parametrar:[],enheter:[]}, r.data);
+  // Load budget year from settings
+  if (_settings.budgetYear) BUDGET_YEAR = parseInt(_settings.budgetYear);
 }
 
 async function saveSettings() {
@@ -2162,6 +2164,23 @@ function renderParamAdmin(container) {
       </div>
     </div>
     <div class="content">
+
+      <div class="param-panel" style="margin-bottom:20px;border:1.5px solid var(--accent);background:var(--green-bg)">
+        <div class="param-panel-title" style="color:var(--accent2)"><i class="ti ti-calendar" style="font-size:14px"></i> Budgetår</div>
+        <p style="font-size:12px;color:var(--text2);margin-bottom:12px">Ändrar vilket år som används i rubriker, sökvägar och beräkningar i hela systemet. Spara och ladda om sidan för att aktivera det nya årtalet.</p>
+        <div class="param-row">
+          <span class="param-label">Budgetår</span>
+          <div class="param-input-wrap" style="display:flex;align-items:center;gap:10px">
+            <input type="number" id="budget-year-input" value="${BUDGET_YEAR}" min="2020" max="2099"
+              style="width:90px;font-size:18px;font-weight:700;text-align:center"
+              oninput="onBudgetYearChange(this)">
+            <button class="btn btn-primary btn-sm" onclick="saveBudgetYear()">
+              <i class="ti ti-check"></i> Spara budgetår
+            </button>
+          </div>
+        </div>
+      </div>
+
       <p style="font-size:13px;color:var(--text2);margin-bottom:16px">Globala parametrar är låsta för campingansvariga. De sätts av ekonomiansvarig och gäller samtliga enheter.</p>
       ${_settings.parametrar.map(function(param) {
         var gv = _settings.globalParamVarden || {};
@@ -2178,6 +2197,25 @@ function renderParamAdmin(container) {
       }).join('')}
       <button class="btn btn-primary" onclick="saveGlobalParams()"><i class="ti ti-device-floppy"></i> Spara globala parametrar</button>
     </div>`;
+}
+
+function onBudgetYearChange(el) {
+  var yr = parseInt(el.value);
+  if (yr >= 2020 && yr <= 2099) BUDGET_YEAR = yr;
+}
+
+async function saveBudgetYear() {
+  var yr = parseInt(document.getElementById('budget-year-input').value);
+  if (!yr || yr < 2020 || yr > 2099) { toast('Ogiltigt år','warn'); return; }
+  BUDGET_YEAR = yr;
+  _settings.budgetYear = yr;
+  var ok = await ghPut(settingsPath('settings.json'), _settings, 'Budgetår ändrat till '+yr);
+  if (ok) {
+    toast('Budgetår sparat – laddar om…','ok');
+    setTimeout(function(){ window.location.reload(); }, 1500);
+  } else {
+    toast('Kunde ej spara budgetår','err');
+  }
 }
 
 function onGlobalParamChange(el) {
