@@ -1705,7 +1705,7 @@ function renderUtfall(container) {
             return '<option value="'+(i+1)+'">t.o.m. '+m+'</option>';
           }).join('')}
         </select>
-        <button class="btn btn-blue" onclick="saveBudgetManuell(_utfallEnhetId)"><i class="ti ti-device-floppy"></i> Spara budget '+( BUDGET_YEAR-1)+'</button>
+        <button class="btn btn-blue" onclick="saveBudgetManuell(_utfallEnhetId)"><i class="ti ti-device-floppy"></i> Spara budget ${BUDGET_YEAR-1}</button>
         <button class="btn btn-primary" onclick="saveUtfall()"><i class="ti ti-device-floppy"></i> Spara utfall</button>
       </div>
       <div id="utfall-table-wrap"></div>
@@ -2181,6 +2181,7 @@ function renderParamAdmin(container) {
         </div>
       </div>
 
+
       <p style="font-size:13px;color:var(--text2);margin-bottom:16px">Globala parametrar är låsta för campingansvariga. De sätts av ekonomiansvarig och gäller samtliga enheter.</p>
       ${_settings.parametrar.map(function(param) {
         var gv = _settings.globalParamVarden || {};
@@ -2203,6 +2204,7 @@ function onBudgetYearChange(el) {
   var yr = parseInt(el.value);
   if (yr >= 2020 && yr <= 2099) BUDGET_YEAR = yr;
 }
+
 
 async function saveBudgetYear() {
   var yr = parseInt(document.getElementById('budget-year-input').value);
