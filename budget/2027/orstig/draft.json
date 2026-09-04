@@ -2,8 +2,9 @@
   "kontoVarden": {},
   "kommentarer": {},
   "paramVarden": {
-    "helarsplatser_antal": 77
+    "helarsplatser_antal": 77,
+    "helarsplatser_pris": 15625
   },
   "investeringar": [],
-  "autosparad": "2026-09-04T15:01:06.683Z"
+  "autosparad": "2026-09-04T15:01:22.471Z"
 }
