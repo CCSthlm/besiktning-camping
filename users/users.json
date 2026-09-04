@@ -294,9 +294,7 @@
       "pin": "1111",
       "pnr": "",
       "adminRoles": [
-        "kontroll-personal",
-        "kontroll-ansvarig",
-        "kontroll-admin"
+        "budget-camping"
       ],
       "role": "Användare",
       "active": true,
@@ -305,15 +303,15 @@
       "godkannarcamping": "",
       "sbaCamping": "",
       "nyckelCamping": "",
-      "budgetEnhet": "",
+      "budgetEnhet": "orstig",
       "elCamping": "",
       "projektCampingId": "",
-      "kontrollAnlaggningId": "graddos_rest",
-      "kontrollAnlaggningNamn": "Gräddös Pärla Kök & Bar",
-      "kontrollAnsvarigAnlaggningId": "graddos_rest",
-      "kontrollAnsvarigAnlaggningNamn": "Gräddös Pärla Kök & Bar",
-      "kontrollAdminAnlaggningId": "graddos_rest",
-      "kontrollAdminAnlaggningNamn": "Gräddös Pärla Kök & Bar",
+      "kontrollAnlaggningId": "",
+      "kontrollAnlaggningNamn": "",
+      "kontrollAnsvarigAnlaggningId": "",
+      "kontrollAnsvarigAnlaggningNamn": "",
+      "kontrollAdminAnlaggningId": "",
+      "kontrollAdminAnlaggningNamn": "",
       "created": "2026-09-04"
     }
   ],
