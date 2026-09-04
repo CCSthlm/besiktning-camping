@@ -10,9 +10,9 @@
     "el_kostnad_sommar_kwh": 135000,
     "el_kostnad_vinter_kwh": 90000,
     "el_intakt_vinter_kwh": 54000,
-    "loner_sommarvard": 1,
-    "loner_vintervard": 0
+    "loner_sommarvard": 3,
+    "loner_vintervard": 2
   },
   "investeringar": [],
-  "autosparad": "2026-09-04T15:10:38.203Z"
+  "autosparad": "2026-09-04T15:12:50.499Z"
 }
