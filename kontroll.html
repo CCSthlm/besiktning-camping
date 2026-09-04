@@ -255,7 +255,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-seri
 <div class="tabs" id="main-tabs">
   <button class="tab active" id="tab-dag" onclick="showTab('dag')"><i class="ti ti-checklist"></i> Dagens kontroller</button>
   <button class="tab" id="tab-lev" onclick="showTab('lev')"><i class="ti ti-truck"></i> Leverans</button>
-  <button class="tab" id="tab-hist" onclick="showTab('hist')"><i class="ti ti-history"></i> Historik</button>
+  <button class="tab" id="tab-hist" onclick="showTab('hist')"><i class="ti ti-report"></i> Kontrollrapport</button>
   <button class="tab" id="tab-manad" onclick="showTab('manad')" style="display:none"><i class="ti ti-calendar-stats"></i> Månadsrapport</button>
   <button class="tab" id="tab-admin" onclick="showTab('admin')" style="display:none"><i class="ti ti-settings"></i> Admin</button>
 </div>
@@ -1158,121 +1158,259 @@ async function saveLev(){
 }
 
 // ── HISTORIK ──────────────────────────────────────────────────────────────
+var _rapportView='sammanfattning';
+var _rapportYear=new Date().getFullYear();
+var _rapportMonth=new Date().getMonth();
+var _rapportAllUtfall={};
+
 async function renderHist(){
-  var el=document.getElementById('view-hist');
-  el.innerHTML='<div style="text-align:center;padding:30px;color:var(--text3)"><i class="ti ti-loader" style="font-size:32px"></i></div>';
+  var el = document.getElementById('view-hist');
+  el.innerHTML = '<div style="text-align:center;padding:30px;color:var(--text3)"><i class="ti ti-loader" style="font-size:32px"></i></div>';
 
-  // Load last 7 days
-  var days=[];
-  for(var i=0;i<7;i++){
-    var d=new Date();d.setDate(d.getDate()-i);
-    days.push(d.toISOString().slice(0,10));
+  var now = new Date();
+  var sm = document.getElementById('rp-sel-month');
+  var sy = document.getElementById('rp-sel-year');
+  if(sm) _rapportMonth = parseInt(sm.value);
+  if(sy) _rapportYear  = parseInt(sy.value);
+
+  var MONTHS = ['Januari','Februari','Mars','April','Maj','Juni','Juli','Augusti','September','Oktober','November','December'];
+  var yearOpts = '', y0 = now.getFullYear();
+  for(var y=y0-2;y<=y0+1;y++) yearOpts += '<option value="'+y+'"'+(y===_rapportYear?' selected':'')+'>'+y+'</option>';
+  var monthOpts = MONTHS.map(function(m,i){ return '<option value="'+i+'"'+(i===_rapportMonth?' selected':'')+'>'+m+'</option>'; }).join('');
+
+  var daysInMonth = new Date(_rapportYear, _rapportMonth+1, 0).getDate();
+  var prefix = _rapportYear+'-'+(_rapportMonth<9?'0':'')+(_rapportMonth+1)+'-';
+  var isCurrentMonth = _rapportYear===now.getFullYear() && _rapportMonth===now.getMonth();
+  var today = isCurrentMonth ? now.getDate() : daysInMonth;
+
+  // Load all days in selected month
+  _rapportAllUtfall = {};
+  for(var d=1;d<=daysInMonth;d++){
+    var ds = prefix+(d<10?'0':'')+d;
+    var r = await ghGet(KBASE+'/utfall/'+_anlaggningId+'/'+ds+'.json');
+    if(r&&r.data) _rapportAllUtfall[ds] = r.data;
   }
-  var allEntries=[];
-  for(var di=0;di<days.length;di++){
-    var r=await ghGet(KBASE+'/utfall/'+_anlaggningId+'/'+days[di]+'.json');
-    if(r&&r.data){
-      Object.keys(r.data).forEach(function(pid){
-        var entry=r.data[pid];
-        var p=_program.find(function(x){return x.id===pid;});
-        allEntries.push({datum:days[di],punktNamn:p?p.namn:pid,typ:p?p.typ:'',
-          varde:entry.varde,ok:entry.ok,av:entry.av,ts:entry.ts,
-          forSent:entry.forSent,forsentMinutter:entry.forsentMinutter,avvikelse:entry.avvikelse});
+
+  // KPI
+  var totalDone=0,totalExp=0,totalAvvik=0,totalSena=0,totalMissed=0;
+  _program.forEach(function(p){
+    var exp = p.intervall==='dagligen'?today : p.intervall==='veckovis'?Math.ceil(today/7) : 1;
+    totalExp += exp;
+    var done=0;
+    Object.keys(_rapportAllUtfall).forEach(function(ds){
+      if(_rapportAllUtfall[ds][p.id]){
+        done++; totalDone++;
+        if(!_rapportAllUtfall[ds][p.id].ok) totalAvvik++;
+        if(_rapportAllUtfall[ds][p.id].forSent) totalSena++;
+      }
+    });
+    totalMissed += Math.max(0, exp-done);
+  });
+  var pctTot = Math.round(totalDone/Math.max(totalExp,1)*100);
+
+  var headerHtml =
+    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px">'
+    +'<div style="font-size:17px;font-weight:700">Kontrollrapport</div>'
+    +'<div style="display:flex;gap:6px;flex-wrap:wrap">'
+    +'<select id="rp-sel-month" onchange="renderHist()" style="padding:7px 10px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);font-size:13px;font-family:inherit">'+monthOpts+'</select>'
+    +'<select id="rp-sel-year" onchange="renderHist()" style="padding:7px 10px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);font-size:13px;font-family:inherit">'+yearOpts+'</select>'
+    +'</div></div>'
+    +'<div class="kpi-row" style="grid-template-columns:repeat(4,1fr);margin-bottom:12px">'
+    +'<div class="kpi"><div class="kpi-val" style="color:'+(pctTot>=90?'var(--green)':pctTot>=70?'var(--amber)':'var(--red)')+'">'+pctTot+'%</div><div class="kpi-lbl">Utfört</div></div>'
+    +'<div class="kpi"><div class="kpi-val" style="color:'+(totalMissed>0?'var(--red)':'var(--green)')+'">'+totalMissed+'</div><div class="kpi-lbl">Missade</div></div>'
+    +'<div class="kpi"><div class="kpi-val" style="color:'+(totalAvvik>0?'var(--amber)':'var(--green)')+'">'+totalAvvik+'</div><div class="kpi-lbl">Avvikelser</div></div>'
+    +'<div class="kpi"><div class="kpi-val" style="color:'+(totalSena>0?'var(--amber)':'var(--green)')+'">'+totalSena+'</div><div class="kpi-lbl">Sena</div></div>'
+    +'</div>'
+  // Build chips with proper JS
+  var chips = '<div class="rapport-chips">'
+    +'<div class="rapport-chip'+(_rapportView==='sammanfattning'?' active':'')+'" data-rv="sammanfattning" onclick="setRapportView(this.dataset.rv)"><i class="ti ti-chart-bar" style="font-size:12px"></i> Sammanfattning</div>'
+    +'<div class="rapport-chip'+(_rapportView==='matris'?' active':'')+'" data-rv="matris" onclick="setRapportView(this.dataset.rv)"><i class="ti ti-layout-grid" style="font-size:12px"></i> Kalendermatris</div>'
+    +'</div>';
+
+  headerHtml = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px">'
+    +'<div style="font-size:17px;font-weight:700">Kontrollrapport – '+_anlaggningNamn+'</div>'
+    +'<div style="display:flex;gap:6px;flex-wrap:wrap">'
+    +'<select id="rp-sel-month" onchange="renderHist()" style="padding:7px 10px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);font-size:13px;font-family:inherit">'+monthOpts+'</select>'
+    +'<select id="rp-sel-year" onchange="renderHist()" style="padding:7px 10px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);font-size:13px;font-family:inherit">'+yearOpts+'</select>'
+    +'</div></div>'
+    +'<div class="kpi-row" style="grid-template-columns:repeat(4,1fr);margin-bottom:12px">'
+    +'<div class="kpi"><div class="kpi-val" style="color:'+(pctTot>=90?'var(--green)':pctTot>=70?'var(--amber)':'var(--red)')+'">'+pctTot+'%</div><div class="kpi-lbl">Utfört</div></div>'
+    +'<div class="kpi"><div class="kpi-val" style="color:'+(totalMissed>0?'var(--red)':'var(--green)')+'">'+totalMissed+'</div><div class="kpi-lbl">Missade</div></div>'
+    +'<div class="kpi"><div class="kpi-val" style="color:'+(totalAvvik>0?'var(--amber)':'var(--green)')+'">'+totalAvvik+'</div><div class="kpi-lbl">Avvikelser</div></div>'
+    +'<div class="kpi"><div class="kpi-val" style="color:'+(totalSena>0?'var(--amber)':'var(--green)')+'">'+totalSena+'</div><div class="kpi-lbl">Sena</div></div>'
+    +'</div>'
+    + chips;
+
+  var contentHtml = '';
+
+  if(_rapportView==='sammanfattning'){
+    // Temp graph
+    var tempPunkt = _program.find(function(p){return p.typ==='temp';});
+    var graphHtml = '';
+    if(tempPunkt){
+      var allTemp = [];
+      Object.keys(_rapportAllUtfall).sort().forEach(function(ds){
+        if(_rapportAllUtfall[ds][tempPunkt.id]){
+          allTemp.push({datum:ds, varde:parseFloat(_rapportAllUtfall[ds][tempPunkt.id].varde), ok:_rapportAllUtfall[ds][tempPunkt.id].ok});
+        }
       });
+      if(allTemp.length>1){
+        var vals=allTemp.map(function(e){return e.varde;});
+        var minV=Math.min.apply(null,vals)-2, maxV=Math.max.apply(null,vals)+2;
+        if(tempPunkt.max) maxV=Math.max(maxV,parseFloat(tempPunkt.max)+1);
+        if(tempPunkt.min) minV=Math.min(minV,parseFloat(tempPunkt.min)-1);
+        var W=540, H=90;
+        var pts=allTemp.map(function(e,i){
+          var x=30+i*(W/(allTemp.length-1||1));
+          var y=H-((e.varde-minV)/(maxV-minV))*(H-10)+5;
+          return x+','+y;
+        }).join(' ');
+        var maxY=tempPunkt.max?H-((parseFloat(tempPunkt.max)-minV)/(maxV-minV))*(H-10)+5:null;
+        var minY=tempPunkt.min?H-((parseFloat(tempPunkt.min)-minV)/(maxV-minV))*(H-10)+5:null;
+        graphHtml='<div class="card" style="margin-bottom:12px;padding:12px 14px 4px">'
+          +'<div style="font-size:12px;font-weight:600;margin-bottom:8px">'+tempPunkt.namn+' – temperaturlogg</div>'
+          +'<svg viewBox="0 0 600 '+H+'" style="width:100%;height:80px;overflow:visible">'
+          +(maxY?'<line x1="0" y1="'+maxY+'" x2="600" y2="'+maxY+'" stroke="var(--red)" stroke-width="1" stroke-dasharray="4,3"/>':'')
+          +(minY?'<line x1="0" y1="'+minY+'" x2="600" y2="'+minY+'" stroke="var(--blue)" stroke-width="1" stroke-dasharray="4,3"/>':'')
+          +'<polyline points="'+pts+'" fill="none" stroke="var(--blue)" stroke-width="2" stroke-linejoin="round"/>'
+          +allTemp.map(function(e,i){
+            var x=30+i*(W/(allTemp.length-1||1));
+            var y=H-((e.varde-minV)/(maxV-minV))*(H-10)+5;
+            var col=e.ok?'var(--blue)':'var(--red)';
+            return'<circle cx="'+x+'" cy="'+y+'" r="4" fill="'+col+'"/>';
+          }).join('')
+          +'</svg>'
+          +'<div style="display:flex;gap:12px;font-size:10px;color:var(--text3);margin-top:2px">'
+          +(maxY?'<span style="display:flex;align-items:center;gap:3px"><span style="width:10px;height:1px;background:var(--red);display:inline-block"></span> Max '+tempPunkt.max+'°C</span>':'')
+          +(minY?'<span style="display:flex;align-items:center;gap:3px"><span style="width:10px;height:1px;background:var(--blue);display:inline-block"></span> Min '+tempPunkt.min+'°C</span>':'')
+          +'<span style="display:flex;align-items:center;gap:3px"><span style="width:8px;height:8px;background:var(--red);border-radius:50%;display:inline-block"></span> Avvikelse</span>'
+          +'</div></div>';
+      }
     }
-  }
 
-  // Temp graph for first temp punkt
-  var tempPunkt=_program.find(function(p){return p.typ==='temp';});
-  var graphHtml='';
-  if(tempPunkt){
-    var tempData=allEntries.filter(function(e){return e.punktNamn===tempPunkt.namn;})
-      .sort(function(a,b){return a.datum.localeCompare(b.datum);});
-    if(tempData.length>1){
-      var vals=tempData.map(function(e){return parseFloat(e.varde);});
-      var minV=Math.min.apply(null,vals)-2,maxV=Math.max.apply(null,vals)+2;
-      if(tempPunkt.max) maxV=Math.max(maxV,parseFloat(tempPunkt.max)+1);
-      var pts=tempData.map(function(e,i){
-        var x=30+i*(540/(tempData.length-1||1));
-        var y=130-((parseFloat(e.varde)-minV)/(maxV-minV))*110;
-        return x+','+y;
-      }).join(' ');
-      var maxLineY=tempPunkt.max?130-((parseFloat(tempPunkt.max)-minV)/(maxV-minV))*110:null;
-      var minLineY=tempPunkt.min?130-((parseFloat(tempPunkt.min)-minV)/(maxV-minV))*110:null;
-      graphHtml='<div class="card" style="margin-bottom:12px">'
-        +'<div class="card-header"><span class="card-title"><i class="ti ti-chart-line"></i> '+tempPunkt.namn+' – senaste '+tempData.length+' avl.</span></div>'
-        +'<div class="graph-wrap">'
-        +'<svg class="graph-svg" viewBox="0 0 600 150" style="height:120px">'
-        +(maxLineY?'<line x1="0" y1="'+maxLineY+'" x2="600" y2="'+maxLineY+'" stroke="#A32D2D" stroke-width="1" stroke-dasharray="4,3"/>':'')
-        +(minLineY?'<line x1="0" y1="'+minLineY+'" x2="600" y2="'+minLineY+'" stroke="#1a4f7a" stroke-width="1" stroke-dasharray="4,3"/>':'')
-        +'<polyline points="'+pts+'" fill="none" stroke="#1a4f7a" stroke-width="2.5" stroke-linejoin="round"/>'
-        +tempData.map(function(e,i){
-          var x=30+i*(540/(tempData.length-1||1));
-          var y=130-((parseFloat(e.varde)-minV)/(maxV-minV))*110;
-          var col=e.ok?'#1a4f7a':'#A32D2D';
-          return'<circle cx="'+x+'" cy="'+y+'" r="5" fill="'+col+'"/>'
-            +'<text x="'+x+'" y="'+(y-9)+'" text-anchor="middle" font-size="10" fill="'+col+'">'+(parseFloat(e.varde)>0?'+':'')+parseFloat(e.varde).toFixed(1)+'</text>'
-            +'<text x="'+x+'" y="145" text-anchor="middle" font-size="9" fill="var(--text3)">'+e.datum.slice(5)+'</text>';
-        }).join('')
-        +'</svg></div></div>';
+    var rows = _program.map(function(p){
+      var exp = p.intervall==='dagligen'?today : p.intervall==='veckovis'?Math.ceil(today/7) : 1;
+      var done=0,late=0,avvik=0;
+      Object.keys(_rapportAllUtfall).forEach(function(ds){
+        if(_rapportAllUtfall[ds][p.id]){
+          done++;
+          if(_rapportAllUtfall[ds][p.id].forSent) late++;
+          if(!_rapportAllUtfall[ds][p.id].ok) avvik++;
+        }
+      });
+      var pct = Math.min(100,Math.round(done/Math.max(exp,1)*100));
+      return'<div class="manad-row">'
+        +'<div style="flex:1;min-width:0">'
+        +'<div style="font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+p.namn+'</div>'
+        +'<div style="font-size:11px;color:var(--text3)">'+done+'/'+exp+' utförda'
+        +(late?' · <span style="color:var(--amber)">'+late+' sena</span>':'')
+        +(avvik?' · <span style="color:var(--red)">'+avvik+' avvik.</span>':'')+'</div>'
+        +'</div>'
+        +'<div class="prog-bar"><div class="prog-fill'+(pct<70?' danger':pct<90?' warn':'')+'" style="width:'+pct+'%"></div></div>'
+        +'<div style="font-size:12px;font-weight:600;min-width:36px;text-align:right;color:'+(pct>=90?'var(--green)':pct>=70?'var(--amber)':'var(--red)')+'">'+pct+'%</div>'
+        +'</div>';
+    }).join('');
+    contentHtml = graphHtml + '<div class="card" style="margin-bottom:14px">'+(rows||'<div style="padding:16px;text-align:center;color:var(--text3)">Ingen data för vald period</div>')+'</div>';
+
+  } else {
+    // KALENDERMATRIS
+    var GROUPS=[{id:'varje_anvandning',label:'Varje användning'},{id:'dagligen',label:'Dagligen'},
+      {id:'veckovis',label:'Veckovis'},{id:'manadsvis',label:'Månadsvis'},{id:'vid_behov',label:'Vid behov'}];
+
+    var dayHeaders='<th class="name-col">Kontrollpunkt</th>';
+    for(var d=1;d<=daysInMonth;d++){
+      var date=new Date(_rapportYear,_rapportMonth,d);
+      var dow=date.getDay();
+      var isToday=isCurrentMonth&&d===now.getDate();
+      var isWeekend=dow===0||dow===6;
+      dayHeaders+='<th style="min-width:22px;font-size:9px'+(isWeekend?';color:var(--red)':'')+(isToday?';color:var(--green);font-weight:700':'')+'">'+(d<10?'0':'')+d+'</th>';
     }
-  }
 
-  var rows=allEntries.sort(function(a,b){return b.ts.localeCompare(a.ts);}).map(function(e){
-    var col=e.ok?'var(--green)':'var(--red)';
-    return'<div class="hist-row">'
-      +'<div style="width:9px;height:9px;border-radius:50%;background:'+col+';flex-shrink:0"></div>'
-      +'<div class="hist-info">'
-      +'<div class="hist-name">'+e.punktNamn+'</div>'
-      +'<div class="hist-meta">'+e.datum+' '+e.ts.slice(11,16)+' · '+e.av
-      +(e.forSent?'<span class="late-badge" style="margin-left:6px">+'+e.forsentMinutter+'min sen</span>':'')
-      +'</div>'
-      +(e.avvikelse?'<div style="font-size:11px;color:var(--red);margin-top:2px">↳ '+e.avvikelse+'</div>':'')
-      +'</div>'
-      +'<div style="font-size:16px;font-weight:600;color:'+col+'">'+e.varde+(e.typ==='temp'?' °C':'')+'</div>'
+    var matrixRows='';
+    GROUPS.forEach(function(grp){
+      var punkter=_program.filter(function(p){return p.intervall===grp.id;});
+      if(!punkter.length) return;
+      matrixRows+='<tr class="matrix-group-row"><th colspan="'+(daysInMonth+1)+'">'+grp.label+'</th></tr>';
+      punkter.forEach(function(p){
+        var cells='';
+        for(var d=1;d<=daysInMonth;d++){
+          var ds=prefix+(d<10?'0':'')+d;
+          var entry=_rapportAllUtfall[ds]&&_rapportAllUtfall[ds][p.id];
+          var date2=new Date(_rapportYear,_rapportMonth,d);
+          var dow2=date2.getDay();
+          var expected=false;
+          if(p.intervall==='dagligen') expected=true;
+          else if(p.intervall==='veckovis'){ var dl=p.deadline||{}; expected=(dow2===parseInt(dl.dag||0)); }
+          else if(p.intervall==='manadsvis') expected=(d===1);
+          var cls='mc-none';
+          if(entry){
+            if(!entry.ok) cls='mc-avvik';
+            else if(entry.forSent) cls='mc-late';
+            else cls='mc-ok';
+          } else if(expected&&d<=(isCurrentMonth?now.getDate():daysInMonth)){
+            cls='mc-miss';
+          } else if(!expected){
+            cls='mc-gray';
+          }
+          var safeDs=ds.replace(/"/g,'');
+          var safePid=p.id.replace(/"/g,'');
+          cells+='<td><div class="matrix-cell '+cls+'"'
+            +(cls!=='mc-none'&&cls!=='mc-gray'?' data-ds="'+safeDs+'" data-pid="'+safePid+'" onclick="openCellDetail(this.dataset.ds,this.dataset.pid,this.dataset.pid)"':'')
+            +'></div></td>';
+        }
+        matrixRows+='<tr><td class="name-col" title="'+p.namn+'">'+p.namn+'</td>'+cells+'</tr>';
+      });
+    });
+
+    contentHtml='<div class="matrix-wrap"><table class="matrix-table" style="background:var(--bg2);border-radius:var(--radius);overflow:hidden;width:100%">'
+      +'<thead><tr>'+dayHeaders+'</tr></thead>'
+      +'<tbody>'+matrixRows+'</tbody>'
+      +'</table></div>'
+      +'<div style="display:flex;gap:12px;flex-wrap:wrap;font-size:11px;color:var(--text2);margin-bottom:14px">'
+      +'<span style="display:flex;align-items:center;gap:5px"><span style="width:14px;height:14px;border-radius:3px;background:var(--green);display:inline-block"></span> Utförd</span>'
+      +'<span style="display:flex;align-items:center;gap:5px"><span style="width:14px;height:14px;border-radius:3px;background:var(--amber);display:inline-block"></span> Sen</span>'
+      +'<span style="display:flex;align-items:center;gap:5px"><span style="width:14px;height:14px;border-radius:3px;background:var(--red);display:inline-block"></span> Avvikelse</span>'
+      +'<span style="display:flex;align-items:center;gap:5px"><span style="width:14px;height:14px;border-radius:3px;background:rgba(163,45,45,.15);display:inline-block"></span> Missad</span>'
+      +'<span style="display:flex;align-items:center;gap:5px"><span style="width:14px;height:14px;border-radius:3px;background:var(--bg4);display:inline-block"></span> Ej aktuell</span>'
       +'</div>';
-  }).join('');
+  }
 
-  el.innerHTML='<div style="font-size:17px;font-weight:700;margin-bottom:12px">Historik – senaste 7 dagar</div>'
-    +graphHtml
-    +(rows?'<div class="card">'+rows+'</div>':'<div style="text-align:center;padding:40px;color:var(--text3)">Ingen historik ännu.</div>');
+  el.innerHTML = headerHtml + contentHtml;
 }
 
-// ── MÅNADSRAPPORT ─────────────────────────────────────────────────────────
+function setRapportView(v){
+  _rapportView=v;
+  var sm=document.getElementById('rp-sel-month');
+  var sy=document.getElementById('rp-sel-year');
+  if(sm) _rapportMonth=parseInt(sm.value);
+  if(sy) _rapportYear=parseInt(sy.value);
+  renderHist();
+}
+
+
 async function renderManad(){
   var el=document.getElementById('view-manad');
   el.innerHTML='<div style="text-align:center;padding:30px;color:var(--text3)"><i class="ti ti-loader" style="font-size:32px"></i></div>';
-
   var now=new Date();
   var year=now.getFullYear(),month=now.getMonth();
   var daysInMonth=new Date(year,month+1,0).getDate();
   var prefix=year+'-'+(month<9?'0':'')+(month+1)+'-';
-
-  // Load all days this month
   var allUtfall={};
   for(var d=1;d<=daysInMonth;d++){
     var ds=prefix+(d<10?'0':'')+d;
     var r=await ghGet(KBASE+'/utfall/'+_anlaggningId+'/'+ds+'.json');
     if(r&&r.data)allUtfall[ds]=r.data;
   }
-
-  // Stats per punkt
   var monthKey=year+'-'+(month<9?'0':'')+(month+1);
   var sign=_signaturer[monthKey];
-
   var today=now.getDate();
   var rows=_program.map(function(p){
     var expected=p.intervall==='dagligen'?today:p.intervall==='veckovis'?Math.ceil(today/7):1;
     var done=0,late=0,avvik=0;
     Object.keys(allUtfall).forEach(function(ds){
-      if(allUtfall[ds][p.id]){
-        done++;
-        if(allUtfall[ds][p.id].forSent)late++;
-        if(!allUtfall[ds][p.id].ok)avvik++;
-      }
+      if(allUtfall[ds][p.id]){done++;if(allUtfall[ds][p.id].forSent)late++;if(!allUtfall[ds][p.id].ok)avvik++;}
     });
     var pct=Math.min(100,Math.round(done/Math.max(expected,1)*100));
-     var fillClass=pct>=90?'':pct>=70?'warn':'danger';
     return'<div class="manad-row">'
       +'<div style="flex:1;min-width:0">'
       +'<div style="font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+p.namn+'</div>'
@@ -1282,7 +1420,6 @@ async function renderManad(){
       +'<div style="font-size:12px;font-weight:600;min-width:36px;text-align:right;color:'+(pct>=90?'var(--green)':pct>=70?'var(--amber)':'var(--red)')+'">'+pct+'%</div>'
       +'</div>';
   }).join('');
-
   var totalDone=0,totalExp=0,totalAvvik=0;
   _program.forEach(function(p){
     var exp=p.intervall==='dagligen'?today:p.intervall==='veckovis'?Math.ceil(today/7):1;
@@ -1291,9 +1428,8 @@ async function renderManad(){
       if(allUtfall[ds][p.id]){totalDone++;if(!allUtfall[ds][p.id].ok)totalAvvik++;}
     });
   });
-
-  el.innerHTML='<div style="font-size:17px;font-weight:700;margin-bottom:12px">'
-    +['Januari','Februari','Mars','April','Maj','Juni','Juli','Augusti','September','Oktober','November','December'][month]+' '+year+'</div>'
+  var MONTHS=['Januari','Februari','Mars','April','Maj','Juni','Juli','Augusti','September','Oktober','November','December'];
+  el.innerHTML='<div style="font-size:17px;font-weight:700;margin-bottom:12px">'+MONTHS[month]+' '+year+' – '+_anlaggningNamn+'</div>'
     +'<div class="kpi-row">'
     +'<div class="kpi"><div class="kpi-val" style="color:var(--green)">'+Math.round(totalDone/Math.max(totalExp,1)*100)+'%</div><div class="kpi-lbl">Utfört</div></div>'
     +'<div class="kpi"><div class="kpi-val" style="color:'+(totalAvvik>0?'var(--red)':'var(--green)')+'">'+totalAvvik+'</div><div class="kpi-lbl">Avvikelser</div></div>'
@@ -1302,8 +1438,9 @@ async function renderManad(){
     +'<div class="card" style="margin-bottom:14px">'+rows+'</div>'
     +(sign
       ?'<div class="sign-box"><div style="font-size:13px;font-weight:600;color:var(--blue);margin-bottom:4px"><i class="ti ti-writing-sign"></i> Signerad</div><div style="font-size:13px">'+sign.av+' · '+sign.ts.slice(0,10)+' '+sign.ts.slice(11,16)+'</div></div>'
-      :'<div class="sign-box"><div style="font-size:13px;font-weight:500;color:var(--blue);margin-bottom:8px">Signera månad</div><div style="font-size:12px;color:var(--text2);margin-bottom:12px">Granska alla kontroller ovan och signera om perioden är komplett och korrekt.</div>'
-      +'<button class="btn btn-primary btn-full" onclick="openSignering()"><i class="ti ti-writing-sign"></i> Granska och signera</button></div>');
+      :'<div class="sign-box"><div style="font-size:13px;font-weight:500;color:var(--blue);margin-bottom:8px">Signera '+MONTHS[month]+' '+year+'</div>'
+        +'<div style="font-size:12px;color:var(--text2);margin-bottom:12px">Granska alla kontroller ovan och signera om perioden är komplett och korrekt.</div>'
+        +'<button class="btn btn-primary btn-full" onclick="openSignering()"><i class="ti ti-writing-sign"></i> Granska och signera</button></div>');
 }
 
 function openSignering(){
