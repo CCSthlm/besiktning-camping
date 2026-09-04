@@ -293,7 +293,9 @@
       "email": "test@cc-camping.se",
       "pin": "1111",
       "pnr": "",
-      "adminRoles": [],
+      "adminRoles": [
+        "kontroll-personal"
+      ],
       "role": "Användare",
       "active": true,
       "apps": [],
@@ -304,8 +306,8 @@
       "budgetEnhet": "",
       "elCamping": "",
       "projektCampingId": "",
-      "kontrollAnlaggningId": "",
-      "kontrollAnlaggningNamn": "",
+      "kontrollAnlaggningId": "graddos_rest",
+      "kontrollAnlaggningNamn": "Gräddös Pärla Kök & Bar",
       "kontrollAnsvarigAnlaggningId": "",
       "kontrollAnsvarigAnlaggningNamn": "",
       "kontrollAdminAnlaggningId": "",
