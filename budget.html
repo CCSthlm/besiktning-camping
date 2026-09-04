@@ -424,7 +424,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-seri
       <div class="form-grid">
         <div class="form-field">
           <label>Utfallsår</label>
-          <input type="number" id="oppna-utfall-ar" value="2025" min="2020" max="2030">
+          <input type="number" id="oppna-utfall-ar" value="${BUDGET_YEAR-1}" min="2020" max="2030">
         </div>
         <div class="form-field">
           <label>T.o.m. period</label>
@@ -1729,7 +1729,7 @@ async function loadUtfallView() {
   _budgetManuellData[enhetId] = rMan ? Object.assign({}, rMan.data) : {};
   if (_budgetManuellData[enhetId]._meta) delete _budgetManuellData[enhetId]._meta;
 
-  var path = BUDGET_BASE + '/' + BUDGET_YEAR + '/' + enhetId + '/utfall_p' + period + '.json';
+  var path = BUDGET_BASE + '/' + (BUDGET_YEAR-1) + '/' + enhetId + '/utfall_p' + period + '.json';
   var r = await ghGet(path);
   _utfallData[key] = r ? r.data : {};
   // Strip _meta from loaded data before using as konto values
@@ -1814,7 +1814,7 @@ async function loadUtfallView() {
 
   document.getElementById('utfall-table-wrap').innerHTML = `
     <div style="font-size:12px;color:var(--text2);margin-bottom:8px">
-      <strong>${enhet.namn||enhetId}</strong> · t.o.m. ${periodLabel} ${BUDGET_YEAR}
+      <strong>${enhet.namn||enhetId}</strong> · t.o.m. ${periodLabel} ${BUDGET_YEAR-1}
     </div>
     <div class="budget-wrap">
       <table class="btable">
@@ -1823,7 +1823,7 @@ async function loadUtfallView() {
           <th class="sticky-col" style="width:220px">Namn</th>
           <th class="num">Budget ${BUDGET_YEAR}</th>
           <th class="num" style="color:var(--blue)">Budget ${prevYear} <span style="font-size:9px;opacity:.7">(manuell)</span></th>
-          <th class="num">Utfall t.o.m. ${periodLabel}</th>
+          <th class="num">Utfall ${BUDGET_YEAR-1} t.o.m. ${periodLabel}</th>
           <th class="num">Avvikelse kr</th>
           <th class="num">Avvikelse %</th>
         </tr></thead>
@@ -1879,7 +1879,7 @@ async function saveUtfall() {
   var payload = Object.assign({}, kontoVarden, {
     _meta: { enhetId, period: parseInt(period), ar: BUDGET_YEAR, sparadAv: _user.name, sparadTs: new Date().toISOString() }
   });
-  var savePath = BUDGET_BASE + '/' + BUDGET_YEAR + '/' + enhetId + '/utfall_p' + period + '.json';
+  var savePath = BUDGET_BASE + '/' + (BUDGET_YEAR-1) + '/' + enhetId + '/utfall_p' + period + '.json';
   var okUtfall = await ghPut(savePath, payload, 'Utfall period '+period+' – '+enhetId);
     if (!okUtfall) { toast('Kunde ej spara utfall','err'); return; }
   if (okUtfall) {
