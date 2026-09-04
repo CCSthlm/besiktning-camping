@@ -294,7 +294,9 @@
       "pin": "1111",
       "pnr": "",
       "adminRoles": [
-        "budget-camping"
+        "kontroll-personal",
+        "kontroll-ansvarig",
+        "kontroll-admin"
       ],
       "role": "Användare",
       "active": true,
@@ -303,15 +305,15 @@
       "godkannarcamping": "",
       "sbaCamping": "",
       "nyckelCamping": "",
-      "budgetEnhet": "orstig",
+      "budgetEnhet": "",
       "elCamping": "",
       "projektCampingId": "",
-      "kontrollAnlaggningId": "",
-      "kontrollAnlaggningNamn": "",
-      "kontrollAnsvarigAnlaggningId": "",
-      "kontrollAnsvarigAnlaggningNamn": "",
-      "kontrollAdminAnlaggningId": "",
-      "kontrollAdminAnlaggningNamn": "",
+      "kontrollAnlaggningId": "graddos_rest",
+      "kontrollAnlaggningNamn": "Gräddös Pärla Kök & Bar",
+      "kontrollAnsvarigAnlaggningId": "graddos_rest",
+      "kontrollAnsvarigAnlaggningNamn": "Gräddös Pärla Kök & Bar",
+      "kontrollAdminAnlaggningId": "graddos_rest",
+      "kontrollAdminAnlaggningNamn": "Gräddös Pärla Kök & Bar",
       "created": "2026-09-04"
     }
   ],
@@ -1022,7 +1024,7 @@
           "pnr": "19750729-0588",
           "date": "2026-09-04",
           "timeIn": "15:54",
-          "timeOut": "",
+          "timeOut": "21:47",
           "registeredBy": "Restaurang Östnora",
           "registeredAt": "2026-09-04T13:54:34.661Z",
           "manual": false,
@@ -1771,6 +1773,15 @@
           "detail": "Linda Wahlund stämplade in 15:54",
           "oldVal": "",
           "newVal": "15:54"
+        },
+        {
+          "id": "mtnd8amtgy1o5",
+          "ts": "2026-09-04T19:47:21.941Z",
+          "user": "Restaurang Östnora",
+          "action": "out",
+          "detail": "Linda Wahlund stämplade ut 21:47",
+          "oldVal": "",
+          "newVal": "21:47"
         }
       ]
     }
