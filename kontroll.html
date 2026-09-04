@@ -1387,6 +1387,33 @@ function setRapportView(v){
   renderHist();
 }
 
+function openCellDetail(ds, punktId){
+  var p = _program.find(function(x){return x.id===punktId;});
+  var entry = _rapportAllUtfall[ds] && _rapportAllUtfall[ds][punktId];
+  document.getElementById('cell-title').textContent = p ? p.namn : punktId;
+  document.getElementById('cell-sub').textContent = ds;
+  var body = '';
+  if(entry){
+    var col = !entry.ok?'var(--red)':entry.forSent?'var(--amber)':'var(--green)';
+    var status = !entry.ok?'Avvikelse':entry.forSent?'Sen (+'+entry.forsentMinutter+' min)':'OK';
+    body = '<div style="background:var(--bg3);border-radius:var(--radius);padding:12px 14px;margin-bottom:12px">'
+      +'<div style="font-size:26px;font-weight:700;color:'+col+'">'+entry.varde+(p&&p.typ==='temp'?' °C':'')+'</div>'
+      +'<div style="font-size:13px;color:'+col+';margin-top:4px"><i class="ti ti-'+(entry.ok?'check':'x')+'" style="font-size:12px"></i> '+status+'</div>'
+      +'</div>'
+      +'<div style="font-size:13px;color:var(--text2);margin-bottom:6px"><i class="ti ti-user" style="font-size:12px"></i> '+entry.av+'</div>'
+      +'<div style="font-size:13px;color:var(--text2);margin-bottom:6px"><i class="ti ti-clock" style="font-size:12px"></i> '+entry.ts.slice(11,16)+'</div>'
+      +(entry.avvikelse?'<div style="background:var(--red-bg);border-radius:var(--radius);padding:10px 12px;font-size:13px;color:var(--red);margin-top:8px"><i class="ti ti-alert-triangle" style="font-size:12px"></i> '+entry.avvikelse+'</div>':'');
+  } else {
+    body = '<div style="text-align:center;padding:24px;color:var(--text3)">'
+      +'<i class="ti ti-x" style="font-size:36px;display:block;margin-bottom:8px;color:var(--red)"></i>'
+      +'<div style="font-size:14px;font-weight:500;color:var(--red);margin-bottom:4px">Missad kontroll</div>'
+      +'<div style="font-size:12px">Ingen registrering för detta datum.</div>'
+      +'</div>';
+  }
+  document.getElementById('cell-body').innerHTML = body;
+  openModal('modal-cell');
+}
+
 
 async function renderManad(){
   var el=document.getElementById('view-manad');
