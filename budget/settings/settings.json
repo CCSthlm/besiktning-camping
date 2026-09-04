@@ -1065,16 +1065,6 @@
       "typ": "bokslut",
       "grupp": "Bokslutsdispositioner",
       "budgeterbar": true
-    },
-    {
-      "nr": "9999",
-      "namn": "Testkonto",
-      "typ": "intakt",
-      "grupp": "",
-      "budgeterbar": true,
-      "aktiv": true,
-      "param": null,
-      "kommentar": ""
     }
   ],
   "parametrar": [
