@@ -1017,6 +1017,20 @@
           "manualReason": "",
           "edited": false,
           "campingId": "c8"
+        },
+        {
+          "id": "mtn0mlut9c3sg",
+          "name": "Linda Wahlund",
+          "pnr": "19750729-0588",
+          "date": "2026-09-04",
+          "timeIn": "15:54",
+          "timeOut": "",
+          "registeredBy": "Restaurang Östnora",
+          "registeredAt": "2026-09-04T13:54:34.661Z",
+          "manual": false,
+          "manualReason": "",
+          "edited": false,
+          "campingId": "c8"
         }
       ],
       "personal": [
@@ -1748,6 +1762,15 @@
           "user": "Restaurang Östnora",
           "action": "in",
           "detail": "Bo Wahlund stämplade in 15:54",
+          "oldVal": "",
+          "newVal": "15:54"
+        },
+        {
+          "id": "mtn0mlutg2m7h",
+          "ts": "2026-09-04T13:54:34.661Z",
+          "user": "Restaurang Östnora",
+          "action": "in",
+          "detail": "Linda Wahlund stämplade in 15:54",
           "oldVal": "",
           "newVal": "15:54"
         }
