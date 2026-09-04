@@ -1352,12 +1352,12 @@
     }
   ],
   "globalParamVarden": {
-    "el_intakt_sommar_pris": 2.5,
+    "el_intakt_sommar_pris": 2.35,
     "el_intakt_sommar_del": 0.6,
-    "el_intakt_vinter_pris": 2.5,
+    "el_intakt_vinter_pris": 2.35,
     "el_intakt_vinter_del": 0.6,
-    "el_kostnad_sommar_inpris": 2.5,
-    "el_kostnad_vinter_inpris": 2.5,
+    "el_kostnad_sommar_inpris": 2.35,
+    "el_kostnad_vinter_inpris": 2.35,
     "loner_arvodesats": 0.33557,
     "loner_pbb": 59600,
     "soc_avg_sats": 31.42
