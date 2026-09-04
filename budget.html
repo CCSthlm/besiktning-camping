@@ -972,7 +972,7 @@ async function renderBudget(container) {
                 var ref = _referensData[_currentEnhet&&_currentEnhet.id] || {};
                 var uP  = ref.utfallFoundPeriod || 0;
                 var MN  = ['','Jan','Feb','Mar','Apr','Maj','Jun','Jul','Aug','Sep','Okt','Nov','Dec'];
-                var utfLabel = uP ? 'Utfall '+BUDGET_YEAR+' t.o.m. '+MN[uP] : 'Utfall '+BUDGET_YEAR+' (ej inlagt)';
+                var utfLabel = uP ? 'Utfall '+(BUDGET_YEAR-1)+' t.o.m. '+MN[uP] : 'Utfall '+(BUDGET_YEAR-1)+' (ej inlagt)';
                 return '<th class="num" style="color:var(--text3);font-size:10px">'+utfLabel+'</th>'
                   +'<th class="num" style="color:var(--text3);font-size:10px">Budget '+(BUDGET_YEAR-1)+'</th>';
               })()}
@@ -1632,7 +1632,7 @@ async function loadReferensData(enhetId) {
 
   // Utfall: always current budget year, find latest saved period (12 → 1)
   for (var p = 12; p >= 1; p--) {
-    var utfPath = BUDGET_BASE+'/'+BUDGET_YEAR+'/'+enhetId+'/utfall_p'+p+'.json';
+    var utfPath = BUDGET_BASE+'/'+(BUDGET_YEAR-1)+'/'+enhetId+'/utfall_p'+p+'.json';
     var r1 = await ghGet(utfPath);
     if (r1 && r1.data) {
       var utfData = Object.assign({}, r1.data);
@@ -1688,7 +1688,7 @@ function renderUtfall(container) {
   container.innerHTML = `
     <div class="page-header">
       <div class="page-header-left">
-        <h1><i class="ti ti-arrow-bar-to-down" style="font-size:18px;color:var(--blue)"></i> Utfall ${BUDGET_YEAR}</h1>
+        <h1><i class="ti ti-arrow-bar-to-down" style="font-size:18px;color:var(--blue)"></i> Utfall ${BUDGET_YEAR-1}</h1>
         <div class="page-sub">Mata in faktiska siffror per konto och period – alla belopp exkl. moms</div>
       </div>
     </div>
@@ -1903,7 +1903,7 @@ function renderOppnaBudgetar(container) {
       ? '<span class="badge badge-approved"><span class="dot"></span> Öppen</span>'
       : '<span class="badge badge-draft"><span class="dot"></span> Stängd</span>';
     var refInfo = isOpen
-      ? 'Utfall '+BUDGET_YEAR+' (senaste period) · Ref.budget '+(BUDGET_YEAR-1)
+      ? 'Utfall '+(BUDGET_YEAR-1)+' (senaste period) · Ref.budget '+(BUDGET_YEAR-1)
       : '–';
     var actions = isOpen
       ? '<button class="btn btn-sm btn-danger" data-eid="'+e.id+'" onclick="stangEnhet(this.dataset.eid)"><i class="ti ti-lock"></i> Stäng</button>'
