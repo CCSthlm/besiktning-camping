@@ -294,7 +294,8 @@
       "pin": "1111",
       "pnr": "",
       "adminRoles": [
-        "kontroll-personal"
+        "kontroll-personal",
+        "kontroll-ansvarig"
       ],
       "role": "Användare",
       "active": true,
@@ -308,8 +309,8 @@
       "projektCampingId": "",
       "kontrollAnlaggningId": "graddos_rest",
       "kontrollAnlaggningNamn": "Gräddös Pärla Kök & Bar",
-      "kontrollAnsvarigAnlaggningId": "",
-      "kontrollAnsvarigAnlaggningNamn": "",
+      "kontrollAnsvarigAnlaggningId": "graddos_rest",
+      "kontrollAnsvarigAnlaggningNamn": "Gräddös Pärla Kök & Bar",
       "kontrollAdminAnlaggningId": "",
       "kontrollAdminAnlaggningNamn": "",
       "created": "2026-09-04"
