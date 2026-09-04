@@ -295,7 +295,8 @@
       "pnr": "",
       "adminRoles": [
         "kontroll-personal",
-        "kontroll-ansvarig"
+        "kontroll-ansvarig",
+        "kontroll-admin"
       ],
       "role": "Användare",
       "active": true,
@@ -311,8 +312,8 @@
       "kontrollAnlaggningNamn": "Gräddös Pärla Kök & Bar",
       "kontrollAnsvarigAnlaggningId": "graddos_rest",
       "kontrollAnsvarigAnlaggningNamn": "Gräddös Pärla Kök & Bar",
-      "kontrollAdminAnlaggningId": "",
-      "kontrollAdminAnlaggningNamn": "",
+      "kontrollAdminAnlaggningId": "graddos_rest",
+      "kontrollAdminAnlaggningNamn": "Gräddös Pärla Kök & Bar",
       "created": "2026-09-04"
     }
   ],
