@@ -201,6 +201,44 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-seri
   font-size:13px;z-index:999;opacity:0;transition:all .25s;pointer-events:none;
   display:flex;align-items:center;gap:8px;white-space:nowrap;box-shadow:var(--shadow);}
 
+
+/* RAPPORT */
+.rapport-chips{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;}
+.rapport-chip{padding:6px 14px;border-radius:20px;font-size:12px;font-weight:500;
+  border:1px solid var(--border2);background:var(--bg2);color:var(--text2);cursor:pointer;}
+.rapport-chip.active{background:var(--green);color:#fff;border-color:transparent;}
+.period-sel{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:14px;}
+.period-sel select{padding:8px 12px;background:var(--bg2);border:1px solid var(--border2);
+  border-radius:var(--radius);font-size:13px;color:var(--text);font-family:inherit;}
+
+/* MATRIX */
+.matrix-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin-bottom:14px;}
+.matrix-table{border-collapse:collapse;font-size:12px;white-space:nowrap;}
+.matrix-table th{padding:4px 3px;text-align:center;font-weight:600;font-size:10px;
+  color:var(--text3);border-bottom:1px solid var(--border2);position:sticky;top:0;background:var(--bg2);}
+.matrix-table th.name-col{text-align:left;padding-left:8px;min-width:160px;max-width:200px;
+  position:sticky;left:0;background:var(--bg2);z-index:2;}
+.matrix-table td{padding:3px;text-align:center;border-bottom:1px solid var(--border);}
+.matrix-table td.name-col{text-align:left;padding:6px 8px;font-size:12px;
+  font-weight:500;position:sticky;left:0;background:var(--bg2);max-width:200px;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;border-right:1px solid var(--border2);}
+.matrix-table tr:hover td{background:var(--bg3);}
+.matrix-table tr:hover td.name-col{background:var(--bg3);}
+.matrix-group-row th{background:var(--bg3);color:var(--text2);font-size:11px;
+  font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:6px 8px;
+  text-align:left;border-top:2px solid var(--border2);}
+.matrix-cell{width:22px;height:22px;border-radius:4px;cursor:pointer;
+  display:inline-block;transition:transform .1s;}
+.matrix-cell:hover{transform:scale(1.2);}
+.mc-ok   {background:var(--green);}
+.mc-late {background:var(--amber);}
+.mc-avvik{background:var(--red);}
+.mc-miss {background:rgba(163,45,45,.15);}
+.mc-none {background:transparent;}
+.mc-gray {background:var(--bg4);}
+.day-red {color:var(--red);}
+.day-today{font-weight:700;color:var(--green);}
+
 @media(min-width:600px){.view{padding:18px 20px 80px;}}
 </style>
 </head>
@@ -339,6 +377,21 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-seri
     <div class="modal-footer">
       <button class="btn" onclick="closeModal('modal-sign')" style="flex:1;justify-content:center">Avbryt</button>
       <button class="btn btn-primary" onclick="doSignera()" style="flex:2;justify-content:center"><i class="ti ti-writing-sign"></i> Signera</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: CELL DETALJ -->
+<div class="modal-overlay" id="modal-cell">
+  <div class="modal" style="max-width:400px">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <div class="modal-title" id="cell-title">Kontrolldetalj</div>
+      <div class="modal-sub" id="cell-sub"></div>
+    </div>
+    <div class="modal-body" id="cell-body"></div>
+    <div class="modal-footer">
+      <button class="btn btn-primary btn-full" onclick="closeModal('modal-cell')">Stäng</button>
     </div>
   </div>
 </div>
