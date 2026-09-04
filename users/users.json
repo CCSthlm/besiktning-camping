@@ -1010,7 +1010,7 @@
           "pnr": "19580412-0250",
           "date": "2026-09-04",
           "timeIn": "15:54",
-          "timeOut": "",
+          "timeOut": "21:47",
           "registeredBy": "Restaurang Östnora",
           "registeredAt": "2026-09-04T13:54:28.314Z",
           "manual": false,
@@ -1780,6 +1780,15 @@
           "user": "Restaurang Östnora",
           "action": "out",
           "detail": "Linda Wahlund stämplade ut 21:47",
+          "oldVal": "",
+          "newVal": "21:47"
+        },
+        {
+          "id": "mtnd8md2hvupv",
+          "ts": "2026-09-04T19:47:37.142Z",
+          "user": "Restaurang Östnora",
+          "action": "out",
+          "detail": "Bo Wahlund stämplade ut 21:47",
           "oldVal": "",
           "newVal": "21:47"
         }
