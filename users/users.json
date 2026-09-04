@@ -286,6 +286,31 @@
       "budgetEnhet": "",
       "elCamping": "",
       "created": "2026-08-28"
+    },
+    {
+      "id": "umtmpknuva68s",
+      "name": "Test",
+      "email": "test@cc-camping.se",
+      "pin": "1111",
+      "pnr": "",
+      "adminRoles": [],
+      "role": "Användare",
+      "active": true,
+      "apps": [],
+      "plCampingId": "",
+      "godkannarcamping": "",
+      "sbaCamping": "",
+      "nyckelCamping": "",
+      "budgetEnhet": "",
+      "elCamping": "",
+      "projektCampingId": "",
+      "kontrollAnlaggningId": "",
+      "kontrollAnlaggningNamn": "",
+      "kontrollAnsvarigAnlaggningId": "",
+      "kontrollAnsvarigAnlaggningNamn": "",
+      "kontrollAdminAnlaggningId": "",
+      "kontrollAdminAnlaggningNamn": "",
+      "created": "2026-09-04"
     }
   ],
   "campings": [
