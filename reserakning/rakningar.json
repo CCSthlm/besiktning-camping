@@ -47,6 +47,15 @@
           "ts": "2026-08-31T22:51:34.711Z"
         },
         {
+          "datum": "2026-05-07",
+          "fordonstyp": "husbil",
+          "stracka": "Hässelby - kärradahl",
+          "km": 890,
+          "ersattning": 4005,
+          "syfte": "Riks årsmöte",
+          "ts": "2026-09-05T15:16:19.972Z"
+        },
+        {
           "datum": "2026-05-15",
           "fordonstyp": "husbil",
           "stracka": "Hässelby BÖ",
