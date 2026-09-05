@@ -1360,7 +1360,8 @@
     "el_kostnad_vinter_inpris": 2.35,
     "loner_arvodesats": 0.41946308,
     "loner_pbb": 59600,
-    "soc_avg_sats": 31.42
+    "soc_avg_sats": 31.42,
+    "overhead_8830": -220000
   },
   "_meta": {
     "skapad": "2026-08-18",
