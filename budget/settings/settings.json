@@ -1050,7 +1050,10 @@
       "namn": "Lämnade overheadbidrag",
       "typ": "bokslut",
       "grupp": "Bokslutsdispositioner",
-      "budgeterbar": false
+      "budgeterbar": true,
+      "aktiv": true,
+      "param": null,
+      "kommentar": ""
     },
     {
       "nr": "8853",
