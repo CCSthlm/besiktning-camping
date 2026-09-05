@@ -2,7 +2,9 @@
   "kontoVarden": {
     "8830": -220000
   },
-  "kommentarer": {},
+  "kommentarer": {
+    "3044": "Hade 2000kr i budget 2026"
+  },
   "paramVarden": {
     "helarsplatser_antal": 81,
     "helarsplatser_pris": 15625,
@@ -12,5 +14,5 @@
     "arvoden_belopp": 35000
   },
   "investeringar": [],
-  "autosparad": "2026-09-05T14:11:52.682Z"
+  "autosparad": "2026-09-05T14:14:45.137Z"
 }
