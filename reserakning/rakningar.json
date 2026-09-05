@@ -182,9 +182,11 @@
           "ts": "2026-09-05T15:10:31.819Z"
         }
       ],
-      "status": "utkast",
+      "status": "inskickad",
       "skapad": "2026-06-26T12:42:33.302Z",
-      "skapadAv": "Massimo Johansson"
+      "skapadAv": "Massimo Johansson",
+      "signeradAv": "Massimo Johansson",
+      "signeradTs": "2026-09-05T15:24:22.233Z"
     },
     {
       "id": "RR-1782478403937",
