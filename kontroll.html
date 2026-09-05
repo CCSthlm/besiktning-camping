@@ -257,6 +257,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-seri
   <button class="tab" id="tab-lev" onclick="showTab('lev')"><i class="ti ti-truck"></i> Leverans</button>
   <button class="tab" id="tab-hist" onclick="showTab('hist')"><i class="ti ti-report"></i> Kontrollrapport</button>
   <button class="tab" id="tab-manad" onclick="showTab('manad')" style="display:none"><i class="ti ti-calendar-stats"></i> Månadsrapport</button>
+  <button class="tab" id="tab-program" onclick="showTab('program')" style="display:none"><i class="ti ti-book"></i> Kontrollprogram</button>
   <button class="tab" id="tab-admin" onclick="showTab('admin')" style="display:none"><i class="ti ti-settings"></i> Admin</button>
 </div>
 
@@ -294,6 +295,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-seri
 <div class="view" id="view-lev"></div>
 <div class="view" id="view-hist"></div>
 <div class="view" id="view-manad"></div>
+<div class="view" id="view-program"></div>
 <div class="view" id="view-admin"></div>
 
 <!-- MODAL: UTFÖRA KONTROLL -->
@@ -565,6 +567,7 @@ async function init(){
   document.getElementById('tb-role').textContent=roleLabel;
   if(_isAnsvarig)document.getElementById('tab-manad').style.display='';
   if(_isAdmin)document.getElementById('tab-admin').style.display='';
+  document.getElementById('tab-program').style.display='';
 
   // Show global picker for global/admin with no assigned anlaggning
   var needsPicker = _roles.includes('global') || (_isAdmin && !_anlaggningId) || (_isAnsvarig && !_anlaggningId);
@@ -607,7 +610,7 @@ async function onGlobalAnlaggningChange() {
   _anlaggningId   = id;
   _anlaggningNamn = ANLAGGNING_NAMN_MAP[id] || id;
   // Show loading
-  ['dag','lev','hist','manad','admin'].forEach(function(t){
+  ['dag','lev','hist','manad','program','admin'].forEach(function(t){
     var el = document.getElementById('view-'+t);
     if (el) el.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text3)"><i class="ti ti-loader" style="font-size:32px"></i></div>';
   });
@@ -638,12 +641,12 @@ async function loadAll(){
 
 // ── TABS ──────────────────────────────────────────────────────────────────
 function showTab(tab){
-  ['dag','lev','hist','manad','admin'].forEach(function(t){
+  ['dag','lev','hist','manad','program','admin'].forEach(function(t){
     document.getElementById('view-'+t).classList.toggle('active',t===tab);
     var el=document.getElementById('tab-'+t);
     if(el)el.classList.toggle('active',t===tab);
   });
-  var renders={dag:renderDag,lev:renderLev,hist:renderHist,manad:renderManad,admin:renderAdmin};
+  var renders={dag:renderDag,lev:renderLev,hist:renderHist,manad:renderManad,program:renderProgram,admin:renderAdmin};
   if(renders[tab])renders[tab]();
 }
 
@@ -1537,6 +1540,8 @@ function renderAdmin(){
     +'<div class="chip'+(_adminTab==='program'?' active':'')+'" data-at="program" onclick="setAdminTab(this.dataset.at)"><i class="ti ti-clipboard-check" style="font-size:12px"></i> Kontrollpunkter</div>'
     +(_isAdmin?'<div class="chip'+(_adminTab==='anlaggningar'?' active':'')+'" data-at="anlaggningar" onclick="setAdminTab(this.dataset.at)"><i class="ti ti-building" style="font-size:12px"></i> Anläggningar</div>':'')
     +(_isAdmin?'<div class="chip'+(_adminTab==='leverantorer'?' active':'')+'" data-at="leverantorer" onclick="setAdminTab(this.dataset.at)"><i class="ti ti-truck" style="font-size:12px"></i> Leverantörer</div>':'')
+    +(_isAdmin?'<div class="chip'+(_adminTab==='personal'?' active':'')+'" data-at="personal" onclick="setAdminTab(this.dataset.at)"><i class="ti ti-users" style="font-size:12px"></i> Personal</div>':'')
+    +(_isAdmin?'<div class="chip'+(_adminTab==='kontrollprogram'?' active':'')+'" data-at="kontrollprogram" onclick="setAdminTab(this.dataset.at)"><i class="ti ti-book" style="font-size:12px"></i> Kontrollprogram</div>':'')
     +'</div>';
 
   var contentHtml='';
@@ -1649,8 +1654,197 @@ function renderAdmin(){
 
   document.getElementById('view-admin').innerHTML=
     '<div style="font-size:17px;font-weight:700;margin-bottom:12px">Administration</div>'
-    +chipHtml+contentHtml;
+    +chipHtml+'<div id="admin-content">'+contentHtml+'</div>';
+
+  // Async tabs — render after DOM is set
+  if(_adminTab==='personal') renderAdminPersonal(document.getElementById('admin-content'));
+  if(_adminTab==='kontrollprogram') renderAdminKontrollprogram(document.getElementById('admin-content'));
 }
+
+// ── KONTROLLPROGRAM DATA ───────────────────────────────────────────────────
+var _kpProgram = { version:1, uppdaterad:'', kapitel:[] };
+
+async function loadKontrollprogram(){
+  var r = await ghGet(KBASE+'/program/'+_anlaggningId+'/kontrollprogram.json');
+  _kpProgram = (r&&r.data) || {version:1, uppdaterad:'', kapitel:[]};
+  if(!_kpProgram.kapitel) _kpProgram.kapitel=[];
+}
+
+async function saveKontrollprogram(){
+  _kpProgram.uppdaterad = new Date().toISOString().slice(0,10);
+  _kpProgram.version = (_kpProgram.version||1);
+  var ok = await ghPut(KBASE+'/program/'+_anlaggningId+'/kontrollprogram.json',
+    _kpProgram, 'Kontrollprogram uppdaterat – '+_anlaggningId);
+  if(ok) toast('Kontrollprogram sparat','ok');
+  else toast('Kunde ej spara','err');
+  return ok;
+}
+
+// ── ADMIN: PERSONAL (speglar personalliggare) ─────────────────────────────
+async function renderAdminPersonal(container){
+  container.innerHTML='<div style="text-align:center;padding:20px;color:var(--text3)"><i class="ti ti-loader" style="font-size:24px"></i></div>';
+  var r = await ghGet('personalliggare/'+_anlaggningId+'/personal.json');
+  var personal = (r&&r.data&&r.data.personal)||[];
+  if(!personal.length){
+    container.innerHTML='<div style="text-align:center;padding:32px;color:var(--text3)"><i class="ti ti-users" style="font-size:40px;display:block;margin-bottom:10px"></i><p>Ingen personal i personalliggaren för den här anläggningen.</p></div>';
+    return;
+  }
+  var rows = personal.map(function(p){
+    var ini = (p.namn||'?').split(' ').map(function(n){return n[0];}).join('').slice(0,2).toUpperCase();
+    var aktiv = p.aktiv!==false;
+    return '<div class="prog-item">'
+      +'<div style="width:34px;height:34px;border-radius:50%;background:'+(aktiv?'var(--green-bg)':'var(--bg3)')+';display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;color:'+(aktiv?'var(--green)':'var(--text3)')+';flex-shrink:0">'+ini+'</div>'
+      +'<div style="flex:1;min-width:0">'
+      +'<div style="font-size:14px;font-weight:500">'+( p.namn||'–')+'</div>'
+      +'<div style="font-size:11px;color:var(--text3)">'+(p.roll||p.titel||'Personal')+'</div>'
+      +'</div>'
+      +'<span style="font-size:10px;padding:3px 9px;border-radius:20px;background:'+(aktiv?'var(--green-bg)':'var(--bg3)')+';color:'+(aktiv?'var(--green)':'var(--text3)')+';">'+(aktiv?'Aktiv':'Inaktiv')+'</span>'
+      +'</div>';
+  }).join('');
+  container.innerHTML='<div style="margin-bottom:8px"><div style="font-size:14px;font-weight:500">'+_anlaggningNamn+'</div>'
+    +'<div style="font-size:11px;color:var(--text3)">Läst från personalliggare · '+personal.length+' personer</div></div>'
+    +'<div class="card">'+rows+'</div>';
+}
+
+// ── ADMIN: KONTROLLPROGRAM ────────────────────────────────────────────────
+var _kpEditId = null;
+
+async function renderAdminKontrollprogram(container){
+  if(!_kpProgram.kapitel) await loadKontrollprogram();
+  var kapHtml = _kpProgram.kapitel.length ? _kpProgram.kapitel.map(function(kap, i){
+    var isEdit = _kpEditId === kap.id;
+    if(isEdit){
+      return '<div style="border-bottom:0.5px solid var(--border)">'
+        +'<div style="padding:10px 14px;display:flex;align-items:center;gap:10px;background:var(--green-bg)">'
+        +'<div style="width:24px;height:24px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;color:#fff;flex-shrink:0">'+(i+1)+'</div>'
+        +'<div style="flex:1;font-size:12px;font-weight:500;color:var(--green)">Redigerar kapitel</div>'
+        +'<button class="btn btn-primary" style="padding:6px 12px;font-size:12px" onclick="saveKapitel()"><i class="ti ti-check"></i> Spara</button>'
+        +'<button class="btn" style="padding:6px 10px;font-size:12px" onclick="cancelKapitel()"><i class="ti ti-x"></i> Avbryt</button>'
+        +'</div>'
+        +'<div style="padding:12px 14px;background:var(--green-bg)">'
+        +'<div class="form-field" style="margin-bottom:10px"><label>Rubrik</label><input type="text" id="kap-rubrik" value="'+esc(kap.rubrik)+'" placeholder="Kapitelrubrik"></div>'
+        +'<div class="form-field" style="margin-bottom:0"><label>Innehåll</label><textarea id="kap-text" style="min-height:120px">'+esc(kap.text)+'</textarea></div>'
+        +'</div></div>';
+    }
+    return '<div style="padding:10px 14px;border-bottom:0.5px solid var(--border);display:flex;align-items:center;gap:10px">'
+      +'<div style="width:24px;height:24px;border-radius:50%;background:var(--green-bg);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;color:var(--green);flex-shrink:0">'+(i+1)+'</div>'
+      +'<div style="flex:1;min-width:0">'
+      +'<div style="font-size:13px;font-weight:500">'+esc(kap.rubrik)+'</div>'
+      +'<div style="font-size:11px;color:var(--text3)">'+(kap.text?kap.text.length+' tecken':'Tom')+'</div>'
+      +'</div>'
+      +'<div style="display:flex;gap:4px">'
+      +'<button class="btn" style="padding:5px 9px;font-size:12px" data-kid="'+kap.id+'" onclick="editKapitel(this.dataset.kid)"><i class="ti ti-pencil"></i> Redigera</button>'
+      +(i>0?'<button class="btn" style="padding:5px 9px;font-size:12px" data-i="'+i+'" onclick="moveKapitel(parseInt(this.dataset.i),-1)"><i class="ti ti-arrow-up"></i> Upp</button>':'')
+      +(i<_kpProgram.kapitel.length-1?'<button class="btn" style="padding:5px 9px;font-size:12px" data-i="'+i+'" onclick="moveKapitel(parseInt(this.dataset.i),1)"><i class="ti ti-arrow-down"></i> Ner</button>':'')
+      +'<button class="btn btn-danger" style="padding:5px 9px;font-size:12px" data-kid="'+kap.id+'" onclick="deleteKapitel(this.dataset.kid)"><i class="ti ti-trash"></i> Ta bort</button>'
+      +'</div></div>';
+  }).join('')
+  : '<div style="padding:28px;text-align:center;color:var(--text3)"><i class="ti ti-book" style="font-size:40px;display:block;margin-bottom:10px"></i>Inga kapitel ännu.</div>';
+
+  container.innerHTML=
+    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">'
+    +'<div><div style="font-size:14px;font-weight:500">'+_anlaggningNamn+'</div>'
+    +'<div style="font-size:11px;color:var(--text3)">Version '+(_kpProgram.version||1)+(_kpProgram.uppdaterad?' · '+_kpProgram.uppdaterad:'')+'</div></div>'
+    +'<div style="display:flex;gap:6px">'
+    +'<button class="btn" data-t="program" onclick="showTab(this.dataset.t)"><i class="ti ti-eye"></i> Förhandsgranska</button>'
+    +'<button class="btn btn-primary" onclick="newKapitel()"><i class="ti ti-plus"></i> Nytt kapitel</button>'
+    +'</div></div>'
+    +'<div class="card">'+kapHtml+'</div>';
+}
+
+function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+function newKapitel(){
+  var newKap = {id:uid(), rubrik:'', text:''};
+  _kpProgram.kapitel.push(newKap);
+  _kpEditId = newKap.id;
+  renderAdmin();
+}
+
+function editKapitel(id){
+  _kpEditId = id;
+  renderAdmin();
+}
+
+function cancelKapitel(){
+  // If rubrik is empty, remove the kapitel
+  var k = _kpProgram.kapitel.find(function(x){return x.id===_kpEditId;});
+  if(k && !k.rubrik) _kpProgram.kapitel = _kpProgram.kapitel.filter(function(x){return x.id!==_kpEditId;});
+  _kpEditId = null;
+  renderAdmin();
+}
+
+async function saveKapitel(){
+  var rubrik = (document.getElementById('kap-rubrik')||{}).value||'';
+  var text   = (document.getElementById('kap-text')||{}).value||'';
+  if(!rubrik.trim()){toast('Ange en rubrik','warn');return;}
+  var k = _kpProgram.kapitel.find(function(x){return x.id===_kpEditId;});
+  if(k){ k.rubrik=rubrik.trim(); k.text=text.trim(); }
+  _kpEditId = null;
+  var ok = await saveKontrollprogram();
+  if(ok) renderAdmin();
+}
+
+async function deleteKapitel(id){
+  var k = _kpProgram.kapitel.find(function(x){return x.id===id;});
+  if(!confirm('Ta bort "'+( k?k.rubrik:id)+'"?')) return;
+  _kpProgram.kapitel = _kpProgram.kapitel.filter(function(x){return x.id!==id;});
+  var ok = await saveKontrollprogram();
+  if(ok) renderAdmin();
+}
+
+async function moveKapitel(i, dir){
+  var j = i+dir;
+  if(j<0||j>=_kpProgram.kapitel.length) return;
+  var tmp=_kpProgram.kapitel[i]; _kpProgram.kapitel[i]=_kpProgram.kapitel[j]; _kpProgram.kapitel[j]=tmp;
+  var ok = await saveKontrollprogram();
+  if(ok) renderAdmin();
+}
+
+// ── LÄSVY: KONTROLLPROGRAM ────────────────────────────────────────────────
+async function renderProgram(){
+  var el = document.getElementById('view-program');
+  el.innerHTML='<div style="text-align:center;padding:30px;color:var(--text3)"><i class="ti ti-loader" style="font-size:32px"></i></div>';
+  await loadKontrollprogram();
+
+  if(!_kpProgram.kapitel||!_kpProgram.kapitel.length){
+    el.innerHTML='<div style="text-align:center;padding:48px 20px;color:var(--text3)">'
+      +'<i class="ti ti-book" style="font-size:48px;display:block;margin-bottom:12px"></i>'
+      +'<div style="font-size:16px;font-weight:600;color:var(--text);margin-bottom:6px">Inget kontrollprogram</div>'
+      +'<p style="font-size:13px">Kontakta administratören.</p></div>';
+    return;
+  }
+
+  // Table of contents
+  var tocHtml = _kpProgram.kapitel.map(function(kap,i){
+    return '<a href="#kap-'+kap.id+'" style="display:flex;gap:8px;font-size:13px;color:var(--green);text-decoration:none;padding:3px 0">'
+      +'<span style="color:var(--text3);min-width:18px">'+(i+1)+'.</span>'+esc(kap.rubrik)+'</a>';
+  }).join('');
+
+  // Chapters
+  var chapHtml = _kpProgram.kapitel.map(function(kap,i){
+    return '<div id="kap-'+kap.id+'" style="margin-bottom:24px;scroll-margin-top:60px">'
+      +'<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">'
+      +'<span style="font-size:11px;font-weight:600;color:var(--green);background:var(--green-bg);padding:2px 9px;border-radius:20px">Kapitel '+(i+1)+'</span>'
+      +'<div style="font-size:16px;font-weight:500">'+esc(kap.rubrik)+'</div>'
+      +'</div>'
+      +'<div style="font-size:14px;color:var(--text2);line-height:1.8;white-space:pre-wrap">'+esc(kap.text)+'</div>'
+      +'</div>';
+  }).join('');
+
+  el.innerHTML=
+    '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;flex-wrap:wrap;gap:8px">'
+    +'<div><div style="font-size:18px;font-weight:500">Egenkontrollprogram</div>'
+    +'<div style="font-size:12px;color:var(--text3)">'+_anlaggningNamn+' · Version '+(_kpProgram.version||1)+(_kpProgram.uppdaterad?' · '+_kpProgram.uppdaterad:'')+'</div></div>'
+    +(_isAdmin?'<button class="btn" data-t="admin" data-at="kontrollprogram" onclick="setAdminTab(this.dataset.at);showTab(this.dataset.t)"><i class="ti ti-pencil"></i> Redigera</button>':'')
+    +'</div>'
+    +'<div class="card" style="margin-bottom:16px;padding:12px 16px">'
+    +'<div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Innehåll</div>'
+    +tocHtml
+    +'</div>'
+    +chapHtml;
+}
+
 
 function setAdminTab(tab){ _adminTab=tab; renderAdmin(); }
 
