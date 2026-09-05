@@ -13,12 +13,12 @@
   },
   "2027": {
     "orstig": {
-      "status": "stängd",
+      "status": "öppen",
       "utfallAr": 2026,
       "utfallPeriod": 8,
       "referensBudgetAr": 2026,
-      "öppadAv": "Cristina Sundberg",
-      "öppadTs": "2026-09-04T15:18:47.554Z"
+      "öppadAv": "Massimo Johansson",
+      "öppadTs": "2026-09-05T07:37:52.501Z"
     }
   }
 }
