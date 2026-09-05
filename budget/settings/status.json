@@ -13,12 +13,12 @@
   },
   "2027": {
     "orstig": {
-      "status": "stängd",
+      "status": "öppen",
       "utfallAr": 2026,
       "utfallPeriod": 8,
       "referensBudgetAr": 2026,
       "öppadAv": "Massimo Johansson",
-      "öppadTs": "2026-09-05T07:45:00.238Z"
+      "öppadTs": "2026-09-05T14:01:42.470Z"
     }
   }
 }
