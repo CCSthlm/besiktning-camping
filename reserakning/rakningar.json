@@ -153,6 +153,15 @@
           "ersattning": 1080,
           "syfte": "Ledningsmöte - tenovering",
           "ts": "2026-08-31T22:28:34.426Z"
+        },
+        {
+          "datum": "2026-09-05",
+          "fordonstyp": "husbil",
+          "stracka": "Hässelby - Örstig",
+          "km": 290,
+          "ersattning": 1305,
+          "syfte": "Jubileum",
+          "ts": "2026-09-05T15:10:31.819Z"
         }
       ],
       "status": "utkast",
