@@ -7,8 +7,10 @@
     "helarsplatser_antal": 81,
     "helarsplatser_pris": 339.29,
     "loner_sommarvard": 3,
-    "loner_vintervard": 2
+    "loner_vintervard": 2,
+    "arvoden_antal": 1,
+    "arvoden_belopp": 30000
   },
   "investeringar": [],
-  "autosparad": "2026-09-05T14:10:44.471Z"
+  "autosparad": "2026-09-05T14:11:05.707Z"
 }
