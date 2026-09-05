@@ -982,7 +982,7 @@ async function renderBudget(container) {
       <div class="kpi-strip" style="padding:16px 24px 0;gap:10px">
         <div class="kpi green"><div class="kpi-val" id="kpi-intakter">${fmtNum(totals.intakter)}</div><div class="kpi-lbl">Intäkter (kr)</div></div>
         <div class="kpi red"><div class="kpi-val" id="kpi-kostnader">${fmtNum(totals.kostnader)}</div><div class="kpi-lbl">Kostnader (kr)</div></div>
-        <div class="kpi ${totals.resultat>=0?'green':'red'}"><div class="kpi-val" id="kpi-resultat">${fmtNum(totals.resultat)}</div><div class="kpi-lbl">Rörelseresultat (kr)</div></div>
+        <div class="kpi ${totals.aret>=0?'green':'red'}"><div class="kpi-val" id="kpi-resultat">${fmtNum(totals.aret)}</div><div class="kpi-lbl">Årets resultat (kr)</div></div>
       </div>
       <div style="padding:16px 24px 60px">
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;font-size:12px;color:var(--text3)">
@@ -999,7 +999,7 @@ async function renderBudget(container) {
                 var ref = _referensData[_currentEnhet&&_currentEnhet.id] || {};
                 var uP  = ref.utfallFoundPeriod || 0;
                 var MN  = ['','Jan','Feb','Mar','Apr','Maj','Jun','Jul','Aug','Sep','Okt','Nov','Dec'];
-                var utfLabel = uP ? 'Utfall '+BUDGET_YEAR+' t.o.m. '+MN[uP] : 'Utfall '+BUDGET_YEAR+' (ej inlagt)';
+                var utfLabel = uP ? 'Utfall '+(BUDGET_YEAR-1)+' t.o.m. '+MN[uP] : 'Utfall '+(BUDGET_YEAR-1)+' (ej inlagt)';
                 return '<th class="num" style="color:var(--text3);font-size:10px">'+utfLabel+'</th>'
                   +'<th class="num" style="color:var(--text3);font-size:10px">Budget '+(BUDGET_YEAR-1)+'</th>';
               })()}
@@ -1026,7 +1026,7 @@ function updateLiveTotals() {
   var kpiVals = [
     {id:'kpi-intakter', val:t.intakter},
     {id:'kpi-kostnader', val:t.kostnader},
-    {id:'kpi-resultat',  val:t.resultat},
+    {id:'kpi-resultat',  val:t.aret},
   ];
   kpiVals.forEach(function(k){
     var el = document.getElementById(k.id);
