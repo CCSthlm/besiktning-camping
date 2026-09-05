@@ -38,6 +38,15 @@
       "syfte": "Körningar mellan campingar",
       "resor": [
         {
+          "datum": "2026-03-06",
+          "fordonstyp": "husbil",
+          "stracka": "Hässelby - sturkö",
+          "km": 800,
+          "ersattning": 3600,
+          "syfte": "Regionmöte CC",
+          "ts": "2026-09-05T15:19:07.088Z"
+        },
+        {
           "datum": "2026-04-23",
           "fordonstyp": "husbil",
           "stracka": "Hässelby BÖ",
