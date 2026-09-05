@@ -315,6 +315,34 @@
       "kontrollAdminAnlaggningId": "graddos_rest",
       "kontrollAdminAnlaggningNamn": "Gräddös Pärla Kök & Bar",
       "created": "2026-09-04"
+    },
+    {
+      "id": "umtog92b6q8a6",
+      "name": "Anders Berglund",
+      "email": "anders.berglund@cc-camping.se",
+      "pin": "4321",
+      "pnr": "",
+      "adminRoles": [
+        "projekt-ansvarig",
+        "budget-camping"
+      ],
+      "role": "Användare",
+      "active": true,
+      "apps": [],
+      "plCampingId": "",
+      "godkannarcamping": "",
+      "sbaCamping": "",
+      "nyckelCamping": "",
+      "budgetEnhet": "orstig",
+      "elCamping": "",
+      "projektCampingId": "",
+      "kontrollAnlaggningId": "",
+      "kontrollAnlaggningNamn": "",
+      "kontrollAnsvarigAnlaggningId": "",
+      "kontrollAnsvarigAnlaggningNamn": "",
+      "kontrollAdminAnlaggningId": "",
+      "kontrollAdminAnlaggningNamn": "",
+      "created": "2026-09-05"
     }
   ],
   "campings": [
