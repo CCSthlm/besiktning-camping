@@ -2289,8 +2289,15 @@ function onGlobalParamChange(el) {
   _settings.globalParamVarden[el.dataset.gkey] = parseFloat(el.value)||0;
 }
 
-function saveGlobalParams() {
-  saveSettings();
+async function saveGlobalParams() {
+  // Sync overhead field explicitly in case onGlobalParamChange wasn't triggered
+  var overheadEl = document.getElementById('overhead-8830');
+  if (overheadEl) {
+    if (!_settings.globalParamVarden) _settings.globalParamVarden = {};
+    _settings.globalParamVarden['overhead_8830'] = parseFloat(overheadEl.value) || 0;
+  }
+  await saveSettings();
+  applyGlobalKonton();
   toast('Globala parametrar sparade','ok');
 }
 
