@@ -675,6 +675,16 @@ async function loadDraft(enhetId) {
   if (!_currentDraft.kommentarer)  _currentDraft.kommentarer = {};
   if (!_currentDraft.paramVarden)  _currentDraft.paramVarden = {};
   if (!_currentDraft.investeringar) _currentDraft.investeringar = [];
+  // Apply global overhead to konto 8830 — always overrides, cannot be edited by camping
+  applyGlobalKonton();
+}
+
+function applyGlobalKonton() {
+  var gv = _settings.globalParamVarden || {};
+  var overhead = parseFloat(gv.overhead_8830) || 0;
+  if (overhead !== 0) {
+    _currentDraft.kontoVarden['8830'] = overhead;
+  }
 }
 
 async function saveDraft(silent) {
@@ -850,10 +860,11 @@ async function renderBudget(container) {
             if (!k || !k.budgeterbar) return;
             var v = getKontoVal(nr);
             var isPar = isParamKonto(nr);
+            var isGlobalKonto = nr === '8830' && (parseFloat((_settings.globalParamVarden||{}).overhead_8830)||0) !== 0;
             var hasComment = _currentDraft.kommentarer && _currentDraft.kommentarer[nr];
-            var cellClass = isPar ? 'num cell-param' : 'num';
+            var cellClass = (isPar||isGlobalKonto) ? 'num cell-param' : 'num';
             var valStr = v ? fmtKr(v) : '<span class="cell-empty">–</span>';
-            if (isPar) valStr = fmtKr(v);
+            if (isPar||isGlobalKonto) valStr = fmtKr(v);
             var ref    = _referensData[_currentEnhet&&_currentEnhet.id] || {};
             var utfVal = (ref.utfall && ref.utfall[nr]) || 0;
             var refVal = (ref.budget && ref.budget[nr]) || 0;
@@ -865,7 +876,9 @@ async function renderBudget(container) {
               + '<td class="num" style="color:var(--text3);font-size:11px">'+(refVal?fmtKr(refVal):'–')+'</td>'
               + '<td class="'+cellClass+'">'+(isPar
                 ? '<span style="font-size:11px" title="Beräknat från parametrar">'+fmtKr(v)+'</span>'
-                : '<input class="cell-input" data-konto="'+nr+'" value="'+(v||'')+'" onchange="onCellChange(this)" oninput="scheduleAutosave()">'
+                : isGlobalKonto
+                  ? '<span style="font-size:11px" title="Globalt overhead – sätts i Parameteradmin">'+fmtKr(v)+'<span style="font-size:9px;color:var(--text3);margin-left:4px">(global)</span></span>'
+                  : '<input class="cell-input" data-konto="'+nr+'" value="'+(v||'')+'" onchange="onCellChange(this)" oninput="scheduleAutosave()">'
               )+'</td>'
               + '</tr>';
           });
@@ -2208,6 +2221,24 @@ function renderParamAdmin(container) {
             </button>
           </div>
         </div>
+      </div>
+
+      <div class="param-panel" style="margin-bottom:20px">
+        <div class="param-panel-title"><i class="ti ti-building-bank" style="font-size:14px"></i> Gemensamma poster – alla KST</div>
+        <p style="font-size:12px;color:var(--text2);margin-bottom:12px">Belopp som sätts här förs automatiskt in på alla kostnadställen i budgetarbetet. Campingansvarig kan inte ändra dessa.</p>
+        <div class="param-row">
+          <span class="param-label">8830 – Lämnade overheadbidrag (kr)</span>
+          <div class="param-input-wrap">
+            <input type="number" id="overhead-8830" data-gkey="overhead_8830"
+              value="${(_settings.globalParamVarden||{}).overhead_8830||0}"
+              oninput="onGlobalParamChange(this)" placeholder="0"
+              style="width:140px">
+          </div>
+        </div>
+        <p style="font-size:11px;color:var(--text3);margin-top:6px">Beloppet läggs på konto 8830 på samtliga KST. Ange negativt värde om det är en kostnad (debet).</p>
+        <button class="btn btn-primary" style="margin-top:12px" onclick="saveGlobalParams()">
+          <i class="ti ti-device-floppy"></i> Spara
+        </button>
       </div>
 
 
