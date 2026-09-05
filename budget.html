@@ -737,14 +737,21 @@ function isParamKonto(nr) {
 // ── TOTALS ─────────────────────────────────────────────────────────────────
 function calcTotals() {
   var kp = _settings.kontoplan.filter(function(k){return k.budgeterbar;});
-  var intakter = 0, kostnader = 0, finans = 0;
+  var intakter = 0, kostnader = 0, finans = 0, bokslut = 0;
   kp.forEach(function(k) {
     var v = getKontoVal(k.nr);
     if (k.typ==='intakt') intakter += v;
     else if (k.typ==='kostnad') kostnader += v;
     else if (k.typ==='finans') { if (k.nr<'8400') finans += v; else finans -= v; }
+    else if (k.typ==='bokslut') bokslut += v;
   });
-  return {intakter, kostnader, resultat: intakter-kostnader, finans, aret: intakter-kostnader+finans};
+  // Also include overhead_8830 from global params if not in kontoplan
+  var gv = _settings.globalParamVarden || {};
+  var overhead = parseFloat(gv.overhead_8830) || 0;
+  var has8830InKp = kp.some(function(k){return k.nr==='8830';});
+  if (!has8830InKp && overhead !== 0) bokslut += overhead;
+  var res = intakter - kostnader;
+  return {intakter, kostnader, resultat: res, finans, bokslut, aret: res + finans + bokslut};
 }
 
 // ── FORMAT ─────────────────────────────────────────────────────────────────
@@ -906,7 +913,10 @@ async function renderBudget(container) {
     var finSum = getKontoVal('8300')+getKontoVal('8310')+getKontoVal('8311')+getKontoVal('8314')-getKontoVal('8400')-getKontoVal('8421')-getKontoVal('8422')-getKontoVal('8423');
     rows += '<tr class="row-subtotal"><td class="sticky-col"></td><td class="sticky-col" colspan="2" style="font-style:italic">Summa finansiella poster</td><td class="num">'+fmtKr(finSum)+'</td></tr>';
 
-    var aretsRes = res + finSum;
+    var bokslutsSum = ['8820','8830','8850','8890'].reduce(function(s,nr){
+      return s + (getKontoVal(nr)||0);
+    }, 0);
+    var aretsRes = res + finSum + bokslutsSum;
     var aCls = aretsRes >= 0 ? 'row-result-pos' : 'row-result-neg';
     rows += '<tr class="'+aCls+'"><td class="sticky-col"></td><td class="sticky-col" colspan="2" style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;">ÅRETS RESULTAT</td><td class="num">'+fmtKr(aretsRes)+'</td></tr>';
     return rows;
