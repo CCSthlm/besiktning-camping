@@ -9,5 +9,14 @@
     "forsentMinutter": 1244,
     "missadForklaring": "Har inte gjorts pga semester/helg",
     "ejUtford": true
+  },
+  "mtiedoaxg7dh": {
+    "varde": "-17.0",
+    "ts": "2026-09-06T19:14:37.220Z",
+    "av": "Massimo Johansson",
+    "ok": true,
+    "avvikelse": "",
+    "forSent": false,
+    "forsentMinutter": 0
   }
 }
