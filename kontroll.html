@@ -239,6 +239,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-seri
 .day-red {color:var(--red);}
 .day-today{font-weight:700;color:var(--green);}
 
+.miss-opt{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border:1px solid var(--border2);border-radius:var(--radius);cursor:pointer;font-size:13px;transition:background .1s;}
+.miss-opt input{flex-shrink:0;margin-top:2px;}
+.explained-badge{font-size:10px;font-weight:600;padding:2px 7px;border-radius:20px;background:var(--amber-bg);color:var(--amber);white-space:nowrap;}
 @media(min-width:600px){.view{padding:18px 20px 80px;}}
 </style>
 </head>
@@ -379,6 +382,36 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-seri
     <div class="modal-footer">
       <button class="btn" onclick="closeModal('modal-sign')" style="flex:1;justify-content:center">Avbryt</button>
       <button class="btn btn-primary" onclick="doSignera()" style="flex:2;justify-content:center"><i class="ti ti-writing-sign"></i> Signera</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: FÖRKLARING VID MISSAD KONTROLL -->
+<div class="modal-overlay" id="modal-missad">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <div class="modal-title" id="miss-title">Missad kontroll</div>
+      <div class="modal-sub" id="miss-sub"></div>
+    </div>
+    <div class="modal-body">
+      <div style="font-size:12px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.04em;margin-bottom:10px">Välj standardförklaring</div>
+      <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:16px">
+        <label class="miss-opt"><input type="radio" name="miss-exp" value="Har inte gjorts pga semester/helg"> Har inte gjorts på grund av semester/helg</label>
+        <label class="miss-opt"><input type="radio" name="miss-exp" value="Har inte gjorts pga sjukfrånvaro"> Har inte gjorts på grund av sjukfrånvaro</label>
+        <label class="miss-opt"><input type="radio" name="miss-exp" value="Har inte registrerats pga problem med dator/internet"> Har inte registrerats på grund av problem med dator/internet</label>
+        <label class="miss-opt"><input type="radio" name="miss-exp" value="Har inte gjorts eftersom kontrollen inte längre är aktuell"> Har inte gjorts eftersom kontrollen inte längre är aktuell</label>
+        <label class="miss-opt"><input type="radio" name="miss-exp" value="Har inte gjorts pga tidsbrist"> Har inte gjorts på grund av tidsbrist</label>
+        <label class="miss-opt"><input type="radio" name="miss-exp" value="Kontrollen missades/glömdes bort"> Kontrollen missades/glömdes bort</label>
+      </div>
+      <div style="font-size:12px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px">Eller skriv en egen förklaring</div>
+      <textarea id="miss-fritext" style="width:100%;min-height:70px;resize:vertical" placeholder="Beskriv anledningen..."></textarea>
+      <div style="font-size:11px;color:var(--text3);margin-top:6px">Välj ett alternativ ovan eller skriv en förklaring. Minst ett krävs.</div>
+      <div id="miss-error" style="font-size:12px;color:var(--red);margin-top:6px;display:none"><i class="ti ti-alert-triangle" style="font-size:12px"></i> Ange en förklaring innan du sparar.</div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('modal-missad')" style="flex:1;justify-content:center">Avbryt</button>
+      <button class="btn btn-primary" onclick="saveMissadForklaring()" style="flex:2;justify-content:center;background:var(--amber);border-color:var(--amber)"><i class="ti ti-check"></i> Spara förklaring</button>
     </div>
   </div>
 </div>
@@ -1030,6 +1063,46 @@ function openKontroll(punktId){
 }
 
 var _jaNejVal=null;
+var _missadPunktId=null;
+
+function openMissadModal(punktId){
+  var p=_program.find(function(x){return x.id===punktId;});
+  if(!p)return;
+  _missadPunktId=punktId;
+  document.getElementById('miss-title').textContent=p.namn;
+  document.getElementById('miss-sub').textContent='Missad kontroll – borde gjorts igår senast '+(p.deadline&&p.deadline.tid||'23:59');
+  document.querySelectorAll('input[name="miss-exp"]').forEach(function(r){r.checked=false;});
+  document.getElementById('miss-fritext').value='';
+  document.getElementById('miss-error').style.display='none';
+  openModal('modal-missad');
+}
+
+async function saveMissadForklaring(){
+  var radio=document.querySelector('input[name="miss-exp"]:checked');
+  var fritext=(document.getElementById('miss-fritext').value||'').trim();
+  var forklaring=radio?radio.value:fritext;
+  if(!forklaring){
+    document.getElementById('miss-error').style.display='';
+    return;
+  }
+  var p=_program.find(function(x){return x.id===_missadPunktId;});
+  if(!p)return;
+  var now=new Date();
+  var startOfYesterday=new Date(now);
+  startOfYesterday.setDate(startOfYesterday.getDate()-1);
+  startOfYesterday.setHours(23,59,0,0);
+  var forsentMinutter=Math.round((now-startOfYesterday)/60000);
+  var entry={varde:'–',ts:now.toISOString(),av:_user.name,ok:false,
+    avvikelse:'',forSent:true,forsentMinutter:forsentMinutter,
+    missadForklaring:forklaring,ejUtford:true};
+  _utfall[_missadPunktId]=entry;
+  var today=todayStr();
+  var ok=await ghPut(KBASE+'/utfall/'+_anlaggningId+'/'+today+'.json',_utfall,'Missad kontroll förklarad: '+p.namn);
+  closeModal('modal-missad');
+  if(ok){toast('Förklaring sparad','ok');renderDag();}
+  else toast('Kunde ej spara','err');
+}
+
 function setJaNej(val){
   _jaNejVal=val;
   document.getElementById('btn-ja').style.background=val?'var(--green-bg)':'';
@@ -1437,7 +1510,8 @@ function openCellDetail(ds, punktId){
       +'</div>'
       +'<div style="font-size:13px;color:var(--text2);margin-bottom:6px"><i class="ti ti-user" style="font-size:12px"></i> '+entry.av+'</div>'
       +'<div style="font-size:13px;color:var(--text2);margin-bottom:6px"><i class="ti ti-clock" style="font-size:12px"></i> '+entry.ts.slice(11,16)+'</div>'
-      +(entry.avvikelse?'<div style="background:var(--red-bg);border-radius:var(--radius);padding:10px 12px;font-size:13px;color:var(--red);margin-top:8px"><i class="ti ti-alert-triangle" style="font-size:12px"></i> '+entry.avvikelse+'</div>':'');
+      +(entry.avvikelse?'<div style="background:var(--red-bg);border-radius:var(--radius);padding:10px 12px;font-size:13px;color:var(--red);margin-top:8px"><i class="ti ti-alert-triangle" style="font-size:12px"></i> '+entry.avvikelse+'</div>':'')
+    +(entry.missadForklaring?'<div style="background:var(--amber-bg);border-radius:var(--radius);padding:10px 12px;font-size:13px;color:var(--amber);margin-top:8px"><i class="ti ti-info-circle" style="font-size:12px"></i> '+entry.missadForklaring+'</div>':'');
   } else {
     body = '<div style="text-align:center;padding:24px;color:var(--text3)">'
       +'<i class="ti ti-x" style="font-size:36px;display:block;margin-bottom:8px;color:var(--red)"></i>'
