@@ -2,37 +2,17 @@
   "anlaggningId": "graddos_rest",
   "punkter": [
     {
-      "id": "mthamdg6ogcx",
-      "namn": "Huvudkyl",
-      "kategori": "Temperatur",
-      "typ": "temp",
-      "min": "2",
-      "max": "6",
-      "intervall": "veckovis",
-      "referens": "",
-      "instr": "Ta kolla tempen som hänger i kylen",
-      "aktiv": true
-    },
-    {
-      "id": "mtie8f3qv4rl",
-      "namn": "DIskmaskin",
-      "kategori": "Temperatur",
-      "typ": "temp",
-      "min": "60",
-      "max": "",
-      "intervall": "veckovis",
-      "referens": "",
-      "instr": "Kolla tempmätaren på diskmaskinen",
-      "aktiv": true
-    },
-    {
-      "id": "mtie948xdo7w",
-      "namn": "Huvudfrysen",
+      "id": "mtq56y298cvu",
+      "namn": "Bakeoff frys",
       "kategori": "Temperatur",
       "typ": "temp",
       "min": "",
       "max": "-16",
       "intervall": "veckovis",
+      "deadline": {
+        "dag": "0",
+        "tid": "22:00"
+      },
       "referens": "",
       "instr": "",
       "aktiv": true
@@ -43,10 +23,27 @@
       "kategori": "Temperatur",
       "typ": "temp",
       "min": "60",
-      "max": "",
+      "max": "90",
       "intervall": "vid_behov",
+      "deadline": {},
       "referens": "",
       "instr": "Tempa varm mat i kantinen",
+      "aktiv": true
+    },
+    {
+      "id": "mtie8f3qv4rl",
+      "namn": "DIskmaskin",
+      "kategori": "Temperatur",
+      "typ": "temp",
+      "min": "60",
+      "max": "",
+      "intervall": "veckovis",
+      "deadline": {
+        "dag": "0",
+        "tid": "22:00"
+      },
+      "referens": "",
+      "instr": "Kolla tempmätaren på diskmaskinen",
       "aktiv": true
     },
     {
@@ -56,9 +53,122 @@
       "typ": "temp",
       "min": "",
       "max": "-15",
-      "intervall": "dagligen",
+      "intervall": "veckovis",
+      "deadline": {
+        "dag": "0",
+        "tid": "22:00"
+      },
       "referens": "",
       "instr": "",
+      "aktiv": true
+    },
+    {
+      "id": "mtq56y29vsya",
+      "namn": "Grönsakskyl",
+      "kategori": "Temperatur",
+      "typ": "temp",
+      "min": "",
+      "max": "5",
+      "intervall": "veckovis",
+      "deadline": {
+        "dag": "0",
+        "tid": "22:00"
+      },
+      "referens": "",
+      "instr": "",
+      "aktiv": true
+    },
+    {
+      "id": "mtie948xdo7w",
+      "namn": "Huvudfrysen",
+      "kategori": "Temperatur",
+      "typ": "temp",
+      "min": "",
+      "max": "-16",
+      "intervall": "veckovis",
+      "deadline": {
+        "dag": "0",
+        "tid": "22:00"
+      },
+      "referens": "",
+      "instr": "",
+      "aktiv": true
+    },
+    {
+      "id": "mthamdg6ogcx",
+      "namn": "Huvudkyl",
+      "kategori": "Temperatur",
+      "typ": "temp",
+      "min": "2",
+      "max": "6",
+      "intervall": "veckovis",
+      "deadline": {
+        "dag": "0",
+        "tid": "22:00"
+      },
+      "referens": "",
+      "instr": "Ta kolla tempen som hänger i kylen",
+      "aktiv": true
+    },
+    {
+      "id": "mtq56y29i6lu",
+      "namn": "Kulglassfrys",
+      "kategori": "Temperatur",
+      "typ": "temp",
+      "min": "",
+      "max": "-16",
+      "intervall": "veckovis",
+      "deadline": {
+        "dag": "0",
+        "tid": "22:00"
+      },
+      "referens": "",
+      "instr": "",
+      "aktiv": true
+    },
+    {
+      "id": "mtq56y291rcr",
+      "namn": "Kylbänk",
+      "kategori": "Temperatur",
+      "typ": "temp",
+      "min": "",
+      "max": "5",
+      "intervall": "veckovis",
+      "deadline": {
+        "dag": "0",
+        "tid": "22:00"
+      },
+      "referens": "",
+      "instr": "",
+      "aktiv": true
+    },
+    {
+      "id": "mtq56y29yr79",
+      "namn": "Mjukglass frys",
+      "kategori": "Temperatur",
+      "typ": "temp",
+      "min": "",
+      "max": "-16",
+      "intervall": "veckovis",
+      "deadline": {
+        "dag": "0",
+        "tid": "22:00"
+      },
+      "referens": "",
+      "instr": "",
+      "aktiv": true
+    },
+    {
+      "id": "mtq56y29ojo0",
+      "namn": "Värmebehandling av livsmedel",
+      "kategori": "Temperatur",
+      "typ": "temp",
+      "min": "70",
+      "max": "90",
+      "intervall": "vid_behov",
+      "deadline": {},
+      "referens": "",
+      "instr": "Tempa varm mat innan servering",
       "aktiv": true
     }
   ]
