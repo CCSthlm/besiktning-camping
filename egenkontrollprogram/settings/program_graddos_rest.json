@@ -52,10 +52,9 @@
       "typ": "temp",
       "min": "",
       "max": "-15",
-      "intervall": "veckovis",
+      "intervall": "dagligen",
       "deadline": {
-        "dag": "0",
-        "tid": "22:00"
+        "tid": "20:05"
       },
       "referens": "",
       "instr": "",
