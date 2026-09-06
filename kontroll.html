@@ -689,15 +689,30 @@ function showTab(tab){
 // ── DAGENS KONTROLLER ─────────────────────────────────────────────────────
 function getPunktStatus(p){
   if(_utfall[p.id]) return _utfall[p.id].forSent?'late':'done';
-  var hour=new Date().getHours();
+  var now=new Date(), hour=now.getHours(), minute=now.getMinutes();
   if(p.intervall==='dagligen'){
-    // Red = was not done yesterday (and today's not done either)
-    if(_igårUtfall && !_igårUtfall[p.id]) return 'red';
-    if(hour<10) return 'gray';   // Before 10:00 — not yet required
-    return 'amber';              // 10:00–23:59 — should be done today
+    var dl=p.deadline||{};
+    var deadlineTid=dl.tid||'23:59';
+    var dParts=deadlineTid.split(':');
+    var dHour=parseInt(dParts[0]||23), dMin=parseInt(dParts[1]||59);
+    // Before 10:00 — too early
+    if(hour<10) return 'gray';
+    // Past deadline today — late for today but NOT missed from yesterday
+    // Only mark as "red/missed" if yesterday's file existed but this punkt wasn't in it
+    // i.e. the restaurant was open yesterday but the kontroll wasn't done
+    if(hour>dHour||(hour===dHour&&minute>dMin)){
+      // Past deadline — check if igår had ANY utfall (restaurant was open)
+      // If igårUtfall is empty object it means no file existed = restaurant possibly closed
+      var igårHadActivity = _igårUtfall && Object.keys(_igårUtfall).length > 0;
+      if(igårHadActivity && !_igårUtfall[p.id]) return 'red'; // truly missed yesterday
+      return 'amber'; // past deadline today but no evidence it was missed yesterday
+    }
+    return 'amber'; // within today's window
   }
   if(p.intervall==='veckovis'){
-    return new Date().getDay()===1 ? 'amber' : 'gray';
+    var dl2=p.deadline||{};
+    var dagNr=parseInt(dl2.dag||0);
+    return new Date().getDay()===dagNr ? 'amber' : 'gray';
   }
   if(p.intervall==='varje_anvandning') return 'amber';
   return 'gray';
@@ -734,8 +749,15 @@ function renderDag(){
 
     if(p.intervall==='dagligen'){
       var tid=dl.tid||'23:59';
-      if(status==='red') return 'Missad – borde gjorts igår senast '+tid;
-      if(status==='amber') return 'Senast idag '+tid;
+      if(status==='red') return 'Missad från igår (borde gjorts senast '+tid+')';
+      if(status==='amber'){
+        var now2=new Date();
+        var dP=tid.split(':'); var dH=parseInt(dP[0]); var dM=parseInt(dP[1]||0);
+        if(now2.getHours()>dH||(now2.getHours()===dH&&now2.getMinutes()>dM)){
+          return 'Försenad – deadline var '+tid+' idag';
+        }
+        return 'Senast idag '+tid;
+      }
       return 'Kan göras från 10:00 (senast '+tid+')';
     }
     if(p.intervall==='varje_anvandning'||p.intervall==='vid_behov') return '';
