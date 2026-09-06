@@ -792,7 +792,8 @@ function renderDag(){
         deadlineSub = deadlineText(p);
       }
 
-      return '<div class="kontroll-item '+itemClass+'" onclick="openKontroll(\''+p.id+'\')">'
+      var clickFn = (status==='red' && !utfall) ? 'openMissadModal(\''+p.id+'\')' : 'openKontroll(\''+p.id+'\')';
+      return '<div class="kontroll-item '+itemClass+'" onclick="'+clickFn+'">'
         +'<div class="'+dotClass+'"></div>'
         +'<div style="flex:1;min-width:0">'
         +'<div class="kontroll-name">'+p.namn+'</div>'
