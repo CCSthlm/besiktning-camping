@@ -1,11 +1,282 @@
 {
   "version": 1,
   "uppdaterad": "2026-09-06",
+  "anlaggning": "Gräddös Pärla Kök & Bar",
   "kapitel": [
     {
-      "id": "mtq29e9b4d4t",
-      "rubrik": "Livsmedelskontroll i Sverige",
-      "text": "Här skriver vi text"
+      "id": "k1",
+      "rubrik": "1. Livsmedelskontroll i Sverige",
+      "text": "Livsmedelsföretagaren ansvarar för att livsmedlen är säkra.\n\nDen offentliga livsmedelskontrollen utförs normalt av kommunen för restaurangverksamheter. Kontrollmyndigheten bedömer bland annat:\n\n• Allmän livsmedelssäkerhet\n• Lokaler och utrustning\n• Hygien\n• Personlig hygien\n• Kompetens\n• Skadedjur\n• Vatten\n• Temperaturer och kylkedja\n• Material i kontakt med livsmedel\n• HACCP\n• Allergener\n• Spårbarhet och märkning"
+    },
+    {
+      "id": "k2",
+      "rubrik": "2. Egenkontroll",
+      "text": "Egenkontrollen består av dokumenterade rutiner som verksamheten använder för att förebygga risker.\n\nSystemet omfattar:\n1. Grundförutsättningar\n2. Faroanalys\n3. HACCP-baserade rutiner\n4. Kontrollpunkter\n5. Korrigerande åtgärder\n6. Dokumentation\n7. Uppföljning\n8. Årlig revision\n\nAvvikelse ska registreras när ett fastställt krav inte uppfylls. Det ska framgå:\n• Vad som inträffat\n• Vilket livsmedel eller vilken utrustning som berörs\n• Vilken omedelbar åtgärd som vidtagits\n• Om livsmedel kasserats\n• Vem som ansvarat för åtgärden\n• Eventuell förebyggande åtgärd"
+    },
+    {
+      "id": "k3",
+      "rubrik": "3. Beskrivning av verksamheten, ansvar och organisation",
+      "text": "Verksamhetsansvarig har det övergripande ansvaret.\n\nKöksansvarig ansvarar för att:\n• Egenkontrollen följs\n• Temperaturkontroller görs\n• Avvikelser åtgärdas\n• Personalen får instruktioner\n• Allergenrutiner följs\n• Dokumentation utförs\n\nVarje medarbetare ansvarar för att följa fastställda rutiner och rapportera avvikelser."
+    },
+    {
+      "id": "k31",
+      "rubrik": "3.1 Verksamheten",
+      "text": "Verksamheten på Gräddös Pärla Kök & Bar omfattar:\n• Restaurang\n• Café\n• Frukost\n• Lunch\n• Middag\n• Grillning\n• Buffé\n• Take-away\n• Mottagning av kylda och frysta varor\n• Förvaring\n• Beredning\n• Tillagning\n• Nedkylning\n• Återuppvärmning\n• Varmhållning\n• Servering\n• Specialkost"
+    },
+    {
+      "id": "k32",
+      "rubrik": "3.2 Information om avfall",
+      "text": "Personalen ska känna till:\n• Var avfall placeras\n• Hur det sorteras\n• Hur matavfall hanteras\n• Hur behållare rengörs\n• Vem som ansvarar för tömning"
+    },
+    {
+      "id": "k33",
+      "rubrik": "3.3 Vatten",
+      "text": "Endast vatten av dricksvattenkvalitet används till:\n• Livsmedel\n• Drycker\n• Is\n• Rengöring av utrustning som kommer i kontakt med livsmedel\n\nOm verksamheten använder egen brunn ska särskild provtagningsplan finnas."
+    },
+    {
+      "id": "k34",
+      "rubrik": "3.4 Avfall",
+      "text": "Avfall ska avlägsnas från livsmedelslokalen regelbundet.\n\nAvfallsbehållare ska:\n• Vara hela\n• Kunna rengöras\n• Tömmas regelbundet\n• Hållas stängda där det är lämpligt\n\nAvfall får inte medföra risk för kontaminering eller skadedjur."
+    },
+    {
+      "id": "k4",
+      "rubrik": "4. Personlig hygien",
+      "text": "Personal ska ha god personlig hygien.\n\nFöljande gäller:\n• Rena arbetskläder\n• Håret hålls på lämpligt sätt\n• Händer tvättas före arbete\n• Händer tvättas efter toalettbesök\n• Händer tvättas efter hantering av rått kött\n• Händer tvättas efter sophantering och rengöring\n• Sår på händer täcks med lämpligt förband\n• Smycken som innebär hygienrisk ska inte användas\n\nHandskar ersätter inte handtvätt.\n\nPersonal med kräkningar eller diarré ska inte hantera livsmedel när detta kan innebära risk för livsmedelssäkerheten."
+    },
+    {
+      "id": "k5",
+      "rubrik": "5. Utbildning och kompetens",
+      "text": "All personal ska ha tillräckliga kunskaper för sina arbetsuppgifter.\n\nIntroduktion ska minst omfatta:\n• Personlig hygien\n• Handtvätt\n• Rengöring\n• Temperaturer\n• Råa respektive färdiga livsmedel\n• Allergener\n• Specialkost\n• Avvikelser\n• Spårbarhet\n• Egenkontrollsystemet\n\nUtbildning dokumenteras."
+    },
+    {
+      "id": "k6",
+      "rubrik": "6. Rengöring och underhåll",
+      "text": "Ett rengöringsschema ska finnas och ange område, frekvens, metod, produkt och ansvar.\n\nKemikalier förvaras åtskilda från livsmedel."
+    },
+    {
+      "id": "k61",
+      "rubrik": "6.1 Underhåll av lokal och utrustning",
+      "text": "Lokalen ska hållas i sådant skick att den kan rengöras effektivt.\n\nDefekter registreras och åtgärdas, exempelvis:\n• Trasiga kakelplattor\n• Skadade arbetsytor\n• Rost\n• Trasiga kylskåp\n• Läckage\n• Trasiga dörrlister\n• Felaktiga temperaturgivare"
+    },
+    {
+      "id": "k62",
+      "rubrik": "6.2 Disk och förvaring av rent gods",
+      "text": "Disk ska ske så att mikroorganismer och smuts avlägsnas effektivt.\n\nRent gods:\n• Hanteras med rena händer\n• Ska skyddas från stänk och smuts\n• Förvaras separat från smutsig disk\n• Ska lufttorka där det är lämpligt"
+    },
+    {
+      "id": "k7",
+      "rubrik": "7. Allergener och specialkost",
+      "text": "Information om allergener ska kunna lämnas på ett säkert och korrekt sätt.\n\nEndast personal som har tillgång till korrekt recept- och ingrediensinformation får lämna säker allergeninformation."
+    },
+    {
+      "id": "k71",
+      "rubrik": "7.1 Specialkost",
+      "text": "Specialkost ska behandlas som en särskild säkerhetsfråga.\n\nBeställningen ska tydligt ange exempelvis: GLUTENFRI – MJÖLKFRI – ÄGGALLERGI."
+    },
+    {
+      "id": "k72",
+      "rubrik": "7.2 Mottagning",
+      "text": "Vid mottagning kontrolleras märkning och ingrediensförteckning på produkter avsedda för specialkost."
+    },
+    {
+      "id": "k73",
+      "rubrik": "7.3 Specialkost – förvaring",
+      "text": "Produkter för specialkost ska förvaras så att sammanblandning och kontaminering förebyggs.\n\nExempelvis ska glutenfria produkter inte förvaras öppet tillsammans med mjöl eller bröd."
+    },
+    {
+      "id": "k74",
+      "rubrik": "7.4 Specialkost – beredning",
+      "text": "Separat redskap, skärbrädor och rengjord arbetsyta används där riskanalysen kräver det.\n\nPersonalen ska kontrollera ingredienser före beredning."
+    },
+    {
+      "id": "k75",
+      "rubrik": "7.5 Servering",
+      "text": "Rätt specialkost ska säkerställas till rätt gäst.\n\nMärkning eller annan säker identifiering används."
+    },
+    {
+      "id": "k8",
+      "rubrik": "8. Kontaminering",
+      "text": "Råa livsmedel ska hållas åtskilda från färdiglagade och ätfärdiga livsmedel.\n\nExempel:\n• Rå kyckling under färdiga produkter i kyl\n• Separata skärbrädor\n• Rengöring mellan olika arbetsmoment\n• Separata redskap vid behov\n\nKemikalier får inte förvaras tillsammans med livsmedel."
+    },
+    {
+      "id": "k9",
+      "rubrik": "9. Beredning",
+      "text": "Livsmedel ska tas fram så nära beredningstillfället som möjligt.\n\nKylvaror ska inte stå framme onödigt länge."
+    },
+    {
+      "id": "k91",
+      "rubrik": "9.1 Sous vide",
+      "text": "Sous vide kräver särskild riskbedömning.\n\nRutinen ska ange:\n• Råvara\n• Förpackningsmetod\n• Temperatur\n• Tillagningstid\n• Nedkylning\n• Kylförvaring\n• Hållbarhet\n\nKombinationen tid och temperatur ska vara validerad för produkten."
+    },
+    {
+      "id": "k92",
+      "rubrik": "9.2 Värmebehandling",
+      "text": "Värmebehandling ska vara tillräcklig för att hantera identifierade mikrobiologiska risker.\n\nDen exakta kritiska gränsen ska fastställas i verksamhetens HACCP-analys.\n\nKontroll: sticktermometer enligt kontrollplan.\n\nAvvikelse: fortsatt värmebehandling tills fastställd säker temperatur/tid uppnåtts."
+    },
+    {
+      "id": "k921",
+      "rubrik": "9.2.1 Återuppvärmning",
+      "text": "Återuppvärmning ska ske snabbt och till den temperatur som fastställts i verksamhetens riskanalys."
+    },
+    {
+      "id": "k93",
+      "rubrik": "9.3 Varmhållning",
+      "text": "Varmhållning ska ske så att bakterietillväxt begränsas.\n\nKontroll sker enligt fastställd frekvens.\n\nVid avvikelse:\n• Kontrollera hur länge maten varit under fastställd temperatur\n• Värm upp på nytt när detta är säkert\n• Eller kassera produkten"
+    },
+    {
+      "id": "k94",
+      "rubrik": "9.4 Bufféservering",
+      "text": "Buffén ska skyddas från:\n• Gästers händer\n• Hosta och nysningar\n• Sammanblandning\n• Temperaturmissbruk\n\nSeparata serveringsbestick ska finnas.\n\nTemperatur kontrolleras enligt kontrollplan.\n\nSmå mängder bör fyllas på successivt."
+    },
+    {
+      "id": "k95",
+      "rubrik": "9.5 Upptining",
+      "text": "Upptining sker som huvudregel i kyl.\n\nProdukten ska placeras så att vätska inte kan kontaminera andra produkter."
+    },
+    {
+      "id": "k10",
+      "rubrik": "10. Förvaring",
+      "text": "Livsmedel ska förvaras under lämpliga temperaturförhållanden.\n\nKylkedjan ska bibehållas.\n\nFIFO används där lämpligt – First In, First Out.\n\nÖppnade produkter märks med:\n• Öppningsdatum\n• Produktionsdatum\n• Sista förbrukningsdatum enligt intern rutin"
+    },
+    {
+      "id": "k101",
+      "rubrik": "10.1 Material i kontakt med livsmedel",
+      "text": "Endast material som är avsedda för kontakt med livsmedel används.\n\nExempel:\n• Förpackningar\n• Plastlådor\n• Vakuumpåsar\n• Handskar\n• Kärl"
+    },
+    {
+      "id": "k102",
+      "rubrik": "10.2 Frysförvaring",
+      "text": "Frysta produkter ska förvaras så att fryskedjan upprätthålls.\n\nTemperatur kontrolleras och dokumenteras enligt kontrollplan."
+    },
+    {
+      "id": "k11",
+      "rubrik": "11. Varumottagning",
+      "text": "Vid mottagning kontrolleras:\n• Leverantör\n• Produkt\n• Förpackning\n• Temperatur vid behov\n• Bäst före/sista förbrukningsdag\n• Märkning\n• Tecken på skadedjur\n• Att frysvaror är frysta\n\nAvvikande produkter avvisas eller spärras."
+    },
+    {
+      "id": "k12",
+      "rubrik": "12. Inköp och leverantörer",
+      "text": "Livsmedel köps från seriösa och identifierbara leverantörer.\n\nLeverantörsfakturor, följesedlar eller motsvarande sparas så att spårbarhet kan säkerställas."
+    },
+    {
+      "id": "k121",
+      "rubrik": "12.1 Transport",
+      "text": "Livsmedel ska transporteras så att:\n• Rätt temperatur bibehålls\n• De skyddas mot smuts\n• Rått och färdigt hålls åtskilt"
+    },
+    {
+      "id": "k1211",
+      "rubrik": "12.1.1 Avhämtning av livsmedel",
+      "text": "Vid egen transport används rena och lämpliga:\n• Kylboxar\n• Värmeboxar\n• Transportkärl"
+    },
+    {
+      "id": "k122",
+      "rubrik": "12.2 Fel/brister och korrigerande åtgärder",
+      "text": "Alla betydande avvikelser ska hanteras.\n\nExempel – Kylskåp +12°C:\n1. Kontrollera produkttemperatur\n2. Flytta livsmedel till fungerande kyl\n3. Bedöm hur länge temperaturen varit för hög\n4. Kassera osäkra produkter\n5. Felanmäl kyl\n6. Registrera avvikelsen"
+    },
+    {
+      "id": "k123",
+      "rubrik": "12.3 Spårbarhet och återkallelse",
+      "text": "Verksamheten ska kunna identifiera från vem ett livsmedel erhållits och, när reglerna kräver det, vart det levererats.\n\nDokumentation kan vara:\n• Faktura\n• Följesedel\n• Leverantörssystem\n• Batchnummer"
+    },
+    {
+      "id": "k1231",
+      "rubrik": "12.3.1 Återkallelse",
+      "text": "När information om en farlig produkt erhålls ska verksamheten:\n1. Identifiera produkten\n2. Stoppa användning och försäljning\n3. Märka/spärra produkten\n4. Fastställa mängd och batch\n5. Följa leverantörens återkallelseinformation\n6. Vid behov kontakta kontrollmyndigheten\n7. Dokumentera åtgärder"
+    },
+    {
+      "id": "k124",
+      "rubrik": "12.4 Reklamationer och klagomål",
+      "text": "Klagomål som kan beröra livsmedelssäkerhet dokumenteras.\n\nExempel:\n• Misstänkt matförgiftning\n• Allergisk reaktion\n• Främmande föremål\n• Felaktig märkning\n\nAllvarliga klagomål rapporteras omedelbart till ansvarig."
+    },
+    {
+      "id": "k13",
+      "rubrik": "13. Märkning",
+      "text": "Märkningen ska vara korrekt och får inte vilseleda konsumenten."
+    },
+    {
+      "id": "k131",
+      "rubrik": "13.1 Märkning av färdigförpackade livsmedel",
+      "text": "Obligatoriska uppgifter:\n• Beteckning\n• Ingredienser\n• Allergener\n• Nettokvantitet där det krävs\n• Datummärkning\n• Förvaring\n• Ansvarigt företag\n• Eventuell ursprungsinformation"
+    },
+    {
+      "id": "k132",
+      "rubrik": "13.2 Märkning av icke-färdigförpackade livsmedel",
+      "text": "För restaurangservering ska verksamheten framför allt säkerställa korrekt information om allergener."
+    },
+    {
+      "id": "k133",
+      "rubrik": "13.3 Märkning av ursprungsland",
+      "text": "Ursprungsinformation lämnas när lagstiftningen kräver det."
+    },
+    {
+      "id": "k14",
+      "rubrik": "14. Riskfyllda livsmedel",
+      "text": "Särskilda rutiner finns för livsmedel där verksamhetens faroanalys har identifierat en förhöjd risk."
+    },
+    {
+      "id": "k141",
+      "rubrik": "14.1 Frysta hallon",
+      "text": "Frysta importerade hallon har kopplats till norovirusutbrott och ska hanteras enligt Livsmedelsverkets aktuella rekommendationer.\n\nRutinen ska ange när produkten ska värmebehandlas innan servering."
+    },
+    {
+      "id": "k142",
+      "rubrik": "14.2 Ris och risprodukter",
+      "text": "Kokt ris ska inte stå länge i temperaturer där bakterier kan växa.\n\nEfter tillagning ska ris antingen:\n• Serveras direkt\n• Varmhållas enligt fastställd rutin\n• Eller kylas ned snabbt och kylförvaras"
+    },
+    {
+      "id": "k143",
+      "rubrik": "14.3 Baljväxter",
+      "text": "Torkade baljväxter tillagas enligt produktens instruktioner.\n\nSärskild uppmärksamhet ska ges åt produkter som kräver blötläggning eller ordentlig kokning."
+    },
+    {
+      "id": "k144",
+      "rubrik": "14.4 Hamburgare och råbiff",
+      "text": "Malet kött medför högre risk än hela köttstycken eftersom bakterier från köttets yta kan fördelas i produkten.\n\nVerksamheten ska ha en dokumenterad riskbedömning och säker tillagningsmetod.\n\nServering av rå eller otillräckligt värmebehandlad färs innebär högre risk och ska hanteras särskilt i HACCP-planen."
+    },
+    {
+      "id": "k15",
+      "rubrik": "15. Egna kontroller",
+      "text": "Verksamheten utför regelbundna egna kontroller enligt fastställd kontrollplan. Resultaten dokumenteras i egenkontrollsystemet."
+    },
+    {
+      "id": "k151",
+      "rubrik": "15.1 Skadedjurskontroll",
+      "text": "Kontroll görs regelbundet av möss, råttor, flugor, kackerlackor och andra skadedjur.\n\nTecken dokumenteras.\n\nVid fynd:\n1. Skydda livsmedel\n2. Rengör\n3. Identifiera intrångsväg\n4. Kontakta skadedjursföretag vid behov\n5. Dokumentera åtgärden"
+    },
+    {
+      "id": "k152",
+      "rubrik": "15.2 Provtagning",
+      "text": "Provtagning utförs när riskbedömning eller annan anledning motiverar det."
+    },
+    {
+      "id": "k1521",
+      "rubrik": "15.2.1 Kontroll av rengöring",
+      "text": "Kan exempelvis göras genom:\n• Visuell kontroll\n• ATP-mätning\n• Mikrobiologisk provtagning"
+    },
+    {
+      "id": "k1522",
+      "rubrik": "15.2.2 Kontroll av tappställen och ismaskiner",
+      "text": "Kontroll kan omfatta:\n• Munstycken\n• Slangar\n• Tappkranar\n• Ismaskin\n• Isbehållare\n\nRengöring dokumenteras."
+    },
+    {
+      "id": "k153",
+      "rubrik": "15.3 Genomgång och uppdatering av egenkontrollen (revision)",
+      "text": "Fullständig genomgång görs minst årligen samt vid större förändringar.\n\nExempel:\n• Nytt kök\n• Ny meny\n• Nya arbetsmetoder\n• Sous vide införs\n• Ny utrustning\n• Nya råvaror\n• Ändrad bufféverksamhet\n• Större avvikelse eller matförgiftningsincident"
+    },
+    {
+      "id": "k154",
+      "rubrik": "15.4 Hygienrond",
+      "text": "Hygienrond görs enligt fastställd frekvens.\n\nKontrollen omfattar exempelvis:\n• Golv, väggar och tak\n• Kyl/frys\n• Redskap\n• Handtvätt, tvål och papper\n• Personalhygien\n• Avfall\n• Skadedjur\n• Märkning\n• Separering av rå/färdig mat"
+    },
+    {
+      "id": "k155",
+      "rubrik": "15.5 Kontroll av mätutrustning",
+      "text": "Termometrar ska kontrolleras regelbundet.\n\nResultatet dokumenteras.\n\nFelaktig mätutrustning ersätts eller justeras."
+    },
+    {
+      "id": "k156",
+      "rubrik": "15.6 Dokumentation och arkivering",
+      "text": "Följande dokumenteras:\n• Temperaturkontroller\n• Varumottagning\n• Tillagning\n• Nedkylning\n• Varmhållning\n• Rengöring\n• Avvikelser\n• Skadedjur\n• Utbildning\n• Hygienronder\n• Termometerkontroll\n• Återkallelser\n• Revision\n\nDokumentationen sparas i egenkontrollsystemet under en tid som är rimlig i förhållande till verksamhetens art och produkternas hållbarhet."
     }
   ]
 }
