@@ -536,6 +536,7 @@ var _user   = null, _roles = [], _isAnsvarig = false, _isAdmin = false;
 var _anlaggningId = '', _anlaggningNamn = '';
 var _program = []; // kontrollpunkter
 var _utfall  = {}; // {punktId: {varde,ts,av,forSent,forsentMinuter,avvikelse}}
+var _missadForklaringar = {}; // {punktId: {forklaring,ts,av}}
 var _leveranser = [];
 var _leverantorer = [];
 var _signaturer = {};
@@ -668,6 +669,8 @@ async function loadAll(){
   _anlaggningar=(anlR&&anlR.data&&anlR.data.anlaggningar)||[];
   var levS=await ghGet(KBASE+'/settings/leverantorer.json');
   _leverantorer=(levS&&levS.data&&levS.data.leverantorer)||['Menigo','Martin & Servera','Arla','Scan','ICA Maxi'];
+  var missadR=await ghGet(KBASE+'/utfall/'+_anlaggningId+'/missad_'+todayStr()+'.json');
+  _missadForklaringar=(missadR&&missadR.data)||{};
   var signs=await ghGet(KBASE+'/signaturer/'+_anlaggningId+'.json');
   _signaturer=(signs&&signs.data)||{};
 }
@@ -782,17 +785,25 @@ function renderDag(){
       var dotClass='dot-gray', itemClass='';
       var mainSub='', deadlineSub='';
 
+      var isForklarad2 = !utfall && _missadForklaringar[p.id];
       if(utfall){
         dotClass='dot-green';
         var valTxt=utfall.varde+(p.typ==='temp'?' °C':'');
         mainSub=valTxt+' · '+utfall.av+' · '+utfall.ts.slice(11,16);
+      } else if(isForklarad2){
+        dotClass='dot-amber'; itemClass='status-amber';
+        mainSub='⚠ Missad – '+_missadForklaringar[p.id].forklaring;
+        deadlineSub = 'Tryck för att utföra kontrollen';
       } else {
         if(status==='red'){  dotClass='dot-red';   itemClass='status-red';   }
         else if(status==='amber'){ dotClass='dot-amber'; itemClass='status-amber'; }
         deadlineSub = deadlineText(p);
       }
 
-      var clickFn = (status==='red' && !utfall) ? 'openMissadModal(\''+p.id+'\')' : 'openKontroll(\''+p.id+'\')';
+      var isForklarad = !utfall && _missadForklaringar[p.id];
+      var clickFn = (status==='red' && !utfall && !isForklarad)
+        ? 'openMissadModal(\''+p.id+'\')'  // missad, ej förklarad → förklaringsmodal
+        : 'openKontroll(\''+p.id+'\')';    // förklarad eller normal → utförandemodal
       return '<div class="kontroll-item '+itemClass+'" onclick="'+clickFn+'">'
         +'<div class="'+dotClass+'"></div>'
         +'<div style="flex:1;min-width:0">'
@@ -966,7 +977,12 @@ function openKontroll(punktId){
       +'</div>';
   }
 
-  var forsenInfo=isMissed?'<div style="background:var(--amber-bg);border-radius:8px;padding:10px 12px;margin-bottom:14px;font-size:13px;color:var(--amber)"><i class="ti ti-clock" style="font-size:13px"></i> Missad kontroll – markeras som för sent utförd</div>':'';
+  var harForklaring = _missadForklaringar[punktId];
+  var forsenInfo=harForklaring
+    ?'<div style="background:var(--amber-bg);border-radius:8px;padding:10px 12px;margin-bottom:14px;font-size:13px;color:var(--amber)">'
+    +'<i class="ti ti-info-circle" style="font-size:13px"></i> Missad – förklaring registrerad. Utför kontrollen och spara så markeras den som sen.'
+    +'<div style="font-size:11px;margin-top:4px;opacity:.8">'+ _missadForklaringar[punktId].forklaring+'</div></div>'
+    :(isMissed?'<div style="background:var(--amber-bg);border-radius:8px;padding:10px 12px;margin-bottom:14px;font-size:13px;color:var(--amber)"><i class="ti ti-clock" style="font-size:13px"></i> Missad kontroll – markeras som för sent utförd</div>':'');
 
   var body='';
   if(p.typ==='temp'){
@@ -1093,12 +1109,10 @@ async function saveMissadForklaring(){
   startOfYesterday.setDate(startOfYesterday.getDate()-1);
   startOfYesterday.setHours(23,59,0,0);
   var forsentMinutter=Math.round((now-startOfYesterday)/60000);
-  var entry={varde:'–',ts:now.toISOString(),av:_user.name,ok:false,
-    avvikelse:'',forSent:true,forsentMinutter:forsentMinutter,
-    missadForklaring:forklaring,ejUtford:true};
-  _utfall[_missadPunktId]=entry;
+  // Save explanation separately — does NOT mark kontroll as done
+  _missadForklaringar[_missadPunktId]={forklaring:forklaring,ts:now.toISOString(),av:_user.name,forsentMinutter:forsentMinutter};
   var today=todayStr();
-  var ok=await ghPut(KBASE+'/utfall/'+_anlaggningId+'/'+today+'.json',_utfall,'Missad kontroll förklarad: '+p.namn);
+  var ok=await ghPut(KBASE+'/utfall/'+_anlaggningId+'/missad_'+today+'.json',_missadForklaringar,'Missad förklaring: '+p.namn);
   closeModal('modal-missad');
   if(ok){toast('Förklaring sparad','ok');renderDag();}
   else toast('Kunde ej spara','err');
@@ -1188,6 +1202,11 @@ async function saveKontroll(){
   var ok2=await ghPut(KBASE+'/utfall/'+_anlaggningId+'/'+today+'.json',_utfall,'Kontroll: '+p.namn);
   closeModal('modal-kontroll');
   if(ok2){
+    // Clear förklaring now that kontroll is actually performed
+    if(_missadForklaringar[_currentPunktId]){
+      delete _missadForklaringar[_currentPunktId];
+      await ghPut(KBASE+'/utfall/'+_anlaggningId+'/missad_'+today+'.json',_missadForklaringar,'Förklaring rensad: '+p.namn);
+    }
     toast(isMissed?'Sparat – markerat som för sent':'Sparat','ok');
     renderDag();
   } else toast('Kunde ej spara','err');
