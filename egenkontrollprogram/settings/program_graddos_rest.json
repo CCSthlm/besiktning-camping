@@ -35,7 +35,7 @@
       "namn": "DIskmaskin",
       "kategori": "Temperatur",
       "typ": "temp",
-      "min": "60",
+      "min": "80",
       "max": "",
       "intervall": "veckovis",
       "deadline": {
