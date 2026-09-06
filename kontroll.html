@@ -823,9 +823,10 @@ function renderDag(){
       }
 
       var isForklarad = !utfall && _missadForklaringar[p.id];
-      var clickFn = (status==='red' && !utfall && !isForklarad)
-        ? 'openMissadModal(\''+p.id+'\')'  // missad, ej förklarad → förklaringsmodal
-        : 'openKontroll(\''+p.id+'\')';    // förklarad eller normal → utförandemodal
+      var dl2=p.deadline||{}, tid2=dl2.tid||'23:59', dP2=tid2.split(':');
+      var dH2=parseInt(dP2[0]), dM2=parseInt(dP2[1]||0), now2=new Date();
+      var isPastDeadline=(status==='red')||(status==='amber'&&(now2.getHours()>dH2||(now2.getHours()===dH2&&now2.getMinutes()>dM2)));
+      var clickFn=(!utfall&&isPastDeadline&&!isForklarad)?'openMissadModal(\''+p.id+'\')':'openKontroll(\''+p.id+'\''+')';
       return '<div class="kontroll-item '+itemClass+'" onclick="'+clickFn+'">'
         +'<div class="'+dotClass+'"></div>'
         +'<div style="flex:1;min-width:0">'
