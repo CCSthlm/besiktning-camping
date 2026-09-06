@@ -1616,10 +1616,30 @@ async function renderManad(){
     +'</div>'
     +'<div class="card" style="margin-bottom:14px">'+rows+'</div>'
     +(sign
-      ?'<div class="sign-box"><div style="font-size:13px;font-weight:600;color:var(--blue);margin-bottom:4px"><i class="ti ti-writing-sign"></i> Signerad</div><div style="font-size:13px">'+sign.av+' · '+sign.ts.slice(0,10)+' '+sign.ts.slice(11,16)+'</div></div>'
+      ?'<div class="sign-box">'
+        +'<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap">'
+        +'<div><div style="font-size:13px;font-weight:600;color:var(--blue);margin-bottom:4px"><i class="ti ti-writing-sign"></i> Signerad</div>'
+        +'<div style="font-size:13px">'+sign.av+' · '+sign.ts.slice(0,10)+' '+sign.ts.slice(11,16)+'</div></div>'
+        +(_isAdmin?'<button class="btn btn-danger" style="font-size:12px;padding:6px 12px" data-mk="'+monthKey+'" onclick="lasaUppManad(this.dataset.mk)"><i class="ti ti-lock-open"></i> Lås upp</button>':'')
+        +'</div></div>'
       :'<div class="sign-box"><div style="font-size:13px;font-weight:500;color:var(--blue);margin-bottom:8px">Signera '+MONTHS[month]+' '+year+'</div>'
         +'<div style="font-size:12px;color:var(--text2);margin-bottom:12px">Granska alla kontroller ovan och signera om perioden är komplett och korrekt.</div>'
         +'<button class="btn btn-primary btn-full" onclick="openSignering()"><i class="ti ti-writing-sign"></i> Granska och signera</button></div>');
+}
+
+async function lasaUppManad(monthKey){
+  var MONTHS=['Januari','Februari','Mars','April','Maj','Juni','Juli','Augusti','September','Oktober','November','December'];
+  var parts=monthKey.split('-');
+  var monthNamn=MONTHS[parseInt(parts[1])-1]+' '+parts[0];
+  if(!confirm('Lås upp '+monthNamn+' för '+_anlaggningNamn+'?\n\nSigneringen tas bort och kontroller kan registreras igen.')) return;
+  delete _signaturer[monthKey];
+  var ok=await ghPut(KBASE+'/signaturer/'+_anlaggningId+'.json',_signaturer,'Signering upplåst: '+monthKey);
+  if(ok){
+    toast(monthNamn+' upplåst','ok');
+    renderManad();
+  } else {
+    toast('Kunde ej låsa upp','err');
+  }
 }
 
 function openSignering(){
