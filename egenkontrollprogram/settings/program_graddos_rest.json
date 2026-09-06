@@ -8,10 +8,9 @@
       "typ": "temp",
       "min": "",
       "max": "-16",
-      "intervall": "veckovis",
+      "intervall": "dagligen",
       "deadline": {
-        "dag": "0",
-        "tid": "22:00"
+        "tid": "20:00"
       },
       "referens": "",
       "instr": "",
