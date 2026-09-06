@@ -261,11 +261,14 @@
           "ts": "2026-06-26T13:51:15.325Z"
         }
       ],
-      "status": "inskickad",
+      "status": "nekad",
       "skapad": "2026-06-26T13:51:02.853Z",
       "skapadAv": "Utbildningsresa Oktoberfest 2027",
       "signeradAv": "Utbildningsresa Oktoberfest 2027",
-      "signeradTs": "2026-06-26T13:51:19.683Z"
+      "signeradTs": "2026-06-26T13:51:19.683Z",
+      "statusKommentar": "",
+      "statusTs": "2026-09-06T09:26:57.190Z",
+      "statusAv": "Massimo Johansson"
     },
     {
       "id": "RR-1782572777515",
