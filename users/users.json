@@ -162,7 +162,7 @@
     },
     {
       "id": "umt5v3lw7ktmh",
-      "name": "jeanette Liljegren",
+      "name": "Jeanette Liljegren",
       "email": "jeanette.liljegren@cc-camping.se",
       "pin": "2222",
       "pnr": "",
@@ -177,7 +177,15 @@
       "sbaCamping": "",
       "nyckelCamping": "",
       "budgetEnhet": "bo_camp",
-      "created": "2026-08-23"
+      "created": "2026-08-23",
+      "elCamping": "",
+      "projektCampingId": "",
+      "kontrollAnlaggningId": "",
+      "kontrollAnlaggningNamn": "",
+      "kontrollAnsvarigAnlaggningId": "",
+      "kontrollAnsvarigAnlaggningNamn": "",
+      "kontrollAdminAnlaggningId": "",
+      "kontrollAdminAnlaggningNamn": ""
     },
     {
       "id": "umt6wq07xhe6r",
