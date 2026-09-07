@@ -279,13 +279,20 @@
       "apps": [
         "personalliggare"
       ],
-      "plCampingId": "c8",
+      "plCampingId": "c2",
       "godkannarcamping": "",
       "sbaCamping": "CC Östnora Camping",
       "nyckelCamping": "",
       "budgetEnhet": "",
       "elCamping": "",
-      "created": "2026-08-28"
+      "created": "2026-08-28",
+      "projektCampingId": "",
+      "kontrollAnlaggningId": "",
+      "kontrollAnlaggningNamn": "",
+      "kontrollAnsvarigAnlaggningId": "",
+      "kontrollAnsvarigAnlaggningNamn": "",
+      "kontrollAdminAnlaggningId": "",
+      "kontrollAdminAnlaggningNamn": ""
     },
     {
       "id": "umtmpknuva68s",
