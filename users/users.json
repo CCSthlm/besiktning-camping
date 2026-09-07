@@ -115,10 +115,20 @@
       "role": "Användare",
       "active": true,
       "apps": [],
-      "plCampingId": "",
+      "plCampingId": "c2",
       "godkannarcamping": "",
       "sbaCamping": "",
-      "created": "2026-07-29"
+      "created": "2026-07-29",
+      "nyckelCamping": "",
+      "budgetEnhet": "",
+      "elCamping": "",
+      "projektCampingId": "",
+      "kontrollAnlaggningId": "",
+      "kontrollAnlaggningNamn": "",
+      "kontrollAnsvarigAnlaggningId": "",
+      "kontrollAnsvarigAnlaggningNamn": "",
+      "kontrollAdminAnlaggningId": "",
+      "kontrollAdminAnlaggningNamn": ""
     },
     {
       "id": "umsyzxopmvp9x",
