@@ -1084,6 +1084,20 @@
           "manualReason": "",
           "edited": false,
           "campingId": "c8"
+        },
+        {
+          "id": "mtvnkoifbirzi",
+          "name": "Sussi Törnander",
+          "pnr": "19631009-6646",
+          "date": "2026-09-10",
+          "timeIn": "16:59",
+          "timeOut": "",
+          "registeredBy": "Restaurang Östnora",
+          "registeredAt": "2026-09-10T14:59:05.367Z",
+          "manual": false,
+          "manualReason": "",
+          "edited": false,
+          "campingId": "c8"
         }
       ],
       "personal": [
@@ -1871,6 +1885,15 @@
           "detail": "Linda Wahlund stämplade ut 09:10",
           "oldVal": "",
           "newVal": "09:10"
+        },
+        {
+          "id": "mtvnkoifvrkt2",
+          "ts": "2026-09-10T14:59:05.367Z",
+          "user": "Restaurang Östnora",
+          "action": "in",
+          "detail": "Sussi Törnander stämplade in 16:59",
+          "oldVal": "",
+          "newVal": "16:59"
         }
       ]
     }
