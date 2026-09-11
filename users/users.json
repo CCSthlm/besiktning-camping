@@ -1105,7 +1105,7 @@
           "pnr": "19631009-6646",
           "date": "2026-09-11",
           "timeIn": "16:15",
-          "timeOut": "",
+          "timeOut": "21:59",
           "registeredBy": "Restaurang Östnora",
           "registeredAt": "2026-09-11T14:15:17.436Z",
           "manual": false,
@@ -1958,6 +1958,15 @@
           "detail": "Jan Törnander stämplade ut 21:58",
           "oldVal": "",
           "newVal": "21:58"
+        },
+        {
+          "id": "mtxdqanjjzxgb",
+          "ts": "2026-09-11T19:59:03.535Z",
+          "user": "Restaurang Östnora",
+          "action": "out",
+          "detail": "Sussi Törnander stämplade ut 21:59",
+          "oldVal": "",
+          "newVal": "21:59"
         }
       ]
     }
