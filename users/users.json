@@ -71,7 +71,9 @@
       "email": "dorry.johansson@cc-camping.se",
       "pin": "1212",
       "pnr": "",
-      "adminRoles": [],
+      "adminRoles": [
+        "budget-camping"
+      ],
       "role": "Användare",
       "active": true,
       "apps": [],
@@ -80,7 +82,15 @@
       "created": "2026-06-26",
       "sbaCamping": "",
       "nyckelCamping": "",
-      "budgetEnhet": ""
+      "budgetEnhet": "orstig",
+      "elCamping": "",
+      "projektCampingId": "",
+      "kontrollAnlaggningId": "",
+      "kontrollAnlaggningNamn": "",
+      "kontrollAnsvarigAnlaggningId": "",
+      "kontrollAnsvarigAnlaggningNamn": "",
+      "kontrollAdminAnlaggningId": "",
+      "kontrollAdminAnlaggningNamn": ""
     },
     {
       "id": "umr39tsqhqx74",
