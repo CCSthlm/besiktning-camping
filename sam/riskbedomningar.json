@@ -14,7 +14,22 @@
       "status": "Öppen",
       "skapad": "2026-07-01T21:37:35.519Z",
       "skapadAv": "Massimo Johansson"
+    },
+    {
+      "id": "RB-1789205749201",
+      "camping": "CC Björkö Örns Camping",
+      "kategori": "Fall",
+      "beskrivning": "Måla vidskivor - ramlar",
+      "sannolikhet": 2,
+      "konsekvens": 3,
+      "riskniva": 6,
+      "atgard": "Man får inte använda stege utan man skall använda godkänd ställning (mobil)",
+      "ansvarig": "Massimo Johansson",
+      "deadline": "2026-09-30",
+      "status": "Öppen",
+      "skapad": "2026-09-12T09:35:49.201Z",
+      "skapadAv": "Massimo Johansson"
     }
   ],
-  "uppdaterad": "2026-07-01T21:37:36.834Z"
+  "uppdaterad": "2026-09-12T09:35:50.151Z"
 }
