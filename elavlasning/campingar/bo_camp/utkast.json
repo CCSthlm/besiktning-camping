@@ -5,7 +5,9 @@
   "datum": "2026-09-12",
   "pris": 2.35,
   "totalPlatser": 65,
-  "avlasningar": {},
+  "avlasningar": {
+    "1": 13510
+  },
   "sparadAv": "Massimo Johansson",
   "startTs": "2026-09-12T09:53:32.755Z"
 }
