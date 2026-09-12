@@ -107,7 +107,19 @@
       "deadline": null,
       "status": "Öppen",
       "skapad": "2026-08-28T14:21:21.516Z"
+    },
+    {
+      "id": "AT-1789205749201",
+      "kalla": "Riskbedömning",
+      "kallaId": "RB-1789205749201",
+      "titel": "Åtgärda: Måla vidskivor - ramlar",
+      "beskrivning": "Man får inte använda stege utan man skall använda godkänd ställning (mobil)",
+      "camping": "CC Björkö Örns Camping",
+      "ansvarig": "Massimo Johansson",
+      "deadline": "2026-09-30",
+      "status": "Öppen",
+      "skapad": "2026-09-12T09:35:49.201Z"
     }
   ],
-  "uppdaterad": "2026-08-28T14:21:21.516Z"
+  "uppdaterad": "2026-09-12T09:35:49.201Z"
 }
