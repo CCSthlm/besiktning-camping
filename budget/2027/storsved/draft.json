@@ -5,8 +5,9 @@
   "kommentarer": {},
   "paramVarden": {
     "loner_vintervard": 1,
-    "loner_sommarvard": 3
+    "loner_sommarvard": 3,
+    "arvoden_antal": 1
   },
   "investeringar": [],
-  "autosparad": "2026-09-12T10:40:06.995Z"
+  "autosparad": "2026-09-12T10:40:34.683Z"
 }
