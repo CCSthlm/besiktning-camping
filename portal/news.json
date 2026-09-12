@@ -11,6 +11,18 @@
       "active": true,
       "created": "2026-08-17T19:17:00.567Z",
       "createdBy": "Massimo Johansson"
+    },
+    {
+      "id": "mty7cdfjhpc9",
+      "type": "news",
+      "system": "CompuSuit",
+      "title": "Test nyhet",
+      "text": "Visar nyheter",
+      "startDate": "2026-09-12T07:47:00.000Z",
+      "endDate": "2026-09-13T09:47:00.000Z",
+      "active": true,
+      "created": "2026-09-12T09:48:02.431Z",
+      "createdBy": "Joachim Säfqvist"
     }
   ]
 }
