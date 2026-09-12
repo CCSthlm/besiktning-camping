@@ -6,8 +6,9 @@
   "paramVarden": {
     "loner_vintervard": 1,
     "loner_sommarvard": 3,
-    "arvoden_antal": 3
+    "arvoden_antal": 3,
+    "arvoden_belopp": 35000
   },
   "investeringar": [],
-  "autosparad": "2026-09-12T10:40:58.937Z"
+  "autosparad": "2026-09-12T10:41:07.441Z"
 }
