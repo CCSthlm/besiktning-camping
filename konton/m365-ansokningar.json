@@ -280,6 +280,24 @@
       "chef": "Johan Eriksson",
       "övrigt": "",
       "gdpr": true
+    },
+    {
+      "id": "M365-2609-7W56",
+      "ts": "2026-09-13T09:07:42.221Z",
+      "status": "ny",
+      "fname": "Stefan",
+      "lname": "Hedström",
+      "pnr": "19620925-0056",
+      "mobil": "0702984991",
+      "email": "stefan.hedstroem62@gmail.com",
+      "adress": "",
+      "anläggning": "CC Östnora Camping",
+      "roll": "Campingråd",
+      "ansForm": "Ideell",
+      "startDatum": "2026-09-01",
+      "chef": "",
+      "övrigt": "",
+      "gdpr": true
     }
   ]
 }
