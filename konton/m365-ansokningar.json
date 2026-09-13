@@ -190,6 +190,24 @@
         "kommentar": "M365-konto skapat: admin.massimo@cc-camping.se · Licens tilldelad · Grupper: Caravan Club of Sweden - Stockholmssektionen",
         "ts": "2026-07-17T16:06:32.076Z"
       }
+    },
+    {
+      "id": "M365-2609-1RU8",
+      "ts": "2026-09-13T08:33:51.490Z",
+      "status": "ny",
+      "fname": "Pernilla",
+      "lname": "Kavenius",
+      "pnr": "19690425-9261",
+      "mobil": "0739419478",
+      "email": "pernillakavenius@gmail.com",
+      "adress": "",
+      "anläggning": "CC Östnora Camping",
+      "roll": "Campingråd",
+      "ansForm": "Ideell",
+      "startDatum": "2026-09-01",
+      "chef": "Madelene Eriksson",
+      "övrigt": "",
+      "gdpr": true
     }
   ]
 }
