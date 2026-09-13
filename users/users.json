@@ -348,8 +348,7 @@
       "pin": "7777",
       "pnr": "",
       "adminRoles": [
-        "nyckel-admin",
-        "el-avlasning"
+        "nyckel-admin"
       ],
       "role": "Användare",
       "active": true,
@@ -359,7 +358,7 @@
       "sbaCamping": "",
       "nyckelCamping": "c3",
       "budgetEnhet": "",
-      "elCamping": "kapellskar",
+      "elCamping": "",
       "projektCampingId": "",
       "kontrollAnlaggningId": "",
       "kontrollAnlaggningNamn": "",
