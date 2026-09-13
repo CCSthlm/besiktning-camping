@@ -340,6 +340,34 @@
       "kontrollAdminAnlaggningId": "graddos_rest",
       "kontrollAdminAnlaggningNamn": "Gräddös Pärla Kök & Bar",
       "created": "2026-09-04"
+    },
+    {
+      "id": "umtzz6x3wp6qs",
+      "name": "Elisabeth Terol",
+      "email": "elisabeth.terol@cc-camping.se",
+      "pin": "7777",
+      "pnr": "",
+      "adminRoles": [
+        "nyckel-admin",
+        "el-avlasning"
+      ],
+      "role": "Användare",
+      "active": true,
+      "apps": [],
+      "plCampingId": "",
+      "godkannarcamping": "",
+      "sbaCamping": "",
+      "nyckelCamping": "c3",
+      "budgetEnhet": "",
+      "elCamping": "kapellskar",
+      "projektCampingId": "",
+      "kontrollAnlaggningId": "",
+      "kontrollAnlaggningNamn": "",
+      "kontrollAnsvarigAnlaggningId": "",
+      "kontrollAnsvarigAnlaggningNamn": "",
+      "kontrollAdminAnlaggningId": "",
+      "kontrollAdminAnlaggningNamn": "",
+      "created": "2026-09-13"
     }
   ],
   "campings": [
