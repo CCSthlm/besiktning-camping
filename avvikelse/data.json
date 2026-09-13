@@ -447,6 +447,46 @@
           "status": "ny"
         }
       ]
+    },
+    {
+      "id": "AV-2609-DF4P",
+      "ts": "2026-09-13T10:50:54.703Z",
+      "kategori": "Sjukdomsfall",
+      "kategoriIndex": 1,
+      "risk": "Låg",
+      "riskNivå": 1,
+      "anläggning": "CC Björkö Örns Camping",
+      "plats": "Campingtomt",
+      "datum": "2026-09-10",
+      "tid": "12:00",
+      "rapportör": "Receptionen Björkö Örn",
+      "rapportörEmail": "info.bjorko@cc-camping.se",
+      "beskrivning": "Gästen promenerade på campingen (vid en stig bredvid stuga 9). Då råkade gästen trampa på en träbit med en smal spik. Spiken gick rakt igenom skon och in i foten. Gästen drog ut spiken, men nästa morgon hade foten svullnat rejält och gjorde ont. Gästen åkte in till Norrtälje sjukhus och blev skickad direkt till akuten. Vid röntgen upptäcktes det att spiken gått av och att det satt kvar en nästan 1 cm lång bit. Han fick penicillin och ska tillbaka på måndag (14/9) för operation.  ",
+      "omedelbar": "Träbiten kastades.",
+      "ansvarig": "Carolina Eek",
+      "deadline": "2026-09-13",
+      "kommentar": "",
+      "status": "ny",
+      "eskalerad": false,
+      "bilder": [],
+      "dynamicFields": {
+        "d-typ": "Skada",
+        "d-person": "Gäst",
+        "d-foerstahjälp": false,
+        "d-ambulans": false,
+        "d-polis": false,
+        "d-anhörig": false,
+        "d-vittnen": "",
+        "d-ansvar": "En träbit med en smal spik låg på marken vid en gångstig."
+      },
+      "historik": [
+        {
+          "ts": "2026-09-13T10:50:54.703Z",
+          "av": "Receptionen Björkö Örn",
+          "händelse": "Skapades",
+          "status": "ny"
+        }
+      ]
     }
   ],
   "inställningar": {
