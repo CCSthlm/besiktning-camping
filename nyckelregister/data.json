@@ -1215,26 +1215,6 @@
       "lostAvId": "",
       "lostLas": "",
       "lostAtgard": ""
-    },
-    {
-      "id": "mtzv6vglqwwo4",
-      "nyckelId": "Kap 60",
-      "typ": "Elektronisk tagg",
-      "beskrivning": "Bommen",
-      "camping": "c3",
-      "plats": "",
-      "tillvnr": "",
-      "kopior": 1,
-      "anteckning": "",
-      "status": "ute",
-      "innehavarId": "",
-      "utlamnadTs": "",
-      "deposition": null,
-      "depositionAterbetald": false,
-      "lostTs": "",
-      "lostAvId": "",
-      "lostLas": "",
-      "lostAtgard": ""
     }
   ],
   "personal": [
