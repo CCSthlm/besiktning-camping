@@ -196,7 +196,7 @@ tr:hover td{background:rgba(59,109,17,.03);}
     <div class="card">
       <div class="card-header"><span class="card-title"><i class="ti ti-arrow-right-circle" style="color:var(--amber)"></i> Utlämnade nycklar just nu</span></div>
       <div style="overflow-x:auto"><table>
-        <thead><tr><th>Nyckel-ID</th><th>Beskrivning</th><th>Camping</th><th>Innehavare</th><th>Utlämnad</th><th>Dagar ute</th></tr></thead>
+        <thead><tr><th>Nyckel-ID</th><th>Beskrivning</th><th>Camping</th><th>Innehavare</th><th>Utlämnad</th><th>Dagar ute</th><th>Deposition</th></tr></thead>
         <tbody id="oversikt-ute-tbody"></tbody>
       </table></div>
     </div>
@@ -752,10 +752,16 @@ function renderOversikt() {
 
   var uteTbody = document.getElementById('oversikt-ute-tbody');
   uteTbody.innerHTML = ute.length ? ute.map(function(n){
+    var depCell = n.deposition && !n.depositionAterbetald
+      ? '<span style="color:var(--amber);font-weight:600;white-space:nowrap"><i class="ti ti-coin" style="font-size:11px"></i> '+n.deposition+' kr</span>'
+      : n.deposition && n.depositionAterbetald
+        ? '<span style="color:var(--text3);font-size:11px">'+n.deposition+' kr (återbet.)</span>'
+        : '–';
     return '<tr><td><strong>'+n.nyckelId+'</strong></td><td>'+n.beskrivning+'</td><td>'+campingName(n.camping)+'</td>'
       +'<td>'+personNamn(n.innehavarId)+'</td><td>'+(n.utlamnadTs?new Date(n.utlamnadTs).toLocaleDateString('sv-SE'):'–')+'</td>'
-      +'<td>'+dagarsUte(n.utlamnadTs)+'</td></tr>';
-  }).join('') : '<tr><td colspan="6"><div class="no-entries"><i class="ti ti-check"></i>Inga utlämnade nycklar</div></td></tr>';
+      +'<td>'+dagarsUte(n.utlamnadTs)+'</td>'
+      +'<td>'+depCell+'</td></tr>';
+  }).join('') : '<tr><td colspan="7"><div class="no-entries"><i class="ti ti-check"></i>Inga utlämnade nycklar</div></td></tr>';
 
   var lostTbody = document.getElementById('oversikt-lost-tbody');
   lostTbody.innerHTML = lost.length ? lost.map(function(n){
