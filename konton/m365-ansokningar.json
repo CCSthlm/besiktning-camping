@@ -226,6 +226,24 @@
       "chef": "",
       "övrigt": "",
       "gdpr": true
+    },
+    {
+      "id": "M365-2609-ABC6",
+      "ts": "2026-09-13T08:38:54.144Z",
+      "status": "ny",
+      "fname": "Lars",
+      "lname": "Frithiof",
+      "pnr": "19631024-3214",
+      "mobil": "07085377740",
+      "email": "lasse.frithiof@gmail.com",
+      "adress": "",
+      "anläggning": "CC Östnora Camping",
+      "roll": "Campingvärd",
+      "ansForm": "Ideell",
+      "startDatum": "2026-10-04",
+      "chef": "Johan Eriksson",
+      "övrigt": "",
+      "gdpr": true
     }
   ]
 }
