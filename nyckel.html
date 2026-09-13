@@ -215,7 +215,7 @@ tr:hover td{background:rgba(59,109,17,.03);}
       <select id="nyckel-camping-filter" onchange="renderNycklar()"><option value="">Alla campingar</option></select>
       <select id="nyckel-typ-filter" onchange="renderNycklar()">
         <option value="">Alla typer</option>
-        <option>Nyckel</option><option>Tagg</option><option>Kort</option>
+        <option>Nyckel</option><option>Tagg</option><option>Kort</option><option>Bom Nyckel</option>
       </select>
       <select id="nyckel-status-filter" onchange="renderNycklar()">
         <option value="">Alla statusar</option>
@@ -333,7 +333,7 @@ tr:hover td{background:rgba(59,109,17,.03);}
         <button class="btn-primary no-print" onclick="openPersonModal(null)"><i class="ti ti-plus"></i> Lägg till person</button>
       </div>
       <div style="overflow-x:auto"><table>
-        <thead><tr><th>Namn</th><th>E-post</th><th>Telefon</th><th>Camping</th><th>Typ</th><th>Aktiv</th><th class="no-print" style="text-align:right">Åtgärder</th></tr></thead>
+        <thead><tr><th>Namn</th><th>E-post</th><th>Telefon</th><th>CC-nr</th><th>Camping</th><th>Typ</th><th>Aktiv</th><th class="no-print" style="text-align:right">Åtgärder</th></tr></thead>
         <tbody id="personal-tbody"></tbody>
       </table></div>
     </div>
@@ -373,7 +373,7 @@ tr:hover td{background:rgba(59,109,17,.03);}
       <div class="form-grid">
         <div class="form-field"><label>Nyckel-ID <span class="req">*</span></label><input type="text" id="n-id" placeholder="T.ex. NYC-001"></div>
         <div class="form-field"><label>Typ <span class="req">*</span></label>
-          <select id="n-typ"><option>Nyckel</option><option>Tagg</option><option>Kort</option></select>
+          <select id="n-typ"><option>Nyckel</option><option>Tagg</option><option>Kort</option><option>Bom Nyckel</option></select>
         </div>
       </div>
       <div class="form-grid full">
@@ -431,7 +431,7 @@ tr:hover td{background:rgba(59,109,17,.03);}
       <div class="form-grid">
         <div class="form-field"><label>E-post</label><input type="email" id="p-email" placeholder="anna@exempel.se"></div>
         <div class="form-field"><label>Telefon</label><input type="tel" id="p-tel" placeholder="070-xxx xx xx"></div>
-      </div>
+        <div class="form-field"><label>CC-nummer</label><input type="text" id="p-ccnr" placeholder="T.ex. 12345" style="max-width:180px"></div>      </div>
       <div class="form-grid">
         <div class="form-field"><label>Camping</label><select id="p-camping"><option value="">– Välj –</option></select></div>
         <div class="form-field"><label>Typ</label>
@@ -1118,7 +1118,7 @@ function renderPersonal() {
     return !sok || (p.fname+' '+p.lname+' '+(p.email||'')).toLowerCase().includes(sok);
   });
   var tbody = document.getElementById('personal-tbody');
-  if (!list.length) { tbody.innerHTML='<tr><td colspan="7"><div class="no-entries"><i class="ti ti-user-x"></i>Inga personer i registret</div></td></tr>'; return; }
+  if (!list.length) { tbody.innerHTML='<tr><td colspan="8"><div class="no-entries"><i class="ti ti-user-x"></i>Inga personer i registret</div></td></tr>'; return; }
   tbody.innerHTML = list.map(function(p) {
     var aktiv = p.aktiv!==false ? '<span class="badge badge-in">Aktiv</span>' : '<span class="badge badge-lost">Inaktiv</span>';
     // How many keys does person have?
@@ -1127,6 +1127,7 @@ function renderPersonal() {
       +'<td style="font-weight:500">'+p.fname+' '+p.lname+(harNycklar>0?'<span class="badge badge-out" style="margin-left:6px">'+harNycklar+' nyckel'+(harNycklar!==1?'ar':'')+'</span>':'')+'</td>'
       +'<td style="font-size:12px">'+(p.email||'–')+'</td>'
       +'<td style="font-size:12px">'+(p.tel||'–')+'</td>'
+      +'<td style="font-size:12px;color:var(--text2)">'+(p.ccnr||'–')+'</td>'
       +'<td style="font-size:12px;color:var(--text2)">'+campingName(p.camping)+'</td>'
       +'<td style="font-size:12px;color:var(--text2)">'+(p.typ||'–')+'</td>'
       +'<td>'+aktiv+'</td>'
@@ -1150,6 +1151,7 @@ function openPersonModal(pid) {
   document.getElementById('p-camping').value= p ? (p.camping||'') : '';
   document.getElementById('p-typ').value    = p ? (p.typ||'Anställd') : 'Anställd';
   document.getElementById('p-aktiv').value  = p && p.aktiv===false ? 'false' : 'true';
+  document.getElementById('p-ccnr').value   = p ? (p.ccnr||'') : '';
   openModal('modal-person');
 }
 
@@ -1163,6 +1165,7 @@ function savePerson() {
     tel:     document.getElementById('p-tel').value.trim(),
     camping: document.getElementById('p-camping').value,
     typ:     document.getElementById('p-typ').value,
+    ccnr:    document.getElementById('p-ccnr').value.trim(),
     aktiv:   document.getElementById('p-aktiv').value==='true',
   };
   var editId = document.getElementById('person-edit-id').value;
