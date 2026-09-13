@@ -208,6 +208,24 @@
       "chef": "Madelene Eriksson",
       "övrigt": "",
       "gdpr": true
+    },
+    {
+      "id": "M365-2609-Y23Y",
+      "ts": "2026-09-13T08:37:41.485Z",
+      "status": "ny",
+      "fname": "Anders",
+      "lname": "Ellström",
+      "pnr": "19600203-0020",
+      "mobil": "0709158582",
+      "email": "ky.pettersson@gmail.com",
+      "adress": "",
+      "anläggning": "CC Östnora Camping",
+      "roll": "Campingvärd",
+      "ansForm": "Ideell",
+      "startDatum": "2026-10-04",
+      "chef": "",
+      "övrigt": "",
+      "gdpr": true
     }
   ]
 }
