@@ -182,6 +182,7 @@ tr:hover td{background:rgba(59,109,17,.03);}
     <button class="tab-btn" id="tab-inventering" onclick="showTab('inventering')"><i class="ti ti-clipboard-check"></i> Inventering</button>
     <button class="tab-btn" id="tab-personal"  onclick="showTab('personal')"><i class="ti ti-users"></i> Personal</button>
     <button class="tab-btn" id="tab-logg"      onclick="showTab('logg')"><i class="ti ti-history"></i> Logg</button>
+    <label class="tab-btn" style="cursor:pointer;display:flex;align-items:center;gap:6px" title="Importera från Excel-mall"><i class="ti ti-file-import"></i> <span class="desktop-only">Importera</span><input type="file" accept=".xlsx" style="display:none" onchange="importeraExcel(this)"></label>
   </div>
 
   <!-- ÖVERSIKT -->
@@ -1272,6 +1273,172 @@ function saveLost() {
 }
 
 // ── LOGG ──────────────────────────────────────────────────────────────────
+// ── IMPORTERA EXCEL ───────────────────────────────────────────────────────
+async function importeraExcel(input) {
+  if (!window.XLSX || !input.files || !input.files[0]) return;
+  var file = input.files[0];
+  input.value = '';
+
+  var reader = new FileReader();
+  reader.onload = async function(e) {
+    try {
+      var wb   = XLSX.read(e.target.result, {type:'array', cellDates:true});
+      var wsP  = wb.Sheets['Personal'];
+      var wsN  = wb.Sheets['Nycklar'];
+      var wsU  = wb.Sheets['Utlämning'];
+      if (!wsP||!wsN||!wsU) { toast('Flikarna Personal, Nycklar och Utlämning måste finnas','err'); return; }
+
+      var rowsP = XLSX.utils.sheet_to_json(wsP, {header:1, defval:'', range:4});
+      var rowsN = XLSX.utils.sheet_to_json(wsN, {header:1, defval:'', range:4});
+      var rowsU = XLSX.utils.sheet_to_json(wsU, {header:1, defval:'', range:4});
+
+      // Filter empty rows
+      var dataP = rowsP.filter(function(r){ return r[0]||r[1]; });
+      var dataN = rowsN.filter(function(r){ return r[0]; });
+      var dataU = rowsU.filter(function(r){ return r[0]&&r[1]; });
+
+      var skippedP=0, skippedN=0, skippedU=0;
+      var addedP=0, addedN=0, addedU=0;
+      var errors = [];
+
+      // ── PERSONAL ──────────────────────────────────────────────────────
+      // Build CC→id map for existing personal
+      var ccToId = {};
+      _d.personal.forEach(function(p){ if(p.ccnr) ccToId[String(p.ccnr)]=p.id; });
+
+      dataP.forEach(function(r, i) {
+        var fname   = String(r[0]||'').trim();
+        var lname   = String(r[1]||'').trim();
+        var email   = String(r[2]||'').trim();
+        var tel     = String(r[3]||'').trim();
+        var ccnr    = String(r[4]||'').trim();
+        var camping = String(r[5]||'').trim();
+        var typ     = String(r[6]||'Gäst').trim();
+        var aktiv   = String(r[7]||'Ja').trim().toLowerCase() !== 'nej';
+
+        if (!fname||!lname||!ccnr||!camping) { skippedP++; return; }
+
+        if (ccToId[ccnr]) {
+          // Update existing
+          var existing = _d.personal.find(function(p){ return String(p.ccnr)===ccnr; });
+          if (existing) {
+            existing.fname=fname; existing.lname=lname; existing.email=email;
+            existing.tel=tel; existing.camping=camping; existing.typ=typ; existing.aktiv=aktiv;
+          }
+        } else {
+          // Add new
+          var newP = {id:uid(), fname, lname, email, tel, ccnr, camping, typ, aktiv};
+          _d.personal.push(newP);
+          ccToId[ccnr] = newP.id;
+          addedP++;
+        }
+      });
+
+      // ── NYCKLAR ───────────────────────────────────────────────────────
+      // Build nyckelId→id map
+      var nidToId = {};
+      _d.nycklar.forEach(function(n){ nidToId[n.nyckelId]=n.id; });
+
+      dataN.forEach(function(r) {
+        var nyckelId = String(r[0]||'').trim();
+        var typ      = String(r[1]||'Nyckel').trim();
+        var besk     = String(r[2]||'').trim();
+        var camping  = String(r[3]||'').trim();
+        var plats    = String(r[4]||'').trim();
+        var tillvnr  = String(r[5]||'').trim();
+        var kopior   = parseInt(r[6])||1;
+        var anteckn  = String(r[7]||'').trim();
+        var status   = String(r[8]||'inne').trim().toLowerCase();
+
+        if (!nyckelId||!typ||!besk||!camping) { skippedN++; return; }
+        if (!['inne','ute','forlorad'].includes(status)) status='inne';
+
+        if (nidToId[nyckelId]) {
+          // Update existing
+          var ex = _d.nycklar.find(function(n){ return n.nyckelId===nyckelId; });
+          if (ex) {
+            ex.typ=typ; ex.beskrivning=besk; ex.camping=camping;
+            ex.plats=plats; ex.tillvnr=tillvnr; ex.kopior=kopior; ex.anteckning=anteckn;
+          }
+        } else {
+          var newN = {id:uid(), nyckelId, typ, beskrivning:besk, camping, plats,
+            tillvnr, kopior, anteckning:anteckn, status,
+            innehavarId:'', utlamnadTs:'', deposition:null, depositionAterbetald:false,
+            lostTs:'', lostAvId:'', lostLas:'', lostAtgard:''};
+          _d.nycklar.push(newN);
+          nidToId[nyckelId] = newN.id;
+          addedN++;
+        }
+      });
+
+      // ── UTLÄMNING ─────────────────────────────────────────────────────
+      dataU.forEach(function(r) {
+        var nyckelId = String(r[0]||'').trim();
+        var ccnr     = String(r[1]||'').trim();
+        var datumRaw = r[2];
+        var dep      = parseFloat(r[3])||0;
+        var ant      = String(r[4]||'').trim();
+
+        var nyckel = _d.nycklar.find(function(n){ return n.nyckelId===nyckelId; });
+        var person = _d.personal.find(function(p){ return String(p.ccnr)===ccnr; });
+
+        if (!nyckel||!person) {
+          skippedU++;
+          if (!nyckel) errors.push('Utlämning: Nyckel-ID "'+nyckelId+'" hittades inte');
+          if (!person) errors.push('Utlämning: CC-nummer "'+ccnr+'" hittades inte i Personal');
+          return;
+        }
+
+        // Format datum
+        var ts = '';
+        if (datumRaw instanceof Date) {
+          ts = datumRaw.toISOString();
+        } else if (datumRaw) {
+          ts = new Date(datumRaw).toISOString();
+        } else {
+          ts = new Date().toISOString();
+        }
+
+        nyckel.status       = 'ute';
+        nyckel.innehavarId  = person.id;
+        nyckel.utlamnadTs   = ts;
+        nyckel.deposition   = dep||null;
+        nyckel.depositionAterbetald = false;
+        addLog('ut', nyckelId+' importerad utlämning till '+person.fname+' '+person.lname
+          +(dep?' (Deposition: '+dep+' kr)':''), nyckel.id, person.id, ant);
+        addedU++;
+      });
+
+      // ── SPARA ─────────────────────────────────────────────────────────
+      await saveData();
+
+      var summary = 'Import klar!\n\n'
+        +'Personal: '+addedP+' tillagda'+(skippedP?' ('+skippedP+' hoppade över)':'')+'\n'
+        +'Nycklar: '+addedN+' tillagda'+(skippedN?' ('+skippedN+' hoppade över)':'')+'\n'
+        +'Utlämningar: '+addedU+' kopplade'+(skippedU?' ('+skippedU+' hoppade över)':'');
+
+      if (errors.length) {
+        summary += '\n\nFel:\n'+errors.slice(0,10).join('\n')+(errors.length>10?'\n...och '+(errors.length-10)+' till':'');
+      }
+
+      alert(summary);
+      renderAll();
+      toast('Import slutförd','ok');
+
+    } catch(err) {
+      toast('Fel vid import: '+err.message,'err');
+      console.error(err);
+    }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function renderAll() {
+  renderOversikt(); renderNycklar(); renderRapport();
+  renderPersonal && renderPersonal();
+  renderLogg && renderLogg();
+}
+
 function addLog(action, detail, nyckelDbId, personId, anteckning) {
   var n = nyckelDbId ? _d.nycklar.find(function(x){return x.id===nyckelDbId;}) : null;
   _d.händelser.push({
