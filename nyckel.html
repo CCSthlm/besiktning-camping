@@ -1068,25 +1068,44 @@ function exportExcel() {
   try {
     if (!window.XLSX) { toast('Excel laddas','warn'); return; }
     var wb = XLSX.utils.book_new();
-    // Sheet 1: Nycklar
-    var ndata = [['Nyckel-ID','Typ','Beskrivning','Camping','Plats','Tillvnr','Kopior','Status','Innehavare','Utlämnad','Anteckning']];
-    _d.nycklar.forEach(function(n){
-      ndata.push([n.nyckelId,n.typ,n.beskrivning,campingName(n.camping),n.plats||'',n.tillvnr||'',n.kopior||1,n.status,
-        n.innehavarId&&n.status==='ute'?personNamn(n.innehavarId):'',
-        n.utlamnadTs?new Date(n.utlamnadTs).toLocaleDateString('sv-SE'):'',n.anteckning||'']);
+
+    // Filter nycklar by current camping filter
+    var nycklar = _d.nycklar.filter(function(n){
+      return !_filterCamping || n.camping === _filterCamping;
     });
-    var ws1=XLSX.utils.aoa_to_sheet(ndata); ws1['!cols']=[{wch:12},{wch:8},{wch:28},{wch:24},{wch:16},{wch:14},{wch:8},{wch:10},{wch:24},{wch:14},{wch:30}];
+
+    // Sheet 1: Nycklar — inkl. deposition
+    var ndata = [['Nyckel-ID','Typ','Beskrivning','Camping','Plats','Tillvnr','Kopior','Status','Innehavare','Utlämnad','Deposition (kr)','Deposition återbetald','Anteckning']];
+    nycklar.forEach(function(n){
+      ndata.push([
+        n.nyckelId, n.typ, n.beskrivning, campingName(n.camping),
+        n.plats||'', n.tillvnr||'', n.kopior||1, n.status,
+        n.innehavarId&&n.status==='ute'?personNamn(n.innehavarId):'',
+        n.utlamnadTs?new Date(n.utlamnadTs).toLocaleDateString('sv-SE'):'',
+        n.deposition||'',
+        n.deposition ? (n.depositionAterbetald?'Ja':'Nej') : '',
+        n.anteckning||''
+      ]);
+    });
+    var ws1=XLSX.utils.aoa_to_sheet(ndata);
+    ws1['!cols']=[{wch:12},{wch:8},{wch:28},{wch:24},{wch:16},{wch:14},{wch:8},{wch:10},{wch:24},{wch:14},{wch:14},{wch:18},{wch:30}];
     XLSX.utils.book_append_sheet(wb,ws1,'Nycklar');
-    // Sheet 2: Logg
+
+    // Sheet 2: Logg — filtered to same camping
+    var nyckelIds = new Set(nycklar.map(function(n){return n.id;}));
     var ldata = [['Tidpunkt','Händelse','Nyckel','Person','Utförd av','Anteckning']];
     _d.händelser.slice().reverse().forEach(function(h){
+      if (_filterCamping && !nyckelIds.has(h.nyckelDbId)) return;
       ldata.push([new Date(h.ts).toLocaleString('sv-SE'),h.action,h.nyckelId||'',h.personNamn||'',h.utfordAv||'',h.anteckning||'']);
     });
-    var ws2=XLSX.utils.aoa_to_sheet(ldata); ws2['!cols']=[{wch:18},{wch:16},{wch:12},{wch:24},{wch:20},{wch:30}];
+    var ws2=XLSX.utils.aoa_to_sheet(ldata);
+    ws2['!cols']=[{wch:18},{wch:16},{wch:12},{wch:24},{wch:20},{wch:30}];
     XLSX.utils.book_append_sheet(wb,ws2,'Logg');
-    XLSX.writeFile(wb,'Nyckelregister_komplett_'+todayStr()+'.xlsx');
-    toast('Excel exporterad','ok');
-  } catch(e) { toast('Export misslyckades','err'); }
+
+    var campNamn = _filterCamping ? campingName(_filterCamping) : 'Alla';
+    XLSX.writeFile(wb,'Nyckelregister_'+campNamn+'_'+todayStr()+'.xlsx');
+    toast('Excel exporterad – '+nycklar.length+' nycklar','ok');
+  } catch(e) { toast('Export misslyckades: '+e.message,'err'); }
 }
 
 // ── INVENTERING ───────────────────────────────────────────────────────────
