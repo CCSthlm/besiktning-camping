@@ -895,11 +895,37 @@ function onUtNyckelChange() {
 function onAtNyckelChange() {
   var id = document.getElementById('at-nyckel').value;
   var el = document.getElementById('at-nyckel-info');
-  if (!id) { el.style.display='none'; return; }
+  var depWrap = document.getElementById('at-deposition-wrap');
+  var depBekr = document.getElementById('at-deposition-bekraftad');
+
+  if (!id) {
+    el.style.display='none';
+    if (depWrap) depWrap.style.display='none';
+    return;
+  }
   var n = _d.nycklar.find(function(x){return x.id===id;});
   if (!n) { el.style.display='none'; return; }
+
+  // Nyckelinfo
   el.style.display='';
-  el.innerHTML = '<strong>'+n.nyckelId+'</strong> – '+n.beskrivning+'<br>Innehavare: <strong>'+personNamn(n.innehavarId)+'</strong> sedan '+(n.utlamnadTs?new Date(n.utlamnadTs).toLocaleString('sv-SE'):'–');
+  var depInfo = (n.deposition && !n.depositionAterbetald)
+    ? ' &nbsp;·&nbsp; <span style="color:var(--amber);font-weight:600"><i class="ti ti-coin"></i> Deposition: '+n.deposition+' kr</span>'
+    : '';
+  el.innerHTML = '<strong>'+n.nyckelId+'</strong> – '+n.beskrivning
+    +'<br>Innehavare: <strong>'+personNamn(n.innehavarId)+'</strong> sedan '
+    +(n.utlamnadTs?new Date(n.utlamnadTs).toLocaleString('sv-SE'):'–')
+    +depInfo;
+
+  // Deposition-bekräftelse
+  if (depWrap) {
+    if (n.deposition && !n.depositionAterbetald) {
+      document.getElementById('at-deposition-belopp').textContent = n.deposition;
+      depWrap.style.display = '';
+      if (depBekr) depBekr.checked = false;
+    } else {
+      depWrap.style.display = 'none';
+    }
+  }
 }
 
 function doUtlamning() {
