@@ -262,6 +262,24 @@
       "chef": "Johan Eriksson",
       "övrigt": "",
       "gdpr": true
+    },
+    {
+      "id": "M365-2609-3TXB",
+      "ts": "2026-09-13T08:41:09.196Z",
+      "status": "ny",
+      "fname": "Jan",
+      "lname": "Törnander",
+      "pnr": "19590103-6615",
+      "mobil": "07072077746",
+      "email": "jannetyr@gmail.com",
+      "adress": "",
+      "anläggning": "CC Östnora Camping",
+      "roll": "Campingvärd",
+      "ansForm": "Ideell",
+      "startDatum": "2026-10-04",
+      "chef": "Johan Eriksson",
+      "övrigt": "",
+      "gdpr": true
     }
   ]
 }
