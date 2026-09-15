@@ -8,8 +8,9 @@
     "loner_sommarvard": 3,
     "arvoden_antal": 3,
     "arvoden_belopp": 35000,
-    "helarsplatser_antal": 81
+    "helarsplatser_antal": 81,
+    "helarsplatser_pris": 15089.29
   },
   "investeringar": [],
-  "autosparad": "2026-09-15T16:27:55.168Z"
+  "autosparad": "2026-09-15T16:28:04.296Z"
 }
