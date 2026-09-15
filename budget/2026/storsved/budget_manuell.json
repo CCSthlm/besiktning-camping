@@ -1,4 +1,5 @@
 {
+  "3010": 1305000,
   "3014": 246429,
   "3016": 2679,
   "3017": 0,
@@ -52,8 +53,8 @@
   "_meta": {
     "enhetId": "storsved",
     "ar": 2026,
-    "sparadAv": "Cristina Sundberg",
-    "sparadTs": "2026-09-15T17:16:31.396Z",
+    "sparadAv": "Massimo Johansson",
+    "sparadTs": "2026-09-15T18:06:01.565Z",
     "typ": "manuell"
   }
 }
