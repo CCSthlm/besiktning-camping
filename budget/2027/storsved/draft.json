@@ -1,21 +1,7 @@
 {
-  "kontoVarden": {
-    "8830": -220000
-  },
-  "kommentarer": {
-    "3017": "Bör vara med i budgeten.",
-    "3029": "Har ni inte haft fler gasoltester?"
-  },
-  "paramVarden": {
-    "loner_vintervard": 1,
-    "loner_sommarvard": 3,
-    "arvoden_antal": 3,
-    "arvoden_belopp": 35000,
-    "helarsplatser_antal": 81,
-    "helarsplatser_pris": 15089.29,
-    "gastavgift_pris": 339.29,
-    "gastavgift_antal": 761
-  },
+  "kontoVarden": {},
+  "kommentarer": {},
+  "paramVarden": {},
   "investeringar": [],
-  "autosparad": "2026-09-15T18:31:31.796Z"
+  "autosparad": null
 }
