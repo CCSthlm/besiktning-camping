@@ -13,8 +13,9 @@
     "arvoden_belopp": 35000,
     "helarsplatser_antal": 81,
     "helarsplatser_pris": 15089.29,
-    "gastavgift_pris": 339.29
+    "gastavgift_pris": 339.29,
+    "gastavgift_antal": 761
   },
   "investeringar": [],
-  "autosparad": "2026-09-15T17:19:44.347Z"
+  "autosparad": "2026-09-15T18:24:14.052Z"
 }
