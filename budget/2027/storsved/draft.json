@@ -2,7 +2,9 @@
   "kontoVarden": {
     "8830": -220000
   },
-  "kommentarer": {},
+  "kommentarer": {
+    "7010": "Avser 3 sommarvärdar och 1 vintervärd."
+  },
   "paramVarden": {
     "helarsplatser_antal": 81,
     "helarsplatser_pris": 15089.29,
@@ -14,5 +16,5 @@
     "arvoden_belopp": 35000
   },
   "investeringar": [],
-  "autosparad": "2026-09-16T19:04:17.232Z"
+  "autosparad": "2026-09-16T19:08:37.421Z"
 }
