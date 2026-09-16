@@ -7,8 +7,10 @@
     "helarsplatser_antal": 38,
     "helarsplatser_pris": 16071.43,
     "gastavgift_antal": 2439,
-    "gastavgift_pris": 339.29
+    "gastavgift_pris": 339.29,
+    "loner_sommarvard": 6,
+    "loner_vintervard": 3
   },
   "investeringar": [],
-  "autosparad": "2026-09-16T18:07:34.415Z"
+  "autosparad": "2026-09-16T18:25:24.442Z"
 }
