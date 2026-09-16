@@ -367,6 +367,34 @@
       "kontrollAdminAnlaggningId": "",
       "kontrollAdminAnlaggningNamn": "",
       "created": "2026-09-13"
+    },
+    {
+      "id": "umu4j1rrp96m1",
+      "name": "EllinorKallur",
+      "email": "elinore.kallur@cc-camping.se",
+      "pin": "9999",
+      "pnr": "",
+      "adminRoles": [
+        "projekt-camping",
+        "budget-camping"
+      ],
+      "role": "Användare",
+      "active": true,
+      "apps": [],
+      "plCampingId": "",
+      "godkannarcamping": "",
+      "sbaCamping": "",
+      "nyckelCamping": "",
+      "budgetEnhet": "storsved",
+      "elCamping": "",
+      "projektCampingId": "storsved",
+      "kontrollAnlaggningId": "",
+      "kontrollAnlaggningNamn": "",
+      "kontrollAnsvarigAnlaggningId": "",
+      "kontrollAnsvarigAnlaggningNamn": "",
+      "kontrollAdminAnlaggningId": "",
+      "kontrollAdminAnlaggningNamn": "",
+      "created": "2026-09-16"
     }
   ],
   "campings": [
