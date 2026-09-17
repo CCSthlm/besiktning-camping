@@ -1828,20 +1828,9 @@ async function loadUtfallView() {
       + '</tr>';
   });
 
-  var res = totUtfall - totBudget;
-  var resCls = res >= 0 ? 'row-result-pos' : 'row-result-neg';
-  tbody += '<tr class="'+resCls+'">'
-    + '<td class="sticky-col"></td>'
-    + '<td class="sticky-col">Rörelseresultat</td>'
-    + '<td class="num">'+fmtKr(totBudget)+'</td>'
-    + '<td class="num">–</td>'
-    + '<td class="num">'+fmtKr(totUtfall)+'</td>'
-    + '<td class="num" colspan="2">'+fmtKr(res)+'</td>'
-    + '</tr>';
-
   document.getElementById('utfall-table-wrap').innerHTML = `
     <div style="font-size:12px;color:var(--text2);margin-bottom:8px">
-      <strong>${enhet.namn||enhetId}</strong> · t.o.m. ${periodLabel} ${BUDGET_YEAR}
+      <strong>${enhet.namn||enhetId}</strong> · t.o.m. ${periodLabel} ${BUDGET_YEAR-1}
     </div>
     <div class="budget-wrap">
       <table class="btable">
@@ -1850,7 +1839,7 @@ async function loadUtfallView() {
           <th class="sticky-col" style="width:220px">Namn</th>
           <th class="num">Budget ${BUDGET_YEAR}</th>
           <th class="num" style="color:var(--blue)">Budget ${prevYear} <span style="font-size:9px;opacity:.7">(manuell)</span></th>
-          <th class="num">Utfall ${BUDGET_YEAR} t.o.m. ${periodLabel}</th>
+          <th class="num">Utfall ${BUDGET_YEAR-1} t.o.m. ${periodLabel}</th>
           <th class="num">Avvikelse kr</th>
           <th class="num">Avvikelse %</th>
         </tr></thead>
