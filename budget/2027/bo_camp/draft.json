@@ -6,8 +6,9 @@
   "kommentarer": {},
   "paramVarden": {
     "loner_sommarvard": 0,
-    "helarsplatser_antal": 54
+    "helarsplatser_antal": 54,
+    "helarsplatser_pris": 18750
   },
   "investeringar": [],
-  "autosparad": "2026-09-18T11:09:30.465Z"
+  "autosparad": "2026-09-18T11:09:36.740Z"
 }
