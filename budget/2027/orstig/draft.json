@@ -3,7 +3,8 @@
     "8830": -220000
   },
   "kommentarer": {
-    "3044": "Hade 2000kr i budget 2026"
+    "3044": "Hade 2000kr i budget 2026",
+    "7241": "Beräknat på 1 CA 25000;./år och 1 superuser 5000;./säsong."
   },
   "paramVarden": {
     "helarsplatser_antal": 81,
@@ -16,5 +17,5 @@
     "gastavgift_pris": 339.29
   },
   "investeringar": [],
-  "autosparad": "2026-09-16T18:00:39.687Z"
+  "autosparad": "2026-09-18T10:02:12.544Z"
 }
