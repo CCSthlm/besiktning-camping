@@ -2,7 +2,9 @@
   "kontoVarden": {
     "8830": -220000
   },
-  "kommentarer": {},
+  "kommentarer": {
+    "3014": "Beräknat på 1847 st gästnätter á 400:-/natt."
+  },
   "paramVarden": {
     "helarsplatser_antal": 84,
     "helarsplatser_pris": 14062.5,
@@ -14,5 +16,5 @@
     "loner_vintervard": 1
   },
   "investeringar": [],
-  "autosparad": "2026-09-18T12:10:42.502Z"
+  "autosparad": "2026-09-18T12:12:54.563Z"
 }
