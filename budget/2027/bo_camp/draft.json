@@ -3,7 +3,9 @@
     "4011": 0,
     "8830": -220000
   },
-  "kommentarer": {},
+  "kommentarer": {
+    "3010": "Beräknat på 54 helår\n11 sommar\n4 vinter"
+  },
   "paramVarden": {
     "loner_sommarvard": 20,
     "helarsplatser_antal": 54,
@@ -15,5 +17,5 @@
     "arvoden_belopp": 55000
   },
   "investeringar": [],
-  "autosparad": "2026-09-18T11:14:28.053Z"
+  "autosparad": "2026-09-18T13:33:21.082Z"
 }
