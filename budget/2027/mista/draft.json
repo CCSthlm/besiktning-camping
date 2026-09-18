@@ -4,7 +4,8 @@
   },
   "kommentarer": {
     "3014": "Beräknat på 1847 st gästnätter á 400:-/natt.",
-    "7010": "beräknat på 5 SV och 1 VC á 25000:-."
+    "7010": "beräknat på 5 SV och 1 VC á 25000:-.",
+    "7240": "Beräknat på 1 CA 25000:-/år och superuser 5000:-/säsong."
   },
   "paramVarden": {
     "helarsplatser_antal": 84,
@@ -17,5 +18,5 @@
     "loner_vintervard": 1
   },
   "investeringar": [],
-  "autosparad": "2026-09-18T12:16:07.301Z"
+  "autosparad": "2026-09-18T12:17:23.778Z"
 }
