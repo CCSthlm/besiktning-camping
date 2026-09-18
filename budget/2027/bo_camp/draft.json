@@ -4,7 +4,7 @@
     "8830": -220000
   },
   "kommentarer": {
-    "3010": "Beräknat på 54 helår x 18750;.\n11 sommar x 13393:-\n4 vinter x 6643:-",
+    "3010": "Beräknat på 54 helår x 18750;.",
     "3011": "Beräknat på 11 sommarsäsongare x 13393:-"
   },
   "paramVarden": {
@@ -18,5 +18,5 @@
     "arvoden_belopp": 55000
   },
   "investeringar": [],
-  "autosparad": "2026-09-18T13:37:06.879Z"
+  "autosparad": "2026-09-18T13:37:23.192Z"
 }
