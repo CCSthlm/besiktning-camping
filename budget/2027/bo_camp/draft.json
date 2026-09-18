@@ -1,11 +1,13 @@
 {
   "kontoVarden": {
-    "4011": 0
+    "4011": 0,
+    "8830": -220000
   },
   "kommentarer": {},
   "paramVarden": {
-    "loner_sommarvard": 0
+    "loner_sommarvard": 0,
+    "helarsplatser_antal": 54
   },
   "investeringar": [],
-  "autosparad": "2026-09-04T09:34:45.981Z"
+  "autosparad": "2026-09-18T11:09:30.465Z"
 }
