@@ -4,7 +4,7 @@
     "8830": -220000
   },
   "kommentarer": {
-    "3010": "Beräknat på 54 helår x 18750;.",
+    "3010": "",
     "3011": "Beräknat på 11 sommarsäsongare x 13393:-",
     "3012": "Beräknat på 4 vinterplatser x 6643:-",
     "3014": "Beräknat på 2649 st gästnätter x 380:-.\nKan bli fel eftersom stugorna ingår här."
@@ -20,5 +20,5 @@
     "arvoden_belopp": 55000
   },
   "investeringar": [],
-  "autosparad": "2026-09-18T15:33:38.335Z"
+  "autosparad": "2026-09-18T15:44:13.081Z"
 }
