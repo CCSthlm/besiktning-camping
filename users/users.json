@@ -1223,6 +1223,20 @@
           "manualReason": "",
           "edited": false,
           "campingId": "c8"
+        },
+        {
+          "id": "mu725ljichgy1",
+          "name": "Bo Wahlund",
+          "pnr": "19580412-0250",
+          "date": "2026-09-18",
+          "timeIn": "16:32",
+          "timeOut": "",
+          "registeredBy": "Restaurang Östnora",
+          "registeredAt": "2026-09-18T14:32:43.854Z",
+          "manual": false,
+          "manualReason": "",
+          "edited": false,
+          "campingId": "c8"
         }
       ],
       "personal": [
@@ -2109,6 +2123,15 @@
           "detail": "Sussi Törnander stämplade in 09:41",
           "oldVal": "",
           "newVal": "09:41"
+        },
+        {
+          "id": "mu725ljjypvq6",
+          "ts": "2026-09-18T14:32:43.855Z",
+          "user": "Restaurang Östnora",
+          "action": "in",
+          "detail": "Bo Wahlund stämplade in 16:32",
+          "oldVal": "",
+          "newVal": "16:32"
         }
       ]
     }
