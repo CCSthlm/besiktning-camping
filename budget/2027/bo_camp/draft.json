@@ -4,7 +4,7 @@
     "8830": -220000
   },
   "kommentarer": {
-    "3010": "Beräknat på 54 helår\n11 sommar\n4 vinter"
+    "3010": "Beräknat på 54 helår x 18750;.\n11 sommar x 13393:-\n4 vinter x 6643:-"
   },
   "paramVarden": {
     "loner_sommarvard": 20,
@@ -17,5 +17,5 @@
     "arvoden_belopp": 55000
   },
   "investeringar": [],
-  "autosparad": "2026-09-18T13:35:04.365Z"
+  "autosparad": "2026-09-18T13:35:52.002Z"
 }
