@@ -1,5 +1,6 @@
 {
   "kontoVarden": {
+    "3011": 11000,
     "8830": -220000
   },
   "kommentarer": {
@@ -17,5 +18,5 @@
     "arvoden_belopp": 35000
   },
   "investeringar": [],
-  "autosparad": "2026-09-19T08:09:20.055Z"
+  "autosparad": "2026-09-19T08:10:19.527Z"
 }
