@@ -1680,13 +1680,15 @@ async function lasaUppManad(monthKey){
 
 function openSignering(){
   var now=new Date();
-  var month=now.getMonth();
+  var prevDate=new Date(now.getFullYear(),now.getMonth()-1,1);
+  var month=prevDate.getMonth();
+  var year=prevDate.getFullYear();
   var monthName=['Januari','Februari','Mars','April','Maj','Juni','Juli','Augusti','September','Oktober','November','December'][month];
-  document.getElementById('sign-title').textContent='Signera '+monthName+' '+now.getFullYear();
+  document.getElementById('sign-title').textContent='Signera '+monthName+' '+year;
   document.getElementById('sign-sub').textContent=_anlaggningNamn;
   document.getElementById('sign-body').innerHTML=
     '<div style="font-size:14px;line-height:1.7;color:var(--text2);margin-bottom:16px">'
-    +'Jag bekräftar att dokumentationen för <strong>'+monthName+' '+now.getFullYear()+'</strong> är korrekt, komplett och att eventuella avvikelser är åtgärdade och dokumenterade.</div>'
+    +'Jag bekräftar att dokumentationen för <strong>'+monthName+' '+year+'</strong> är korrekt, komplett och att eventuella avvikelser är åtgärdade och dokumenterade.</div>'
     +'<div style="background:var(--bg3);border-radius:var(--radius);padding:12px 14px;margin-bottom:4px">'
     +'<div style="font-size:12px;color:var(--text3)">Signerar som</div>'
     +'<div style="font-size:15px;font-weight:500;margin-top:2px">'+_user.name+'</div>'
@@ -1697,7 +1699,10 @@ function openSignering(){
 
 async function doSignera(){
   var now=new Date();
-  var monthKey=now.getFullYear()+'-'+(now.getMonth()<9?'0':'')+(now.getMonth()+1);
+  var prevDate=new Date(now.getFullYear(),now.getMonth()-1,1);
+  var year=prevDate.getFullYear();
+  var month=prevDate.getMonth();
+  var monthKey=year+'-'+(month<9?'0':'')+(month+1);
   _signaturer[monthKey]={av:_user.name,ts:now.toISOString(),anlaggning:_anlaggningId};
   var ok=await ghPut(KBASE+'/signaturer/'+_anlaggningId+'.json',_signaturer,'Signering '+monthKey);
   closeModal('modal-sign');
