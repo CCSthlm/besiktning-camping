@@ -691,16 +691,6 @@
           "active": true
         },
         {
-          "id": "mrp75wysyqm35",
-          "fname": "Dorry",
-          "lname": "Johansson",
-          "pnr": "191212121212",
-          "address": "Hemaavägen 1",
-          "phone": "0766121212",
-          "type": "anställd",
-          "active": true
-        },
-        {
           "id": "mu8awhoum7dnk",
           "fname": "Lena",
           "lname": "Larsson",
@@ -934,6 +924,15 @@
           "user": "Massimo Johansson",
           "action": "delete",
           "detail": "Tog bort person: Massimo Johansson",
+          "oldVal": "",
+          "newVal": ""
+        },
+        {
+          "id": "mu8axeo44b5fs",
+          "ts": "2026-09-19T11:26:04.420Z",
+          "user": "Massimo Johansson",
+          "action": "delete",
+          "detail": "Tog bort person: Dorry Johansson",
           "oldVal": "",
           "newVal": ""
         }
