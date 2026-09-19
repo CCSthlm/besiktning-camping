@@ -51,7 +51,8 @@
       "kategori": "Temperatur",
       "typ": "temp",
       "min": "",
-      "max": "-18",
+      "max": "",
+      "riktvarde": -18,
       "intervall": "dagligen",
       "deadline": {
         "tid": "23:59"
