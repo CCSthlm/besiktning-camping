@@ -67,7 +67,8 @@
       "kategori": "Temperatur",
       "typ": "temp",
       "min": "",
-      "max": "5",
+      "max": "",
+      "riktvarde": 4,
       "intervall": "veckovis",
       "deadline": {
         "dag": "0",
