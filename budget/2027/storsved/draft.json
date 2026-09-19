@@ -65,7 +65,7 @@
     "4011": "Boulebanan och barnens sandlåda behöver restaureras. Boulebanan behöver grävas ur och nytt grus på. Sandlådan med litet lekhus på så behöver sandlådan tömmas, trät runt om bytas samt att lilla lekhuset behöver restaureras eller bytas så det sviktar rejält.",
     "5120": "Beräknar till ca 200 000",
     "5121": "Beräknar till ca 200 000",
-    "7010": "Avser 3 sommarvärdar och 1 vintervärd.",
+    "7010": "Avser 3 sommarvärdar och 1 vintervärd.\nSe Storsvedstankar under arvoden.",
     "7241": "Not från Storsved: Det planeras för 4 (3+1 som mer som en teamleader/superuser) sommarvärdar och1 vintervärd samt 1 campingansvarig på helår, dvs 155 000.",
     "7610": "tex cv utbildning, hlr mm."
   },
@@ -80,5 +80,5 @@
     "arvoden_belopp": 35000
   },
   "investeringar": [],
-  "autosparad": "2026-09-19T09:05:04.606Z"
+  "autosparad": "2026-09-19T09:05:22.226Z"
 }
