@@ -717,7 +717,7 @@
           "pnr": "19660216-1025",
           "address": "Ekolsund 26",
           "phone": "070-4618178",
-          "type": "anställd",
+          "type": "ideell",
           "active": true
         }
       ],
@@ -926,6 +926,15 @@
           "user": "Massimo Johansson",
           "action": "in",
           "detail": "Lade till: Lena Larsson",
+          "oldVal": "",
+          "newVal": ""
+        },
+        {
+          "id": "mu8ax7we8juwc",
+          "ts": "2026-09-19T11:25:55.646Z",
+          "user": "Massimo Johansson",
+          "action": "edit",
+          "detail": "Uppdaterade: Lena Larsson",
           "oldVal": "",
           "newVal": ""
         }
