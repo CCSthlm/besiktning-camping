@@ -5,8 +5,9 @@
   "kommentarer": {},
   "paramVarden": {
     "helarsplatser_antal": 61,
-    "helarsplatser_pris": 16071.43
+    "helarsplatser_pris": 16071.43,
+    "gastavgift_pris": 339.29
   },
   "investeringar": [],
-  "autosparad": "2026-09-19T04:25:37.634Z"
+  "autosparad": "2026-09-19T04:26:14.097Z"
 }
