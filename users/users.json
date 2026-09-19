@@ -709,6 +709,16 @@
           "phone": "0766319996",
           "type": "anställd",
           "active": true
+        },
+        {
+          "id": "mu8awhoum7dnk",
+          "fname": "Lena",
+          "lname": "Larsson",
+          "pnr": "19660216-1025",
+          "address": "Ekolsund 26",
+          "phone": "070-4618178",
+          "type": "anställd",
+          "active": true
         }
       ],
       "auditlog": [
@@ -907,6 +917,15 @@
           "user": "Massimo Johansson",
           "action": "edit",
           "detail": "Uppdaterade: Molly Johansson",
+          "oldVal": "",
+          "newVal": ""
+        },
+        {
+          "id": "mu8awhoueqw7z",
+          "ts": "2026-09-19T11:25:21.678Z",
+          "user": "Massimo Johansson",
+          "action": "in",
+          "detail": "Lade till: Lena Larsson",
           "oldVal": "",
           "newVal": ""
         }
