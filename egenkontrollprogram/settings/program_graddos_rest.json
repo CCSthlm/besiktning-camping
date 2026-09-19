@@ -58,7 +58,8 @@
       },
       "referens": "",
       "instr": "",
-      "aktiv": true
+      "aktiv": false,
+      "inaktivSedan": "2026-09-19"
     },
     {
       "id": "mtq56y29vsya",
