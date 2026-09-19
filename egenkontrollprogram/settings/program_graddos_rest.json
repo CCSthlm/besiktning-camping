@@ -3,11 +3,11 @@
   "punkter": [
     {
       "id": "mtq56y298cvu",
-      "namn": "Bakeoff frys",
+      "namn": "Frys - Torrförråd Stor",
       "kategori": "Temperatur",
       "typ": "temp",
       "min": "",
-      "max": "-16",
+      "max": "-18",
       "intervall": "dagligen",
       "deadline": {
         "tid": "20:00"
