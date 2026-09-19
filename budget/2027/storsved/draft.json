@@ -45,6 +45,7 @@
     "3031": "beräknar det blir 185 000",
     "3032": "beräknar till 130 000 pga att många stänger igen sina ekipage för vintern.",
     "4011": "Boulebanan och barnens sandlåda behöver restaureras. Boulebanan behöver grävas ur och nytt grus på. Sandlådan med litet lekhus på så behöver sandlådan tömmas, trät runt om bytas samt att lilla lekhuset behöver restaureras eller bytas så det sviktar rejält.",
+    "5120": "Beräknar till ca 200 000",
     "7010": "Avser 3 sommarvärdar och 1 vintervärd."
   },
   "paramVarden": {
@@ -58,5 +59,5 @@
     "arvoden_belopp": 35000
   },
   "investeringar": [],
-  "autosparad": "2026-09-19T08:35:26.486Z"
+  "autosparad": "2026-09-19T08:36:44.226Z"
 }
