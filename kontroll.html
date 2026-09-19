@@ -130,9 +130,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-seri
 /* TEMP RESULT */
 .temp-result{text-align:center;padding:12px;margin-bottom:14px;border-radius:var(--radius);}
 .temp-result.ok{background:var(--green-bg);}
+.temp-result.anmarkning{background:var(--amber-bg);}
 .temp-result.warn{background:var(--red-bg);}
 .temp-result-val{font-size:32px;font-weight:700;}
 .temp-result.ok .temp-result-val{color:var(--green);}
+.temp-result.anmarkning .temp-result-val{color:var(--amber);}
 .temp-result.warn .temp-result-val{color:var(--red);}
 .temp-result-lbl{font-size:13px;color:var(--text2);margin-top:4px;}
 
@@ -140,6 +142,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-seri
 .avvik-field{display:none;background:var(--red-bg);border-radius:var(--radius);
   padding:12px;margin-bottom:14px;}
 .avvik-field.show{display:block;}
+.anmark-field{display:none;background:var(--amber-bg);border-radius:var(--radius);
+  padding:12px;margin-bottom:14px;font-size:13px;color:var(--amber);}
+.anmark-field.show{display:block;}
 .avvik-field label{color:var(--red);font-size:12px;font-weight:600;
   text-transform:uppercase;letter-spacing:.04em;display:block;margin-bottom:6px;}
 .avvik-field textarea{width:100%;padding:10px;border:1px solid rgba(163,45,45,.3);
@@ -1001,20 +1006,41 @@ function onDrumChange(){
   updateTempResult(val);
 }
 
+function evalTemp(p, val){
+  var rv = p.riktvarde!==undefined&&p.riktvarde!==null&&p.riktvarde!=='' ? parseFloat(p.riktvarde) : null;
+  if(rv!==null){
+    var diff = val - rv;
+    if(diff<=0) return {status:'ok', msg:'Inom riktvärde ('+rv+'°C)'};
+    if(diff<4) return {status:'anmarkning', msg:diff.toFixed(1)+'° över riktvärde ('+rv+'°C)'};
+    return {status:'avvikelse', msg:diff.toFixed(1)+'° över riktvärde ('+rv+'°C)'};
+  }
+  // Fallback: gammal min/max-logik
+  var ok=true, msg='Inom gränsvärde';
+  if(p.min!==undefined&&p.min!==null&&p.min!==''&&val<parseFloat(p.min)){ok=false;msg='Under min ('+p.min+'°C)';}
+  if(p.max!==undefined&&p.max!==null&&p.max!==''&&val>parseFloat(p.max)){ok=false;msg='Över max ('+p.max+'°C)';}
+  return {status: ok?'ok':'avvikelse', msg:msg};
+}
+
 function updateTempResult(val){
   var p=_program.find(function(x){return x.id===_currentPunktId;});
   if(!p)return;
-  var ok=true;
-  var msg='Inom gränsvärde';
-  if(p.min!==undefined&&p.min!==null&&p.min!==''&&val<parseFloat(p.min)){ok=false;msg='Under min ('+p.min+'°C)';}
-  if(p.max!==undefined&&p.max!==null&&p.max!==''&&val>parseFloat(p.max)){ok=false;msg='Över max ('+p.max+'°C)';}
   var res=document.getElementById('temp-result');
   if(!res)return;
-  res.className='temp-result '+(ok?'ok':'warn');
+  var e = evalTemp(p, val);
+  var cls = e.status==='ok'?'ok':(e.status==='anmarkning'?'anmarkning':'warn');
+  var icon = e.status==='ok'?'✓':(e.status==='anmarkning'?'⚠':'✗');
+  res.className='temp-result '+cls;
   res.querySelector('.temp-result-val').textContent=(val>0?'+':'')+val.toFixed(1)+'°C';
-  res.querySelector('.temp-result-lbl').textContent=ok?('✓ '+msg):('✗ '+msg);
+  res.querySelector('.temp-result-lbl').textContent=icon+' '+e.msg;
+
   var avvik=document.getElementById('avvik-field');
-  if(avvik)avvik.className='avvik-field'+(ok?'':' show');
+  var anmark=document.getElementById('anmark-field');
+  if(avvik) avvik.className='avvik-field'+(e.status==='avvikelse'?' show':'');
+  if(anmark){
+    anmark.className='anmark-field'+(e.status==='anmarkning'?' show':'');
+    var lbl=document.getElementById('anmark-text-lbl');
+    if(lbl) lbl.textContent=e.msg+' – ingen åtgärd krävs, men noteras i rapporten.';
+  }
 }
 
 // ── OPEN KONTROLL MODAL ───────────────────────────────────────────────────
@@ -1090,8 +1116,13 @@ function openKontroll(punktId){
     if(initIdx<0) initIdx = Math.floor(scaleValues.length/2);
 
     // Show scale info
+    var rv = p.riktvarde!==undefined&&p.riktvarde!==null&&p.riktvarde!=='' ? parseFloat(p.riktvarde) : null;
     var scaleInfo = '';
-    if(pMin!==null||pMax!==null){
+    if(rv!==null){
+      scaleInfo = '<div style="text-align:center;font-size:11px;color:var(--text3);margin-bottom:6px">'
+        +'Riktvärde: '+rv+'°C &nbsp;|&nbsp; Rulla för att välja'
+        +'</div>';
+    } else if(pMin!==null||pMax!==null){
       scaleInfo = '<div style="text-align:center;font-size:11px;color:var(--text3);margin-bottom:6px">'
         +'Skala: '+(pMin!==null?'min '+pMin+'°C':'')+(pMin!==null&&pMax!==null?' – ':'')+(pMax!==null?'max '+pMax+'°C':'')
         +' &nbsp;|&nbsp; Rulla för att välja'
@@ -1106,6 +1137,9 @@ function openKontroll(punktId){
       +scaleInfo
       +'<div class="drum-wrap" style="justify-content:center">'
       +buildDrumScale('temp-scale', scaleValues, initIdx)
+      +'</div>'
+      +'<div class="anmark-field" id="anmark-field">'
+      +'<i class="ti ti-info-circle" style="font-size:13px"></i> <span id="anmark-text-lbl">Anmärkning – ingen åtgärd krävs.</span>'
       +'</div>'
       +'<div class="avvik-field" id="avvik-field">'
       +'<label>Åtgärd (obligatorisk vid avvikelse)</label>'
@@ -1215,11 +1249,13 @@ async function saveKontroll(){
       val=parseFloat(sign2+''+whole2+'.'+dec2);
     }
     varde=val;
-    if(p.min!==undefined&&p.min!==''&&p.min!==null&&varde<parseFloat(p.min))ok=false;
-    if(p.max!==undefined&&p.max!==''&&p.max!==null&&varde>parseFloat(p.max))ok=false;
-    if(!ok){
+    var e = evalTemp(p, varde);
+    ok = e.status!=='avvikelse';
+    if(e.status==='avvikelse'){
       avvikelse=(document.getElementById('avvik-text')||{}).value||'';
       if(!avvikelse.trim()){toast('Ange åtgärd vid avvikelse','warn');return;}
+    } else if(e.status==='anmarkning'){
+      avvikelse='Anmärkning: '+e.msg;
     }
     varde=varde.toFixed(1);
   } else if(p.typ==='janej'){
@@ -1805,7 +1841,7 @@ function renderAdmin(){
           +'<div style="flex:1;min-width:0">'
           +'<div style="font-size:14px;font-weight:500'+(isAktiv?'':';color:var(--text2)')+'">'+p.namn+'</div>'
           +'<div style="font-size:11px;color:var(--text3)">'+p.kategori
-          +(p.max?' · max '+p.max+'°C':'')+(p.min?' · min '+p.min+'°C':'')
+          +(p.riktvarde!==undefined&&p.riktvarde!==null&&p.riktvarde!==''?' · riktvärde '+p.riktvarde+'°C':(p.max?' · max '+p.max+'°C':'')+(p.min?' · min '+p.min+'°C':''))
           +(dl?' · <span style="color:var(--blue)"><i class="ti ti-clock" style="font-size:10px"></i> '+dl+'</span>':'')
           +(!isAktiv&&p.inaktivSedan?' · <span style="color:var(--amber)">Inaktiv sedan '+p.inaktivSedan+'</span>':'')
           +'</div>'
@@ -2082,6 +2118,9 @@ async function renderProgram(){
   var TYP_NAMN={temp:'Temperatur',janej:'Ja/Nej-kontroll',fritext:'Fritextkontroll',numerisk:'Numerisk kontroll'};
 
   function refIntervall(p){
+    if(p.riktvarde!==undefined&&p.riktvarde!==null&&p.riktvarde!==''){
+      return 'Riktvärde '+p.riktvarde+'°C (anmärkning vid +2°, avvikelse vid +4°)';
+    }
     if(p.min && p.max) return p.min+'–'+p.max+'°C';
     if(p.max) return 'Max '+p.max+'°C';
     if(p.min) return 'Min '+p.min+'°C';
@@ -2256,6 +2295,7 @@ function newPunkt(){
   if(document.getElementById('mp-dl-tid')) document.getElementById('mp-dl-tid').value='23:59';
   updateTypFields();
   updateDeadlineFields();
+  applyKylFrysPreset(true);
   openModal('modal-punkt');
 }
 
@@ -2268,7 +2308,8 @@ function editPunkt(id){
   document.getElementById('mp-typ').value=p.typ||'temp';
   document.getElementById('mp-min').value=p.min||'';
   document.getElementById('mp-max').value=p.max||'';
-  document.getElementById('mp-kylfrys').value='';
+  var rv = p.riktvarde!==undefined&&p.riktvarde!==null&&p.riktvarde!=='' ? parseFloat(p.riktvarde) : null;
+  document.getElementById('mp-kylfrys').value = rv===4?'kyl':(rv===-18?'frys':'');
   document.getElementById('mp-intervall').value=p.intervall||'dagligen';
   document.getElementById('mp-ref').value=p.referens||'';
   document.getElementById('mp-instr').value=p.instr||'';
@@ -2292,6 +2333,7 @@ function editPunkt(id){
   }
   updateTypFields();
   updateDeadlineFields();
+  applyKylFrysPreset(true);
   openModal('modal-punkt');
 }
 
@@ -2313,16 +2355,16 @@ function updateTypFields(){
   document.getElementById('mp-kylfrys-wrap').style.display=typ==='temp'?'':'none';
 }
 
-function applyKylFrysPreset(){
+function applyKylFrysPreset(isLoading){
   var val = document.getElementById('mp-kylfrys').value;
-  if(val==='kyl'){
-    document.getElementById('mp-max').value = '4';
-    document.getElementById('mp-min').value = '';
-  } else if(val==='frys'){
-    document.getElementById('mp-max').value = '-18';
-    document.getElementById('mp-min').value = '';
+  var minEl = document.getElementById('mp-min');
+  var maxEl = document.getElementById('mp-max');
+  var isPreset = val==='kyl'||val==='frys';
+  minEl.disabled = isPreset;
+  maxEl.disabled = isPreset;
+  if(isPreset && !isLoading){
+    minEl.value=''; maxEl.value='';
   }
-  // 'Anpassat' (tom) — rör inte befintliga min/max, låt användaren styra själv
 }
 
 function exportPunkterExcel(){
@@ -2515,18 +2557,23 @@ async function savePunkt(){
       deadline={typ:'dag',dag:document.getElementById('mp-dl-manad-dag').value||'30',tid:document.getElementById('mp-dl-manad-tid').value||'23:00'};
     }
   }
+  var kfVal = document.getElementById('mp-kylfrys').value;
+  var riktvarde = kfVal==='kyl' ? 4 : (kfVal==='frys' ? -18 : '');
+  var existing = editId ? _program.find(function(x){return x.id===editId;}) : null;
   var p={
     id:editId||uid(),
     namn:namn,
     kategori:document.getElementById('mp-kategori').value,
     typ:document.getElementById('mp-typ').value,
-    min:document.getElementById('mp-min').value,
-    max:document.getElementById('mp-max').value,
+    min:riktvarde!==''?'':document.getElementById('mp-min').value,
+    max:riktvarde!==''?'':document.getElementById('mp-max').value,
+    riktvarde:riktvarde,
     intervall:iv,
     deadline:deadline,
     referens:document.getElementById('mp-ref').value,
     instr:document.getElementById('mp-instr').value,
-    aktiv:true
+    aktiv: existing ? existing.aktiv!==false : true,
+    inaktivSedan: existing ? existing.inaktivSedan : undefined
   };
   if(editId){
     var i=_program.findIndex(function(x){return x.id===editId;});
