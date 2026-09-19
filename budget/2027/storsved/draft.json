@@ -54,7 +54,7 @@
     "8830": -220000
   },
   "kommentarer": {
-    "3010": "83 helårsplatser på Storsved gånger 17400/år blir 1 444 200kr.",
+    "3010": "83 helårsplatser på Storsved gånger 17400/år blir 1 444 200kr. vi behöver höja årsavgiften med ca 500 kr.",
     "3011": "det finns endast 1 sommarplats",
     "3012": "Det finns 1 vinterplats",
     "3013": "",
@@ -80,5 +80,5 @@
     "arvoden_belopp": 35000
   },
   "investeringar": [],
-  "autosparad": "2026-09-19T09:05:22.226Z"
+  "autosparad": "2026-09-19T09:09:08.155Z"
 }
