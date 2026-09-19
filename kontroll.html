@@ -1011,7 +1011,7 @@ function evalTemp(p, val){
   if(rv!==null){
     var diff = val - rv;
     if(diff<=0) return {status:'ok', msg:'Inom riktvärde ('+rv+'°C)'};
-    if(diff<4) return {status:'anmarkning', msg:diff.toFixed(1)+'° över riktvärde ('+rv+'°C)'};
+    if(diff<=2) return {status:'anmarkning', msg:diff.toFixed(1)+'° över riktvärde ('+rv+'°C)'};
     return {status:'avvikelse', msg:diff.toFixed(1)+'° över riktvärde ('+rv+'°C)'};
   }
   // Fallback: gammal min/max-logik
@@ -2123,7 +2123,7 @@ async function renderProgram(){
 
   function refIntervall(p){
     if(p.riktvarde!==undefined&&p.riktvarde!==null&&p.riktvarde!==''){
-      return 'Riktvärde '+p.riktvarde+'°C (anmärkning vid +2°, avvikelse vid +4°)';
+      return 'Riktvärde '+p.riktvarde+'°C (anmärkning 0–2° över, avvikelse över 2°)';
     }
     if(p.min && p.max) return p.min+'–'+p.max+'°C';
     if(p.max) return 'Max '+p.max+'°C';
