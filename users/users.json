@@ -701,16 +701,6 @@
           "active": true
         },
         {
-          "id": "mrpad3qkmwwoq",
-          "fname": "Massimo",
-          "lname": "Johansson",
-          "pnr": "197511183571",
-          "address": "Svärdsliljevägen 155",
-          "phone": "0766319996",
-          "type": "anställd",
-          "active": true
-        },
-        {
           "id": "mu8awhoum7dnk",
           "fname": "Lena",
           "lname": "Larsson",
@@ -935,6 +925,15 @@
           "user": "Massimo Johansson",
           "action": "edit",
           "detail": "Uppdaterade: Lena Larsson",
+          "oldVal": "",
+          "newVal": ""
+        },
+        {
+          "id": "mu8axd0czqspe",
+          "ts": "2026-09-19T11:26:02.268Z",
+          "user": "Massimo Johansson",
+          "action": "delete",
+          "detail": "Tog bort person: Massimo Johansson",
           "oldVal": "",
           "newVal": ""
         }
