@@ -719,6 +719,16 @@
           "phone": "070-3033588",
           "type": "ideell",
           "active": true
+        },
+        {
+          "id": "mu8g7o0bjioqe",
+          "fname": "Christer",
+          "lname": "Jakobsson",
+          "pnr": "19650109-1117",
+          "address": "Ekolsund 26",
+          "phone": "070-4148024",
+          "type": "ideell",
+          "active": true
         }
       ],
       "auditlog": [
@@ -998,6 +1008,15 @@
           "user": "Massimo Johansson",
           "action": "in",
           "detail": "Lade till: Christoffer Maddison",
+          "oldVal": "",
+          "newVal": ""
+        },
+        {
+          "id": "mu8g7o0b41tmn",
+          "ts": "2026-09-19T13:54:01.163Z",
+          "user": "Massimo Johansson",
+          "action": "in",
+          "detail": "Lade till: Christer Jakobsson",
           "oldVal": "",
           "newVal": ""
         }
