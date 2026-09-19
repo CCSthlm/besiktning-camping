@@ -352,6 +352,24 @@
       "chef": "Hans Östman",
       "övrigt": "",
       "gdpr": true
+    },
+    {
+      "id": "M365-2609-72BB",
+      "ts": "2026-09-19T11:21:50.444Z",
+      "status": "ny",
+      "fname": "Ulrika",
+      "lname": "Hagebö",
+      "pnr": "19670203-1185",
+      "mobil": "0707570467",
+      "email": "ulrijarvi@telia.com",
+      "adress": "",
+      "anläggning": "CC Kapellskärs Camping",
+      "roll": "Campingråd",
+      "ansForm": "Ideell",
+      "startDatum": "2026-10-01",
+      "chef": "Hans Östman",
+      "övrigt": "",
+      "gdpr": true
     }
   ]
 }
