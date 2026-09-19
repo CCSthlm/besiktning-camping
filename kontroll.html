@@ -1761,7 +1761,7 @@ function renderAdmin(){
       {id:'manadsvis',       label:'Månadsvis',        icon:'ti-calendar-month'},
       {id:'vid_behov',       label:'Vid behov',        icon:'ti-dots'},
     ];
-    var typeIcon={temp:'ti-thermometer',janej:'ti-check',fritext:'ti-text-size',numerisk:'ti-123'};
+    var typeSymbol={temp:'°',janej:'✓',fritext:'Aa',numerisk:'#'};
     var typeClass={temp:'type-temp',janej:'type-janej',fritext:'type-text',numerisk:'type-text'};
 
     var groupsHtml=GROUPS.map(function(grp){
@@ -1784,7 +1784,7 @@ function renderAdmin(){
       }
 
       var items=punkter.map(function(p,idx){
-        var tIcon=typeIcon[p.typ]||'ti-check';
+        var tSym=typeSymbol[p.typ]||'?';
         var tClass=typeClass[p.typ]||'type-janej';
         var dl=dlSummary(p);
         var isAktiv = p.aktiv!==false;
@@ -1794,7 +1794,7 @@ function renderAdmin(){
           +'<button class="btn" style="width:22px;height:17px;padding:0;line-height:1;font-size:9px;border-radius:4px;display:flex;align-items:center;justify-content:center'+(isFirst?';opacity:.3;pointer-events:none':'')+'" data-id="'+p.id+'" data-dir="-1" onclick="movePunktInGroup(this.dataset.id,parseInt(this.dataset.dir))" aria-label="Flytta upp">&#9650;</button>'
           +'<button class="btn" style="width:22px;height:17px;padding:0;line-height:1;font-size:9px;border-radius:4px;display:flex;align-items:center;justify-content:center'+(isLast?';opacity:.3;pointer-events:none':'')+'" data-id="'+p.id+'" data-dir="1" onclick="movePunktInGroup(this.dataset.id,parseInt(this.dataset.dir))" aria-label="Flytta ner">&#9660;</button>'
           +'</div>'
-          +'<div class="type-icon '+tClass+'">'+(isAktiv?'':'')+'<i class="ti '+tIcon+'"></i></div>'
+          +'<div class="type-icon '+tClass+'" style="font-size:14px;font-weight:600">'+tSym+'</div>'
           +'<div style="flex:1;min-width:0">'
           +'<div style="font-size:14px;font-weight:500'+(isAktiv?'':';color:var(--text2)')+'">'+p.namn+'</div>'
           +'<div style="font-size:11px;color:var(--text3)">'+p.kategori
