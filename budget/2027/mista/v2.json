@@ -1,0 +1,28 @@
+{
+  "kontoVarden": {
+    "8830": -220000
+  },
+  "kommentarer": {
+    "3014": "Beräknat på 1847 st gästnätter á 400:-/natt.",
+    "7010": "beräknat på 5 SV och 1 VC á 25000:-.",
+    "7240": "Beräknat på 1 CA 25000:-/år och superuser 5000:-/säsong."
+  },
+  "paramVarden": {
+    "helarsplatser_antal": 84,
+    "helarsplatser_pris": 14062.5,
+    "gastavgift_antal": 1847,
+    "gastavgift_pris": 357.14,
+    "arvoden_antal": 1,
+    "arvoden_belopp": 35000,
+    "loner_sommarvard": 5,
+    "loner_vintervard": 1
+  },
+  "investeringar": [],
+  "autosparad": "2026-09-18T12:17:23.778Z",
+  "typ": "budget",
+  "version": 2,
+  "versionKommentar": "ver 1",
+  "skickadAv": "Cristina Sundberg",
+  "skickadTs": "2026-09-19T09:48:30.032Z",
+  "status": "inkickad"
+}
