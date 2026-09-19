@@ -334,6 +334,24 @@
       "chef": "Hans Östman",
       "övrigt": "",
       "gdpr": true
+    },
+    {
+      "id": "M365-2609-IYCC",
+      "ts": "2026-09-19T09:27:13.313Z",
+      "status": "ny",
+      "fname": "Erika",
+      "lname": "Lindström",
+      "pnr": "19700605-0749",
+      "mobil": "0760490025",
+      "email": "erika.alindstrom@gmail.com",
+      "adress": "",
+      "anläggning": "CC Kapellskärs Camping",
+      "roll": "Campingvärd",
+      "ansForm": "Ideell",
+      "startDatum": "2027-04-01",
+      "chef": "Hans Östman",
+      "övrigt": "",
+      "gdpr": true
     }
   ]
 }
