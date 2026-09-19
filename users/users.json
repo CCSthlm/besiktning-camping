@@ -681,16 +681,6 @@
       ],
       "personal": [
         {
-          "id": "mqc8sy48kv8lz",
-          "fname": "Molly",
-          "lname": "Johansson",
-          "pnr": "2020121212-1111",
-          "address": "HEmma",
-          "phone": "0762275266",
-          "type": "extrapersonal",
-          "active": true
-        },
-        {
           "id": "mu8awhoum7dnk",
           "fname": "Lena",
           "lname": "Larsson",
@@ -933,6 +923,15 @@
           "user": "Massimo Johansson",
           "action": "delete",
           "detail": "Tog bort person: Dorry Johansson",
+          "oldVal": "",
+          "newVal": ""
+        },
+        {
+          "id": "mu8axgc4dbi6n",
+          "ts": "2026-09-19T11:26:06.580Z",
+          "user": "Massimo Johansson",
+          "action": "delete",
+          "detail": "Tog bort person: Molly Johansson",
           "oldVal": "",
           "newVal": ""
         }
