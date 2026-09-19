@@ -696,7 +696,7 @@
           "lname": "Larsson",
           "pnr": "19471212-0221",
           "address": "Stormgatan 10",
-          "phone": "0706284885",
+          "phone": "070-6284885",
           "type": "ideell",
           "active": true
         }
@@ -951,6 +951,15 @@
           "user": "Massimo Johansson",
           "action": "in",
           "detail": "Lade till: Kerstin Larsson",
+          "oldVal": "",
+          "newVal": ""
+        },
+        {
+          "id": "mu8az16sdfyig",
+          "ts": "2026-09-19T11:27:20.260Z",
+          "user": "Massimo Johansson",
+          "action": "edit",
+          "detail": "Uppdaterade: Kerstin Larsson",
           "oldVal": "",
           "newVal": ""
         }
