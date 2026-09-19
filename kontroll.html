@@ -1074,16 +1074,20 @@ function openKontroll(punktId){
   if(p.typ==='temp'){
     var pMin = p.min!==undefined&&p.min!==''&&p.min!==null ? parseFloat(p.min) : null;
     var pMax = p.max!==undefined&&p.max!==''&&p.max!==null ? parseFloat(p.max) : null;
+    var pRv  = p.riktvarde!==undefined&&p.riktvarde!==null&&p.riktvarde!=='' ? parseFloat(p.riktvarde) : null;
 
     // Smart start value:
     // 1. Last reading if exists
-    // 2. Midpoint if both min+max
-    // 3. Max if only max (e.g. kyl)
-    // 4. Min if only min (e.g. diskmaskin)
-    // 5. Fallback 4
+    // 2. Riktvärde if set (kyl/frys-preset)
+    // 3. Midpoint if both min+max
+    // 4. Max if only max (e.g. kyl)
+    // 5. Min if only min (e.g. diskmaskin)
+    // 6. Fallback 4
     var initVal;
     if(utfall){
       initVal = parseFloat(utfall.varde);
+    } else if(pRv!==null){
+      initVal = pRv; // starta exakt på riktvärdet
     } else if(pMin!==null && pMax!==null){
       initVal = Math.round((pMin+pMax)/2*10)/10; // midpoint
     } else if(pMax!==null){
@@ -1094,12 +1098,13 @@ function openKontroll(punktId){
       initVal = 4;
     }
 
-    // Scale: ±10 degrees around startVal, but also cover min/max
+    // Scale: ±10 degrees around startVal, but also cover min/max/riktvärde
     var scaleCenter = initVal;
     var scaleMin = scaleCenter - 10;
     var scaleMax = scaleCenter + 10;
     if(pMin!==null) scaleMin = Math.min(scaleMin, pMin - 3);
     if(pMax!==null) scaleMax = Math.max(scaleMax, pMax + 3);
+    if(pRv!==null){ scaleMin = Math.min(scaleMin, pRv - 6); scaleMax = Math.max(scaleMax, pRv + 6); }
     // Round to integers
     scaleMin = Math.floor(scaleMin);
     scaleMax = Math.ceil(scaleMax);
@@ -1116,11 +1121,10 @@ function openKontroll(punktId){
     if(initIdx<0) initIdx = Math.floor(scaleValues.length/2);
 
     // Show scale info
-    var rv = p.riktvarde!==undefined&&p.riktvarde!==null&&p.riktvarde!=='' ? parseFloat(p.riktvarde) : null;
     var scaleInfo = '';
-    if(rv!==null){
+    if(pRv!==null){
       scaleInfo = '<div style="text-align:center;font-size:11px;color:var(--text3);margin-bottom:6px">'
-        +'Riktvärde: '+rv+'°C &nbsp;|&nbsp; Rulla för att välja'
+        +'Riktvärde: '+pRv+'°C &nbsp;|&nbsp; Rulla för att välja'
         +'</div>';
     } else if(pMin!==null||pMax!==null){
       scaleInfo = '<div style="text-align:center;font-size:11px;color:var(--text3);margin-bottom:6px">'
