@@ -46,15 +46,15 @@
       "aktiv": true
     },
     {
-      "id": "mu8b6km01squ",
-      "namn": "Torrförråd Liten Frys 1",
+      "id": "mtiedoaxg7dh",
+      "namn": "Glassfrysen",
       "kategori": "Temperatur",
       "typ": "temp",
       "min": "",
-      "max": "",
+      "max": "-15",
       "intervall": "dagligen",
       "deadline": {
-        "tid": "23:59"
+        "tid": "20:05"
       },
       "referens": "",
       "instr": "",
@@ -155,15 +155,15 @@
       "aktiv": true
     },
     {
-      "id": "mtiedoaxg7dh",
-      "namn": "Glassfrysen",
+      "id": "mu8b6km01squ",
+      "namn": "Torrförråd Liten Frys 1",
       "kategori": "Temperatur",
       "typ": "temp",
       "min": "",
-      "max": "-15",
+      "max": "",
       "intervall": "dagligen",
       "deadline": {
-        "tid": "20:05"
+        "tid": "23:59"
       },
       "referens": "",
       "instr": "",
