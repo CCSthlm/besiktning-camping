@@ -71,7 +71,9 @@
       "email": "dorry.johansson@cc-camping.se",
       "pin": "1212",
       "pnr": "",
-      "adminRoles": [],
+      "adminRoles": [
+        "kontroll-ansvarig"
+      ],
       "role": "Användare",
       "active": true,
       "apps": [],
@@ -80,7 +82,15 @@
       "created": "2026-06-26",
       "sbaCamping": "",
       "nyckelCamping": "",
-      "budgetEnhet": ""
+      "budgetEnhet": "",
+      "elCamping": "",
+      "projektCampingId": "",
+      "kontrollAnlaggningId": "",
+      "kontrollAnlaggningNamn": "",
+      "kontrollAnsvarigAnlaggningId": "graddos_rest",
+      "kontrollAnsvarigAnlaggningNamn": "Gräddös Pärla Kök & Bar",
+      "kontrollAdminAnlaggningId": "",
+      "kontrollAdminAnlaggningNamn": ""
     },
     {
       "id": "umr39tsqhqx74",
