@@ -169,7 +169,6 @@
       "adminRoles": [
         "personal",
         "kontroll-ansvarig",
-        "kontroll-admin",
         "budget-camping"
       ],
       "role": "Användare",
@@ -187,8 +186,8 @@
       "kontrollAnlaggningNamn": "",
       "kontrollAnsvarigAnlaggningId": "",
       "kontrollAnsvarigAnlaggningNamn": "",
-      "kontrollAdminAnlaggningId": "graddos_rest",
-      "kontrollAdminAnlaggningNamn": "Gräddös Pärla Kök & Bar"
+      "kontrollAdminAnlaggningId": "",
+      "kontrollAdminAnlaggningNamn": ""
     },
     {
       "id": "umt5v3lw7ktmh",
@@ -413,35 +412,6 @@
       "kontrollAdminAnlaggningId": "",
       "kontrollAdminAnlaggningNamn": "",
       "created": "2026-09-16"
-    },
-    {
-      "id": "umu8h79sstr2r",
-      "name": "Lena Larsson",
-      "email": "lena.larsson@cc-camping.se",
-      "pin": "1111",
-      "pnr": "",
-      "adminRoles": [
-        "kontroll-personal"
-      ],
-      "role": "Användare",
-      "active": true,
-      "apps": [
-        "personalliggare"
-      ],
-      "plCampingId": "c7",
-      "godkannarcamping": "",
-      "sbaCamping": "",
-      "nyckelCamping": "",
-      "budgetEnhet": "",
-      "elCamping": "",
-      "projektCampingId": "",
-      "kontrollAnlaggningId": "graddos_rest",
-      "kontrollAnlaggningNamn": "Gräddös Pärla Kök & Bar",
-      "kontrollAnsvarigAnlaggningId": "",
-      "kontrollAnsvarigAnlaggningNamn": "",
-      "kontrollAdminAnlaggningId": "",
-      "kontrollAdminAnlaggningNamn": "",
-      "created": "2026-09-19"
     }
   ],
   "campings": [
@@ -711,63 +681,33 @@
       ],
       "personal": [
         {
-          "id": "mu8awhoum7dnk",
-          "fname": "Lena",
-          "lname": "Larsson",
-          "pnr": "19660216-1025",
-          "address": "Ekolsund 26",
-          "phone": "070-4618178",
-          "type": "ideell",
+          "id": "mqc8sy48kv8lz",
+          "fname": "Molly",
+          "lname": "Johansson",
+          "pnr": "2020121212-1111",
+          "address": "HEmma",
+          "phone": "0762275266",
+          "type": "anställd",
           "active": true
         },
         {
-          "id": "mu8ayunlamhew",
-          "fname": "Kerstin",
-          "lname": "Larsson",
-          "pnr": "19471212-0221",
-          "address": "Stormgatan 10",
-          "phone": "070-6284885",
-          "type": "ideell",
+          "id": "mrp75wysyqm35",
+          "fname": "Dorry",
+          "lname": "Johansson",
+          "pnr": "191212121212",
+          "address": "Hemaavägen 1",
+          "phone": "0766121212",
+          "type": "anställd",
           "active": true
         },
         {
-          "id": "mu8b1hotkq3or",
-          "fname": "Monica",
-          "lname": "Maddison",
-          "pnr": "19800506-0481",
-          "address": "Lillhagsvägen 4",
-          "phone": "070-7860359",
-          "type": "ideell",
-          "active": true
-        },
-        {
-          "id": "mu8b3yi5rt8b5",
-          "fname": "Christoffer",
-          "lname": "Maddison",
-          "pnr": "19831014-2495",
-          "address": "Lillhagsvägen 4",
-          "phone": "070-3033588",
-          "type": "ideell",
-          "active": true
-        },
-        {
-          "id": "mu8g7o0bjioqe",
-          "fname": "Christer",
-          "lname": "Jakobsson",
-          "pnr": "19650109-1117",
-          "address": "Ekolsund 26",
-          "phone": "073-4148024",
-          "type": "ideell",
-          "active": true
-        },
-        {
-          "id": "mu8g97szedjit",
-          "fname": "Josefine",
-          "lname": "Jakobsson Larsson",
-          "pnr": "20060410-8829",
-          "address": "Ekolsund 26",
-          "phone": "079-3415108",
-          "type": "ideell",
+          "id": "mrpad3qkmwwoq",
+          "fname": "Massimo",
+          "lname": "Johansson",
+          "pnr": "197511183571",
+          "address": "Svärdsliljevägen 155",
+          "phone": "0766319996",
+          "type": "anställd",
           "active": true
         }
       ],
@@ -960,123 +900,6 @@
           "detail": "Manuell: Massimo Johansson in 14:00 ut 22:20 (2026-07-16) – GLömde stämpla in",
           "oldVal": "",
           "newVal": "14:00"
-        },
-        {
-          "id": "mu8asj5g7g7ug",
-          "ts": "2026-09-19T11:22:16.948Z",
-          "user": "Massimo Johansson",
-          "action": "edit",
-          "detail": "Uppdaterade: Molly Johansson",
-          "oldVal": "",
-          "newVal": ""
-        },
-        {
-          "id": "mu8awhoueqw7z",
-          "ts": "2026-09-19T11:25:21.678Z",
-          "user": "Massimo Johansson",
-          "action": "in",
-          "detail": "Lade till: Lena Larsson",
-          "oldVal": "",
-          "newVal": ""
-        },
-        {
-          "id": "mu8ax7we8juwc",
-          "ts": "2026-09-19T11:25:55.646Z",
-          "user": "Massimo Johansson",
-          "action": "edit",
-          "detail": "Uppdaterade: Lena Larsson",
-          "oldVal": "",
-          "newVal": ""
-        },
-        {
-          "id": "mu8axd0czqspe",
-          "ts": "2026-09-19T11:26:02.268Z",
-          "user": "Massimo Johansson",
-          "action": "delete",
-          "detail": "Tog bort person: Massimo Johansson",
-          "oldVal": "",
-          "newVal": ""
-        },
-        {
-          "id": "mu8axeo44b5fs",
-          "ts": "2026-09-19T11:26:04.420Z",
-          "user": "Massimo Johansson",
-          "action": "delete",
-          "detail": "Tog bort person: Dorry Johansson",
-          "oldVal": "",
-          "newVal": ""
-        },
-        {
-          "id": "mu8axgc4dbi6n",
-          "ts": "2026-09-19T11:26:06.580Z",
-          "user": "Massimo Johansson",
-          "action": "delete",
-          "detail": "Tog bort person: Molly Johansson",
-          "oldVal": "",
-          "newVal": ""
-        },
-        {
-          "id": "mu8ayunllfuby",
-          "ts": "2026-09-19T11:27:11.793Z",
-          "user": "Massimo Johansson",
-          "action": "in",
-          "detail": "Lade till: Kerstin Larsson",
-          "oldVal": "",
-          "newVal": ""
-        },
-        {
-          "id": "mu8az16sdfyig",
-          "ts": "2026-09-19T11:27:20.260Z",
-          "user": "Massimo Johansson",
-          "action": "edit",
-          "detail": "Uppdaterade: Kerstin Larsson",
-          "oldVal": "",
-          "newVal": ""
-        },
-        {
-          "id": "mu8b1hotp879f",
-          "ts": "2026-09-19T11:29:14.957Z",
-          "user": "Massimo Johansson",
-          "action": "in",
-          "detail": "Lade till: Monica Maddison",
-          "oldVal": "",
-          "newVal": ""
-        },
-        {
-          "id": "mu8b3yi55ofrl",
-          "ts": "2026-09-19T11:31:10.061Z",
-          "user": "Massimo Johansson",
-          "action": "in",
-          "detail": "Lade till: Christoffer Maddison",
-          "oldVal": "",
-          "newVal": ""
-        },
-        {
-          "id": "mu8g7o0b41tmn",
-          "ts": "2026-09-19T13:54:01.163Z",
-          "user": "Massimo Johansson",
-          "action": "in",
-          "detail": "Lade till: Christer Jakobsson",
-          "oldVal": "",
-          "newVal": ""
-        },
-        {
-          "id": "mu8g83ivzemvn",
-          "ts": "2026-09-19T13:54:21.271Z",
-          "user": "Massimo Johansson",
-          "action": "edit",
-          "detail": "Uppdaterade: Christer Jakobsson",
-          "oldVal": "",
-          "newVal": ""
-        },
-        {
-          "id": "mu8g97szxlrbw",
-          "ts": "2026-09-19T13:55:13.475Z",
-          "user": "Massimo Johansson",
-          "action": "in",
-          "detail": "Lade till: Josefine Jakobsson Larsson",
-          "oldVal": "",
-          "newVal": ""
         }
       ]
     },
@@ -1466,7 +1289,7 @@
           "pnr": "19750729-0588",
           "date": "2026-09-19",
           "timeIn": "10:21",
-          "timeOut": "",
+          "timeOut": "20:35",
           "registeredBy": "Restaurang Östnora",
           "registeredAt": "2026-09-19T08:21:41.398Z",
           "manual": false,
@@ -2395,6 +2218,15 @@
           "detail": "Linda Wahlund stämplade in 10:21",
           "oldVal": "",
           "newVal": "10:21"
+        },
+        {
+          "id": "mu8qa7trkb38w",
+          "ts": "2026-09-19T18:35:56.319Z",
+          "user": "Restaurang Östnora",
+          "action": "out",
+          "detail": "Linda Wahlund stämplade ut 20:35",
+          "oldVal": "",
+          "newVal": "20:35"
         }
       ]
     }
