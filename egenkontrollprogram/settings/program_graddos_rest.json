@@ -168,6 +168,22 @@
       "referens": "",
       "instr": "",
       "aktiv": true
+    },
+    {
+      "id": "mu8d3gdsk1uv",
+      "namn": "Rengjort ugnarna",
+      "kategori": "Städning",
+      "typ": "janej",
+      "min": "",
+      "max": "",
+      "intervall": "veckovis",
+      "deadline": {
+        "dag": "0",
+        "tid": "22:00"
+      },
+      "referens": "",
+      "instr": "",
+      "aktiv": true
     }
   ]
 }
