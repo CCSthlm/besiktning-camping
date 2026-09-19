@@ -1,6 +1,13 @@
 {
   "handelser": [
     {
+      "ts": "2026-09-19T13:50:59.166Z",
+      "av": "Massimo Johansson",
+      "action": "historik-rensad",
+      "punktNamn": "Gräddös Pärla Kök & Bar – nytt startdatum 2026-09-19",
+      "punktId": "graddos_rest"
+    },
+    {
       "ts": "2026-09-19T12:44:16.683Z",
       "av": "Massimo Johansson",
       "action": "aktiverad",
