@@ -412,6 +412,33 @@
       "kontrollAdminAnlaggningId": "",
       "kontrollAdminAnlaggningNamn": "",
       "created": "2026-09-16"
+    },
+    {
+      "id": "umu8h79sstr2r",
+      "name": "Lena Larsson",
+      "email": "lena.larsson@cc-camping.se",
+      "pin": "1111",
+      "pnr": "",
+      "adminRoles": [
+        "kontroll-personal"
+      ],
+      "role": "Användare",
+      "active": true,
+      "apps": [],
+      "plCampingId": "c7",
+      "godkannarcamping": "",
+      "sbaCamping": "",
+      "nyckelCamping": "",
+      "budgetEnhet": "",
+      "elCamping": "",
+      "projektCampingId": "",
+      "kontrollAnlaggningId": "graddos_rest",
+      "kontrollAnlaggningNamn": "Gräddös Pärla Kök & Bar",
+      "kontrollAnsvarigAnlaggningId": "",
+      "kontrollAnsvarigAnlaggningNamn": "",
+      "kontrollAdminAnlaggningId": "",
+      "kontrollAdminAnlaggningNamn": "",
+      "created": "2026-09-19"
     }
   ],
   "campings": [
