@@ -1,6 +1,13 @@
 {
   "handelser": [
     {
+      "ts": "2026-09-19T10:50:40.658Z",
+      "av": "Massimo Johansson",
+      "action": "aktiverad",
+      "punktNamn": "Kulglassfrys",
+      "punktId": "mtq56y29i6lu"
+    },
+    {
       "ts": "2026-09-19T10:50:37.930Z",
       "av": "Massimo Johansson",
       "action": "inaktiverad",
