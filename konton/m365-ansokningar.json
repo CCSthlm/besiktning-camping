@@ -298,6 +298,24 @@
       "chef": "",
       "övrigt": "",
       "gdpr": true
+    },
+    {
+      "id": "M365-2609-MOQ5",
+      "ts": "2026-09-19T09:14:23.505Z",
+      "status": "ny",
+      "fname": "Klas",
+      "lname": "Andersson",
+      "pnr": "680903-0296",
+      "mobil": "0734337959",
+      "email": "klandersson68@outlook.com",
+      "adress": "",
+      "anläggning": "CC Kapellskärs Camping",
+      "roll": "Campingvärd",
+      "ansForm": "Ideell",
+      "startDatum": "2027-04-01",
+      "chef": "Hans Östman",
+      "övrigt": "",
+      "gdpr": true
     }
   ]
 }
