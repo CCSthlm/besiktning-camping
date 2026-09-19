@@ -600,6 +600,27 @@ async function ghPut(path,data,msg){
      body:JSON.stringify(payload)});
   return r.ok;
 }
+async function ghListDir(path){
+  var token=localStorage.getItem('gh_token')||'';
+  if(!token)return [];
+  try{
+    var r=await fetch('https://api.github.com/repos/'+GH_REPO+'/contents/'+path,
+      {headers:{'Authorization':'token '+token}});
+    if(!r.ok)return [];
+    var arr=await r.json();
+    return Array.isArray(arr)?arr:[];
+  }catch(e){return [];}
+}
+async function ghDeleteFile(path,sha,msg){
+  var token=localStorage.getItem('gh_token')||'';
+  if(!token)return false;
+  try{
+    var r=await fetch('https://api.github.com/repos/'+GH_REPO+'/contents/'+path,
+      {method:'DELETE',headers:{'Authorization':'token '+token,'Content-Type':'application/json'},
+       body:JSON.stringify({message:msg||'Radera fil',sha:sha,branch:'main'})});
+    return r.ok;
+  }catch(e){return false;}
+}
 
 // ── INIT ──────────────────────────────────────────────────────────────────
 async function init(){
@@ -1797,6 +1818,7 @@ function renderAdmin(){
     +(_isAdmin?'<div class="chip'+(_adminTab==='leverantorer'?' active':'')+'" data-at="leverantorer" onclick="setAdminTab(this.dataset.at)"><i class="ti ti-truck" style="font-size:12px"></i> Leverantörer</div>':'')
     +(_isAdmin?'<div class="chip'+(_adminTab==='personal'?' active':'')+'" data-at="personal" onclick="setAdminTab(this.dataset.at)"><i class="ti ti-users" style="font-size:12px"></i> Personal</div>':'')
     +(_isAdmin?'<div class="chip'+(_adminTab==='kontrollprogram'?' active':'')+'" data-at="kontrollprogram" onclick="setAdminTab(this.dataset.at)"><i class="ti ti-book" style="font-size:12px"></i> Kontrollprogram</div>':'')
+    +(_roles.includes('global')?'<div class="chip'+(_adminTab==='historik'?' active':'')+'" data-at="historik" onclick="setAdminTab(this.dataset.at)" style="color:var(--red)"><i class="ti ti-trash" style="font-size:12px"></i> Historik</div>':'')
     +'</div>';
 
   var contentHtml='';
@@ -1927,6 +1949,7 @@ function renderAdmin(){
   // Async tabs — render after DOM is set
   if(_adminTab==='personal') renderAdminPersonal(document.getElementById('admin-content'));
   if(_adminTab==='kontrollprogram') renderAdminKontrollprogram(document.getElementById('admin-content'));
+  if(_adminTab==='historik') renderAdminHistorik(document.getElementById('admin-content'));
 }
 
 // ── KONTROLLPROGRAM DATA ───────────────────────────────────────────────────
@@ -1985,7 +2008,176 @@ async function renderAdminPersonal(container){
     +'<div class="card">'+rows+'</div>';
 }
 
-// ── ADMIN: KONTROLLPROGRAM ────────────────────────────────────────────────
+// ── ADMIN: HISTORIK-RENSNING (endast global) ──────────────────────────────
+async function renderAdminHistorik(container){
+  var anlOptions = (_anlaggningar||[]).map(function(a){
+    return '<option value="'+a.id+'"'+(a.id===_anlaggningId?' selected':'')+'>'+a.namn+'</option>';
+  }).join('') || '<option value="'+_anlaggningId+'">'+_anlaggningNamn+'</option>';
+
+  var todayVal = todayStr();
+
+  container.innerHTML =
+    '<div style="margin-bottom:16px">'
+    +'<div style="font-size:14px;font-weight:500;color:var(--red)"><i class="ti ti-alert-triangle"></i> Radera historik och sätt ny start</div>'
+    +'<div style="font-size:12px;color:var(--text2);margin-top:4px">Detta tar bort utförda kontroller, missade förklaringar och månadssignaturer som ligger <strong>före</strong> det valda startdatumet, för den valda anläggningen. Åtgärden går inte att ångra.</div>'
+    +'</div>'
+    +'<div class="card" style="padding:16px">'
+    +'<div class="form-field"><label>Anläggning</label>'
+    +'<select id="hist-anlaggning">'+anlOptions+'</select></div>'
+    +'<div class="form-field"><label>Nytt startdatum</label>'
+    +'<input type="date" id="hist-startdatum" value="'+todayVal+'">'
+    +'<div style="font-size:11px;color:var(--text3);margin-top:4px">All historik före detta datum raderas. Från och med detta datum börjar kontrollrapporten om från noll.</div>'
+    +'</div>'
+    +'<div class="form-field"><label>Skriv RADERA för att bekräfta</label>'
+    +'<input type="text" id="hist-confirm" placeholder="RADERA"></div>'
+    +'<div style="display:flex;gap:8px">'
+    +'<button class="btn" style="flex:1;justify-content:center" onclick="exportHistorikTillExcel(document.getElementById(\'hist-anlaggning\').value, document.getElementById(\'hist-startdatum\').value)"><i class="ti ti-download"></i> Exportera historik (Excel)</button>'
+    +'<button class="btn btn-danger" style="flex:1;justify-content:center" onclick="raderaHistorik()"><i class="ti ti-trash"></i> Radera historik</button>'
+    +'</div>'
+    +'<div id="hist-status" style="margin-top:12px;font-size:13px"></div>'
+    +'</div>';
+}
+
+async function exportHistorikTillExcel(anlId, cutoffDate){
+  if(!window.XLSX){ toast('Excel-modul laddas, försök igen om en stund','warn'); return false; }
+  if(!anlId){ toast('Ingen anläggning vald','warn'); return false; }
+  cutoffDate = cutoffDate || '9999-99-99'; // om tomt: exportera allt
+  var statusEl = document.getElementById('hist-status');
+  if(statusEl) statusEl.innerHTML = '<i class="ti ti-loader"></i> Hämtar historik för export…';
+
+  var anlNamn = ANLAGGNING_NAMN_MAP[anlId] || anlId;
+
+  // Namn-lookup för kontrollpunkter i den valda anläggningen
+  var progR = await ghGet(KBASE+'/settings/program_'+anlId+'.json');
+  var punkter = (progR&&progR.data&&progR.data.punkter)||[];
+  var punktNamnMap = {};
+  punkter.forEach(function(p){ punktNamnMap[p.id]=p.namn; });
+
+  var files = await ghListDir(KBASE+'/utfall/'+anlId);
+  var kontrollRows = [['Datum','Kontrollpunkt','Värde','OK','Avvikelse / anmärkning','Utförd av','Försent','Minuter försent']];
+  var forklaringRows = [['Datum','Kontrollpunkt','Förklaring','Registrerad av']];
+
+  for(var i=0;i<files.length;i++){
+    var f = files[i];
+    var m = f.name.match(/^(\d{4}-\d{2}-\d{2})\.json$/);
+    var mMissad = f.name.match(/^missad_(\d{4}-\d{2}-\d{2})\.json$/);
+    if(m && m[1] < cutoffDate){
+      var r = await ghGet(f.path);
+      var data = (r&&r.data)||{};
+      Object.keys(data).forEach(function(pid){
+        var e = data[pid];
+        kontrollRows.push([m[1], punktNamnMap[pid]||pid, e.varde, e.ok?'Ja':'Nej', e.avvikelse||'', e.av||'', e.forSent?'Ja':'Nej', e.forsentMinutter||'']);
+      });
+    } else if(mMissad && mMissad[1] < cutoffDate){
+      var r2 = await ghGet(f.path);
+      var data2 = (r2&&r2.data)||{};
+      Object.keys(data2).forEach(function(pid){
+        var e2 = data2[pid];
+        forklaringRows.push([mMissad[1], punktNamnMap[pid]||pid, e2.forklaring||'', e2.av||'']);
+      });
+    }
+  }
+
+  var signR = await ghGet(KBASE+'/signaturer/'+anlId+'.json');
+  var signData = (signR&&signR.data)||{};
+  var cutoffMonth = cutoffDate.slice(0,7);
+  var signRows = [['Månad','Signerad av','Tidpunkt']];
+  Object.keys(signData).sort().forEach(function(mk){
+    if(mk < cutoffMonth){
+      signRows.push([mk, signData[mk].av||'', signData[mk].ts?new Date(signData[mk].ts).toLocaleString('sv-SE'):'']);
+    }
+  });
+
+  var wb = XLSX.utils.book_new();
+  var ws1 = XLSX.utils.aoa_to_sheet(kontrollRows);
+  ws1['!cols'] = [{wch:12},{wch:28},{wch:10},{wch:8},{wch:30},{wch:20},{wch:10},{wch:14}];
+  XLSX.utils.book_append_sheet(wb, ws1, 'Kontroller');
+
+  var ws2 = XLSX.utils.aoa_to_sheet(forklaringRows);
+  ws2['!cols'] = [{wch:12},{wch:28},{wch:40},{wch:20}];
+  XLSX.utils.book_append_sheet(wb, ws2, 'Missade förklaringar');
+
+  var ws3 = XLSX.utils.aoa_to_sheet(signRows);
+  ws3['!cols'] = [{wch:10},{wch:20},{wch:20}];
+  XLSX.utils.book_append_sheet(wb, ws3, 'Signaturer');
+
+  var fname = 'Historik_'+anlNamn.replace(/[^a-zA-Z0-9åäöÅÄÖ]/g,'_')+'_tom_'+(cutoffDate==='9999-99-99'?'allt':cutoffDate)+'.xlsx';
+  XLSX.writeFile(wb, fname);
+
+  if(statusEl) statusEl.innerHTML = '<div style="background:var(--green-bg);border-radius:var(--radius);padding:10px 12px;color:var(--green)"><i class="ti ti-check"></i> Export klar: '+(kontrollRows.length-1)+' kontrollrader, '+(forklaringRows.length-1)+' förklaringar, '+(signRows.length-1)+' signaturer.</div>';
+  toast('Historik exporterad','ok');
+  return true;
+}
+
+async function raderaHistorik(){
+  var anlId = document.getElementById('hist-anlaggning').value;
+  var startdatum = document.getElementById('hist-startdatum').value;
+  var confirmVal = document.getElementById('hist-confirm').value.trim();
+  var statusEl = document.getElementById('hist-status');
+
+  if(!startdatum){ toast('Ange ett startdatum','warn'); return; }
+  if(confirmVal!=='RADERA'){ toast('Skriv RADERA för att bekräfta','warn'); return; }
+  var anlNamn = ANLAGGNING_NAMN_MAP[anlId] || anlId;
+  if(!confirm('Radera all historik före '+startdatum+' för '+anlNamn+'?\n\nDetta går INTE att ångra.')) return;
+
+  statusEl.innerHTML = '<i class="ti ti-loader"></i> Exporterar historik innan radering…';
+  var exportOk = await exportHistorikTillExcel(anlId, startdatum);
+  if(!exportOk){
+    if(!confirm('Exporten misslyckades eller kunde inte köras. Vill du radera historiken UTAN att spara en backup först?')) return;
+  }
+
+  statusEl.innerHTML = '<i class="ti ti-loader"></i> Raderar historik…';
+  var deletedUtfall = 0, deletedMissad = 0, deletedSign = 0, failed = 0;
+
+  // 1. Lista och radera utfall-filer (YYYY-MM-DD.json och missad_YYYY-MM-DD.json)
+  var files = await ghListDir(KBASE+'/utfall/'+anlId);
+  for(var i=0;i<files.length;i++){
+    var f = files[i];
+    var m = f.name.match(/^(\d{4}-\d{2}-\d{2})\.json$/);
+    var mMissad = f.name.match(/^missad_(\d{4}-\d{2}-\d{2})\.json$/);
+    var fileDate = m ? m[1] : (mMissad ? mMissad[1] : null);
+    if(!fileDate) continue;
+    if(fileDate < startdatum){
+      var ok = await ghDeleteFile(f.path, f.sha, 'Historikrensning: raderade '+f.name);
+      if(ok){ if(m) deletedUtfall++; else deletedMissad++; }
+      else failed++;
+    }
+  }
+
+  // 2. Rensa signaturer före startdatum (håll kvar filen, ta bort gamla månadsnycklar)
+  var signR = await ghGet(KBASE+'/signaturer/'+anlId+'.json');
+  var signData = (signR&&signR.data) || {};
+  var startMonthKey = startdatum.slice(0,7); // YYYY-MM
+  Object.keys(signData).forEach(function(mk){
+    if(mk < startMonthKey){ delete signData[mk]; deletedSign++; }
+  });
+  if(deletedSign>0){
+    await ghPut(KBASE+'/signaturer/'+anlId+'.json', signData, 'Historikrensning: signaturer rensade före '+startMonthKey);
+  }
+
+  // 3. Spara nytt startdatum i inställningarna för anläggningen
+  var progR = await ghGet(KBASE+'/settings/program_'+anlId+'.json');
+  var progData = (progR&&progR.data) || {anlaggningId:anlId, punkter:[]};
+  progData.historikStart = startdatum;
+  await ghPut(KBASE+'/settings/program_'+anlId+'.json', progData, 'Nytt historikstartdatum: '+startdatum);
+
+  // 4. Logga händelsen (mot vald anläggnings egen logg)
+  await logAdminHandelse('historik-rensad', anlNamn+' – nytt startdatum '+startdatum, anlId, anlId);
+
+  statusEl.innerHTML = '<div style="background:var(--green-bg);border-radius:var(--radius);padding:10px 12px;color:var(--green)">'
+    +'<i class="ti ti-check"></i> Klart. '+deletedUtfall+' dagsfiler, '+deletedMissad+' förklaringar och '+deletedSign+' signaturer raderade.'
+    +(failed?' <span style="color:var(--red)">'+failed+' filer kunde inte raderas.</span>':'')
+    +'</div>';
+  document.getElementById('hist-confirm').value='';
+  toast('Historik raderad','ok');
+
+  // Om vi just rensade den anläggning vi tittar på — ladda om data
+  if(anlId===_anlaggningId){
+    await loadAll();
+  }
+}
+
+
 var _kpEditId = null;
 
 async function renderAdminKontrollprogram(container){
@@ -2604,6 +2796,16 @@ async function visaAdminLogg(){
     return;
   }
   body.innerHTML = logg.map(function(h){
+    if(h.action==='historik-rensad'){
+      return '<div style="padding:10px 0;border-bottom:0.5px solid var(--border)">'
+        +'<div style="display:flex;align-items:center;gap:8px">'
+        +'<i class="ti ti-trash" style="font-size:15px;color:var(--red)"></i>'
+        +'<span style="font-size:13px;font-weight:500">Historik raderad</span>'
+        +'<span style="font-size:12px;color:var(--red)">'+h.punktNamn+'</span>'
+        +'</div>'
+        +'<div style="font-size:11px;color:var(--text3);margin-left:23px">'+h.av+' · '+new Date(h.ts).toLocaleString('sv-SE')+'</div>'
+        +'</div>';
+    }
     var isAktivering = h.action==='aktiverad';
     return '<div style="padding:10px 0;border-bottom:0.5px solid var(--border)">'
       +'<div style="display:flex;align-items:center;gap:8px">'
@@ -2659,9 +2861,10 @@ async function toggleAktiv(id){
   }
 }
 
-async function logAdminHandelse(action, punktNamn, punktId){
+async function logAdminHandelse(action, punktNamn, punktId, anlOverride){
   try{
-    var path = KBASE+'/logg/'+_anlaggningId+'/adminlogg.json';
+    var targetAnl = anlOverride || _anlaggningId;
+    var path = KBASE+'/logg/'+targetAnl+'/adminlogg.json';
     var r = await ghGet(path);
     var logg = (r&&r.data&&r.data.handelser) ? r.data.handelser : [];
     logg.unshift({
