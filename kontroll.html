@@ -475,6 +475,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-seri
       </div>
       <div id="mp-grans-wrap" class="form-field">
         <label>Gränsvärde</label>
+        <div id="mp-kylfrys-wrap" style="margin-bottom:8px">
+          <select id="mp-kylfrys" onchange="applyKylFrysPreset()">
+            <option value="">Anpassat (ange min/max manuellt)</option>
+            <option value="kyl">Kyl (riktvärde 4°C)</option>
+            <option value="frys">Frys (riktvärde -18°C)</option>
+          </select>
+        </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
           <div><input type="number" id="mp-min" placeholder="Min (lämna tomt)"></div>
           <div><input type="number" id="mp-max" placeholder="Max (lämna tomt)"></div>
@@ -2240,6 +2247,7 @@ function newPunkt(){
   document.getElementById('mp-namn').value='';
   document.getElementById('mp-min').value='';
   document.getElementById('mp-max').value='';
+  document.getElementById('mp-kylfrys').value='';
   document.getElementById('mp-ref').value='';
   document.getElementById('mp-instr').value='';
   document.getElementById('mp-edit-id').value='';
@@ -2260,6 +2268,7 @@ function editPunkt(id){
   document.getElementById('mp-typ').value=p.typ||'temp';
   document.getElementById('mp-min').value=p.min||'';
   document.getElementById('mp-max').value=p.max||'';
+  document.getElementById('mp-kylfrys').value='';
   document.getElementById('mp-intervall').value=p.intervall||'dagligen';
   document.getElementById('mp-ref').value=p.referens||'';
   document.getElementById('mp-instr').value=p.instr||'';
@@ -2301,6 +2310,19 @@ function updateDeadlineFields(){
 function updateTypFields(){
   var typ=document.getElementById('mp-typ').value;
   document.getElementById('mp-grans-wrap').style.display=typ==='temp'||typ==='numerisk'?'':'none';
+  document.getElementById('mp-kylfrys-wrap').style.display=typ==='temp'?'':'none';
+}
+
+function applyKylFrysPreset(){
+  var val = document.getElementById('mp-kylfrys').value;
+  if(val==='kyl'){
+    document.getElementById('mp-max').value = '4';
+    document.getElementById('mp-min').value = '';
+  } else if(val==='frys'){
+    document.getElementById('mp-max').value = '-18';
+    document.getElementById('mp-min').value = '';
+  }
+  // 'Anpassat' (tom) — rör inte befintliga min/max, låt användaren styra själv
 }
 
 function exportPunkterExcel(){
