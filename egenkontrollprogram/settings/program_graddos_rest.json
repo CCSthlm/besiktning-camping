@@ -153,6 +153,21 @@
       "referens": "",
       "instr": "Tempa varm mat innan servering",
       "aktiv": true
+    },
+    {
+      "id": "mu8b6km01squ",
+      "namn": "Torrförråd Liten Frys 1",
+      "kategori": "Temperatur",
+      "typ": "temp",
+      "min": "",
+      "max": "",
+      "intervall": "dagligen",
+      "deadline": {
+        "tid": "23:59"
+      },
+      "referens": "",
+      "instr": "",
+      "aktiv": true
     }
   ]
 }
