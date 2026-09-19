@@ -2420,6 +2420,8 @@ async function visaAdminLogg(){
 }
 async function toggleAktiv(id){
   var p=_program.find(function(x){return x.id===id;});
+  if(!p)return;
+  var wasAktiv = p.aktiv!==false;
   var nyStatus = !wasAktiv;
   p.aktiv = nyStatus;
   var nu = new Date();
