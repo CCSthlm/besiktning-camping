@@ -672,6 +672,7 @@ async function onGlobalAnlaggningChange() {
   if (!id) return;
   _anlaggningId   = id;
   _anlaggningNamn = ANLAGGNING_NAMN_MAP[id] || id;
+  _kpLoaded = false;
   // Show loading
   ['dag','lev','hist','manad','program','admin'].forEach(function(t){
     var el = document.getElementById('view-'+t);
@@ -1883,11 +1884,13 @@ function renderAdmin(){
 
 // ── KONTROLLPROGRAM DATA ───────────────────────────────────────────────────
 var _kpProgram = { version:1, uppdaterad:'', kapitel:[] };
+var _kpLoaded = false;
 
 async function loadKontrollprogram(){
   var r = await ghGet(KBASE+'/program/'+_anlaggningId+'/kontrollprogram.json');
   _kpProgram = (r&&r.data) || {version:1, uppdaterad:'', kapitel:[]};
   if(!_kpProgram.kapitel) _kpProgram.kapitel=[];
+  _kpLoaded = true;
 }
 
 async function saveKontrollprogram(){
@@ -1939,7 +1942,7 @@ async function renderAdminPersonal(container){
 var _kpEditId = null;
 
 async function renderAdminKontrollprogram(container){
-  if(!_kpProgram.kapitel) await loadKontrollprogram();
+  if(!_kpLoaded) await loadKontrollprogram();
   var kapHtml = _kpProgram.kapitel.length ? _kpProgram.kapitel.map(function(kap, i){
     var isEdit = _kpEditId === kap.id;
     if(isEdit){
