@@ -1,6 +1,13 @@
 {
   "handelser": [
     {
+      "ts": "2026-09-19T12:43:44.661Z",
+      "av": "Massimo Johansson",
+      "action": "aktiverad",
+      "punktNamn": "Torrförråd Liten Frys 1",
+      "punktId": "mu8b6km01squ"
+    },
+    {
       "ts": "2026-09-19T10:50:44.824Z",
       "av": "Massimo Johansson",
       "action": "inaktiverad",
