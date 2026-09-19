@@ -1571,7 +1571,11 @@ async function renderManad(){
   var el=document.getElementById('view-manad');
   el.innerHTML='<div style="text-align:center;padding:30px;color:var(--text3)"><i class="ti ti-loader" style="font-size:32px"></i></div>';
   var now=new Date();
-  var year=now.getFullYear(),month=now.getMonth();
+  var MONTHS=['Januari','Februari','Mars','April','Maj','Juni','Juli','Augusti','September','Oktober','November','December'];
+
+  // Föregående månad — den enda som kan signeras
+  var prevDate=new Date(now.getFullYear(),now.getMonth()-1,1);
+  var year=prevDate.getFullYear(), month=prevDate.getMonth();
   var daysInMonth=new Date(year,month+1,0).getDate();
   var prefix=year+'-'+(month<9?'0':'')+(month+1)+'-';
   var allUtfall={};
@@ -1582,7 +1586,8 @@ async function renderManad(){
   }
   var monthKey=year+'-'+(month<9?'0':'')+(month+1);
   var sign=_signaturer[monthKey];
-  var today=now.getDate();
+  var today=daysInMonth; // hela månaden
+
   var rows=_program.map(function(p){
     var expected=p.intervall==='dagligen'?today:p.intervall==='veckovis'?Math.ceil(today/7):1;
     var done=0,late=0,avvik=0;
@@ -1599,6 +1604,7 @@ async function renderManad(){
       +'<div style="font-size:12px;font-weight:600;min-width:36px;text-align:right;color:'+(pct>=90?'var(--green)':pct>=70?'var(--amber)':'var(--red)')+'">'+pct+'%</div>'
       +'</div>';
   }).join('');
+
   var totalDone=0,totalExp=0,totalAvvik=0;
   _program.forEach(function(p){
     var exp=p.intervall==='dagligen'?today:p.intervall==='veckovis'?Math.ceil(today/7):1;
@@ -1607,24 +1613,54 @@ async function renderManad(){
       if(allUtfall[ds][p.id]){totalDone++;if(!allUtfall[ds][p.id].ok)totalAvvik++;}
     });
   });
-  var MONTHS=['Januari','Februari','Mars','April','Maj','Juni','Juli','Augusti','September','Oktober','November','December'];
-  el.innerHTML='<div style="font-size:17px;font-weight:700;margin-bottom:12px">'+MONTHS[month]+' '+year+' – '+_anlaggningNamn+'</div>'
+
+  // Signaturhistorik — alla signerade månader sorterade nyast först
+  var sigList = Object.keys(_signaturer).sort().reverse();
+  var sigRows = sigList.length
+    ? sigList.map(function(mk){
+        var s=_signaturer[mk];
+        var parts=mk.split('-');
+        var mNamn=MONTHS[parseInt(parts[1])-1]+' '+parts[0];
+        var isCurrent=(mk===monthKey);
+        return '<div style="padding:9px 14px;border-bottom:0.5px solid var(--border);display:flex;align-items:center;gap:10px">'
+          +'<i class="ti ti-check" style="font-size:14px;color:var(--green);flex-shrink:0"></i>'
+          +'<div style="flex:1">'
+          +'<div style="font-size:13px;font-weight:500">'+mNamn+(isCurrent?' <span style="font-size:10px;color:var(--blue);font-weight:400">(föregående månad)</span>':'')+'</div>'
+          +'<div style="font-size:11px;color:var(--text3)">'+s.av+' · '+s.ts.slice(0,10)+' '+s.ts.slice(11,16)+'</div>'
+          +'</div>'
+          +(_isAdmin?'<button class="btn btn-danger" style="padding:4px 8px;font-size:11px" data-mk="'+mk+'" onclick="lasaUppManad(this.dataset.mk)"><i class="ti ti-lock-open"></i> Lås upp</button>':'')
+          +'</div>';
+      }).join('')
+    : '<div style="padding:16px;text-align:center;color:var(--text3)">Inga signerade månader ännu.</div>';
+
+  el.innerHTML=
+    // Rubrik — föregående månad
+    '<div style="font-size:17px;font-weight:700;margin-bottom:4px">'+MONTHS[month]+' '+year+'</div>'
+    +'<div style="font-size:12px;color:var(--text2);margin-bottom:12px">'+_anlaggningNamn+' · Föregående månad</div>'
+    // KPI
     +'<div class="kpi-row">'
     +'<div class="kpi"><div class="kpi-val" style="color:var(--green)">'+Math.round(totalDone/Math.max(totalExp,1)*100)+'%</div><div class="kpi-lbl">Utfört</div></div>'
     +'<div class="kpi"><div class="kpi-val" style="color:'+(totalAvvik>0?'var(--red)':'var(--green)')+'">'+totalAvvik+'</div><div class="kpi-lbl">Avvikelser</div></div>'
     +'<div class="kpi"><div class="kpi-val" style="color:'+(sign?'var(--green)':'var(--text3)')+'"><i class="ti ti-'+(sign?'check':'clock')+'" style="font-size:20px"></i></div><div class="kpi-lbl">'+(sign?'Signerat':'Ej signerat')+'</div></div>'
     +'</div>'
+    // Kontrollpunkter
     +'<div class="card" style="margin-bottom:14px">'+rows+'</div>'
+    // Signering
     +(sign
-      ?'<div class="sign-box">'
+      ?'<div class="sign-box" style="margin-bottom:16px">'
         +'<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap">'
         +'<div><div style="font-size:13px;font-weight:600;color:var(--blue);margin-bottom:4px"><i class="ti ti-writing-sign"></i> Signerad</div>'
         +'<div style="font-size:13px">'+sign.av+' · '+sign.ts.slice(0,10)+' '+sign.ts.slice(11,16)+'</div></div>'
         +(_isAdmin?'<button class="btn btn-danger" style="font-size:12px;padding:6px 12px" data-mk="'+monthKey+'" onclick="lasaUppManad(this.dataset.mk)"><i class="ti ti-lock-open"></i> Lås upp</button>':'')
         +'</div></div>'
-      :'<div class="sign-box"><div style="font-size:13px;font-weight:500;color:var(--blue);margin-bottom:8px">Signera '+MONTHS[month]+' '+year+'</div>'
-        +'<div style="font-size:12px;color:var(--text2);margin-bottom:12px">Granska alla kontroller ovan och signera om perioden är komplett och korrekt.</div>'
-        +'<button class="btn btn-primary btn-full" onclick="openSignering()"><i class="ti ti-writing-sign"></i> Granska och signera</button></div>');
+      :'<div class="sign-box" style="margin-bottom:16px">'
+        +'<div style="font-size:13px;font-weight:500;color:var(--blue);margin-bottom:8px">Signera '+MONTHS[month]+' '+year+'</div>'
+        +'<div style="font-size:12px;color:var(--text2);margin-bottom:12px">Granska kontrollerna ovan och signera om perioden är komplett och korrekt.</div>'
+        +'<button class="btn btn-primary btn-full" onclick="openSignering()"><i class="ti ti-writing-sign"></i> Granska och signera</button>'
+        +'</div>')
+    // Signaturhistorik
+    +'<div style="font-size:14px;font-weight:600;margin-bottom:8px;margin-top:4px">Signerade månader</div>'
+    +'<div class="card">'+sigRows+'</div>';
 }
 
 async function lasaUppManad(monthKey){
