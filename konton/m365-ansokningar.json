@@ -316,6 +316,24 @@
       "chef": "Hans Östman",
       "övrigt": "",
       "gdpr": true
+    },
+    {
+      "id": "M365-2609-VD3B",
+      "ts": "2026-09-19T09:25:11.789Z",
+      "status": "ny",
+      "fname": "Katarina",
+      "lname": "Andersson",
+      "pnr": "19690825-6941",
+      "mobil": "0702784710",
+      "email": "kattis69@hotmail.com",
+      "adress": "",
+      "anläggning": "CC Kapellskärs Camping",
+      "roll": "Campingvärd",
+      "ansForm": "Ideell",
+      "startDatum": "2027-04-01",
+      "chef": "Hans Östman",
+      "övrigt": "",
+      "gdpr": true
     }
   ]
 }
