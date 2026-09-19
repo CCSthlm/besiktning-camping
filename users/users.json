@@ -689,6 +689,16 @@
           "phone": "070-4618178",
           "type": "ideell",
           "active": true
+        },
+        {
+          "id": "mu8ayunlamhew",
+          "fname": "Kerstin",
+          "lname": "Larsson",
+          "pnr": "19471212-0221",
+          "address": "Stormgatan 10",
+          "phone": "0706284885",
+          "type": "ideell",
+          "active": true
         }
       ],
       "auditlog": [
@@ -932,6 +942,15 @@
           "user": "Massimo Johansson",
           "action": "delete",
           "detail": "Tog bort person: Molly Johansson",
+          "oldVal": "",
+          "newVal": ""
+        },
+        {
+          "id": "mu8ayunllfuby",
+          "ts": "2026-09-19T11:27:11.793Z",
+          "user": "Massimo Johansson",
+          "action": "in",
+          "detail": "Lade till: Kerstin Larsson",
           "oldVal": "",
           "newVal": ""
         }
