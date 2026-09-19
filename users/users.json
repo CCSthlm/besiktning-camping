@@ -687,7 +687,7 @@
           "pnr": "2020121212-1111",
           "address": "HEmma",
           "phone": "0762275266",
-          "type": "anställd",
+          "type": "extrapersonal",
           "active": true
         },
         {
@@ -900,6 +900,15 @@
           "detail": "Manuell: Massimo Johansson in 14:00 ut 22:20 (2026-07-16) – GLömde stämpla in",
           "oldVal": "",
           "newVal": "14:00"
+        },
+        {
+          "id": "mu8asj5g7g7ug",
+          "ts": "2026-09-19T11:22:16.948Z",
+          "user": "Massimo Johansson",
+          "action": "edit",
+          "detail": "Uppdaterade: Molly Johansson",
+          "oldVal": "",
+          "newVal": ""
         }
       ]
     },
