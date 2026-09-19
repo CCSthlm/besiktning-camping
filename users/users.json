@@ -709,6 +709,16 @@
           "phone": "070-7860359",
           "type": "ideell",
           "active": true
+        },
+        {
+          "id": "mu8b3yi5rt8b5",
+          "fname": "Christoffer",
+          "lname": "Maddison",
+          "pnr": "19831014-2495",
+          "address": "Lillhagsvägen 4",
+          "phone": "070-3033588",
+          "type": "ideell",
+          "active": true
         }
       ],
       "auditlog": [
@@ -979,6 +989,15 @@
           "user": "Massimo Johansson",
           "action": "in",
           "detail": "Lade till: Monica Maddison",
+          "oldVal": "",
+          "newVal": ""
+        },
+        {
+          "id": "mu8b3yi55ofrl",
+          "ts": "2026-09-19T11:31:10.061Z",
+          "user": "Massimo Johansson",
+          "action": "in",
+          "detail": "Lade till: Christoffer Maddison",
           "oldVal": "",
           "newVal": ""
         }
