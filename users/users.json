@@ -424,7 +424,9 @@
       ],
       "role": "Användare",
       "active": true,
-      "apps": [],
+      "apps": [
+        "personalliggare"
+      ],
       "plCampingId": "c7",
       "godkannarcamping": "",
       "sbaCamping": "",
