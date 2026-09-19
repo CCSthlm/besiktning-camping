@@ -431,6 +431,21 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-seri
   </div>
 </div>
 
+<!-- MODAL: ADMINLOGG -->
+<div class="modal-overlay" id="modal-adminlogg">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <div class="modal-title">Ändringslogg – kontrollpunkter</div>
+      <div class="modal-sub">Aktiverade och inaktiverade punkter</div>
+    </div>
+    <div class="modal-body" id="adminlogg-body" style="max-height:60vh;overflow-y:auto"></div>
+    <div class="modal-footer">
+      <button class="btn btn-primary btn-full" onclick="closeModal('modal-adminlogg')">Stäng</button>
+    </div>
+  </div>
+</div>
+
 <!-- MODAL: NY/REDIGERA KONTROLLPUNKT -->
 <div class="modal-overlay" id="modal-punkt">
   <div class="modal">
@@ -534,7 +549,8 @@ var GH_REPO = 'CCSthlm/besiktning-camping';
 var KBASE   = 'egenkontrollprogram';
 var _user   = null, _roles = [], _isAnsvarig = false, _isAdmin = false;
 var _anlaggningId = '', _anlaggningNamn = '';
-var _program = []; // kontrollpunkter
+var _program = []; // kontrollpunkter (alla, inkl. inaktiva — endast admin läser denna direkt)
+function aktivaPunkter(){ return _program.filter(function(p){return p.aktiv!==false;}); }
 var _utfall  = {}; // {punktId: {varde,ts,av,forSent,forsentMinuter,avvikelse}}
 var _missadForklaringar = {}; // {punktId: {forklaring,ts,av}}
 var _leveranser = [];
@@ -719,13 +735,13 @@ function getPunktStatus(p){
 }
 
 function renderDag(){
-  if(!_program.length){
+  if(!aktivaPunkter().length){
     document.getElementById('view-dag').innerHTML='<div style="text-align:center;padding:48px 20px;color:var(--text3)"><i class="ti ti-clipboard" style="font-size:48px;display:block;margin-bottom:12px"></i><p>Inga kontrollpunkter inlagda ännu.</p></div>';
     return;
   }
 
-  var done=_program.filter(function(p){return _utfall[p.id];}).length;
-  var pct=Math.round(done/_program.length*100);
+  var done=aktivaPunkter().filter(function(p){return _utfall[p.id];}).length;
+  var pct=Math.round(done/aktivaPunkter().length*100);
 
   // Check if current month is signed
   var now2=new Date();
@@ -798,7 +814,7 @@ function renderDag(){
   ];
 
   var groupsHtml = GROUPS.map(function(grp){
-    var punkter = _program.filter(function(p){ return p.intervall===grp.id; });
+    var punkter = aktivaPunkter().filter(function(p){ return p.intervall===grp.id; });
     if(!punkter.length) return '';
 
     var itemsHtml = punkter.map(function(p){
@@ -860,7 +876,7 @@ function renderDag(){
     '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">'
     +'<div><div style="font-size:17px;font-weight:700">Idag</div>'
     +'<div style="font-size:12px;color:var(--text2)">'+_anlaggningNamn+' · '+todayStr()+'</div></div>'
-    +'<div style="text-align:right"><div style="font-size:20px;font-weight:700;color:var(--green)">'+done+'/'+_program.length+'</div>'
+    +'<div style="text-align:right"><div style="font-size:20px;font-weight:700;color:var(--green)">'+done+'/'+aktivaPunkter().length+'</div>'
     +'<div style="font-size:11px;color:var(--text3)">klara</div></div>'
     +'</div>'
     +'<div style="height:6px;background:var(--border2);border-radius:3px;margin-bottom:16px;overflow:hidden">'
@@ -1344,7 +1360,7 @@ async function renderHist(){
 
   // KPI
   var totalDone=0,totalExp=0,totalAvvik=0,totalSena=0,totalMissed=0;
-  _program.forEach(function(p){
+  aktivaPunkter().forEach(function(p){
     var exp = p.intervall==='dagligen'?today : p.intervall==='veckovis'?Math.ceil(today/7) : 1;
     totalExp += exp;
     var done=0;
@@ -1439,7 +1455,7 @@ async function renderHist(){
       }
     }
 
-    var rows = _program.map(function(p){
+    var rows = aktivaPunkter().map(function(p){
       var exp = p.intervall==='dagligen'?today : p.intervall==='veckovis'?Math.ceil(today/7) : 1;
       var done=0,late=0,avvik=0;
       Object.keys(_rapportAllUtfall).forEach(function(ds){
@@ -1479,7 +1495,7 @@ async function renderHist(){
 
     var matrixRows='';
     GROUPS.forEach(function(grp){
-      var punkter=_program.filter(function(p){return p.intervall===grp.id;});
+      var punkter=aktivaPunkter().filter(function(p){return p.intervall===grp.id;});
       if(!punkter.length) return;
       matrixRows+='<tr class="matrix-group-row"><th colspan="'+(daysInMonth+1)+'">'+grp.label+'</th></tr>';
       punkter.forEach(function(p){
@@ -1588,7 +1604,7 @@ async function renderManad(){
   var sign=_signaturer[monthKey];
   var today=daysInMonth; // hela månaden
 
-  var rows=_program.map(function(p){
+  var rows=aktivaPunkter().map(function(p){
     var expected=p.intervall==='dagligen'?today:p.intervall==='veckovis'?Math.ceil(today/7):1;
     var done=0,late=0,avvik=0;
     Object.keys(allUtfall).forEach(function(ds){
@@ -1606,7 +1622,7 @@ async function renderManad(){
   }).join('');
 
   var totalDone=0,totalExp=0,totalAvvik=0;
-  _program.forEach(function(p){
+  aktivaPunkter().forEach(function(p){
     var exp=p.intervall==='dagligen'?today:p.intervall==='veckovis'?Math.ceil(today/7):1;
     totalExp+=exp;
     Object.keys(allUtfall).forEach(function(ds){
@@ -1757,15 +1773,22 @@ function renderAdmin(){
         var tIcon=typeIcon[p.typ]||'ti-check';
         var tClass=typeClass[p.typ]||'type-janej';
         var dl=dlSummary(p);
-        return'<div class="prog-item">'
-          +'<div class="type-icon '+tClass+'"><i class="ti '+tIcon+'"></i></div>'
+        var isAktiv = p.aktiv!==false;
+        return'<div class="prog-item"'+(isAktiv?'':' style="opacity:.55;background:var(--bg3)"')+'>'
+          +'<div class="type-icon '+tClass+'">'+(isAktiv?'':'')+'<i class="ti '+tIcon+'"></i></div>'
           +'<div style="flex:1;min-width:0">'
-          +'<div style="font-size:14px;font-weight:500">'+p.namn+'</div>'
+          +'<div style="font-size:14px;font-weight:500'+(isAktiv?'':';color:var(--text2)')+'">'+p.namn+'</div>'
           +'<div style="font-size:11px;color:var(--text3)">'+p.kategori
           +(p.max?' · max '+p.max+'°C':'')+(p.min?' · min '+p.min+'°C':'')
           +(dl?' · <span style="color:var(--blue)"><i class="ti ti-clock" style="font-size:10px"></i> '+dl+'</span>':'')
+          +(!isAktiv&&p.inaktivSedan?' · <span style="color:var(--amber)">Inaktiv sedan '+p.inaktivSedan+'</span>':'')
           +'</div>'
           +'</div>'
+          +'<label style="position:relative;display:inline-block;width:38px;height:22px;flex-shrink:0;cursor:pointer" title="'+(isAktiv?'Klicka för att inaktivera':'Klicka för att aktivera')+'">'
+          +'<input type="checkbox" '+(isAktiv?'checked':'')+' data-id="'+p.id+'" onchange="toggleAktiv(this.dataset.id)" style="opacity:0;width:0;height:0">'
+          +'<span style="position:absolute;inset:0;background:'+(isAktiv?'var(--green)':'var(--border2)')+';border-radius:22px;transition:background .15s"></span>'
+          +'<span style="position:absolute;top:2px;'+(isAktiv?'right':'left')+':2px;width:18px;height:18px;background:#fff;border-radius:50%;transition:left .15s,right .15s"></span>'
+          +'</label>'
           +'<div style="display:flex;gap:6px">'
           +'<button class="btn" style="padding:6px 10px;font-size:12px" data-id="'+p.id+'" onclick="editPunkt(this.dataset.id)"><i class="ti ti-pencil"></i> Redigera</button>'
           +'<button class="btn btn-danger" style="padding:6px 10px;font-size:12px" data-id="'+p.id+'" onclick="deletePunkt(this.dataset.id)"><i class="ti ti-trash"></i> Ta bort</button>'
@@ -1788,6 +1811,7 @@ function renderAdmin(){
       +'<div style="display:flex;gap:6px;flex-wrap:wrap">'
       +'<button class="btn btn-sm" onclick="exportPunkterExcel()"><i class="ti ti-download"></i> Exportera Excel</button>'
       +'<label class="btn btn-sm" style="cursor:pointer"><i class="ti ti-upload"></i> Importera Excel<input type="file" accept=".xlsx,.xls" style="display:none" onchange="importPunkterExcel(this)"></label>'
+      +'<button class="btn btn-sm" onclick="visaAdminLogg()"><i class="ti ti-history"></i> Ändringslogg</button>'
       +'<button class="btn btn-primary" onclick="newPunkt()"><i class="ti ti-plus"></i> Ny punkt</button>'
       +'</div>'
       +'</div>'
@@ -2371,6 +2395,71 @@ async function savePunkt(){
   else toast('Kunde ej spara','err');
 }
 
+async function visaAdminLogg(){
+  var body=document.getElementById('adminlogg-body');
+  body.innerHTML='<div style="text-align:center;padding:20px;color:var(--text3)"><i class="ti ti-loader" style="font-size:24px"></i></div>';
+  openModal('modal-adminlogg');
+  var path = KBASE+'/logg/'+_anlaggningId+'/adminlogg.json';
+  var r = await ghGet(path);
+  var logg = (r&&r.data&&r.data.handelser) ? r.data.handelser : [];
+  if(!logg.length){
+    body.innerHTML='<div style="text-align:center;padding:24px;color:var(--text3)">Inga ändringar loggade ännu.</div>';
+    return;
+  }
+  body.innerHTML = logg.map(function(h){
+    var isAktivering = h.action==='aktiverad';
+    return '<div style="padding:10px 0;border-bottom:0.5px solid var(--border)">'
+      +'<div style="display:flex;align-items:center;gap:8px">'
+      +'<i class="ti '+(isAktivering?'ti-toggle-right':'ti-toggle-left')+'" style="font-size:15px;color:'+(isAktivering?'var(--green)':'var(--amber)')+'"></i>'
+      +'<span style="font-size:13px;font-weight:500">'+h.punktNamn+'</span>'
+      +'<span style="font-size:12px;color:'+(isAktivering?'var(--green)':'var(--amber)')+'">'+(isAktivering?'aktiverad':'inaktiverad')+'</span>'
+      +'</div>'
+      +'<div style="font-size:11px;color:var(--text3);margin-left:23px">'+h.av+' · '+new Date(h.ts).toLocaleString('sv-SE')+'</div>'
+      +'</div>';
+  }).join('');
+}
+async function toggleAktiv(id){
+  var p=_program.find(function(x){return x.id===id;});
+  var nyStatus = !wasAktiv;
+  p.aktiv = nyStatus;
+  var nu = new Date();
+  if(nyStatus){
+    delete p.inaktivSedan;
+  } else {
+    p.inaktivSedan = todayStr();
+  }
+
+  var ok=await ghPut(KBASE+'/settings/program_'+_anlaggningId+'.json',
+    {anlaggningId:_anlaggningId,punkter:_program},
+    (nyStatus?'Punkt aktiverad: ':'Punkt inaktiverad: ')+p.namn);
+
+  if(ok){
+    await logAdminHandelse(nyStatus?'aktiverad':'inaktiverad', p.namn, p.id);
+    toast(p.namn+(nyStatus?' aktiverad':' inaktiverad'),'ok');
+    renderAdmin();
+  } else {
+    p.aktiv = wasAktiv; // revert on failure
+    toast('Kunde ej spara','err');
+    renderAdmin();
+  }
+}
+
+async function logAdminHandelse(action, punktNamn, punktId){
+  try{
+    var path = KBASE+'/logg/'+_anlaggningId+'/adminlogg.json';
+    var r = await ghGet(path);
+    var logg = (r&&r.data&&r.data.handelser) ? r.data.handelser : [];
+    logg.unshift({
+      ts: new Date().toISOString(),
+      av: _user.name,
+      action: action,
+      punktNamn: punktNamn,
+      punktId: punktId
+    });
+    if(logg.length>500) logg = logg.slice(0,500);
+    await ghPut(path, {handelser:logg}, 'Adminlogg: '+action+' '+punktNamn);
+  }catch(e){ console.warn('Kunde ej logga adminhändelse', e); }
+}
 async function deletePunkt(id){
   var p=_program.find(function(x){return x.id===id;});
   if(!confirm('Ta bort "'+( p?p.namn:id)+'"?'))return;
