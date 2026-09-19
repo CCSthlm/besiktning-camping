@@ -726,7 +726,7 @@
           "lname": "Jakobsson",
           "pnr": "19650109-1117",
           "address": "Ekolsund 26",
-          "phone": "070-4148024",
+          "phone": "073-4148024",
           "type": "ideell",
           "active": true
         }
@@ -1017,6 +1017,15 @@
           "user": "Massimo Johansson",
           "action": "in",
           "detail": "Lade till: Christer Jakobsson",
+          "oldVal": "",
+          "newVal": ""
+        },
+        {
+          "id": "mu8g83ivzemvn",
+          "ts": "2026-09-19T13:54:21.271Z",
+          "user": "Massimo Johansson",
+          "action": "edit",
+          "detail": "Uppdaterade: Christer Jakobsson",
           "oldVal": "",
           "newVal": ""
         }
