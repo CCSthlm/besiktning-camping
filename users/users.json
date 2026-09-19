@@ -169,6 +169,7 @@
       "adminRoles": [
         "personal",
         "kontroll-ansvarig",
+        "kontroll-admin",
         "budget-camping"
       ],
       "role": "Användare",
@@ -186,8 +187,8 @@
       "kontrollAnlaggningNamn": "",
       "kontrollAnsvarigAnlaggningId": "",
       "kontrollAnsvarigAnlaggningNamn": "",
-      "kontrollAdminAnlaggningId": "",
-      "kontrollAdminAnlaggningNamn": ""
+      "kontrollAdminAnlaggningId": "graddos_rest",
+      "kontrollAdminAnlaggningNamn": "Gräddös Pärla Kök & Bar"
     },
     {
       "id": "umt5v3lw7ktmh",
