@@ -653,6 +653,19 @@ var ANLAGGNING_NAMN_MAP = {
   angsudden_rest:'Ängsuddens Kiosk'
 };
 
+// Mappning: kontrollprogrammets anläggnings-ID → personalliggarens camping-ID (c1–c8)
+var PL_CAMPING_MAP = {
+  bo_camp:'c1', bo_camp_rest:'c1',
+  ostnora:'c2', ostnora_rest:'c8',
+  kapellskar:'c3', kapellskar_rest:'c3',
+  mista:'c4', mista_rest:'c4',
+  storsved:'c5', storsved_rest:'c5',
+  orstig:'c6', orstig_rest:'c6',
+  graddos:'c7', graddos_rest:'c7',
+  angsudden:'', angsudden_rest:''
+};
+function plCampingId(anlaggningId){ return PL_CAMPING_MAP[anlaggningId] || anlaggningId; }
+
 async function onGlobalAnlaggningChange() {
   var sel = document.getElementById('global-anlaggning-select');
   var id  = sel ? sel.value : '';
@@ -1885,20 +1898,29 @@ async function saveKontrollprogram(){
 // ── ADMIN: PERSONAL (speglar personalliggare) ─────────────────────────────
 async function renderAdminPersonal(container){
   container.innerHTML='<div style="text-align:center;padding:20px;color:var(--text3)"><i class="ti ti-loader" style="font-size:24px"></i></div>';
-  var r = await ghGet('personalliggare/'+_anlaggningId+'/personal.json');
-  var personal = (r&&r.data&&r.data.personal)||[];
+  var personal = [];
+  try {
+    var usersR = await ghGet('users/users.json');
+    var pl = usersR && usersR.data && usersR.data.personalliggare;
+    var plId = plCampingId(_anlaggningId);
+    if (pl && pl[plId] && pl[plId].personal) {
+      personal = pl[plId].personal;
+    }
+  } catch(e) { console.warn('Kunde ej läsa personalliggare', e); }
+
   if(!personal.length){
     container.innerHTML='<div style="text-align:center;padding:32px;color:var(--text3)"><i class="ti ti-users" style="font-size:40px;display:block;margin-bottom:10px"></i><p>Ingen personal i personalliggaren för den här anläggningen.</p></div>';
     return;
   }
   var rows = personal.map(function(p){
-    var ini = (p.namn||'?').split(' ').map(function(n){return n[0];}).join('').slice(0,2).toUpperCase();
-    var aktiv = p.aktiv!==false;
+    var fullNamn = (p.fname||'')+' '+(p.lname||'');
+    var ini = fullNamn.trim().split(' ').filter(Boolean).map(function(n){return n[0];}).join('').slice(0,2).toUpperCase()||'?';
+    var aktiv = p.active!==false;
     return '<div class="prog-item">'
       +'<div style="width:34px;height:34px;border-radius:50%;background:'+(aktiv?'var(--green-bg)':'var(--bg3)')+';display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;color:'+(aktiv?'var(--green)':'var(--text3)')+';flex-shrink:0">'+ini+'</div>'
       +'<div style="flex:1;min-width:0">'
-      +'<div style="font-size:14px;font-weight:500">'+( p.namn||'–')+'</div>'
-      +'<div style="font-size:11px;color:var(--text3)">'+(p.roll||p.titel||'Personal')+'</div>'
+      +'<div style="font-size:14px;font-weight:500">'+(fullNamn.trim()||'–')+'</div>'
+      +'<div style="font-size:11px;color:var(--text3)">'+(p.type||'Personal')+'</div>'
       +'</div>'
       +'<span style="font-size:10px;padding:3px 9px;border-radius:20px;background:'+(aktiv?'var(--green-bg)':'var(--bg3)')+';color:'+(aktiv?'var(--green)':'var(--text3)')+';">'+(aktiv?'Aktiv':'Inaktiv')+'</span>'
       +'</div>';
@@ -2088,17 +2110,26 @@ async function renderProgram(){
       : '<div style="padding:20px;text-align:center;color:var(--text3)">Inga kontrollpunkter.</div>')
     +'</div>';
 
-  // Bilaga B — personal, speglad från personalliggaren
-  var personalR = await ghGet('personalliggare/'+_anlaggningId+'/personal.json');
-  var personalList = (personalR&&personalR.data&&personalR.data.personal)||[];
+  // Bilaga B — personal, speglad från personalliggaren (users.json → personalliggare[campingId].personal)
+  var personalList = [];
+  try {
+    var usersR = await ghGet('users/users.json');
+    var pl = usersR && usersR.data && usersR.data.personalliggare;
+    var plId = plCampingId(_anlaggningId);
+    if (pl && pl[plId] && pl[plId].personal) {
+      personalList = pl[plId].personal;
+    }
+  } catch(e) { console.warn('Kunde ej läsa personalliggare', e); }
+
   var bilagaBRows = personalList.map(function(pe){
-    var ini=(pe.namn||'?').split(' ').map(function(n){return n[0];}).join('').slice(0,2).toUpperCase();
-    var aktivP = pe.aktiv!==false;
+    var fullNamn = (pe.fname||'')+' '+(pe.lname||'');
+    var ini=fullNamn.trim().split(' ').filter(Boolean).map(function(n){return n[0];}).join('').slice(0,2).toUpperCase()||'?';
+    var aktivP = pe.active!==false;
     return '<div class="prog-item">'
       +'<div style="width:32px;height:32px;border-radius:50%;background:'+(aktivP?'var(--green-bg)':'var(--bg3)')+';display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;color:'+(aktivP?'var(--green)':'var(--text3)')+';flex-shrink:0">'+ini+'</div>'
       +'<div style="flex:1;min-width:0">'
-      +'<div style="font-size:14px;font-weight:500">'+esc(pe.namn||'–')+'</div>'
-      +'<div style="font-size:11px;color:var(--text3)">'+esc(pe.roll||pe.titel||'Personal')+'</div>'
+      +'<div style="font-size:14px;font-weight:500">'+esc(fullNamn.trim()||'–')+'</div>'
+      +'<div style="font-size:11px;color:var(--text3)">'+esc(pe.type||'Personal')+'</div>'
       +'</div>'
       +'<span style="font-size:10px;padding:3px 9px;border-radius:20px;background:'+(aktivP?'var(--green-bg)':'var(--bg3)')+';color:'+(aktivP?'var(--green)':'var(--text3)')+'">'+(aktivP?'Aktiv':'Inaktiv')+'</span>'
       +'</div>';
