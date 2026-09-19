@@ -9,6 +9,7 @@
     "3011": "det finns endast 1 sommarplats",
     "3012": "Det finns 1 vinterplats",
     "3013": "",
+    "3014": "Drar ner gästavgiften till mer realistiska 165 000 pga att det inte vintern 25-26 var gäster som stod och betalade dygnsavgift mm. räknar inte med detta nästa vinter heller.",
     "7010": "Avser 3 sommarvärdar och 1 vintervärd."
   },
   "paramVarden": {
@@ -22,5 +23,5 @@
     "arvoden_belopp": 35000
   },
   "investeringar": [],
-  "autosparad": "2026-09-19T08:13:59.212Z"
+  "autosparad": "2026-09-19T08:14:10.101Z"
 }
