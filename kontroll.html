@@ -1791,8 +1791,8 @@ function renderAdmin(){
         var isFirst = idx===0, isLast = idx===punkter.length-1;
         return'<div class="prog-item"'+(isAktiv?'':' style="opacity:.55;background:var(--bg3)"')+'>'
           +'<div style="display:flex;flex-direction:column;gap:2px;flex-shrink:0">'
-          +'<button class="btn" style="width:22px;height:18px;padding:0;display:flex;align-items:center;justify-content:center'+(isFirst?';opacity:.3;pointer-events:none':'')+'" data-id="'+p.id+'" data-dir="-1" onclick="movePunktInGroup(this.dataset.id,parseInt(this.dataset.dir))" aria-label="Flytta upp"><i class="ti ti-chevron-up" style="font-size:12px"></i></button>'
-          +'<button class="btn" style="width:22px;height:18px;padding:0;display:flex;align-items:center;justify-content:center'+(isLast?';opacity:.3;pointer-events:none':'')+'" data-id="'+p.id+'" data-dir="1" onclick="movePunktInGroup(this.dataset.id,parseInt(this.dataset.dir))" aria-label="Flytta ner"><i class="ti ti-chevron-down" style="font-size:12px"></i></button>'
+          +'<button class="btn" style="width:22px;height:18px;padding:0;line-height:1;font-size:11px;display:flex;align-items:center;justify-content:center'+(isFirst?';opacity:.3;pointer-events:none':'')+'" data-id="'+p.id+'" data-dir="-1" onclick="movePunktInGroup(this.dataset.id,parseInt(this.dataset.dir))" aria-label="Flytta upp">&#9650;</button>'
+          +'<button class="btn" style="width:22px;height:18px;padding:0;line-height:1;font-size:11px;display:flex;align-items:center;justify-content:center'+(isLast?';opacity:.3;pointer-events:none':'')+'" data-id="'+p.id+'" data-dir="1" onclick="movePunktInGroup(this.dataset.id,parseInt(this.dataset.dir))" aria-label="Flytta ner">&#9660;</button>'
           +'</div>'
           +'<div class="type-icon '+tClass+'">'+(isAktiv?'':'')+'<i class="ti '+tIcon+'"></i></div>'
           +'<div style="flex:1;min-width:0">'
