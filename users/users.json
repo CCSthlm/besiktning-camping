@@ -699,6 +699,16 @@
           "phone": "070-6284885",
           "type": "ideell",
           "active": true
+        },
+        {
+          "id": "mu8b1hotkq3or",
+          "fname": "Monica",
+          "lname": "Maddison",
+          "pnr": "19800506-0481",
+          "address": "Lillhagsvägen 4",
+          "phone": "070-7860359",
+          "type": "ideell",
+          "active": true
         }
       ],
       "auditlog": [
@@ -960,6 +970,15 @@
           "user": "Massimo Johansson",
           "action": "edit",
           "detail": "Uppdaterade: Kerstin Larsson",
+          "oldVal": "",
+          "newVal": ""
+        },
+        {
+          "id": "mu8b1hotp879f",
+          "ts": "2026-09-19T11:29:14.957Z",
+          "user": "Massimo Johansson",
+          "action": "in",
+          "detail": "Lade till: Monica Maddison",
           "oldVal": "",
           "newVal": ""
         }
