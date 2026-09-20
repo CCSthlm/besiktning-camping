@@ -294,7 +294,7 @@
     {
       "id": "M365-2609-7W56",
       "ts": "2026-09-13T09:07:42.221Z",
-      "status": "ny",
+      "status": "behandlad",
       "fname": "Stefan",
       "lname": "Hedström",
       "pnr": "19620925-0056",
@@ -307,7 +307,17 @@
       "startDatum": "2026-09-01",
       "chef": "",
       "övrigt": "",
-      "gdpr": true
+      "gdpr": true,
+      "m365": {
+        "upn": "stefan.hedstrom@cc-camping.se",
+        "skapadTs": "2026-09-20T08:22:46.158Z",
+        "skapadAv": "Joachim Säfqvist"
+      },
+      "handläggning": {
+        "av": "Joachim Säfqvist",
+        "kommentar": "M365-konto skapat: stefan.hedstrom@cc-camping.se · Licens tilldelad · Grupper: Caravan Club of Sweden - Stockholmssektionen",
+        "ts": "2026-09-20T08:22:46.158Z"
+      }
     },
     {
       "id": "M365-2609-MOQ5",
