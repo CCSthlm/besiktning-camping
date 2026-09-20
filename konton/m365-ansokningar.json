@@ -340,7 +340,7 @@
     {
       "id": "M365-2609-VD3B",
       "ts": "2026-09-19T09:25:11.789Z",
-      "status": "ny",
+      "status": "behandlad",
       "fname": "Katarina",
       "lname": "Andersson",
       "pnr": "19690825-6941",
@@ -353,7 +353,17 @@
       "startDatum": "2027-04-01",
       "chef": "Hans Östman",
       "övrigt": "",
-      "gdpr": true
+      "gdpr": true,
+      "m365": {
+        "upn": "katarina.andersson@cc-camping.se",
+        "skapadTs": "2026-09-20T08:05:33.628Z",
+        "skapadAv": "Joachim Säfqvist"
+      },
+      "handläggning": {
+        "av": "Joachim Säfqvist",
+        "kommentar": "M365-konto skapat: katarina.andersson@cc-camping.se · Licens tilldelad · Grupper: Caravan Club of Sweden - Stockholmssektionen",
+        "ts": "2026-09-20T08:05:33.628Z"
+      }
     },
     {
       "id": "M365-2609-IYCC",
