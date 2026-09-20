@@ -396,7 +396,7 @@
     {
       "id": "M365-2609-72BB",
       "ts": "2026-09-19T11:21:50.444Z",
-      "status": "ny",
+      "status": "behandlad",
       "fname": "Ulrika",
       "lname": "Hagebö",
       "pnr": "19670203-1185",
@@ -409,7 +409,17 @@
       "startDatum": "2026-10-01",
       "chef": "Hans Östman",
       "övrigt": "",
-      "gdpr": true
+      "gdpr": true,
+      "m365": {
+        "upn": "ulrika.hagebo@cc-camping.se",
+        "skapadTs": "2026-09-20T08:15:24.233Z",
+        "skapadAv": "Joachim Säfqvist"
+      },
+      "handläggning": {
+        "av": "Joachim Säfqvist",
+        "kommentar": "M365-konto skapat: ulrika.hagebo@cc-camping.se · Licens tilldelad · Grupper: Caravan Club of Sweden - Stockholmssektionen",
+        "ts": "2026-09-20T08:15:24.233Z"
+      }
     }
   ]
 }
