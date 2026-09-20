@@ -17,6 +17,15 @@
           "ersattning": 1080,
           "syfte": "Månadsmöte, Ledningsgruppsmöte",
           "ts": "2026-06-26T12:30:34.050Z"
+        },
+        {
+          "datum": "2026-09-18",
+          "fordonstyp": "husbil",
+          "stracka": "Hässelby - BÖ - Hässelby",
+          "km": 240,
+          "ersattning": 1080,
+          "syfte": "arbetsdag ochsätra igång kontrollprogram",
+          "ts": "2026-09-20T12:07:35.163Z"
         }
       ],
       "status": "utkast",
