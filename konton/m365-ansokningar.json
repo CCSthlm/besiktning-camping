@@ -312,7 +312,7 @@
     {
       "id": "M365-2609-MOQ5",
       "ts": "2026-09-19T09:14:23.505Z",
-      "status": "ny",
+      "status": "behandlad",
       "fname": "Klas",
       "lname": "Andersson",
       "pnr": "680903-0296",
@@ -325,7 +325,17 @@
       "startDatum": "2027-04-01",
       "chef": "Hans Östman",
       "övrigt": "",
-      "gdpr": true
+      "gdpr": true,
+      "m365": {
+        "upn": "klas.andersson@cc-camping.se",
+        "skapadTs": "2026-09-20T07:52:19.875Z",
+        "skapadAv": "Joachim Säfqvist"
+      },
+      "handläggning": {
+        "av": "Joachim Säfqvist",
+        "kommentar": "M365-konto skapat: klas.andersson@cc-camping.se · Licens tilldelad · Grupper: Caravan Club of Sweden - Stockholmssektionen",
+        "ts": "2026-09-20T07:52:19.875Z"
+      }
     },
     {
       "id": "M365-2609-VD3B",
