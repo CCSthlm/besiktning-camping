@@ -276,7 +276,7 @@
     {
       "id": "M365-2609-3TXB",
       "ts": "2026-09-13T08:41:09.196Z",
-      "status": "ny",
+      "status": "behandlad",
       "fname": "Jan",
       "lname": "Törnander",
       "pnr": "19590103-6615",
@@ -289,7 +289,12 @@
       "startDatum": "2026-10-04",
       "chef": "Johan Eriksson",
       "övrigt": "",
-      "gdpr": true
+      "gdpr": true,
+      "handläggning": {
+        "av": "Joachim Säfqvist",
+        "kommentar": "Har redan ett CC-konto men adderat till rätt team",
+        "ts": "2026-09-20T08:32:34.965Z"
+      }
     },
     {
       "id": "M365-2609-7W56",
