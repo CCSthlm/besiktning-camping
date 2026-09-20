@@ -278,7 +278,7 @@
     {
       "id": "M365-2609-66OJ",
       "ts": "2026-09-13T08:40:16.463Z",
-      "status": "ny",
+      "status": "behandlad",
       "fname": "Marzec",
       "lname": "Maciej",
       "pnr": "19800229-0792",
@@ -291,7 +291,17 @@
       "startDatum": "2026-10-04",
       "chef": "Johan Eriksson",
       "övrigt": "",
-      "gdpr": true
+      "gdpr": true,
+      "m365": {
+        "upn": "marzec.maciej@cc-camping.se",
+        "skapadTs": "2026-09-20T08:34:59.983Z",
+        "skapadAv": "Joachim Säfqvist"
+      },
+      "handläggning": {
+        "av": "Joachim Säfqvist",
+        "kommentar": "M365-konto skapat: marzec.maciej@cc-camping.se · Licens tilldelad · Grupper: Caravan Club of Sweden - Stockholmssektionen",
+        "ts": "2026-09-20T08:34:59.983Z"
+      }
     },
     {
       "id": "M365-2609-3TXB",
