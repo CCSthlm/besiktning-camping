@@ -3,6 +3,7 @@
     "8830": -220000
   },
   "kommentarer": {
+    "7010": "Beräknat på 5 Sommararvoden/25000:-\noch 1 vinterarvode/25000:-.",
     "7241": "Beräknat på 1 CA/25000:-\nSuperuser 5000:-/säsong"
   },
   "paramVarden": {
@@ -16,5 +17,5 @@
     "arvoden_belopp": 35000
   },
   "investeringar": [],
-  "autosparad": "2026-09-20T10:34:51.375Z"
+  "autosparad": "2026-09-20T10:36:11.170Z"
 }
