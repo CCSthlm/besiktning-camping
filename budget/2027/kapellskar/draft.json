@@ -1,23 +1,7 @@
 {
-  "kontoVarden": {
-    "8830": -220000
-  },
-  "kommentarer": {
-    "3010": "Här har jag räknat 38 helår x 16071,43 (utan moms, 18000:- med)",
-    "3014": "Räknat på 2439 nätter x 339,29 utan moms.\nVilket är 380.-med moms för medlemmar.",
-    "7010": "Beräknat på 6 SV x 25000:- och 3 VV x 25000;.",
-    "7241": "CA-25000/år\nSuperuser 5000/säsong"
-  },
-  "paramVarden": {
-    "helarsplatser_antal": 38,
-    "helarsplatser_pris": 16071.43,
-    "gastavgift_antal": 2439,
-    "gastavgift_pris": 339.29,
-    "loner_sommarvard": 6,
-    "loner_vintervard": 3,
-    "arvoden_antal": 1,
-    "arvoden_belopp": 35000
-  },
+  "kontoVarden": {},
+  "kommentarer": {},
+  "paramVarden": {},
   "investeringar": [],
-  "autosparad": "2026-09-18T09:09:15.187Z"
+  "autosparad": null
 }
