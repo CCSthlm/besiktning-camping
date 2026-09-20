@@ -1,24 +1,12 @@
 {
-  "kontoVarden": {
-    "8830": -220000
-  },
+  "kontoVarden": {},
   "kommentarer": {},
-  "paramVarden": {
-    "helarsplatser_antal": 84,
-    "helarsplatser_pris": 14062.5,
-    "gastavgift_pris": 357.14,
-    "gastavgift_antal": 1847,
-    "loner_vintervard": 1,
-    "loner_sommarvard": 5,
-    "arvoden_antal": 1,
-    "arvoden_belopp": 35000
-  },
+  "paramVarden": {},
   "investeringar": [],
-  "autosparad": "2026-09-19T10:04:27.214Z",
-  "typ": "budget",
-  "version": 4,
-  "versionKommentar": "ver 1X",
-  "skickadAv": "Cristina Sundberg",
-  "skickadTs": "2026-09-19T10:04:53.113Z",
-  "status": "inkickad"
+  "autosparad": null,
+  "_meta": {
+    "aterstalld": true,
+    "aterstalldAv": "Cristina Sundberg",
+    "aterstalldTs": "2026-09-20T10:18:30.792Z"
+  }
 }
