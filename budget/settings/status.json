@@ -29,9 +29,12 @@
       "öppadTs": "2026-09-15T18:32:40.182Z"
     },
     "mista": {
-      "status": "stängd",
-      "aterstalldAv": "Cristina Sundberg",
-      "aterstalldTs": "2026-09-20T10:18:43.183Z"
+      "status": "öppen",
+      "utfallAr": 2026,
+      "utfallPeriod": 8,
+      "referensBudgetAr": 2026,
+      "öppadAv": "Cristina Sundberg",
+      "öppadTs": "2026-09-20T10:36:53.374Z"
     },
     "kapellskar": {
       "status": "öppen",
