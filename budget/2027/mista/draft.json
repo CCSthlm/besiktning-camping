@@ -2,7 +2,9 @@
   "kontoVarden": {
     "8830": -220000
   },
-  "kommentarer": {},
+  "kommentarer": {
+    "7241": "Beräknat på 1 CA/25000:-\nSuperuser 5000:-/säsong"
+  },
   "paramVarden": {
     "helarsplatser_antal": 84,
     "helarsplatser_pris": 14062.5,
@@ -14,5 +16,5 @@
     "arvoden_belopp": 35000
   },
   "investeringar": [],
-  "autosparad": "2026-09-20T10:19:21.966Z"
+  "autosparad": "2026-09-20T10:34:51.375Z"
 }
