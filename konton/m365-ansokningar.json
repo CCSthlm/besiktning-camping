@@ -222,7 +222,7 @@
     {
       "id": "M365-2609-Y23Y",
       "ts": "2026-09-13T08:37:41.485Z",
-      "status": "ny",
+      "status": "behandlad",
       "fname": "Anders",
       "lname": "Ellström",
       "pnr": "19600203-0020",
@@ -235,7 +235,17 @@
       "startDatum": "2026-10-04",
       "chef": "",
       "övrigt": "",
-      "gdpr": true
+      "gdpr": true,
+      "m365": {
+        "upn": "anders.ellstrom@cc-camping.se",
+        "skapadTs": "2026-09-20T08:33:10.569Z",
+        "skapadAv": "Joachim Säfqvist"
+      },
+      "handläggning": {
+        "av": "Joachim Säfqvist",
+        "kommentar": "M365-konto skapat: anders.ellstrom@cc-camping.se · Licens tilldelad · Grupper: Caravan Club of Sweden - Stockholmssektionen",
+        "ts": "2026-09-20T08:33:10.569Z"
+      }
     },
     {
       "id": "M365-2609-ABC6",
