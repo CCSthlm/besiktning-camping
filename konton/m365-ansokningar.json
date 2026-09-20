@@ -194,7 +194,7 @@
     {
       "id": "M365-2609-1RU8",
       "ts": "2026-09-13T08:33:51.490Z",
-      "status": "ny",
+      "status": "behandlad",
       "fname": "Pernilla",
       "lname": "Kavenius",
       "pnr": "19690425-9261",
@@ -207,7 +207,17 @@
       "startDatum": "2026-09-01",
       "chef": "Madelene Eriksson",
       "övrigt": "",
-      "gdpr": true
+      "gdpr": true,
+      "m365": {
+        "upn": "pernilla.kavenius@cc-camping.se",
+        "skapadTs": "2026-09-20T07:28:28.950Z",
+        "skapadAv": "Joachim Säfqvist"
+      },
+      "handläggning": {
+        "av": "Joachim Säfqvist",
+        "kommentar": "M365-konto skapat: pernilla.kavenius@cc-camping.se · Licens tilldelad · Grupper: Caravan Club of Sweden - Stockholmssektionen",
+        "ts": "2026-09-20T07:28:28.950Z"
+      }
     },
     {
       "id": "M365-2609-Y23Y",
