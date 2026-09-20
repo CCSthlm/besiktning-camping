@@ -368,7 +368,7 @@
     {
       "id": "M365-2609-IYCC",
       "ts": "2026-09-19T09:27:13.313Z",
-      "status": "ny",
+      "status": "behandlad",
       "fname": "Erika",
       "lname": "Lindström",
       "pnr": "19700605-0749",
@@ -381,7 +381,17 @@
       "startDatum": "2027-04-01",
       "chef": "Hans Östman",
       "övrigt": "",
-      "gdpr": true
+      "gdpr": true,
+      "m365": {
+        "upn": "erika.lindstrom@cc-camping.se",
+        "skapadTs": "2026-09-20T08:09:38.742Z",
+        "skapadAv": "Joachim Säfqvist"
+      },
+      "handläggning": {
+        "av": "Joachim Säfqvist",
+        "kommentar": "M365-konto skapat: erika.lindstrom@cc-camping.se · Licens tilldelad · Grupper: Caravan Club of Sweden - Stockholmssektionen",
+        "ts": "2026-09-20T08:09:38.742Z"
+      }
     },
     {
       "id": "M365-2609-72BB",
