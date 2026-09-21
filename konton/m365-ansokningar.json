@@ -465,6 +465,24 @@
         "kommentar": "M365-konto skapat: ulrika.hagebo@cc-camping.se · Licens tilldelad · Grupper: Caravan Club of Sweden - Stockholmssektionen",
         "ts": "2026-09-20T08:15:24.233Z"
       }
+    },
+    {
+      "id": "M365-2609-6OI1",
+      "ts": "2026-09-21T08:02:02.934Z",
+      "status": "ny",
+      "fname": "Roger",
+      "lname": "Lindström",
+      "pnr": "19690801-7137",
+      "mobil": "0760498909",
+      "email": "rogerlindstrom@icloud.com",
+      "adress": "",
+      "anläggning": "CC Kapellskärs Camping",
+      "roll": "Campingvärd",
+      "ansForm": "Ideell",
+      "startDatum": "2027-04-01",
+      "chef": "",
+      "övrigt": "",
+      "gdpr": true
     }
   ]
 }
