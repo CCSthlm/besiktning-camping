@@ -6,8 +6,9 @@
   "paramVarden": {
     "arvoden_antal": 1,
     "arvoden_belopp": 25000,
-    "helarsplatser_antal": 117
+    "helarsplatser_antal": 117,
+    "helarsplatser_pris": 4910.71
   },
   "investeringar": [],
-  "autosparad": "2026-09-21T16:50:02.196Z"
+  "autosparad": "2026-09-21T16:50:08.198Z"
 }
