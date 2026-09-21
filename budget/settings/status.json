@@ -26,7 +26,15 @@
       "utfallPeriod": 8,
       "referensBudgetAr": 2026,
       "öppadAv": "Cristina Sundberg",
-      "öppadTs": "2026-09-15T18:32:40.182Z"
+      "öppadTs": "2026-09-15T18:32:40.182Z",
+      "versionStatus": {
+        "v1": {
+          "status": "återsänd",
+          "kommentar": "nya direktiv/CS.",
+          "av": "Cristina Sundberg",
+          "ts": "2026-09-21T16:42:44.561Z"
+        }
+      }
     },
     "mista": {
       "status": "öppen",
