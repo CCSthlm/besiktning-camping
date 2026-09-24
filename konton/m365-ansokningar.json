@@ -501,6 +501,24 @@
       "chef": "Maria Edstedt",
       "övrigt": "",
       "gdpr": true
+    },
+    {
+      "id": "M365-2609-33BI",
+      "ts": "2026-09-24T07:28:36.407Z",
+      "status": "ny",
+      "fname": "Veronica",
+      "lname": "Hjerpe Berglund",
+      "pnr": "19631104-0205",
+      "mobil": "0736873768",
+      "email": "veronicahjerpe@hotmail.com",
+      "adress": "Vitfåravägen 28 184 61 Åkersberga",
+      "anläggning": "CC Mista Camping",
+      "roll": "Restauranggrupp",
+      "ansForm": "Ideell",
+      "startDatum": "2026-09-26",
+      "chef": "Maria Edstedt",
+      "övrigt": "",
+      "gdpr": true
     }
   ]
 }
