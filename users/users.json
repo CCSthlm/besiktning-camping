@@ -1447,7 +1447,7 @@
           "address": "",
           "phone": "",
           "type": "anställd",
-          "active": true
+          "active": false
         },
         {
           "id": "msvoc3fsdfduw",
@@ -2262,6 +2262,15 @@
           "user": "Marie Olén",
           "action": "edit",
           "detail": "Uppdaterade: Evert Olen",
+          "oldVal": "",
+          "newVal": ""
+        },
+        {
+          "id": "mufxdmk8rbt5d",
+          "ts": "2026-09-24T19:28:55.928Z",
+          "user": "Marie Olén",
+          "action": "edit",
+          "detail": "Uppdaterade: Annica Pettersson",
           "oldVal": "",
           "newVal": ""
         }
