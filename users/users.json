@@ -1486,7 +1486,7 @@
           "pnr": "19760404-0563",
           "address": "Djuprännilen 313, 13767 Jordbro",
           "phone": "073-6006200",
-          "type": "ideell",
+          "type": "anställd",
           "active": true
         }
       ],
@@ -2244,6 +2244,15 @@
           "user": "Marie Olén",
           "action": "in",
           "detail": "Lade till: Marie Tirmén Olén",
+          "oldVal": "",
+          "newVal": ""
+        },
+        {
+          "id": "mufxb9q5rfrjs",
+          "ts": "2026-09-24T19:27:05.981Z",
+          "user": "Marie Olén",
+          "action": "edit",
+          "detail": "Uppdaterade: Marie Tirmén Olén",
           "oldVal": "",
           "newVal": ""
         }
