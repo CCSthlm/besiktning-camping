@@ -1327,7 +1327,7 @@
           "address": "Salsavägen 32a, 14943, Nynäshamn",
           "phone": "",
           "type": "anställd",
-          "active": true
+          "active": false
         },
         {
           "id": "msg5cqj0ty572",
@@ -2280,6 +2280,15 @@
           "user": "Marie Olén",
           "action": "edit",
           "detail": "Uppdaterade: Robyn Ståhlberg",
+          "oldVal": "",
+          "newVal": ""
+        },
+        {
+          "id": "mufxfhg418ywj",
+          "ts": "2026-09-24T19:30:22.612Z",
+          "user": "Marie Olén",
+          "action": "edit",
+          "detail": "Uppdaterade: Emilia Gustafsson",
           "oldVal": "",
           "newVal": ""
         }
