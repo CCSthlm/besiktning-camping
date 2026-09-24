@@ -1317,7 +1317,7 @@
           "address": "Bokstigen 3, 13734 Västerhaninge",
           "phone": "",
           "type": "anställd",
-          "active": true
+          "active": false
         },
         {
           "id": "msg5c0exwultx",
@@ -2271,6 +2271,15 @@
           "user": "Marie Olén",
           "action": "edit",
           "detail": "Uppdaterade: Annica Pettersson",
+          "oldVal": "",
+          "newVal": ""
+        },
+        {
+          "id": "mufxf4okc407p",
+          "ts": "2026-09-24T19:30:06.068Z",
+          "user": "Marie Olén",
+          "action": "edit",
+          "detail": "Uppdaterade: Robyn Ståhlberg",
           "oldVal": "",
           "newVal": ""
         }
