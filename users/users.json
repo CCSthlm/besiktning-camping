@@ -1478,6 +1478,16 @@
           "phone": "0703049453",
           "type": "anställd",
           "active": true
+        },
+        {
+          "id": "mufxaonef2ier",
+          "fname": "Marie",
+          "lname": "Tirmén Olén",
+          "pnr": "19760404-0563",
+          "address": "Djuprännilen 313, 13767 Jordbro",
+          "phone": "073-6006200",
+          "type": "ideell",
+          "active": true
         }
       ],
       "auditlog": [
@@ -2227,6 +2237,15 @@
           "detail": "Linda Wahlund stämplade ut 20:35",
           "oldVal": "",
           "newVal": "20:35"
+        },
+        {
+          "id": "mufxaonefzycw",
+          "ts": "2026-09-24T19:26:38.666Z",
+          "user": "Marie Olén",
+          "action": "in",
+          "detail": "Lade till: Marie Tirmén Olén",
+          "oldVal": "",
+          "newVal": ""
         }
       ]
     }
