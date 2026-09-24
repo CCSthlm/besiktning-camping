@@ -1474,7 +1474,7 @@
           "fname": "Evert",
           "lname": "Olen",
           "pnr": "196009060093",
-          "address": "Djuprennilen 313",
+          "address": "Djuprännilen 313",
           "phone": "0703049453",
           "type": "anställd",
           "active": true
@@ -2253,6 +2253,15 @@
           "user": "Marie Olén",
           "action": "edit",
           "detail": "Uppdaterade: Marie Tirmén Olén",
+          "oldVal": "",
+          "newVal": ""
+        },
+        {
+          "id": "mufxdcuoobuvb",
+          "ts": "2026-09-24T19:28:43.344Z",
+          "user": "Marie Olén",
+          "action": "edit",
+          "detail": "Uppdaterade: Evert Olen",
           "oldVal": "",
           "newVal": ""
         }
