@@ -347,6 +347,15 @@
           "ersattning": 340,
           "syfte": "Hämtning av skåp till musikanläggning på servering",
           "ts": "2026-09-25T12:45:52.077Z"
+        },
+        {
+          "datum": "2026-09-25",
+          "fordonstyp": "bil",
+          "stracka": "Östnora cc-camping - Gasolfyllarna jordbro",
+          "km": 36,
+          "ersattning": 90,
+          "syfte": "Påfyllning av gasol inför Oktoberfest",
+          "ts": "2026-09-25T12:47:37.127Z"
         }
       ],
       "status": "utkast",
