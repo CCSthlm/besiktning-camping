@@ -338,7 +338,17 @@
       "camping": "CC Östnora Camping",
       "period": "September",
       "syfte": "Hämtning av möbler för serveringen samt påfyllning av gasol inför oktoberfest",
-      "resor": [],
+      "resor": [
+        {
+          "datum": "2026-09-02",
+          "fordonstyp": "bil",
+          "stracka": "Östnora CC-camping - Skvadrongränd 12",
+          "km": 136,
+          "ersattning": 340,
+          "syfte": "Hämtning av skåp till musikanläggning på servering",
+          "ts": "2026-09-25T12:45:52.077Z"
+        }
+      ],
       "status": "utkast",
       "skapad": "2026-09-25T12:42:38.529Z",
       "skapadAv": "Evert Olén"
