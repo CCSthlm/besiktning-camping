@@ -329,6 +329,19 @@
       "statusKommentar": "OK //Massimo",
       "statusTs": "2026-09-06T09:25:42.453Z",
       "statusAv": "Massimo Johansson"
+    },
+    {
+      "id": "RR-1790340158529",
+      "userId": "umtd1861szfyb",
+      "namn": "Evert Olén",
+      "konto": "6184 272 288 632",
+      "camping": "CC Östnora Camping",
+      "period": "September",
+      "syfte": "Hämtning av möbler för serveringen samt påfyllning av gasol inför oktoberfest",
+      "resor": [],
+      "status": "utkast",
+      "skapad": "2026-09-25T12:42:38.529Z",
+      "skapadAv": "Evert Olén"
     }
   ]
 }
