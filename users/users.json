@@ -1296,6 +1296,20 @@
           "manualReason": "",
           "edited": false,
           "campingId": "c8"
+        },
+        {
+          "id": "muh1sqja2oe6n",
+          "name": "Bengt Forslund",
+          "pnr": "19620708-1198",
+          "date": "2026-09-25",
+          "timeIn": "16:20",
+          "timeOut": "",
+          "registeredBy": "Restaurang Östnora",
+          "registeredAt": "2026-09-25T14:20:25.558Z",
+          "manual": false,
+          "manualReason": "",
+          "edited": false,
+          "campingId": "c8"
         }
       ],
       "personal": [
@@ -2291,6 +2305,15 @@
           "detail": "Uppdaterade: Emilia Gustafsson",
           "oldVal": "",
           "newVal": ""
+        },
+        {
+          "id": "muh1sqjafd8jp",
+          "ts": "2026-09-25T14:20:25.558Z",
+          "user": "Restaurang Östnora",
+          "action": "in",
+          "detail": "Bengt Forslund stämplade in 16:20",
+          "oldVal": "",
+          "newVal": "16:20"
         }
       ]
     }
