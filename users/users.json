@@ -1331,7 +1331,7 @@
           "pnr": "19620708-1198",
           "date": "2026-09-26",
           "timeIn": "10:46",
-          "timeOut": "",
+          "timeOut": "21:09",
           "registeredBy": "Restaurang Östnora",
           "registeredAt": "2026-09-26T08:46:36.972Z",
           "manual": false,
@@ -2440,6 +2440,15 @@
           "user": "Restaurang Östnora",
           "action": "out",
           "detail": "Ingalill Nore stämplade ut 21:09",
+          "oldVal": "",
+          "newVal": "21:09"
+        },
+        {
+          "id": "muirkqtt4p4ok",
+          "ts": "2026-09-26T19:09:48.881Z",
+          "user": "Restaurang Östnora",
+          "action": "out",
+          "detail": "Bengt Forslund stämplade ut 21:09",
           "oldVal": "",
           "newVal": "21:09"
         }
