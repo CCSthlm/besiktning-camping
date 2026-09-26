@@ -1359,7 +1359,7 @@
           "pnr": "19481117-0200",
           "date": "2026-09-26",
           "timeIn": "21:09",
-          "timeOut": "",
+          "timeOut": "21:09",
           "registeredBy": "Restaurang Östnora",
           "registeredAt": "2026-09-26T19:09:41.353Z",
           "manual": false,
@@ -2431,6 +2431,15 @@
           "user": "Restaurang Östnora",
           "action": "in",
           "detail": "Ingalill Nore stämplade in 21:09",
+          "oldVal": "",
+          "newVal": "21:09"
+        },
+        {
+          "id": "muirkmot9d47y",
+          "ts": "2026-09-26T19:09:43.517Z",
+          "user": "Restaurang Östnora",
+          "action": "out",
+          "detail": "Ingalill Nore stämplade ut 21:09",
           "oldVal": "",
           "newVal": "21:09"
         }
