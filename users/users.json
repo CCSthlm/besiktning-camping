@@ -241,7 +241,7 @@
       "id": "umt7ob6ricizh",
       "name": "Malin Liljedahl",
       "email": "malin.liljedahl@cc-camping.se",
-      "pin": "2222",
+      "pin": "1557",
       "pnr": "",
       "adminRoles": [
         "nyckel-admin",
@@ -257,7 +257,14 @@
       "nyckelCamping": "c1",
       "budgetEnhet": "bo_camp",
       "created": "2026-08-24",
-      "elCamping": "bo_camp"
+      "elCamping": "bo_camp",
+      "projektCampingId": "",
+      "kontrollAnlaggningId": "",
+      "kontrollAnlaggningNamn": "",
+      "kontrollAnsvarigAnlaggningId": "",
+      "kontrollAnsvarigAnlaggningNamn": "",
+      "kontrollAdminAnlaggningId": "",
+      "kontrollAdminAnlaggningNamn": ""
     },
     {
       "id": "umtbvs4yvmvyd",
