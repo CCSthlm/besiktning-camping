@@ -487,6 +487,41 @@
           "status": "ny"
         }
       ]
+    },
+    {
+      "id": "AV-2609-WK1W",
+      "ts": "2026-09-27T09:22:50.468Z",
+      "kategori": "Alkohol / servering",
+      "kategoriIndex": 5,
+      "risk": "Medel",
+      "riskNivå": 2,
+      "anläggning": "CC Björkö Örns Camping",
+      "plats": "Restaurang / kök",
+      "datum": "2026-09-26",
+      "tid": "22:45",
+      "rapportör": "Receptionen Björkö Örn",
+      "rapportörEmail": "info.bjorko@cc-camping.se",
+      "beskrivning": "Incidentrapport\n\nI samband med kvällens spelning uppstod en incident mellan två grupper av säsongsgäster och deras vänner.\n\nDet fanns sedan tidigare en spänning mellan grupperna med anledning av privata relationer. En av våra säsongsgäster har inlett en relation med en annan säsongsgästs före detta make. Tidigare under kvällen hade en väninna till den ena kvinnan uttryckt att hon var på plats som hennes ”bodyguard”.\n\nHändelseförlopp\n\nMot slutet av spelningen rörde sig den ena kvinnan tillsammans med sina väninnor mot området där hennes före detta make dansade tillsammans med sin nuvarande flickvän och hennes mamma.\n\nI samband med detta uppstod en spänd situation mellan grupperna. Det förekom blickar och kroppskontakt i form av mindre knuffar/stötar med kropp och höfter.\n\nSituationen eskalerade när kvinnans väninna, som tidigare benämnt sig själv som ”bodyguard”, gick fram mot den andra gruppen på ett sätt som uppfattades som konfrontativt. Campingvärden Malin bedömde att det fanns risk för ytterligare konflikt och gick därför emellan. Väninnan fördes därefter ut från lokalen/området.\n\nUtanför uppstod sedan ytterligare en situation mellan kvinnan och hennes före detta make. Ordförande Massimo ingrep och uppmanade mannen att lämna området och gå utanför grinden. Mannen informerades även om att han inte var välkommen tillbaka till campingen.\n\nMannen uppgav därefter att hans före detta hustru hade gett honom en hård armbåge i bröstet. Han kontaktade polisen, som kom till campingen.\n\nPolisen höll samtal/förhör med mannen och hans sällskap samt med ordföranden och campingvärden angående det inträffade.\n\nNär polisen senare skulle lämna campingen hördes skrik och bråk bakom servicehuset. Det visade sig då att två kvinnor, mamman och styvmamman, hade hamnat i en fysisk konflikt. Polis, campingvärd och ordförande tog sig omedelbart till platsen och ingrep.\n\nPolisen höll därefter ytterligare samtal/förhör med de inblandade. De berörda personerna uppmanades av polisen att gå tillbaka till sina respektive husvagnar och stanna där. Polisen lämnade därefter campingen.\n\nEfter händelsen\n\nCampingvärden och ordföranden genomförde senare en sista kontrollrunda på campingområdet för att säkerställa att situationen hade lugnat ner sig.\n\nVid kontrollen befann sig de berörda personerna i sina respektive husvagnar och inga ytterligare incidenter noterades.\n\nHändelsen bedömdes därmed som avslutad för kvällen.",
+      "omedelbar": "särade på dom berörda",
+      "ansvarig": "Malin Liljedahl",
+      "deadline": "",
+      "kommentar": "",
+      "status": "ny",
+      "eskalerad": false,
+      "bilder": [],
+      "dynamicFields": {
+        "d-alktyp": "",
+        "d-polis-alk": false,
+        "d-alk-komm": ""
+      },
+      "historik": [
+        {
+          "ts": "2026-09-27T09:22:50.468Z",
+          "av": "Receptionen Björkö Örn",
+          "händelse": "Skapades",
+          "status": "ny"
+        }
+      ]
     }
   ],
   "inställningar": {
