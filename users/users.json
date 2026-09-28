@@ -446,6 +446,33 @@
       "kontrollAdminAnlaggningId": "",
       "kontrollAdminAnlaggningNamn": "",
       "created": "2026-09-28"
+    },
+    {
+      "id": "umulhxlchbsyb",
+      "name": "Anders Berglund",
+      "email": "anders.berglund@cc-camping.se",
+      "pin": "9999",
+      "pnr": "",
+      "adminRoles": [
+        "budget-camping"
+      ],
+      "role": "Användare",
+      "active": true,
+      "apps": [],
+      "plCampingId": "",
+      "godkannarcamping": "",
+      "sbaCamping": "",
+      "nyckelCamping": "",
+      "budgetEnhet": "orstig",
+      "elCamping": "",
+      "projektCampingId": "",
+      "kontrollAnlaggningId": "",
+      "kontrollAnlaggningNamn": "",
+      "kontrollAnsvarigAnlaggningId": "",
+      "kontrollAnsvarigAnlaggningNamn": "",
+      "kontrollAdminAnlaggningId": "",
+      "kontrollAdminAnlaggningNamn": "",
+      "created": "2026-09-28"
     }
   ],
   "campings": [
