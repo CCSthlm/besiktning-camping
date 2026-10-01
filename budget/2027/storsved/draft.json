@@ -71,7 +71,7 @@
   },
   "paramVarden": {
     "helarsplatser_antal": 83,
-    "helarsplatser_pris": 15089.29,
+    "helarsplatser_pris": 15535.71,
     "gastavgift_antal": 803,
     "gastavgift_pris": 339.29,
     "loner_sommarvard": 3,
@@ -80,5 +80,5 @@
     "arvoden_belopp": 35000
   },
   "investeringar": [],
-  "autosparad": "2026-10-01T20:18:14.729Z"
+  "autosparad": "2026-10-01T20:18:28.927Z"
 }
