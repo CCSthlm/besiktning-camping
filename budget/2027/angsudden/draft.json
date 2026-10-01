@@ -5,8 +5,10 @@
   "kommentarer": {},
   "paramVarden": {
     "helarsplatser_antal": 117,
-    "helarsplatser_pris": 4910.71
+    "helarsplatser_pris": 4910.71,
+    "arvoden_antal": 1,
+    "arvoden_belopp": 25000
   },
   "investeringar": [],
-  "autosparad": "2026-10-01T12:50:23.554Z"
+  "autosparad": "2026-10-01T12:50:48.633Z"
 }
