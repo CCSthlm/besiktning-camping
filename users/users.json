@@ -1487,6 +1487,20 @@
           "manualReason": "",
           "edited": false,
           "campingId": "c8"
+        },
+        {
+          "id": "mur10c318esbb",
+          "name": "Bo Wahlund",
+          "pnr": "19580412-0250",
+          "date": "2026-10-02",
+          "timeIn": "15:56",
+          "timeOut": "",
+          "registeredBy": "Restaurang Östnora",
+          "registeredAt": "2026-10-02T13:56:02.221Z",
+          "manual": false,
+          "manualReason": "",
+          "edited": false,
+          "campingId": "c8"
         }
       ],
       "personal": [
@@ -2590,6 +2604,15 @@
           "detail": "Marie Tirmén Olén stämplade in 15:55",
           "oldVal": "",
           "newVal": "15:55"
+        },
+        {
+          "id": "mur10c31mga79",
+          "ts": "2026-10-02T13:56:02.221Z",
+          "user": "Restaurang Östnora",
+          "action": "in",
+          "detail": "Bo Wahlund stämplade in 15:56",
+          "oldVal": "",
+          "newVal": "15:56"
         }
       ]
     }
