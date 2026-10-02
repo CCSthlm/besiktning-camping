@@ -1459,6 +1459,20 @@
           "manualReason": "",
           "edited": false,
           "campingId": "c8"
+        },
+        {
+          "id": "mur1053868r70",
+          "name": "Linda Wahlund",
+          "pnr": "19750729-0588",
+          "date": "2026-10-02",
+          "timeIn": "15:55",
+          "timeOut": "",
+          "registeredBy": "Restaurang Östnora",
+          "registeredAt": "2026-10-02T13:55:53.156Z",
+          "manual": false,
+          "manualReason": "",
+          "edited": false,
+          "campingId": "c8"
         }
       ],
       "personal": [
@@ -2544,6 +2558,15 @@
           "detail": "Bengt Forslund stämplade ut 21:09",
           "oldVal": "",
           "newVal": "21:09"
+        },
+        {
+          "id": "mur105386r0nz",
+          "ts": "2026-10-02T13:55:53.156Z",
+          "user": "Restaurang Östnora",
+          "action": "in",
+          "detail": "Linda Wahlund stämplade in 15:55",
+          "oldVal": "",
+          "newVal": "15:55"
         }
       ]
     }
