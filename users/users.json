@@ -1515,6 +1515,20 @@
           "manualReason": "",
           "edited": false,
           "campingId": "c8"
+        },
+        {
+          "id": "mur2cnkcg11cm",
+          "name": "Sussi Törnander",
+          "pnr": "19631009-6646",
+          "date": "2026-10-02",
+          "timeIn": "16:33",
+          "timeOut": "",
+          "registeredBy": "Restaurang Östnora",
+          "registeredAt": "2026-10-02T14:33:36.588Z",
+          "manual": false,
+          "manualReason": "",
+          "edited": false,
+          "campingId": "c8"
         }
       ],
       "personal": [
@@ -2655,6 +2669,15 @@
           "detail": "Peo Thörnestad stämplade in 15:59",
           "oldVal": "",
           "newVal": "15:59"
+        },
+        {
+          "id": "mur2cnkch68d0",
+          "ts": "2026-10-02T14:33:36.588Z",
+          "user": "Restaurang Östnora",
+          "action": "in",
+          "detail": "Sussi Törnander stämplade in 16:33",
+          "oldVal": "",
+          "newVal": "16:33"
         }
       ]
     }
