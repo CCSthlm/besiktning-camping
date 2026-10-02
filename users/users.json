@@ -1501,6 +1501,20 @@
           "manualReason": "",
           "edited": false,
           "campingId": "c8"
+        },
+        {
+          "id": "mur14wf95r2oe",
+          "name": "Peo Thörnestad",
+          "pnr": "19580919-1272",
+          "date": "2026-10-02",
+          "timeIn": "15:59",
+          "timeOut": "",
+          "registeredBy": "Restaurang Östnora",
+          "registeredAt": "2026-10-02T13:59:35.205Z",
+          "manual": false,
+          "manualReason": "",
+          "edited": false,
+          "campingId": "c8"
         }
       ],
       "personal": [
@@ -2632,6 +2646,15 @@
           "detail": "Lade till: Peo Thörnestad",
           "oldVal": "",
           "newVal": ""
+        },
+        {
+          "id": "mur14wf90dc2u",
+          "ts": "2026-10-02T13:59:35.205Z",
+          "user": "Restaurang Östnora",
+          "action": "in",
+          "detail": "Peo Thörnestad stämplade in 15:59",
+          "oldVal": "",
+          "newVal": "15:59"
         }
       ]
     }
