@@ -1508,7 +1508,7 @@
           "pnr": "19580919-1272",
           "date": "2026-10-02",
           "timeIn": "15:59",
-          "timeOut": "",
+          "timeOut": "20:16",
           "registeredBy": "Restaurang Östnora",
           "registeredAt": "2026-10-02T13:59:35.205Z",
           "manual": false,
@@ -2678,6 +2678,15 @@
           "detail": "Sussi Törnander stämplade in 16:33",
           "oldVal": "",
           "newVal": "16:33"
+        },
+        {
+          "id": "muraarj51q0q8",
+          "ts": "2026-10-02T18:16:05.345Z",
+          "user": "Restaurang Östnora",
+          "action": "out",
+          "detail": "Peo Thörnestad stämplade ut 20:16",
+          "oldVal": "",
+          "newVal": "20:16"
         }
       ]
     }
