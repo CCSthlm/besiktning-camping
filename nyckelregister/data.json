@@ -1743,6 +1743,17 @@
       "camping": "c3",
       "typ": "Gäst",
       "aktiv": true
+    },
+    {
+      "id": "mur0d13lc2q46",
+      "fname": "Anna",
+      "lname": "Sernler",
+      "email": "",
+      "tel": "",
+      "camping": "c3",
+      "typ": "Gäst",
+      "ccnr": "132786",
+      "aktiv": true
     }
   ],
   "händelser": [
