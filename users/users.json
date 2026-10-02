@@ -1693,6 +1693,16 @@
           "phone": "073-6006200",
           "type": "anställd",
           "active": true
+        },
+        {
+          "id": "mur146y4i4kdg",
+          "fname": "Peo",
+          "lname": "Thörnestad",
+          "pnr": "19580919-1272",
+          "address": "Lagbodavägen 124 76112, Bergshamra",
+          "phone": "0720778277",
+          "type": "anställd",
+          "active": true
         }
       ],
       "auditlog": [
@@ -2613,6 +2623,15 @@
           "detail": "Bo Wahlund stämplade in 15:56",
           "oldVal": "",
           "newVal": "15:56"
+        },
+        {
+          "id": "mur146y43f3v1",
+          "ts": "2026-10-02T13:59:02.188Z",
+          "user": "Marie Olén",
+          "action": "in",
+          "detail": "Lade till: Peo Thörnestad",
+          "oldVal": "",
+          "newVal": ""
         }
       ]
     }
