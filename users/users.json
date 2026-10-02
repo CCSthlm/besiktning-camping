@@ -473,6 +473,37 @@
       "kontrollAdminAnlaggningId": "",
       "kontrollAdminAnlaggningNamn": "",
       "created": "2026-09-28"
+    },
+    {
+      "id": "umuqo5aqxoc2g",
+      "name": "Madelene Eriksson",
+      "email": "madelene.eriksson@cc-camping.se",
+      "pin": "0505",
+      "pnr": "",
+      "adminRoles": [
+        "nyckel-admin",
+        "projekt-camping",
+        "budget-camping"
+      ],
+      "role": "Användare",
+      "active": true,
+      "apps": [
+        "personalliggare"
+      ],
+      "plCampingId": "c2",
+      "godkannarcamping": "",
+      "sbaCamping": "",
+      "nyckelCamping": "c2",
+      "budgetEnhet": "ostnora",
+      "elCamping": "",
+      "projektCampingId": "ostnora",
+      "kontrollAnlaggningId": "",
+      "kontrollAnlaggningNamn": "",
+      "kontrollAnsvarigAnlaggningId": "",
+      "kontrollAnsvarigAnlaggningNamn": "",
+      "kontrollAdminAnlaggningId": "",
+      "kontrollAdminAnlaggningNamn": "",
+      "created": "2026-10-02"
     }
   ],
   "campings": [
