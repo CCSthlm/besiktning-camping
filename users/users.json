@@ -482,6 +482,7 @@
       "pnr": "",
       "adminRoles": [
         "nyckel-admin",
+        "swish-admin",
         "projekt-camping",
         "budget-camping"
       ],
