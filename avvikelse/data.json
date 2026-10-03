@@ -230,7 +230,7 @@
       "ansvarig": "CV",
       "deadline": "2026-07-31",
       "kommentar": "",
-      "status": "pågående",
+      "status": "stängd",
       "eskalerad": false,
       "bilder": [
         {
@@ -252,6 +252,13 @@
           "händelse": "Status: Ny → Pågående",
           "kommentar": "",
           "status": "pågående"
+        },
+        {
+          "ts": "2026-10-03T11:27:37.955Z",
+          "av": "Massimo Johansson",
+          "händelse": "Status: Pågående → Stängd",
+          "kommentar": "",
+          "status": "stängd"
         }
       ]
     },
