@@ -1,6 +1,190 @@
 {
   "ärenden": [
     {
+      "id": "AV-2609-WK1W",
+      "ts": "2026-09-27T09:22:50.468Z",
+      "kategori": "Alkohol / servering",
+      "kategoriIndex": 5,
+      "risk": "Medel",
+      "riskNivå": 2,
+      "anläggning": "CC Björkö Örns Camping",
+      "plats": "Restaurang / kök",
+      "datum": "2026-09-26",
+      "tid": "22:45",
+      "rapportör": "Receptionen Björkö Örn",
+      "rapportörEmail": "info.bjorko@cc-camping.se",
+      "beskrivning": "Incidentrapport\n\nI samband med kvällens spelning uppstod en incident mellan två grupper av säsongsgäster och deras vänner.\n\nDet fanns sedan tidigare en spänning mellan grupperna med anledning av privata relationer. En av våra säsongsgäster har inlett en relation med en annan säsongsgästs före detta make. Tidigare under kvällen hade en väninna till den ena kvinnan uttryckt att hon var på plats som hennes ”bodyguard”.\n\nHändelseförlopp\n\nMot slutet av spelningen rörde sig den ena kvinnan tillsammans med sina väninnor mot området där hennes före detta make dansade tillsammans med sin nuvarande flickvän och hennes mamma.\n\nI samband med detta uppstod en spänd situation mellan grupperna. Det förekom blickar och kroppskontakt i form av mindre knuffar/stötar med kropp och höfter.\n\nSituationen eskalerade när kvinnans väninna, som tidigare benämnt sig själv som ”bodyguard”, gick fram mot den andra gruppen på ett sätt som uppfattades som konfrontativt. Campingvärden Malin bedömde att det fanns risk för ytterligare konflikt och gick därför emellan. Väninnan fördes därefter ut från lokalen/området.\n\nUtanför uppstod sedan ytterligare en situation mellan kvinnan och hennes före detta make. Ordförande Massimo ingrep och uppmanade mannen att lämna området och gå utanför grinden. Mannen informerades även om att han inte var välkommen tillbaka till campingen.\n\nMannen uppgav därefter att hans före detta hustru hade gett honom en hård armbåge i bröstet. Han kontaktade polisen, som kom till campingen.\n\nPolisen höll samtal/förhör med mannen och hans sällskap samt med ordföranden och campingvärden angående det inträffade.\n\nNär polisen senare skulle lämna campingen hördes skrik och bråk bakom servicehuset. Det visade sig då att två kvinnor, mamman och styvmamman, hade hamnat i en fysisk konflikt. Polis, campingvärd och ordförande tog sig omedelbart till platsen och ingrep.\n\nPolisen höll därefter ytterligare samtal/förhör med de inblandade. De berörda personerna uppmanades av polisen att gå tillbaka till sina respektive husvagnar och stanna där. Polisen lämnade därefter campingen.\n\nEfter händelsen\n\nCampingvärden och ordföranden genomförde senare en sista kontrollrunda på campingområdet för att säkerställa att situationen hade lugnat ner sig.\n\nVid kontrollen befann sig de berörda personerna i sina respektive husvagnar och inga ytterligare incidenter noterades.\n\nHändelsen bedömdes därmed som avslutad för kvällen.",
+      "omedelbar": "särade på dom berörda",
+      "ansvarig": "Malin Liljedahl",
+      "deadline": "2026-10-03",
+      "kommentar": "Sektionen ser två delar. Får inte ha så mycket folk på innomhus fest. Det måste finnas vakter på plats samt detta är inte den typ av restaurang som vi skall ha inom sektionen. Folk såg detta  som en nattklubb.\n\nTillsägelse och sitta ner med restaurangansvarig. Aldrig mer att detta händer.",
+      "status": "pågående",
+      "eskalerad": false,
+      "bilder": [],
+      "dynamicFields": {
+        "d-alktyp": "",
+        "d-polis-alk": false,
+        "d-alk-komm": ""
+      },
+      "historik": [
+        {
+          "ts": "2026-09-27T09:22:50.468Z",
+          "av": "Receptionen Björkö Örn",
+          "händelse": "Skapades",
+          "status": "ny"
+        },
+        {
+          "ts": "2026-10-03T11:01:30.505Z",
+          "av": "Massimo Johansson",
+          "händelse": "Status: Ny → Pågående",
+          "kommentar": "Sektionen ser två delar. Får inte ha så mycket folk på innomhus fest. Det måste finnas vakter på plats samt detta är inte den typ av restaurang som vi skall ha inom sektionen. Folk såg detta  som en nattklubb.\n\nTillsägelse och sitta ner med restaurangansvarig. Aldrig mer att detta händer.",
+          "status": "pågående"
+        }
+      ]
+    },
+    {
+      "id": "AV-2609-DF4P",
+      "ts": "2026-09-13T10:50:54.703Z",
+      "kategori": "Sjukdomsfall",
+      "kategoriIndex": 1,
+      "risk": "Låg",
+      "riskNivå": 1,
+      "anläggning": "CC Björkö Örns Camping",
+      "plats": "Campingtomt",
+      "datum": "2026-09-10",
+      "tid": "12:00",
+      "rapportör": "Receptionen Björkö Örn",
+      "rapportörEmail": "info.bjorko@cc-camping.se",
+      "beskrivning": "Gästen promenerade på campingen (vid en stig bredvid stuga 9). Då råkade gästen trampa på en träbit med en smal spik. Spiken gick rakt igenom skon och in i foten. Gästen drog ut spiken, men nästa morgon hade foten svullnat rejält och gjorde ont. Gästen åkte in till Norrtälje sjukhus och blev skickad direkt till akuten. Vid röntgen upptäcktes det att spiken gått av och att det satt kvar en nästan 1 cm lång bit. Han fick penicillin och ska tillbaka på måndag (14/9) för operation.  ",
+      "omedelbar": "Träbiten kastades.",
+      "ansvarig": "Carolina Eek",
+      "deadline": "2026-09-13",
+      "kommentar": "",
+      "status": "ny",
+      "eskalerad": false,
+      "bilder": [],
+      "dynamicFields": {
+        "d-typ": "Skada",
+        "d-person": "Gäst",
+        "d-foerstahjälp": false,
+        "d-ambulans": false,
+        "d-polis": false,
+        "d-anhörig": false,
+        "d-vittnen": "",
+        "d-ansvar": "En träbit med en smal spik låg på marken vid en gångstig."
+      },
+      "historik": [
+        {
+          "ts": "2026-09-13T10:50:54.703Z",
+          "av": "Receptionen Björkö Örn",
+          "händelse": "Skapades",
+          "status": "ny"
+        }
+      ]
+    },
+    {
+      "id": "AV-2608-XSHQ",
+      "ts": "2026-08-09T08:12:50.378Z",
+      "kategori": "Driftavvikelse",
+      "kategoriIndex": 0,
+      "risk": "Medel",
+      "riskNivå": 2,
+      "anläggning": "CC Björkö Örns Camping",
+      "plats": "Campingtomt",
+      "datum": "2026-08-08",
+      "tid": "21:56",
+      "rapportör": "Receptionen Björkö Örn",
+      "rapportörEmail": "info.bjorko@cc-camping.se",
+      "beskrivning": "Fick samtal från plats 59 att det var bråk på gästplats 204, campingvärdarna Liljedahl går direkt till platsen och på träffar 2 män som tjafsar. Båda är kraftigt berusade så vi ber båda att gå in i sina vagnar och meddelar att om detta inte görs kommer vi tillkalla polis. Båda hörsammar vad som sagt och går in, vi kontrollerar båda platserna med jämna mellanrum och allt är lugnt. På morgonen kommer den ena mannen och hans kvinna upp till receptionen och undrar va som hänt och varför jag skickat in honom i husvagnen, och han vill även ta bord det extra dygn han skulle stannat. Han pratade om att han suttit på kåken 1,5 år och att tjejen jobbat på kriminalvården. jag sa bara att jag inte har något intresse i varför dom tjafsat eller vad dom gjort eller jobbat med. ",
+      "omedelbar": "skickade in dom i sina vagnar",
+      "ansvarig": "ingen vidare åtgärd behöver tas",
+      "deadline": "2026-08-09",
+      "kommentar": "",
+      "status": "ny",
+      "eskalerad": false,
+      "bilder": [],
+      "dynamicFields": {},
+      "historik": [
+        {
+          "ts": "2026-08-09T08:12:50.379Z",
+          "av": "Receptionen Björkö Örn",
+          "händelse": "Skapades",
+          "status": "ny"
+        }
+      ]
+    },
+    {
+      "id": "AV-2608-LPQF",
+      "ts": "2026-08-02T10:53:10.273Z",
+      "kategori": "Säkerhet / ordning",
+      "kategoriIndex": 6,
+      "risk": "Låg",
+      "riskNivå": 1,
+      "anläggning": "CC Östnora Camping",
+      "plats": "Campingtomt",
+      "datum": "2026-08-01",
+      "tid": "02:30",
+      "rapportör": "Reception Östnora",
+      "rapportörEmail": "reception.ostnora@cc-camping.se",
+      "beskrivning": "En tältgäst från Nederländerna ringer när hon har lämnat campingen och säger att någon har stulit en hammare och ett paket cigaretter. Hon har en tältplats med el och tältar nära stuga 2. Vi uppmärksammar att de som bor i stuga 2 beter sig underligt men tror inte de är inblandade. Sedan ringer gästen en gång till och säger att hon även blivit av med en väska med kläder och presenter och handdukar. Senare samma dag kommer det en tältgäst till och säger att han blivit av med två kikare. Denna gäst har också tältat på plats med el. Även denna gäst är från Nederländerna. Ytterligare en tid senare återkommer den senare gästen och säger att han blivit av med 40 Euro och ett par Raybanglasögon. Han vill boka tid hos polisen men vi ger honom numret till 114 14 så han kan ringa direkt. Det handlar alltså om två tältare från Nederländerna som stått på plats med el. Båda nämner att sakerna tagits från deras bilar. Den första gästen jag nämner säger att bilen har varit olåst och den andra gästen vet inte om den varit låst eller inte.",
+      "omedelbar": "Sagt till gästerna att de kan ringa 114 14 för polisanmälan.",
+      "ansvarig": "Campingvärdar Johan och Anna",
+      "deadline": "",
+      "kommentar": "",
+      "status": "ny",
+      "eskalerad": false,
+      "bilder": [],
+      "dynamicFields": {},
+      "historik": [
+        {
+          "ts": "2026-08-02T10:53:10.273Z",
+          "av": "Reception Östnora",
+          "händelse": "Skapades",
+          "status": "ny"
+        }
+      ]
+    },
+    {
+      "id": "AV-2608-EW0H",
+      "ts": "2026-08-02T10:17:39.599Z",
+      "kategori": "Sjukdomsfall",
+      "kategoriIndex": 1,
+      "risk": "Hög",
+      "riskNivå": 3,
+      "anläggning": "CC Östnora Camping",
+      "plats": "Utomhusområde",
+      "datum": "2026-07-30",
+      "tid": "14:10",
+      "rapportör": "Reception Östnora",
+      "rapportörEmail": "reception.ostnora@cc-camping.se",
+      "beskrivning": "En gäst snubblar utanför servicehuset på gräsmattan. Han slår i huvudet och han bröt lårbenet ",
+      "omedelbar": "Vi säkerställde att det inte var något hål/skada i marken som personen snubblade på",
+      "ansvarig": "Campingvärdar Johan och Anna",
+      "deadline": "",
+      "kommentar": "Det behöves ingen åtgärd, Personen kom säkert till sjukhus ",
+      "status": "ny",
+      "eskalerad": true,
+      "bilder": [],
+      "dynamicFields": {
+        "d-typ": "Fallolycka",
+        "d-person": "Gäst",
+        "d-foerstahjälp": true,
+        "d-ambulans": true,
+        "d-polis": false,
+        "d-anhörig": true,
+        "d-vittnen": "Kompisar med säsongare på plats 15 Polsäter",
+        "d-ansvar": "nej"
+      },
+      "historik": [
+        {
+          "ts": "2026-08-02T10:17:39.600Z",
+          "av": "Reception Östnora",
+          "händelse": "Skapades",
+          "status": "ny"
+        }
+      ]
+    },
+    {
       "id": "AV-2607-6UK3",
       "ts": "2026-07-17T07:12:58.472Z",
       "kategori": "Driftavvikelse",
@@ -343,183 +527,6 @@
           "händelse": "Status: Pågående → Stängd",
           "kommentar": "",
           "status": "stängd"
-        }
-      ]
-    },
-    {
-      "id": "AV-2608-EW0H",
-      "ts": "2026-08-02T10:17:39.599Z",
-      "kategori": "Sjukdomsfall",
-      "kategoriIndex": 1,
-      "risk": "Hög",
-      "riskNivå": 3,
-      "anläggning": "CC Östnora Camping",
-      "plats": "Utomhusområde",
-      "datum": "2026-07-30",
-      "tid": "14:10",
-      "rapportör": "Reception Östnora",
-      "rapportörEmail": "reception.ostnora@cc-camping.se",
-      "beskrivning": "En gäst snubblar utanför servicehuset på gräsmattan. Han slår i huvudet och han bröt lårbenet ",
-      "omedelbar": "Vi säkerställde att det inte var något hål/skada i marken som personen snubblade på",
-      "ansvarig": "Campingvärdar Johan och Anna",
-      "deadline": "",
-      "kommentar": "Det behöves ingen åtgärd, Personen kom säkert till sjukhus ",
-      "status": "ny",
-      "eskalerad": true,
-      "bilder": [],
-      "dynamicFields": {
-        "d-typ": "Fallolycka",
-        "d-person": "Gäst",
-        "d-foerstahjälp": true,
-        "d-ambulans": true,
-        "d-polis": false,
-        "d-anhörig": true,
-        "d-vittnen": "Kompisar med säsongare på plats 15 Polsäter",
-        "d-ansvar": "nej"
-      },
-      "historik": [
-        {
-          "ts": "2026-08-02T10:17:39.600Z",
-          "av": "Reception Östnora",
-          "händelse": "Skapades",
-          "status": "ny"
-        }
-      ]
-    },
-    {
-      "id": "AV-2608-LPQF",
-      "ts": "2026-08-02T10:53:10.273Z",
-      "kategori": "Säkerhet / ordning",
-      "kategoriIndex": 6,
-      "risk": "Låg",
-      "riskNivå": 1,
-      "anläggning": "CC Östnora Camping",
-      "plats": "Campingtomt",
-      "datum": "2026-08-01",
-      "tid": "02:30",
-      "rapportör": "Reception Östnora",
-      "rapportörEmail": "reception.ostnora@cc-camping.se",
-      "beskrivning": "En tältgäst från Nederländerna ringer när hon har lämnat campingen och säger att någon har stulit en hammare och ett paket cigaretter. Hon har en tältplats med el och tältar nära stuga 2. Vi uppmärksammar att de som bor i stuga 2 beter sig underligt men tror inte de är inblandade. Sedan ringer gästen en gång till och säger att hon även blivit av med en väska med kläder och presenter och handdukar. Senare samma dag kommer det en tältgäst till och säger att han blivit av med två kikare. Denna gäst har också tältat på plats med el. Även denna gäst är från Nederländerna. Ytterligare en tid senare återkommer den senare gästen och säger att han blivit av med 40 Euro och ett par Raybanglasögon. Han vill boka tid hos polisen men vi ger honom numret till 114 14 så han kan ringa direkt. Det handlar alltså om två tältare från Nederländerna som stått på plats med el. Båda nämner att sakerna tagits från deras bilar. Den första gästen jag nämner säger att bilen har varit olåst och den andra gästen vet inte om den varit låst eller inte.",
-      "omedelbar": "Sagt till gästerna att de kan ringa 114 14 för polisanmälan.",
-      "ansvarig": "Campingvärdar Johan och Anna",
-      "deadline": "",
-      "kommentar": "",
-      "status": "ny",
-      "eskalerad": false,
-      "bilder": [],
-      "dynamicFields": {},
-      "historik": [
-        {
-          "ts": "2026-08-02T10:53:10.273Z",
-          "av": "Reception Östnora",
-          "händelse": "Skapades",
-          "status": "ny"
-        }
-      ]
-    },
-    {
-      "id": "AV-2608-XSHQ",
-      "ts": "2026-08-09T08:12:50.378Z",
-      "kategori": "Driftavvikelse",
-      "kategoriIndex": 0,
-      "risk": "Medel",
-      "riskNivå": 2,
-      "anläggning": "CC Björkö Örns Camping",
-      "plats": "Campingtomt",
-      "datum": "2026-08-08",
-      "tid": "21:56",
-      "rapportör": "Receptionen Björkö Örn",
-      "rapportörEmail": "info.bjorko@cc-camping.se",
-      "beskrivning": "Fick samtal från plats 59 att det var bråk på gästplats 204, campingvärdarna Liljedahl går direkt till platsen och på träffar 2 män som tjafsar. Båda är kraftigt berusade så vi ber båda att gå in i sina vagnar och meddelar att om detta inte görs kommer vi tillkalla polis. Båda hörsammar vad som sagt och går in, vi kontrollerar båda platserna med jämna mellanrum och allt är lugnt. På morgonen kommer den ena mannen och hans kvinna upp till receptionen och undrar va som hänt och varför jag skickat in honom i husvagnen, och han vill även ta bord det extra dygn han skulle stannat. Han pratade om att han suttit på kåken 1,5 år och att tjejen jobbat på kriminalvården. jag sa bara att jag inte har något intresse i varför dom tjafsat eller vad dom gjort eller jobbat med. ",
-      "omedelbar": "skickade in dom i sina vagnar",
-      "ansvarig": "ingen vidare åtgärd behöver tas",
-      "deadline": "2026-08-09",
-      "kommentar": "",
-      "status": "ny",
-      "eskalerad": false,
-      "bilder": [],
-      "dynamicFields": {},
-      "historik": [
-        {
-          "ts": "2026-08-09T08:12:50.379Z",
-          "av": "Receptionen Björkö Örn",
-          "händelse": "Skapades",
-          "status": "ny"
-        }
-      ]
-    },
-    {
-      "id": "AV-2609-DF4P",
-      "ts": "2026-09-13T10:50:54.703Z",
-      "kategori": "Sjukdomsfall",
-      "kategoriIndex": 1,
-      "risk": "Låg",
-      "riskNivå": 1,
-      "anläggning": "CC Björkö Örns Camping",
-      "plats": "Campingtomt",
-      "datum": "2026-09-10",
-      "tid": "12:00",
-      "rapportör": "Receptionen Björkö Örn",
-      "rapportörEmail": "info.bjorko@cc-camping.se",
-      "beskrivning": "Gästen promenerade på campingen (vid en stig bredvid stuga 9). Då råkade gästen trampa på en träbit med en smal spik. Spiken gick rakt igenom skon och in i foten. Gästen drog ut spiken, men nästa morgon hade foten svullnat rejält och gjorde ont. Gästen åkte in till Norrtälje sjukhus och blev skickad direkt till akuten. Vid röntgen upptäcktes det att spiken gått av och att det satt kvar en nästan 1 cm lång bit. Han fick penicillin och ska tillbaka på måndag (14/9) för operation.  ",
-      "omedelbar": "Träbiten kastades.",
-      "ansvarig": "Carolina Eek",
-      "deadline": "2026-09-13",
-      "kommentar": "",
-      "status": "ny",
-      "eskalerad": false,
-      "bilder": [],
-      "dynamicFields": {
-        "d-typ": "Skada",
-        "d-person": "Gäst",
-        "d-foerstahjälp": false,
-        "d-ambulans": false,
-        "d-polis": false,
-        "d-anhörig": false,
-        "d-vittnen": "",
-        "d-ansvar": "En träbit med en smal spik låg på marken vid en gångstig."
-      },
-      "historik": [
-        {
-          "ts": "2026-09-13T10:50:54.703Z",
-          "av": "Receptionen Björkö Örn",
-          "händelse": "Skapades",
-          "status": "ny"
-        }
-      ]
-    },
-    {
-      "id": "AV-2609-WK1W",
-      "ts": "2026-09-27T09:22:50.468Z",
-      "kategori": "Alkohol / servering",
-      "kategoriIndex": 5,
-      "risk": "Medel",
-      "riskNivå": 2,
-      "anläggning": "CC Björkö Örns Camping",
-      "plats": "Restaurang / kök",
-      "datum": "2026-09-26",
-      "tid": "22:45",
-      "rapportör": "Receptionen Björkö Örn",
-      "rapportörEmail": "info.bjorko@cc-camping.se",
-      "beskrivning": "Incidentrapport\n\nI samband med kvällens spelning uppstod en incident mellan två grupper av säsongsgäster och deras vänner.\n\nDet fanns sedan tidigare en spänning mellan grupperna med anledning av privata relationer. En av våra säsongsgäster har inlett en relation med en annan säsongsgästs före detta make. Tidigare under kvällen hade en väninna till den ena kvinnan uttryckt att hon var på plats som hennes ”bodyguard”.\n\nHändelseförlopp\n\nMot slutet av spelningen rörde sig den ena kvinnan tillsammans med sina väninnor mot området där hennes före detta make dansade tillsammans med sin nuvarande flickvän och hennes mamma.\n\nI samband med detta uppstod en spänd situation mellan grupperna. Det förekom blickar och kroppskontakt i form av mindre knuffar/stötar med kropp och höfter.\n\nSituationen eskalerade när kvinnans väninna, som tidigare benämnt sig själv som ”bodyguard”, gick fram mot den andra gruppen på ett sätt som uppfattades som konfrontativt. Campingvärden Malin bedömde att det fanns risk för ytterligare konflikt och gick därför emellan. Väninnan fördes därefter ut från lokalen/området.\n\nUtanför uppstod sedan ytterligare en situation mellan kvinnan och hennes före detta make. Ordförande Massimo ingrep och uppmanade mannen att lämna området och gå utanför grinden. Mannen informerades även om att han inte var välkommen tillbaka till campingen.\n\nMannen uppgav därefter att hans före detta hustru hade gett honom en hård armbåge i bröstet. Han kontaktade polisen, som kom till campingen.\n\nPolisen höll samtal/förhör med mannen och hans sällskap samt med ordföranden och campingvärden angående det inträffade.\n\nNär polisen senare skulle lämna campingen hördes skrik och bråk bakom servicehuset. Det visade sig då att två kvinnor, mamman och styvmamman, hade hamnat i en fysisk konflikt. Polis, campingvärd och ordförande tog sig omedelbart till platsen och ingrep.\n\nPolisen höll därefter ytterligare samtal/förhör med de inblandade. De berörda personerna uppmanades av polisen att gå tillbaka till sina respektive husvagnar och stanna där. Polisen lämnade därefter campingen.\n\nEfter händelsen\n\nCampingvärden och ordföranden genomförde senare en sista kontrollrunda på campingområdet för att säkerställa att situationen hade lugnat ner sig.\n\nVid kontrollen befann sig de berörda personerna i sina respektive husvagnar och inga ytterligare incidenter noterades.\n\nHändelsen bedömdes därmed som avslutad för kvällen.",
-      "omedelbar": "särade på dom berörda",
-      "ansvarig": "Malin Liljedahl",
-      "deadline": "",
-      "kommentar": "",
-      "status": "ny",
-      "eskalerad": false,
-      "bilder": [],
-      "dynamicFields": {
-        "d-alktyp": "",
-        "d-polis-alk": false,
-        "d-alk-komm": ""
-      },
-      "historik": [
-        {
-          "ts": "2026-09-27T09:22:50.468Z",
-          "av": "Receptionen Björkö Örn",
-          "händelse": "Skapades",
-          "status": "ny"
         }
       ]
     }
