@@ -564,6 +564,39 @@
           "status": "stängd"
         }
       ]
+    },
+    {
+      "id": "AV-2610-94MM",
+      "ts": "2026-10-03T11:40:52.936Z",
+      "kategori": "Störningsrapport",
+      "kategoriIndex": 8,
+      "risk": "Låg",
+      "riskNivå": 1,
+      "anläggning": "CC Östnora Camping",
+      "plats": "Annan",
+      "datum": "2026-10-02",
+      "tid": "12:15",
+      "rapportör": "Reception Östnora",
+      "rapportörEmail": "reception.ostnora@cc-camping.se",
+      "beskrivning": "Lämnat kläder och lakan kvar i stugan nr 3 efter utcheckning. Kvarlämnat finns i påse i receptionen",
+      "omedelbar": "Campingvärd har städat och åtgärdat i stugan",
+      "ansvarig": "Anna och Linda",
+      "deadline": "2026-10-02",
+      "kommentar": "Åtgärdat och klart",
+      "status": "ny",
+      "eskalerad": false,
+      "bilder": [],
+      "dynamicFields": {
+        "d-personal": ""
+      },
+      "historik": [
+        {
+          "ts": "2026-10-03T11:40:52.936Z",
+          "av": "Reception Östnora",
+          "händelse": "Skapades",
+          "status": "ny"
+        }
+      ]
     }
   ],
   "inställningar": {
