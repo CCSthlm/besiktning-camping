@@ -68,8 +68,15 @@
       "personal": "Johan Eriksson",
       "överlämnas": "John Nilsson",
       "beskrivning": "Detta gäller en säsongsgäst som på olika sätt inte följt de trivselregler Caravan Club har satt upp. Säsongaren har, trots flera påminnelser, fortfarande inte inkommit med ett giltigt gasolintyg. Kravet på gasolintyg framgår tydligt av campingens trivselregler och gäller samtliga säsongare.\n\nDetta är inte första gången som upprepade påminnelser har behövts för att regler och rutiner ska följas. Ritning för altanen lämnades exempelvis in först efter flera påminnelser och efter cirka 1,5 år.\nÄven när det gäller betalningar har påminnelser behövt göras vid flera tillfällen.\n\nSammantaget visar detta på återkommande brister i att följa de regler, tidsramar och rutiner som gäller för säsongsplatsen. Trots upprepade påminnelser har efterfrågade handlingar och betalningar inte inkommit inom utsatt tid. Det är viktigt att samma regler gäller för samtliga säsongare och att de efterlevs utan att upprepade påminnelser ska behöva göras.",
-      "status": "ny",
-      "beslut": null
+      "status": "beslutad",
+      "beslut": {
+        "typ": "Varning",
+        "datum": "2026-10-03",
+        "beskrivning": "Efter enhetligt beslut i styrelsen beslutades att utdela en varning med bakgrund av upprepade allvarliga avvikelser gentemot sektionens trivselanvisningar.",
+        "uteslutning": false,
+        "av": "Maria Edstedt",
+        "ts": "2026-10-03T10:46:06.773Z"
+      }
     }
   ]
 }
