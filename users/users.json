@@ -589,6 +589,34 @@
       "kontrollAdminAnlaggningId": "",
       "kontrollAdminAnlaggningNamn": "",
       "created": "2026-10-03"
+    },
+    {
+      "id": "umus8cnlcmdet",
+      "name": "Jenny Jacobi",
+      "email": "jenny.jacobi@cc-camping.se",
+      "pin": "9999",
+      "pnr": "",
+      "adminRoles": [
+        "projekt-camping",
+        "budget-camping"
+      ],
+      "role": "Användare",
+      "active": true,
+      "apps": [],
+      "plCampingId": "",
+      "godkannarcamping": "",
+      "sbaCamping": "",
+      "nyckelCamping": "",
+      "budgetEnhet": "kapellskar",
+      "elCamping": "",
+      "projektCampingId": "kapellskar",
+      "kontrollAnlaggningId": "",
+      "kontrollAnlaggningNamn": "",
+      "kontrollAnsvarigAnlaggningId": "",
+      "kontrollAnsvarigAnlaggningNamn": "",
+      "kontrollAdminAnlaggningId": "",
+      "kontrollAdminAnlaggningNamn": "",
+      "created": "2026-10-03"
     }
   ],
   "campings": [
