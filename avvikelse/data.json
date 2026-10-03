@@ -145,7 +145,7 @@
       "ansvarig": "Campingvärdar Johan och Anna",
       "deadline": "",
       "kommentar": "",
-      "status": "ny",
+      "status": "stängd",
       "eskalerad": false,
       "bilder": [],
       "dynamicFields": {},
@@ -155,6 +155,13 @@
           "av": "Reception Östnora",
           "händelse": "Skapades",
           "status": "ny"
+        },
+        {
+          "ts": "2026-10-03T11:26:08.587Z",
+          "av": "Massimo Johansson",
+          "händelse": "Status: Ny → Stängd",
+          "kommentar": "",
+          "status": "stängd"
         }
       ]
     },
