@@ -427,6 +427,8 @@
       "pin": "9999",
       "pnr": "",
       "adminRoles": [
+        "avvikelse-admin",
+        "störningsadmin",
         "budget-camping"
       ],
       "role": "Användare",
