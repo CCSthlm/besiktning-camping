@@ -1571,6 +1571,20 @@
           "manualReason": "",
           "edited": false,
           "campingId": "c8"
+        },
+        {
+          "id": "musheot3ir4p6",
+          "name": "Alva Säfqvist",
+          "pnr": "20070108-5409",
+          "date": "2026-10-03",
+          "timeIn": "16:22",
+          "timeOut": "",
+          "registeredBy": "Restaurang Östnora",
+          "registeredAt": "2026-10-03T14:22:51.927Z",
+          "manual": false,
+          "manualReason": "",
+          "edited": false,
+          "campingId": "c8"
         }
       ],
       "personal": [
@@ -2790,6 +2804,15 @@
           "user": "Restaurang Östnora",
           "action": "in",
           "detail": "Josefine Eriksson stämplade in 16:22",
+          "oldVal": "",
+          "newVal": "16:22"
+        },
+        {
+          "id": "musheot3p9ona",
+          "ts": "2026-10-03T14:22:51.927Z",
+          "user": "Restaurang Östnora",
+          "action": "in",
+          "detail": "Alva Säfqvist stämplade in 16:22",
           "oldVal": "",
           "newVal": "16:22"
         }
