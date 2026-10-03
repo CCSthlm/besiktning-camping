@@ -1466,7 +1466,7 @@
           "pnr": "19750729-0588",
           "date": "2026-10-02",
           "timeIn": "15:55",
-          "timeOut": "",
+          "timeOut": "23:01",
           "registeredBy": "Restaurang Östnora",
           "registeredAt": "2026-10-02T13:55:53.156Z",
           "manual": false,
@@ -1480,7 +1480,7 @@
           "pnr": "19760404-0563",
           "date": "2026-10-02",
           "timeIn": "15:55",
-          "timeOut": "",
+          "timeOut": "23:01",
           "registeredBy": "Restaurang Östnora",
           "registeredAt": "2026-10-02T13:55:55.972Z",
           "manual": false,
@@ -1494,7 +1494,7 @@
           "pnr": "19580412-0250",
           "date": "2026-10-02",
           "timeIn": "15:56",
-          "timeOut": "",
+          "timeOut": "23:01",
           "registeredBy": "Restaurang Östnora",
           "registeredAt": "2026-10-02T13:56:02.221Z",
           "manual": false,
@@ -1522,9 +1522,37 @@
           "pnr": "19631009-6646",
           "date": "2026-10-02",
           "timeIn": "16:33",
-          "timeOut": "",
+          "timeOut": "23:01",
           "registeredBy": "Restaurang Östnora",
           "registeredAt": "2026-10-02T14:33:36.588Z",
+          "manual": false,
+          "manualReason": "",
+          "edited": false,
+          "campingId": "c8"
+        },
+        {
+          "id": "mus1drxoghpje",
+          "name": "Marie Tirmén Olén",
+          "pnr": "19760404-0563",
+          "date": "2026-10-03",
+          "timeIn": "08:54",
+          "timeOut": "",
+          "registeredBy": "Restaurang Östnora",
+          "registeredAt": "2026-10-03T06:54:15.468Z",
+          "manual": false,
+          "manualReason": "",
+          "edited": false,
+          "campingId": "c8"
+        },
+        {
+          "id": "mus4xbrocisgy",
+          "name": "Linda Wahlund",
+          "pnr": "19750729-0588",
+          "date": "2026-10-03",
+          "timeIn": "10:33",
+          "timeOut": "",
+          "registeredBy": "Restaurang Östnora",
+          "registeredAt": "2026-10-03T08:33:26.484Z",
           "manual": false,
           "manualReason": "",
           "edited": false,
@@ -2687,6 +2715,60 @@
           "detail": "Peo Thörnestad stämplade ut 20:16",
           "oldVal": "",
           "newVal": "20:16"
+        },
+        {
+          "id": "murg76z77vbc8",
+          "ts": "2026-10-02T21:01:16.435Z",
+          "user": "Restaurang Östnora",
+          "action": "out",
+          "detail": "Sussi Törnander stämplade ut 23:01",
+          "oldVal": "",
+          "newVal": "23:01"
+        },
+        {
+          "id": "murg77mapzdsp",
+          "ts": "2026-10-02T21:01:17.266Z",
+          "user": "Restaurang Östnora",
+          "action": "out",
+          "detail": "Bo Wahlund stämplade ut 23:01",
+          "oldVal": "",
+          "newVal": "23:01"
+        },
+        {
+          "id": "murg77zozuavk",
+          "ts": "2026-10-02T21:01:17.748Z",
+          "user": "Restaurang Östnora",
+          "action": "out",
+          "detail": "Marie Tirmén Olén stämplade ut 23:01",
+          "oldVal": "",
+          "newVal": "23:01"
+        },
+        {
+          "id": "murg788w5ol4s",
+          "ts": "2026-10-02T21:01:18.080Z",
+          "user": "Restaurang Östnora",
+          "action": "out",
+          "detail": "Linda Wahlund stämplade ut 23:01",
+          "oldVal": "",
+          "newVal": "23:01"
+        },
+        {
+          "id": "mus1drxoprdsb",
+          "ts": "2026-10-03T06:54:15.468Z",
+          "user": "Restaurang Östnora",
+          "action": "in",
+          "detail": "Marie Tirmén Olén stämplade in 08:54",
+          "oldVal": "",
+          "newVal": "08:54"
+        },
+        {
+          "id": "mus4xbro9yw8c",
+          "ts": "2026-10-03T08:33:26.484Z",
+          "user": "Restaurang Östnora",
+          "action": "in",
+          "detail": "Linda Wahlund stämplade in 10:33",
+          "oldVal": "",
+          "newVal": "10:33"
         }
       ]
     }
