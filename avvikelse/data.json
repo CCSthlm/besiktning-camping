@@ -60,7 +60,7 @@
       "ansvarig": "Carolina Eek",
       "deadline": "2026-09-13",
       "kommentar": "",
-      "status": "ny",
+      "status": "stängd",
       "eskalerad": false,
       "bilder": [],
       "dynamicFields": {
@@ -79,6 +79,13 @@
           "av": "Receptionen Björkö Örn",
           "händelse": "Skapades",
           "status": "ny"
+        },
+        {
+          "ts": "2026-10-03T11:23:08.736Z",
+          "av": "Massimo Johansson",
+          "händelse": "Status: Ny → Stängd",
+          "kommentar": "",
+          "status": "stängd"
         }
       ]
     },
