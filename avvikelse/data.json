@@ -183,7 +183,7 @@
       "ansvarig": "Campingvärdar Johan och Anna",
       "deadline": "",
       "kommentar": "Det behöves ingen åtgärd, Personen kom säkert till sjukhus ",
-      "status": "ny",
+      "status": "stängd",
       "eskalerad": true,
       "bilder": [],
       "dynamicFields": {
@@ -202,6 +202,13 @@
           "av": "Reception Östnora",
           "händelse": "Skapades",
           "status": "ny"
+        },
+        {
+          "ts": "2026-10-03T11:27:09.561Z",
+          "av": "Massimo Johansson",
+          "händelse": "Status: Ny → Stängd",
+          "kommentar": "",
+          "status": "stängd"
         }
       ]
     },
