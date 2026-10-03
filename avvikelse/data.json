@@ -107,7 +107,7 @@
       "ansvarig": "ingen vidare åtgärd behöver tas",
       "deadline": "2026-08-09",
       "kommentar": "",
-      "status": "ny",
+      "status": "stängd",
       "eskalerad": false,
       "bilder": [],
       "dynamicFields": {},
@@ -117,6 +117,13 @@
           "av": "Receptionen Björkö Örn",
           "händelse": "Skapades",
           "status": "ny"
+        },
+        {
+          "ts": "2026-10-03T11:24:35.438Z",
+          "av": "Massimo Johansson",
+          "händelse": "Status: Ny → Stängd",
+          "kommentar": "",
+          "status": "stängd"
         }
       ]
     },
