@@ -11,8 +11,9 @@
     "loner_sommarvard": 5,
     "loner_vintervard": 1,
     "arvoden_antal": 2,
-    "arvoden_belopp": 17500
+    "arvoden_belopp": 17500,
+    "soc_avg_lonekostnad": 175000
   },
   "investeringar": [],
-  "autosparad": "2026-10-04T17:22:34.901Z"
+  "autosparad": "2026-10-04T17:22:51.687Z"
 }
