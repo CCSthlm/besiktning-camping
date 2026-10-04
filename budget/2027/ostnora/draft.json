@@ -10,8 +10,9 @@
     "gastavgift_antal": 1179,
     "loner_sommarvard": 5,
     "loner_vintervard": 1,
-    "arvoden_antal": 2
+    "arvoden_antal": 2,
+    "arvoden_belopp": 17500
   },
   "investeringar": [],
-  "autosparad": "2026-10-04T17:22:26.059Z"
+  "autosparad": "2026-10-04T17:22:34.901Z"
 }
