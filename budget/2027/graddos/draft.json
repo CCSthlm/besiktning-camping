@@ -3,7 +3,10 @@
     "8830": -220000
   },
   "kommentarer": {},
-  "paramVarden": {},
+  "paramVarden": {
+    "loner_sommarvard": 10,
+    "loner_vintervard": 3
+  },
   "investeringar": [],
-  "autosparad": "2026-09-26T10:23:33.150Z"
+  "autosparad": "2026-10-04T12:20:51.352Z"
 }
