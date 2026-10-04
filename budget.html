@@ -387,6 +387,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-seri
     </div>
     <div class="modal-body">
       <input type="hidden" id="enhet-edit-id">
+      <div class="form-field" id="enhet-id-wrap" style="display:none">
+        <label>Enhets-ID (mappnamn i GitHub)</label>
+        <input type="text" id="enhet-id-field" style="font-family:monospace">
+        <div style="font-size:11px;color:var(--amber);margin-top:4px">
+          <i class="ti ti-alert-triangle"></i> Ändra bara om ID:t inte stämmer med mappen i GitHub där budget/utfall sparas (t.ex. <code>budget/2027/{id}/</code>). Fel ändring gör att tidigare data inte längre hittas.
+        </div>
+      </div>
       <div class="form-grid">
         <div class="form-field"><label>Namn <span class="req">*</span></label><input type="text" id="enhet-namn" placeholder="Östnora"></div>
         <div class="form-field"><label>KST <span class="req">*</span></label><input type="text" id="enhet-kst" placeholder="50"></div>
@@ -2305,6 +2312,7 @@ function renderEnheter(container) {
   var tbody = _settings.enheter.map(function(e) {
     return '<tr>'
       +'<td style="font-weight:500">'+e.namn+'</td>'
+      +'<td style="color:var(--text3);font-family:monospace;font-size:12px">'+e.id+'</td>'
       +'<td style="color:var(--text3)">'+e.kst+'</td>'
       +'<td style="color:var(--text3)">'+(e.kb||'–')+'</td>'
       +'<td>'+(e.parent?'<span style="font-size:11px;color:var(--text2)">'+(e.parentNamn||e.parent)+'</span>':'–')+'</td>'
@@ -2328,7 +2336,7 @@ function renderEnheter(container) {
     </div>
     <div class="content">
       <table class="btable">
-        <thead><tr><th>Namn</th><th>KST</th><th>KB</th><th>Ingår i</th><th>Status</th><th class="no-print" style="text-align:right">Åtgärder</th></tr></thead>
+        <thead><tr><th>Namn</th><th>ID (mapp i GitHub)</th><th>KST</th><th>KB</th><th>Ingår i</th><th>Status</th><th class="no-print" style="text-align:right">Åtgärder</th></tr></thead>
         <tbody>${tbody}</tbody>
       </table>
     </div>`;
@@ -2435,7 +2443,17 @@ function openEnhetModal(eid) {
   document.getElementById('enhet-parent').value     = e ? (e.parent||'')    : '';
   document.getElementById('enhet-parentnamn').value = e ? (e.parentNamn||'') : '';
   document.getElementById('enhet-aktiv').value      = e && e.aktiv===false ? 'false' : 'true';
+  // ID-fältet visas och kan ändras bara vid redigering av en befintlig enhet
+  document.getElementById('enhet-id-wrap').style.display = e ? '' : 'none';
+  document.getElementById('enhet-id-field').value = e ? e.id : '';
   openModal('modal-enhet');
+}
+
+function slugifyEnhetNamn(namn){
+  return namn.toLowerCase()
+    .replace(/å/g,'a').replace(/ä/g,'a').replace(/ö/g,'o')
+    .replace(/é/g,'e').replace(/è/g,'e').replace(/ü/g,'u').replace(/ß/g,'ss')
+    .replace(/[^a-z0-9]/g,'_').replace(/_+/g,'_').replace(/^_|_$/g,'');
 }
 
 function saveEnhet() {
@@ -2443,8 +2461,14 @@ function saveEnhet() {
   var kst  = document.getElementById('enhet-kst').value.trim();
   if (!namn||!kst) { alert('Namn och KST krävs.'); return; }
   var editId = document.getElementById('enhet-edit-id').value;
+  var newId = editId
+    ? (document.getElementById('enhet-id-field').value.trim() || editId)
+    : slugifyEnhetNamn(namn);
+  if (editId && newId !== editId) {
+    if (!confirm('Du har ändrat Enhets-ID från "'+editId+'" till "'+newId+'".\n\nBefintlig budget- och utfallsdata under det gamla ID:t flyttas INTE automatiskt — den måste flyttas manuellt i GitHub (byt mappnamn från "'+editId+'" till "'+newId+'" under budget/*/).\n\nFortsätta ändå?')) return;
+  }
   var obj = {
-    id:         editId || namn.toLowerCase().replace(/[^a-z0-9]/g,'_').replace(/_+/g,'_'),
+    id:         newId,
     namn, kst,
     kb:         document.getElementById('enhet-kb').value.trim(),
     parent:     document.getElementById('enhet-parent').value.trim() || undefined,
