@@ -9,8 +9,9 @@
     "gastavgift_pris": 424.11,
     "gastavgift_antal": 1179,
     "loner_sommarvard": 5,
-    "loner_vintervard": 1
+    "loner_vintervard": 1,
+    "arvoden_antal": 2
   },
   "investeringar": [],
-  "autosparad": "2026-10-04T17:22:16.495Z"
+  "autosparad": "2026-10-04T17:22:26.059Z"
 }
