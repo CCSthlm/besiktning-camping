@@ -13,9 +13,9 @@
     "arvoden_antal": 2,
     "arvoden_belopp": 17500,
     "soc_avg_lonekostnad": 175000,
-    "el_intakt_sommar_kwh": 150000,
+    "el_intakt_sommar_kwh": 90000,
     "el_intakt_vinter_kwh": 0
   },
   "investeringar": [],
-  "autosparad": "2026-10-04T17:24:12.597Z"
+  "autosparad": "2026-10-04T17:25:13.304Z"
 }
