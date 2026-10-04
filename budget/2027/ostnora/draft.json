@@ -15,8 +15,8 @@
     "soc_avg_lonekostnad": 175000,
     "el_intakt_sommar_kwh": 90000,
     "el_intakt_vinter_kwh": 60001,
-    "el_kostnad_sommar_kwh": 149999
+    "el_kostnad_sommar_kwh": 150000
   },
   "investeringar": [],
-  "autosparad": "2026-10-04T17:25:37.902Z"
+  "autosparad": "2026-10-04T17:25:43.892Z"
 }
