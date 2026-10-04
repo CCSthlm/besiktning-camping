@@ -1,5 +1,6 @@
 {
   "kontoVarden": {
+    "3011": 44645,
     "4011": 0,
     "8830": -220000
   },
@@ -14,8 +15,11 @@
     "el_kostnad_sommar_kwh": 130000,
     "el_kostnad_vinter_kwh": 150000,
     "loner_sommarvard": 5,
-    "loner_vintervard": 1
+    "loner_vintervard": 1,
+    "arvoden_antal": 2,
+    "arvoden_belopp": 17500,
+    "soc_avg_lonekostnad": 175000
   },
   "investeringar": [],
-  "autosparad": "2026-10-04T17:39:50.303Z"
+  "autosparad": "2026-10-04T17:41:53.532Z"
 }
