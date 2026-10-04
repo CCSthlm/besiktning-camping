@@ -10,8 +10,8 @@
     "gastavgift_antal": 1179,
     "loner_sommarvard": 0,
     "loner_vintervard": 0,
-    "arvoden_antal": 2,
-    "arvoden_belopp": 17500,
+    "arvoden_antal": 0,
+    "arvoden_belopp": 1750,
     "soc_avg_lonekostnad": 175000,
     "el_intakt_sommar_kwh": 0,
     "el_intakt_vinter_kwh": 0,
@@ -19,5 +19,5 @@
     "el_kostnad_vinter_kwh": 0
   },
   "investeringar": [],
-  "autosparad": "2026-10-04T17:29:30.919Z"
+  "autosparad": "2026-10-04T17:29:35.153Z"
 }
