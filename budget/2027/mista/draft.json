@@ -10,8 +10,8 @@
     "gastavgift_antal": 1180,
     "gastavgift_pris": 424.11,
     "el_intakt_sommar_kwh": 150000,
-    "el_intakt_vinter_kwh": 100000
+    "el_intakt_vinter_kwh": 150000
   },
   "investeringar": [],
-  "autosparad": "2026-10-04T17:35:12.565Z"
+  "autosparad": "2026-10-04T17:35:52.957Z"
 }
