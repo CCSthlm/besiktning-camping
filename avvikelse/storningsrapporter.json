@@ -77,6 +77,26 @@
         "av": "Maria Edstedt",
         "ts": "2026-10-03T10:46:06.773Z"
       }
+    },
+    {
+      "id": "SR-2610-TYPM",
+      "ts": "2026-10-04T09:23:01.671Z",
+      "anläggning": "CC Björkö Örns Camping",
+      "platsOmråde": "Utomhusområde",
+      "datum": "2026-09-26",
+      "tid": "23:09",
+      "rapportör": "Massimo Johansson <massimo.johansson@cc-camping.se>",
+      "risk": "Låg",
+      "riskNivå": 1,
+      "ccNr": "116121",
+      "platsNr": "62",
+      "gästTyp": "Säsongsgäst",
+      "gästNamn": "Angelica Kihlblom",
+      "personal": "Malin och Massimo",
+      "överlämnas": "Angelica Kihlblom",
+      "beskrivning": "Det var väldigt turbulent mellan Angelica, Jimmy, Angelicas mamma med sällskap samt carina och Madde.\n\nDetta är ett privat relationsproblem i grunden men vi måste bedöma oordningen vid campingtillfället. \nAngelica med pojkvän samt mamma med sambo störde ordningen och var väldigt högljudda. Jimmy ombads lämna campingen varpå Jimmy tillkallade polis till platsen. Vid ett tillfälle en bit efter 23:00 blev det ett bråk där både personal gick till platsen och polis fick ingripa för att få ordning på detta. Massimo fick ge Angelicas mamma och sambo skarp tillsägelse att vara tysta och sluta skrika då det skall vara tyst klockan 23:00. \n\nDet var en kraftig oordning kring personerna i fråga.  ",
+      "status": "ny",
+      "beslut": null
     }
   ]
 }
