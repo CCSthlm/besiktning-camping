@@ -977,6 +977,7 @@ async function renderBudget(container) {
           ${_currentEnhet ? _currentEnhet.namn : '–'}
           <span class="badge badge-draft"><span class="dot"></span> Utkast</span>
           <span style="color:var(--text3)">Autosparad: ${autosparad}</span>
+          <span style="color:var(--text3);font-family:monospace;font-size:11px">· ID: ${_currentEnhet ? _currentEnhet.id : '–'}</span>
         </div>
       </div>
       <div class="page-actions">
@@ -1741,6 +1742,7 @@ function renderUtfall(container) {
         </select>
         <button class="btn btn-blue" onclick="saveBudgetManuell(_utfallEnhetId)"><i class="ti ti-device-floppy"></i> Spara budget ${BUDGET_YEAR-1}</button>
         <button class="btn btn-primary" onclick="saveUtfall()"><i class="ti ti-device-floppy"></i> Spara utfall</button>
+        <span id="utfall-enhet-id-display" style="color:var(--text3);font-family:monospace;font-size:11px;align-self:center">ID: ${defaultEnhet}</span>
       </div>
       <div id="utfall-table-wrap"></div>
     </div>`;
@@ -1753,6 +1755,8 @@ async function loadUtfallView() {
   _utfallPeriod  = document.getElementById('utfall-period').value;
   var enhetId = _utfallEnhetId;
   var period  = _utfallPeriod;
+  var idDisp = document.getElementById('utfall-enhet-id-display');
+  if (idDisp) idDisp.textContent = 'ID: ' + enhetId;
   var key     = enhetId + '_' + period;
 
   // Always reload from GitHub - don't use cache
