@@ -5,8 +5,10 @@
   "kommentarer": {},
   "paramVarden": {
     "loner_sommarvard": 10,
-    "loner_vintervard": 3
+    "loner_vintervard": 3,
+    "arvoden_antal": 1,
+    "arvoden_belopp": 25000
   },
   "investeringar": [],
-  "autosparad": "2026-10-04T12:20:51.352Z"
+  "autosparad": "2026-10-04T12:21:47.573Z"
 }
