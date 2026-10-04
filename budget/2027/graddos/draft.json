@@ -1,14 +1,7 @@
 {
-  "kontoVarden": {
-    "8830": -220000
-  },
+  "kontoVarden": {},
   "kommentarer": {},
-  "paramVarden": {
-    "loner_sommarvard": 10,
-    "loner_vintervard": 3,
-    "arvoden_antal": 1,
-    "arvoden_belopp": 25000
-  },
+  "paramVarden": {},
   "investeringar": [],
-  "autosparad": "2026-10-04T12:21:54.100Z"
+  "autosparad": null
 }
