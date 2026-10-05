@@ -62,7 +62,7 @@
     "gastavgift_pris": 424.11,
     "el_intakt_sommar_kwh": 130000,
     "el_intakt_vinter_kwh": 150000,
-    "el_kostnad_sommar_kwh": 130000,
+    "el_kostnad_sommar_kwh": 100000,
     "el_kostnad_vinter_kwh": 150000,
     "loner_sommarvard": 5,
     "loner_vintervard": 1,
@@ -71,5 +71,5 @@
     "soc_avg_lonekostnad": 175000
   },
   "investeringar": [],
-  "autosparad": "2026-10-05T12:48:21.265Z"
+  "autosparad": "2026-10-05T12:51:37.569Z"
 }
