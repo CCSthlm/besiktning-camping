@@ -316,7 +316,8 @@
       "pin": "9988",
       "pnr": "",
       "adminRoles": [
-        "sba-lokal"
+        "sba-lokal",
+        "budget-ekonomi"
       ],
       "role": "Användare",
       "active": true,
