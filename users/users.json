@@ -1586,6 +1586,20 @@
           "manualReason": "",
           "edited": false,
           "campingId": "c8"
+        },
+        {
+          "id": "mv0ww06oog9fs",
+          "name": "Marie Tirmén Olén",
+          "pnr": "19760404-0563",
+          "date": "2026-10-09",
+          "timeIn": "13:58",
+          "timeOut": "",
+          "registeredBy": "Restaurang Östnora",
+          "registeredAt": "2026-10-09T11:58:23.472Z",
+          "manual": false,
+          "manualReason": "",
+          "edited": false,
+          "campingId": "c8"
         }
       ],
       "personal": [
@@ -2816,6 +2830,15 @@
           "detail": "Alva Säfqvist stämplade in 16:22",
           "oldVal": "",
           "newVal": "16:22"
+        },
+        {
+          "id": "mv0ww06o7950w",
+          "ts": "2026-10-09T11:58:23.472Z",
+          "user": "Restaurang Östnora",
+          "action": "in",
+          "detail": "Marie Tirmén Olén stämplade in 13:58",
+          "oldVal": "",
+          "newVal": "13:58"
         }
       ]
     }
