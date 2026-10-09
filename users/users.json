@@ -1600,6 +1600,20 @@
           "manualReason": "",
           "edited": false,
           "campingId": "c8"
+        },
+        {
+          "id": "mv0zbjfp2fgi9",
+          "name": "Evert Olen",
+          "pnr": "196009060093",
+          "date": "2026-10-09",
+          "timeIn": "15:06",
+          "timeOut": "",
+          "registeredBy": "Restaurang Östnora",
+          "registeredAt": "2026-10-09T13:06:27.493Z",
+          "manual": false,
+          "manualReason": "",
+          "edited": false,
+          "campingId": "c8"
         }
       ],
       "personal": [
@@ -2839,6 +2853,15 @@
           "detail": "Marie Tirmén Olén stämplade in 13:58",
           "oldVal": "",
           "newVal": "13:58"
+        },
+        {
+          "id": "mv0zbjfp3jx5h",
+          "ts": "2026-10-09T13:06:27.493Z",
+          "user": "Restaurang Östnora",
+          "action": "in",
+          "detail": "Evert Olen stämplade in 15:06",
+          "oldVal": "",
+          "newVal": "15:06"
         }
       ]
     }
