@@ -1607,7 +1607,7 @@
           "pnr": "196009060093",
           "date": "2026-10-09",
           "timeIn": "15:06",
-          "timeOut": "",
+          "timeOut": "20:37",
           "registeredBy": "Restaurang Östnora",
           "registeredAt": "2026-10-09T13:06:27.493Z",
           "manual": false,
@@ -2862,6 +2862,15 @@
           "detail": "Evert Olen stämplade in 15:06",
           "oldVal": "",
           "newVal": "15:06"
+        },
+        {
+          "id": "mv1b5gqa3px8o",
+          "ts": "2026-10-09T18:37:39.442Z",
+          "user": "Restaurang Östnora",
+          "action": "out",
+          "detail": "Evert Olen stämplade ut 20:37",
+          "oldVal": "",
+          "newVal": "20:37"
         }
       ]
     }
