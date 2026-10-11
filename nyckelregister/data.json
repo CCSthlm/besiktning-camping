@@ -1754,6 +1754,17 @@
       "typ": "Gäst",
       "ccnr": "132786",
       "aktiv": true
+    },
+    {
+      "id": "mv3orjge41olu",
+      "fname": "Ragnhild",
+      "lname": "Petersson",
+      "email": "",
+      "tel": "",
+      "camping": "c3",
+      "typ": "Gäst",
+      "ccnr": "",
+      "aktiv": true
     }
   ],
   "händelser": [
