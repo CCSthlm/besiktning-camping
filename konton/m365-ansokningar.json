@@ -519,6 +519,24 @@
       "chef": "Maria Edstedt",
       "övrigt": "",
       "gdpr": true
+    },
+    {
+      "id": "M365-2610-TT9C",
+      "ts": "2026-10-11T10:46:46.559Z",
+      "status": "ny",
+      "fname": "Toni",
+      "lname": "Nelimarkka",
+      "pnr": "19761030-9333",
+      "mobil": "+46764230100",
+      "email": "mailto:toni.nelimarkka@hotmail.com",
+      "adress": "",
+      "anläggning": "CC Kapellskärs Camping",
+      "roll": "Campingråd",
+      "ansForm": "Ideell",
+      "startDatum": "2026-10-11",
+      "chef": "Hans Östman",
+      "övrigt": "",
+      "gdpr": true
     }
   ]
 }
