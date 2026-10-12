@@ -4,7 +4,7 @@
   },
   "kommentarer": {},
   "paramVarden": {
-    "helarsplatser_antal": 63,
+    "helarsplatser_antal": 62,
     "helarsplatser_pris": 0,
     "gastavgift_pris": 0,
     "gastavgift_antal": 1179,
@@ -19,5 +19,5 @@
     "el_kostnad_vinter_kwh": 0
   },
   "investeringar": [],
-  "autosparad": "2026-10-12T17:21:01.585Z"
+  "autosparad": "2026-10-12T17:21:09.011Z"
 }
