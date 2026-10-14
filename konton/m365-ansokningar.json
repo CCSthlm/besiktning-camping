@@ -538,7 +538,7 @@
     {
       "id": "M365-2610-TT9C",
       "ts": "2026-10-11T10:46:46.559Z",
-      "status": "ny",
+      "status": "behandlad",
       "fname": "Toni",
       "lname": "Nelimarkka",
       "pnr": "19761030-9333",
@@ -551,7 +551,12 @@
       "startDatum": "2026-10-11",
       "chef": "Hans Östman",
       "övrigt": "",
-      "gdpr": true
+      "gdpr": true,
+      "handläggning": {
+        "av": "Joachim Säfqvist",
+        "kommentar": "",
+        "ts": "2026-10-14T18:54:53.331Z"
+      }
     }
   ]
 }
