@@ -469,7 +469,7 @@
     {
       "id": "M365-2609-6OI1",
       "ts": "2026-09-21T08:02:02.934Z",
-      "status": "ny",
+      "status": "behandlad",
       "fname": "Roger",
       "lname": "Lindström",
       "pnr": "19690801-7137",
@@ -482,7 +482,12 @@
       "startDatum": "2027-04-01",
       "chef": "",
       "övrigt": "",
-      "gdpr": true
+      "gdpr": true,
+      "handläggning": {
+        "av": "Joachim Säfqvist",
+        "kommentar": "",
+        "ts": "2026-10-14T18:00:55.275Z"
+      }
     },
     {
       "id": "M365-2609-9KKE",
