@@ -17,7 +17,7 @@
   "kommentarer": {},
   "paramVarden": {
     "helarsplatser_antal": 61,
-    "helarsplatser_pris": 966240,
+    "helarsplatser_pris": 0,
     "gastavgift_pris": 0,
     "gastavgift_antal": 1300,
     "loner_sommarvard": 12,
@@ -31,5 +31,5 @@
     "el_kostnad_vinter_kwh": 0
   },
   "investeringar": [],
-  "autosparad": "2026-10-18T16:11:35.222Z"
+  "autosparad": "2026-10-18T18:15:08.364Z"
 }
