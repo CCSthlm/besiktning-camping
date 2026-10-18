@@ -1,5 +1,6 @@
 {
   "kontoVarden": {
+    "3012": 26,
     "3016": 84821,
     "3029": 4000,
     "3044": 3000,
@@ -31,5 +32,5 @@
     "el_kostnad_vinter_kwh": 0
   },
   "investeringar": [],
-  "autosparad": "2026-10-18T18:32:23.382Z"
+  "autosparad": "2026-10-18T18:34:04.354Z"
 }
