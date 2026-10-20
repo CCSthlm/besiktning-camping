@@ -591,6 +591,37 @@
       "kontrollAdminAnlaggningId": "",
       "kontrollAdminAnlaggningNamn": "",
       "created": "2026-10-16"
+    },
+    {
+      "id": "umvgwklkna71p",
+      "name": "Stefan Leijon",
+      "email": "stefan.leijon@cc-camping.se",
+      "pin": "1891",
+      "pnr": "",
+      "adminRoles": [
+        "avvikelse-admin",
+        "avvikelse-ledning",
+        "avvikelse-anlaggning",
+        "reserakning-admin",
+        "budget-styrelse"
+      ],
+      "role": "Användare",
+      "active": true,
+      "apps": [],
+      "plCampingId": "",
+      "godkannarcamping": "",
+      "sbaCamping": "",
+      "nyckelCamping": "",
+      "budgetEnhet": "",
+      "elCamping": "",
+      "projektCampingId": "",
+      "kontrollAnlaggningId": "",
+      "kontrollAnlaggningNamn": "",
+      "kontrollAnsvarigAnlaggningId": "",
+      "kontrollAnsvarigAnlaggningNamn": "",
+      "kontrollAdminAnlaggningId": "",
+      "kontrollAdminAnlaggningNamn": "",
+      "created": "2026-10-20"
     }
   ],
   "campings": [
