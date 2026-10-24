@@ -70,7 +70,7 @@
     "7610": "tex cv utbildning, hlr mm."
   },
   "paramVarden": {
-    "helarsplatser_antal": 83,
+    "helarsplatser_antal": 82,
     "helarsplatser_pris": 15535.71,
     "gastavgift_antal": 420,
     "gastavgift_pris": 357.14,
@@ -80,5 +80,5 @@
     "arvoden_belopp": 35000
   },
   "investeringar": [],
-  "autosparad": "2026-10-24T07:24:18.651Z"
+  "autosparad": "2026-10-24T07:26:38.058Z"
 }
