@@ -77,10 +77,10 @@
     "loner_sommarvard": 4,
     "loner_vintervard": 1,
     "arvoden_antal": 1,
-    "arvoden_belopp": 35000,
+    "arvoden_belopp": 25000,
     "el_kostnad_sommar_kwh": 85500,
     "el_kostnad_vinter_kwh": 85500
   },
   "investeringar": [],
-  "autosparad": "2026-10-24T15:13:48.091Z"
+  "autosparad": "2026-10-24T15:16:36.597Z"
 }
