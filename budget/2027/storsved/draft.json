@@ -79,8 +79,8 @@
     "arvoden_antal": 1,
     "arvoden_belopp": 35000,
     "el_kostnad_sommar_kwh": 85500,
-    "el_kostnad_vinter_kwh": 855000
+    "el_kostnad_vinter_kwh": 85500
   },
   "investeringar": [],
-  "autosparad": "2026-10-24T15:13:38.467Z"
+  "autosparad": "2026-10-24T15:13:41.969Z"
 }
