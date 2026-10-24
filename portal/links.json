@@ -19,15 +19,15 @@
       "active": true
     },
     {
-      "id": "mquswlffd4nm",
-      "name": "Caravan Club of Sweden - Stockholmssektionen",
-      "url": "https://caravanclub.se/stockholm/",
-      "active": true
-    },
-    {
       "id": "mvm76oa6am7o",
       "name": "Resultat / Kontoutdrag",
       "url": "https://caravanclubofswedenstockhol.sharepoint.com/:f:/s/CaravanClubofSweden-Stockholmssektionen/IgBh1Y4L_fLJRI7V1d8wuEkmARW2ZpfcUEx5WXNW3fUE3Zg?e=bu9YzJ",
+      "active": true
+    },
+    {
+      "id": "mquswlffd4nm",
+      "name": "Caravan Club of Sweden - Stockholmssektionen",
+      "url": "https://caravanclub.se/stockholm/",
       "active": true
     }
   ]
