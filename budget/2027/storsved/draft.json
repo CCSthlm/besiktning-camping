@@ -80,8 +80,9 @@
     "arvoden_belopp": 25000,
     "el_kostnad_sommar_kwh": 85500,
     "el_kostnad_vinter_kwh": 85500,
-    "el_intakt_sommar_kwh": 78725
+    "el_intakt_sommar_kwh": 78725,
+    "el_intakt_vinter_kwh": 553
   },
   "investeringar": [],
-  "autosparad": "2026-10-24T15:22:39.266Z"
+  "autosparad": "2026-10-24T15:23:37.114Z"
 }
