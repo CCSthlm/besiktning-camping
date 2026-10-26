@@ -13,7 +13,7 @@
     "3691": 5000,
     "3820": 5000,
     "4010": 450000,
-    "4011": 160000,
+    "4011": 240000,
     "5212": 20000,
     "8830": -220000
   },
@@ -45,7 +45,19 @@
       "y2029": 0,
       "y2030": 0,
       "y2031": 0
+    },
+    {
+      "kb": "70",
+      "omrade": "Gästplatser",
+      "atgard": "grusning inkl schackarbete gästplatser 10 st",
+      "kommentar": "Avser grus och anläggningsarbete med inhyrd grävmaskin",
+      "y2026": 0,
+      "y2027": 80000,
+      "y2028": 0,
+      "y2029": 0,
+      "y2030": 0,
+      "y2031": 0
     }
   ],
-  "autosparad": "2026-10-26T17:29:16.765Z"
+  "autosparad": "2026-10-26T17:30:16.800Z"
 }
