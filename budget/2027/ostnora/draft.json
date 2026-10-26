@@ -13,7 +13,7 @@
     "3691": 5000,
     "3820": 5000,
     "4010": 450000,
-    "4011": 0,
+    "4011": 160000,
     "5212": 20000,
     "8830": -220000
   },
@@ -33,6 +33,19 @@
     "el_kostnad_sommar_kwh": 0,
     "el_kostnad_vinter_kwh": 0
   },
-  "investeringar": [],
-  "autosparad": "2026-10-20T18:50:14.034Z"
+  "investeringar": [
+    {
+      "kb": "70",
+      "omrade": "Diskhus",
+      "atgard": "Renovering av diskhus inkl inredning.",
+      "kommentar": "",
+      "y2026": 0,
+      "y2027": 160000,
+      "y2028": 0,
+      "y2029": 0,
+      "y2030": 0,
+      "y2031": 0
+    }
+  ],
+  "autosparad": "2026-10-26T17:29:16.765Z"
 }
