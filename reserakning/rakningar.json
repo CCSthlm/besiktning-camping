@@ -293,14 +293,14 @@
           "ts": "2026-06-27T15:06:53.165Z"
         }
       ],
-      "status": "godkand",
+      "status": "utbetald",
       "skapad": "2026-06-27T15:06:17.516Z",
       "skapadAv": "Malin Liljedahl Björkö Örn",
       "signeradAv": "Malin Liljedahl Björkö Örn",
       "signeradTs": "2026-06-27T15:07:01.095Z",
-      "statusKommentar": "OK //Massimo",
-      "statusTs": "2026-09-06T09:25:17.141Z",
-      "statusAv": "Massimo Johansson"
+      "statusKommentar": "20261026",
+      "statusTs": "2026-10-26T12:50:29.268Z",
+      "statusAv": "Anna Söderman"
     },
     {
       "id": "RR-1785761430024",
