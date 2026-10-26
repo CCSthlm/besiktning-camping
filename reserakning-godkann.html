@@ -144,18 +144,23 @@ function render(){
   list.sort((a,b)=>b.signeradTs?.localeCompare(a.signeradTs||''));
 
   const c=document.getElementById('main-content');
-  const väntar=list.filter(r=>r.status==='inskickad');
-  const rest=list.filter(r=>r.status!=='inskickad');
+  const attGodkanna = list.filter(r=>r.status==='inskickad');
+  const forUtbetalning = list.filter(r=>r.status==='godkand');
+  const historik = list.filter(r=>r.status==='utbetald');
+  const nekade = list.filter(r=>r.status==='nekad');
+
+  const sektion=(titel,ikon,arr,canGodkann,canUtbetala)=>{
+    if(!arr.length) return '';
+    return `<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin:18px 0 10px;display:flex;align-items:center;gap:6px"><i class="ti ${ikon}" style="font-size:13px"></i> ${titel} (${arr.length})</div>`
+      + arr.map(r=>renderCard(r,canGodkann,canUtbetala)).join('');
+  };
 
   let html='';
-  if(väntar.length){
-    html+=`<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin-bottom:10px">Väntar på godkännande (${väntar.length})</div>`;
-    html+=väntar.map(r=>renderCard(r,isGodkannare,isUtbetalare)).join('');
-  }
-  if(rest.length){
-    html+=`<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin:18px 0 10px">Historik</div>`;
-    html+=rest.map(r=>renderCard(r,false,isUtbetalare)).join('');
-  }
+  html+=sektion('Att godkänna','ti-inbox',attGodkanna,isGodkannare,false);
+  html+=sektion('För utbetalning','ti-coin',forUtbetalning,false,isUtbetalare);
+  html+=sektion('Nekade','ti-x',nekade,false,false);
+  html+=sektion('Historik','ti-history',historik,false,false);
+
   if(!list.length) html='<div style="text-align:center;padding:48px;color:var(--text3)"><i class="ti ti-check" style="font-size:40px;display:block;margin-bottom:10px;color:var(--accent)"></i>Inga reseräkningar att hantera</div>';
   c.innerHTML=html;
 }
