@@ -59,6 +59,15 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
 
 <div class="content" id="main-content"><div style="text-align:center;padding:40px;color:var(--text3)">Laddar…</div></div>
 
+<!-- DETALJ MODAL -->
+<div class="modal-overlay" id="modal-detalj">
+  <div class="modal" style="max-width:640px">
+    <div class="modal-header"><div><div class="modal-title" id="detalj-title">–</div><div style="font-size:11px;color:var(--text3);margin-top:2px" id="detalj-meta">–</div></div><button class="modal-close" onclick="closeModal('modal-detalj')"><i class="ti ti-x"></i></button></div>
+    <div class="modal-body" id="detalj-body"></div>
+    <div class="modal-footer" id="detalj-footer"></div>
+  </div>
+</div>
+
 <!-- BESLUT MODAL -->
 <div class="modal-overlay" id="modal-beslut">
   <div class="modal">
@@ -148,14 +157,7 @@ function render(){
 function renderCard(r,canGodkann,canUtbetala){
   const tot=(r.resor||[]).reduce((s,x)=>s+Number(x.ersattning||0),0);
   const km=(r.resor||[]).reduce((s,x)=>s+Number(x.km||0),0);
-  const btns=[];
-  if(canGodkann&&r.status==='inskickad'){
-    btns.push(`<button class="btn-primary" onclick="beslut('${r.id}','godkand')"><i class="ti ti-check"></i> Godkänn</button>`);
-    btns.push(`<button class="btn-nek" onclick="beslut('${r.id}','nekad')"><i class="ti ti-x"></i> Neka</button>`);
-  }
-  if(canUtbetala&&r.status==='godkand'){
-    btns.push(`<button class="btn-primary" onclick="beslut('${r.id}','utbetald')"><i class="ti ti-coin"></i> Markera utbetald</button>`);
-  }
+  const kanAgera=(canGodkann&&r.status==='inskickad')||(canUtbetala&&r.status==='godkand');
   return `<div class="card">
     <div class="card-header">
       <span class="card-title"><i class="ti ti-file-text"></i>${r.namn} – ${r.period}</span>
@@ -168,9 +170,57 @@ function renderCard(r,canGodkann,canUtbetala){
         <div><div style="font-size:10px;font-weight:600;text-transform:uppercase;color:var(--text3);margin-bottom:3px">Belopp</div><span style="font-size:16px;font-weight:700;color:var(--accent)">${fmtKr(tot)}</span></div>
       </div>
       <div style="font-size:12px;color:var(--text2);margin-bottom:12px">${(r.resor||[]).length} resor · ${km} km · Inskickad ${fmtDate(r.signeradTs)}</div>
-      ${btns.length?`<div style="display:flex;gap:8px;flex-wrap:wrap">${btns.join('')}</div>`:''}
+      <button class="btn-primary" onclick="openDetalj('${r.id}')"><i class="ti ti-eye"></i> ${kanAgera?'Visa detaljer och hantera':'Visa detaljer'}</button>
     </div>
   </div>`;
+}
+
+function openDetalj(id){
+  const r=(_rakningar.rakningar||[]).find(x=>x.id===id);if(!r)return;
+  const roles=_user.adminRoles||[];
+  const isUtbetalare=roles.includes('reserakning-utbetalare')||roles.includes('global')||_user.role==='Admin';
+  const isGodkannare=roles.includes('reserakning-godkannare')||roles.includes('reserakning-admin')||roles.includes('global')||_user.role==='Admin';
+  const tot=(r.resor||[]).reduce((s,x)=>s+Number(x.ersattning||0),0);
+  const km=(r.resor||[]).reduce((s,x)=>s+Number(x.km||0),0);
+
+  document.getElementById('detalj-title').textContent=r.namn+' – '+r.period;
+  document.getElementById('detalj-meta').textContent='Camping: '+(r.camping||'–')+' · Inskickad: '+fmtDate(r.signeradTs);
+
+  const kommentarEl=r.statusKommentar
+    ?`<div style="margin-top:12px;padding:10px 13px;background:var(--amber-bg);border-radius:var(--radius);font-size:12px;color:var(--amber-text)"><strong>Tidigare kommentar:</strong> ${r.statusKommentar}</div>`
+    :'';
+
+  document.getElementById('detalj-body').innerHTML=`
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;font-size:13px">
+      <div><div style="font-size:10px;font-weight:600;text-transform:uppercase;color:var(--text3);margin-bottom:3px">Namn</div><div style="font-weight:500">${r.namn||'–'}</div></div>
+      <div><div style="font-size:10px;font-weight:600;text-transform:uppercase;color:var(--text3);margin-bottom:3px">Kontonummer</div><div style="font-family:monospace">${r.konto||'–'}</div></div>
+      <div><div style="font-size:10px;font-weight:600;text-transform:uppercase;color:var(--text3);margin-bottom:3px">Camping</div><div>${r.camping||'–'}</div></div>
+      <div><div style="font-size:10px;font-weight:600;text-transform:uppercase;color:var(--text3);margin-bottom:3px">Syfte</div><div>${r.syfte||'–'}</div></div>
+    </div>
+    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin-bottom:8px">Resor (${(r.resor||[]).length})</div>
+    ${(r.resor||[]).map(re=>`<div style="background:var(--bg3);border-radius:var(--radius);padding:10px 12px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:flex-start">
+      <div><div style="font-size:11px;color:var(--text3)">${re.datum||'–'} · ${re.fordonstyp==='husbil'?'Husbil/Bil+Husvagn':'Bil'}</div>
+        <div style="font-size:13px;font-weight:500;margin:2px 0">${re.stracka||'–'}</div>
+        <div style="font-size:11px;color:var(--text2)">${re.km} km${re.syfte?' · '+re.syfte:''}</div>
+      </div>
+      <div style="font-weight:700;color:var(--accent);flex-shrink:0;margin-left:10px">${fmtKr(re.ersattning)}</div>
+    </div>`).join('')}
+    <div style="background:var(--green-bg);border-radius:var(--radius);padding:12px 14px;margin-top:10px">
+      <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px"><span style="color:var(--text2)">Totalt antal km</span><span>${km} km</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:16px;font-weight:700"><span style="color:var(--text2)">Totalt belopp</span><span style="color:var(--accent)">${fmtKr(tot)}</span></div>
+    </div>
+    ${kommentarEl}`;
+
+  const footerBtns=[`<button class="btn-secondary" onclick="closeModal('modal-detalj')">Stäng</button>`];
+  if(isGodkannare&&r.status==='inskickad'){
+    footerBtns.push(`<button class="btn-nek" onclick="closeModal('modal-detalj');beslut('${r.id}','nekad')"><i class="ti ti-x"></i> Neka</button>`);
+    footerBtns.push(`<button class="btn-primary" onclick="closeModal('modal-detalj');beslut('${r.id}','godkand')"><i class="ti ti-check"></i> Godkänn</button>`);
+  }
+  if(isUtbetalare&&r.status==='godkand'){
+    footerBtns.push(`<button class="btn-primary" onclick="closeModal('modal-detalj');beslut('${r.id}','utbetald')"><i class="ti ti-coin"></i> Markera utbetald</button>`);
+  }
+  document.getElementById('detalj-footer').innerHTML=footerBtns.join('');
+  openModal('modal-detalj');
 }
 
 function beslut(id,action){
