@@ -13,7 +13,7 @@
     "3691": 5000,
     "3820": 5000,
     "4010": 450000,
-    "4011": 240000,
+    "4011": 0,
     "5212": 20000,
     "8830": -220000
   },
@@ -26,38 +26,13 @@
     "loner_sommarvard": 12,
     "loner_vintervard": 4,
     "arvoden_antal": 1,
-    "arvoden_belopp": 0,
+    "arvoden_belopp": 25000,
     "soc_avg_lonekostnad": 0,
     "el_intakt_sommar_kwh": 0,
     "el_intakt_vinter_kwh": 0,
     "el_kostnad_sommar_kwh": 0,
     "el_kostnad_vinter_kwh": 0
   },
-  "investeringar": [
-    {
-      "kb": "70",
-      "omrade": "Diskhus",
-      "atgard": "Renovering av diskhus inkl inredning.",
-      "kommentar": "",
-      "y2026": 0,
-      "y2027": 160000,
-      "y2028": 0,
-      "y2029": 0,
-      "y2030": 0,
-      "y2031": 0
-    },
-    {
-      "kb": "70",
-      "omrade": "Gästplatser",
-      "atgard": "grusning inkl schackarbete gästplatser 10 st",
-      "kommentar": "Avser grus och anläggningsarbete med inhyrd grävmaskin",
-      "y2026": 0,
-      "y2027": 80000,
-      "y2028": 0,
-      "y2029": 0,
-      "y2030": 0,
-      "y2031": 0
-    }
-  ],
-  "autosparad": "2026-10-26T17:30:16.800Z"
+  "investeringar": [],
+  "autosparad": "2026-10-26T18:10:40.105Z"
 }
