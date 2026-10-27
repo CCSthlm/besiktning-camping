@@ -31,7 +31,7 @@
     "el_intakt_sommar_kwh": 75000,
     "el_intakt_vinter_kwh": 130000,
     "el_kostnad_sommar_kwh": 95000,
-    "el_kostnad_vinter_kwh": 0
+    "el_kostnad_vinter_kwh": 195000
   },
   "investeringar": [
     {
@@ -71,5 +71,5 @@
       "y2031": 0
     }
   ],
-  "autosparad": "2026-10-27T19:57:07.216Z"
+  "autosparad": "2026-10-27T19:57:33.415Z"
 }
