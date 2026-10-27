@@ -28,7 +28,7 @@
     "arvoden_antal": 1,
     "arvoden_belopp": 0,
     "soc_avg_lonekostnad": 0,
-    "el_intakt_sommar_kwh": 0,
+    "el_intakt_sommar_kwh": 75000,
     "el_intakt_vinter_kwh": 0,
     "el_kostnad_sommar_kwh": 0,
     "el_kostnad_vinter_kwh": 0
@@ -71,5 +71,5 @@
       "y2031": 0
     }
   ],
-  "autosparad": "2026-10-27T19:55:19.188Z"
+  "autosparad": "2026-10-27T19:55:26.206Z"
 }
