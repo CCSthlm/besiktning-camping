@@ -399,6 +399,31 @@
       "skapadAv": "Joachim Säfqvist",
       "andrad": "2026-09-01T15:20:23.103Z",
       "andradAv": "Joachim Säfqvist"
+    },
+    {
+      "id": "INV-2610-HBYP",
+      "namn": "LENOVO TP X1 YOGA G6",
+      "kategori": "Datorer & surfplattor",
+      "funktion": "Administration",
+      "status": "Aktiv",
+      "marke": "Lenovo",
+      "modell": "LENOVO TP X1 YOGA G6 CI7-1185G7 16/256",
+      "serienr": "",
+      "anlaggning": "Sektionen",
+      "placering": "IT Ansvarig",
+      "ansvarig": "Joachim Säfqvist",
+      "inkopDatum": "2026-10-27",
+      "inkopPris": 6799,
+      "garantiTill": "2028-10-27",
+      "leverantor": "Dustin",
+      "anteckningar": "",
+      "iptyp": "Dynamisk",
+      "ip": "",
+      "mac": "",
+      "skapad": "2026-10-27T16:22:20.301Z",
+      "skapadAv": "Joachim Säfqvist",
+      "andrad": "2026-10-27T16:22:20.301Z",
+      "andradAv": "Joachim Säfqvist"
     }
   ]
 }
