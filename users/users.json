@@ -1740,7 +1740,7 @@
           "pnr": "19750729-0588",
           "date": "2026-10-30",
           "timeIn": "15:44",
-          "timeOut": "",
+          "timeOut": "21:54",
           "registeredBy": "Restaurang Östnora",
           "registeredAt": "2026-10-30T14:44:32.974Z",
           "manual": false,
@@ -3066,6 +3066,15 @@
           "user": "Restaurang Östnora",
           "action": "out",
           "detail": "Sussi Törnander stämplade ut 21:54",
+          "oldVal": "",
+          "newVal": "21:54"
+        },
+        {
+          "id": "mvvgaas2j7px3",
+          "ts": "2026-10-30T20:54:28.370Z",
+          "user": "Restaurang Östnora",
+          "action": "out",
+          "detail": "Linda Wahlund stämplade ut 21:54",
           "oldVal": "",
           "newVal": "21:54"
         }
