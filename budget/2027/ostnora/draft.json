@@ -71,7 +71,7 @@
     "gastavgift_antal": 1900,
     "loner_sommarvard": 17,
     "loner_vintervard": 5,
-    "arvoden_antal": 4,
+    "arvoden_antal": 3,
     "arvoden_belopp": 25000,
     "soc_avg_lonekostnad": 0,
     "el_intakt_sommar_kwh": 78000,
@@ -117,5 +117,5 @@
       "y2031": 0
     }
   ],
-  "autosparad": "2026-10-30T13:55:35.655Z"
+  "autosparad": "2026-10-30T13:55:46.764Z"
 }
