@@ -70,7 +70,7 @@
     "gastavgift_pris": 339,
     "gastavgift_antal": 1900,
     "loner_sommarvard": 17,
-    "loner_vintervard": 4,
+    "loner_vintervard": 3,
     "arvoden_antal": 3,
     "arvoden_belopp": 25000,
     "soc_avg_lonekostnad": 600000,
@@ -117,5 +117,5 @@
       "y2031": 0
     }
   ],
-  "autosparad": "2026-10-30T14:08:22.023Z"
+  "autosparad": "2026-10-30T14:09:14.034Z"
 }
