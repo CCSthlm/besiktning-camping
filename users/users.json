@@ -1733,6 +1733,20 @@
           "manualReason": "",
           "edited": false,
           "campingId": "c8"
+        },
+        {
+          "id": "mvv32kp9vqntn",
+          "name": "Linda Wahlund",
+          "pnr": "19750729-0588",
+          "date": "2026-10-30",
+          "timeIn": "15:44",
+          "timeOut": "",
+          "registeredBy": "Restaurang Östnora",
+          "registeredAt": "2026-10-30T14:44:32.974Z",
+          "manual": false,
+          "manualReason": "",
+          "edited": false,
+          "campingId": "c8"
         }
       ],
       "personal": [
@@ -2990,6 +3004,15 @@
           "detail": "Evert Olen stämplade ut 20:37",
           "oldVal": "",
           "newVal": "20:37"
+        },
+        {
+          "id": "mvv32kpawksxm",
+          "ts": "2026-10-30T14:44:32.974Z",
+          "user": "Restaurang Östnora",
+          "action": "in",
+          "detail": "Linda Wahlund stämplade in 15:44",
+          "oldVal": "",
+          "newVal": "15:44"
         }
       ]
     }
