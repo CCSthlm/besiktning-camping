@@ -1747,6 +1747,20 @@
           "manualReason": "",
           "edited": false,
           "campingId": "c8"
+        },
+        {
+          "id": "mvv3vsi3099hj",
+          "name": "Elisabeth Åkerbrink",
+          "pnr": "701005-0545",
+          "date": "2026-10-30",
+          "timeIn": "16:07",
+          "timeOut": "",
+          "registeredBy": "Restaurang Östnora",
+          "registeredAt": "2026-10-30T15:07:16.107Z",
+          "manual": false,
+          "manualReason": "",
+          "edited": false,
+          "campingId": "c8"
         }
       ],
       "personal": [
@@ -3013,6 +3027,15 @@
           "detail": "Linda Wahlund stämplade in 15:44",
           "oldVal": "",
           "newVal": "15:44"
+        },
+        {
+          "id": "mvv3vsi3lecqe",
+          "ts": "2026-10-30T15:07:16.107Z",
+          "user": "Restaurang Östnora",
+          "action": "in",
+          "detail": "Elisabeth Åkerbrink stämplade in 16:07",
+          "oldVal": "",
+          "newVal": "16:07"
         }
       ]
     }
