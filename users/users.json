@@ -1754,7 +1754,7 @@
           "pnr": "701005-0545",
           "date": "2026-10-30",
           "timeIn": "16:07",
-          "timeOut": "",
+          "timeOut": "21:54",
           "registeredBy": "Restaurang Östnora",
           "registeredAt": "2026-10-30T15:07:16.107Z",
           "manual": false,
@@ -1771,6 +1771,34 @@
           "timeOut": "21:54",
           "registeredBy": "Restaurang Östnora",
           "registeredAt": "2026-10-30T15:43:25.113Z",
+          "manual": false,
+          "manualReason": "",
+          "edited": false,
+          "campingId": "c8"
+        },
+        {
+          "id": "mvwebvgz3y24r",
+          "name": "Elisabeth Åkerbrink",
+          "pnr": "701005-0545",
+          "date": "2026-10-31",
+          "timeIn": "13:47",
+          "timeOut": "",
+          "registeredBy": "Restaurang Östnora",
+          "registeredAt": "2026-10-31T12:47:28.787Z",
+          "manual": false,
+          "manualReason": "",
+          "edited": false,
+          "campingId": "c8"
+        },
+        {
+          "id": "mvwecebnrjms2",
+          "name": "Linda Wahlund",
+          "pnr": "19750729-0588",
+          "date": "2026-10-31",
+          "timeIn": "13:47",
+          "timeOut": "",
+          "registeredBy": "Restaurang Östnora",
+          "registeredAt": "2026-10-31T12:47:53.219Z",
           "manual": false,
           "manualReason": "",
           "edited": false,
@@ -3077,6 +3105,33 @@
           "detail": "Linda Wahlund stämplade ut 21:54",
           "oldVal": "",
           "newVal": "21:54"
+        },
+        {
+          "id": "mvvgac1umxhgy",
+          "ts": "2026-10-30T20:54:30.018Z",
+          "user": "Restaurang Östnora",
+          "action": "out",
+          "detail": "Elisabeth Åkerbrink stämplade ut 21:54",
+          "oldVal": "",
+          "newVal": "21:54"
+        },
+        {
+          "id": "mvwebvgzmxff6",
+          "ts": "2026-10-31T12:47:28.787Z",
+          "user": "Restaurang Östnora",
+          "action": "in",
+          "detail": "Elisabeth Åkerbrink stämplade in 13:47",
+          "oldVal": "",
+          "newVal": "13:47"
+        },
+        {
+          "id": "mvwecebngakua",
+          "ts": "2026-10-31T12:47:53.219Z",
+          "user": "Restaurang Östnora",
+          "action": "in",
+          "detail": "Linda Wahlund stämplade in 13:47",
+          "oldVal": "",
+          "newVal": "13:47"
         }
       ]
     }
