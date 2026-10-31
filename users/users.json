@@ -1782,7 +1782,7 @@
           "pnr": "701005-0545",
           "date": "2026-10-31",
           "timeIn": "13:47",
-          "timeOut": "",
+          "timeOut": "22:09",
           "registeredBy": "Restaurang Östnora",
           "registeredAt": "2026-10-31T12:47:28.787Z",
           "manual": false,
@@ -3171,6 +3171,15 @@
           "user": "Restaurang Östnora",
           "action": "out",
           "detail": "Linda Wahlund stämplade ut 22:09",
+          "oldVal": "",
+          "newVal": "22:09"
+        },
+        {
+          "id": "mvwwa3uxhfbvn",
+          "ts": "2026-10-31T21:09:59.433Z",
+          "user": "Restaurang Östnora",
+          "action": "out",
+          "detail": "Elisabeth Åkerbrink stämplade ut 22:09",
           "oldVal": "",
           "newVal": "22:09"
         }
