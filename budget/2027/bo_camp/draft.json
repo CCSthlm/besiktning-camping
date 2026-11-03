@@ -1,7 +1,11 @@
 {
-  "kontoVarden": {},
+  "kontoVarden": {
+    "8830": -220000
+  },
   "kommentarer": {},
-  "paramVarden": {},
+  "paramVarden": {
+    "helarsplatser_antal": 60
+  },
   "investeringar": [],
-  "autosparad": null
+  "autosparad": "2026-11-03T18:49:45.105Z"
 }
