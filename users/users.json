@@ -625,6 +625,36 @@
       "kontrollAdminAnlaggningId": "",
       "kontrollAdminAnlaggningNamn": "",
       "created": "2026-10-20"
+    },
+    {
+      "id": "umw11jhsa3i0p",
+      "name": "Peo Karlsson",
+      "email": "peo.karlsson@cc-camping.se",
+      "pin": "4321",
+      "pnr": "",
+      "adminRoles": [
+        "avvikelse-anlaggning",
+        "sba-lokal",
+        "projekt-camping",
+        "budget-camping"
+      ],
+      "role": "Användare",
+      "active": true,
+      "apps": [],
+      "plCampingId": "",
+      "godkannarcamping": "",
+      "sbaCamping": "CC Björkö Örns Camping",
+      "nyckelCamping": "",
+      "budgetEnhet": "bo_camp",
+      "elCamping": "",
+      "projektCampingId": "bo_camp",
+      "kontrollAnlaggningId": "",
+      "kontrollAnlaggningNamn": "",
+      "kontrollAnsvarigAnlaggningId": "",
+      "kontrollAnsvarigAnlaggningNamn": "",
+      "kontrollAdminAnlaggningId": "",
+      "kontrollAdminAnlaggningNamn": "",
+      "created": "2026-11-03"
     }
   ],
   "campings": [
