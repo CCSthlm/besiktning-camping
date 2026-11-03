@@ -20,7 +20,19 @@
       "y2029": 0,
       "y2030": 0,
       "y2031": 0
+    },
+    {
+      "kb": "60",
+      "omrade": "Lekplats",
+      "atgard": "Lägga konstgräs med fallskydd",
+      "kommentar": "",
+      "y2026": 0,
+      "y2027": 0,
+      "y2028": 0,
+      "y2029": 80000,
+      "y2030": 0,
+      "y2031": 0
     }
   ],
-  "autosparad": "2026-11-03T18:52:03.940Z"
+  "autosparad": "2026-11-03T18:53:05.951Z"
 }
