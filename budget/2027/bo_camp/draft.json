@@ -1,6 +1,6 @@
 {
   "kontoVarden": {
-    "4011": 50000,
+    "4011": 0,
     "8830": -220000
   },
   "kommentarer": {},
@@ -9,18 +9,6 @@
     "helarsplatser_pris": 18750
   },
   "investeringar": [
-    {
-      "kb": "60",
-      "omrade": "Platser",
-      "atgard": "Markarbete gästplatser",
-      "kommentar": "Vi behöver lägga gräs",
-      "y2026": 0,
-      "y2027": 50000,
-      "y2028": 20000,
-      "y2029": 0,
-      "y2030": 0,
-      "y2031": 0
-    },
     {
       "kb": "60",
       "omrade": "Lekplats",
@@ -34,5 +22,5 @@
       "y2031": 0
     }
   ],
-  "autosparad": "2026-11-03T18:53:05.951Z"
+  "autosparad": "2026-11-03T18:53:17.704Z"
 }
