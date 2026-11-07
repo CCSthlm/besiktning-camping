@@ -27,13 +27,13 @@
     {
       "id": "AT-AVV-AV-2606-G77J",
       "kalla": "Avvikelse",
-      "kallaId": "AV-2606-G77J",
+      "kallaId": null,
       "titel": "Avvikelse: Sjukdom / gästincident",
       "beskrivning": "En kvinna har fått något i ögat och behöver skölja med ögonducsh",
       "camping": "CC Björkö Örns Camping",
       "ansvarig": "Malin Liljedahl",
       "deadline": "2026-06-19",
-      "status": "Öppen",
+      "status": "Klar",
       "skapad": "2026-06-19"
     },
     {
@@ -181,5 +181,5 @@
       "skapad": "2026-07-01"
     }
   ],
-  "uppdaterad": "2026-11-07T07:13:40.393Z"
+  "uppdaterad": "2026-11-07T07:13:50.893Z"
 }
