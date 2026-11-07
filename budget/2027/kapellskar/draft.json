@@ -59,7 +59,8 @@
     "8830": -220000
   },
   "kommentarer": {
-    "4011": "Dansbana tak 150000\n201 duschar 50000\n202 utekök 30000\nBrandsläckare 30000"
+    "4011": "Dansbana tak 150000\n201 duschar 50000\n202 utekök 30000\nBrandsläckare 30000",
+    "7610": "Röjsågutbildning\narbetsmiljö\nförarbevis"
   },
   "paramVarden": {
     "helarsplatser_antal": 41,
@@ -74,5 +75,5 @@
     "soc_avg_lonekostnad": 260000
   },
   "investeringar": [],
-  "autosparad": "2026-11-07T10:19:54.764Z"
+  "autosparad": "2026-11-07T10:21:06.963Z"
 }
