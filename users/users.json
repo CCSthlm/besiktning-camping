@@ -709,6 +709,41 @@
       "kontrollAdminAnlaggningId": "",
       "kontrollAdminAnlaggningNamn": "",
       "created": "2026-11-07"
+    },
+    {
+      "id": "umw61cinm4pgf",
+      "name": "Hans Östman",
+      "email": "hans.ostman@cc-camping.se",
+      "pin": "9999",
+      "pnr": "",
+      "adminRoles": [
+        "avvikelse-ledning",
+        "avvikelse-anlaggning",
+        "nyhetsadmin",
+        "sam-ansvarig",
+        "arshjul-admin",
+        "reserakning-godkannare",
+        "nyckel-admin",
+        "projekt-ansvarig",
+        "budget-styrelse"
+      ],
+      "role": "Användare",
+      "active": true,
+      "apps": [],
+      "plCampingId": "",
+      "godkannarcamping": "CC Kapellskärs Camping",
+      "sbaCamping": "",
+      "nyckelCamping": "c3",
+      "budgetEnhet": "",
+      "elCamping": "",
+      "projektCampingId": "",
+      "kontrollAnlaggningId": "",
+      "kontrollAnlaggningNamn": "",
+      "kontrollAnsvarigAnlaggningId": "",
+      "kontrollAnsvarigAnlaggningNamn": "",
+      "kontrollAdminAnlaggningId": "",
+      "kontrollAdminAnlaggningNamn": "",
+      "created": "2026-11-07"
     }
   ],
   "campings": [
