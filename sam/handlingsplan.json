@@ -1,18 +1,6 @@
 {
   "atgarder": [
     {
-      "id": "AT-AVV-AV-2606-QWIJ",
-      "kalla": "Avvikelse",
-      "kallaId": "AV-2606-QWIJ",
-      "titel": "Avvikelse: Sjukdom / gästincident",
-      "beskrivning": "Misstänkt hjärtstopp",
-      "camping": "CC Björkö Örns Camping",
-      "ansvarig": "Massimo Johansson",
-      "deadline": "2026-06-13",
-      "status": "Öppen",
-      "skapad": "2026-06-12"
-    },
-    {
       "id": "AT-AVV-AV-2606-G77J",
       "kalla": "Avvikelse",
       "kallaId": "AV-2606-G77J",
@@ -49,18 +37,6 @@
       "skapad": "2026-07-09"
     },
     {
-      "id": "SAM-SBA-SBA-AVV-AV-2607-V29H",
-      "kalla": "SBA",
-      "kallaId": "SBA-AVV-AV-2607-V29H",
-      "titel": "[SBA] Brandincident: Brandtillbud / SBA",
-      "beskrivning": "Gasolgrill som tog eld.",
-      "camping": "CC Björkö Örns Camping",
-      "ansvarig": "Massimo Johansson",
-      "deadline": null,
-      "status": "Klar",
-      "skapad": "2026-07-02T08:41:21.620Z"
-    },
-    {
       "id": "AT-AVV-AV-2607-EZ9T",
       "kalla": "Avvikelse",
       "kallaId": "AV-2607-EZ9T",
@@ -83,6 +59,42 @@
       "deadline": "2026-09-01",
       "status": "Öppen",
       "skapad": "2026-08-28T14:18:46.708Z"
+    },
+    {
+      "id": "AT-AVV-AV-2609-DF4P",
+      "kalla": "Avvikelse",
+      "kallaId": "AV-2609-DF4P",
+      "titel": "Avvikelse: Sjukdomsfall",
+      "beskrivning": "Gästen promenerade på campingen (vid en stig bredvid stuga 9). Då råkade gästen trampa på en träbit med en smal spik. Spiken gick rakt igenom skon och in i foten. Gästen drog ut spiken, men nästa morgon hade foten svullnat rejält och gjorde ont. Gästen åkte in till Norrtälje sjukhus och blev skickad direkt till akuten. Vid röntgen upptäcktes det att spiken gått av och att det satt kvar en nästan 1 cm lång bit. Han fick penicillin och ska tillbaka på måndag (14/9) för operation.  ",
+      "camping": "CC Björkö Örns Camping",
+      "ansvarig": "Carolina Eek",
+      "deadline": "2026-09-13",
+      "status": "Öppen",
+      "skapad": "2026-09-10"
+    },
+    {
+      "id": "AT-1789205749201",
+      "kalla": "Riskbedömning",
+      "kallaId": "RB-1789205749201",
+      "titel": "Åtgärda: Måla vidskivor - ramlar",
+      "beskrivning": "Man får inte använda stege utan man skall använda godkänd ställning (mobil)",
+      "camping": "CC Björkö Örns Camping",
+      "ansvarig": "Massimo Johansson",
+      "deadline": "2026-09-30",
+      "status": "Öppen",
+      "skapad": "2026-09-12T09:35:49.201Z"
+    },
+    {
+      "id": "SAM-SBA-SBA-AVV-AV-2607-V29H",
+      "kalla": "SBA",
+      "kallaId": "SBA-AVV-AV-2607-V29H",
+      "titel": "[SBA] Brandincident: Brandtillbud / SBA",
+      "beskrivning": "Gasolgrill som tog eld.",
+      "camping": "CC Björkö Örns Camping",
+      "ansvarig": "Massimo Johansson",
+      "deadline": null,
+      "status": "Klar",
+      "skapad": "2026-07-02T08:41:21.620Z"
     },
     {
       "id": "SAM-SBA-1787926879541",
@@ -109,17 +121,41 @@
       "skapad": "2026-08-28T14:21:21.516Z"
     },
     {
-      "id": "AT-1789205749201",
-      "kalla": "Riskbedömning",
-      "kallaId": "RB-1789205749201",
-      "titel": "Åtgärda: Måla vidskivor - ramlar",
-      "beskrivning": "Man får inte använda stege utan man skall använda godkänd ställning (mobil)",
+      "id": "AT-AVV-AV-2608-LPQF",
+      "kalla": "Avvikelse",
+      "kallaId": "AV-2608-LPQF",
+      "titel": "Avvikelse: Säkerhet / ordning",
+      "beskrivning": "En tältgäst från Nederländerna ringer när hon har lämnat campingen och säger att någon har stulit en hammare och ett paket cigaretter. Hon har en tältplats med el och tältar nära stuga 2. Vi uppmärksammar att de som bor i stuga 2 beter sig underligt men tror inte de är inblandade. Sedan ringer gästen en gång till och säger att hon även blivit av med en väska med kläder och presenter och handdukar. Senare samma dag kommer det en tältgäst till och säger att han blivit av med två kikare. Denna gäst har också tältat på plats med el. Även denna gäst är från Nederländerna. Ytterligare en tid senare återkommer den senare gästen och säger att han blivit av med 40 Euro och ett par Raybanglasögon. Han vill boka tid hos polisen men vi ger honom numret till 114 14 så han kan ringa direkt. Det handlar alltså om två tältare från Nederländerna som stått på plats med el. Båda nämner att sakerna tagits från deras bilar. Den första gästen jag nämner säger att bilen har varit olåst och den andra gästen vet inte om den varit låst eller inte.",
+      "camping": "CC Östnora Camping",
+      "ansvarig": "Campingvärdar Johan och Anna",
+      "deadline": null,
+      "status": "Öppen",
+      "skapad": "2026-08-01"
+    },
+    {
+      "id": "AT-AVV-AV-2608-EW0H",
+      "kalla": "Avvikelse",
+      "kallaId": "AV-2608-EW0H",
+      "titel": "Avvikelse: Sjukdomsfall",
+      "beskrivning": "En gäst snubblar utanför servicehuset på gräsmattan. Han slår i huvudet och han bröt lårbenet ",
+      "camping": "CC Östnora Camping",
+      "ansvarig": "Campingvärdar Johan och Anna",
+      "deadline": null,
+      "status": "Öppen",
+      "skapad": "2026-07-30"
+    },
+    {
+      "id": "AT-AVV-AV-2607-V29H",
+      "kalla": "Avvikelse",
+      "kallaId": "AV-2607-V29H",
+      "titel": "Avvikelse: Brandtillbud / SBA",
+      "beskrivning": "Gasolgrill som tog eld.",
       "camping": "CC Björkö Örns Camping",
       "ansvarig": "Massimo Johansson",
-      "deadline": "2026-09-30",
+      "deadline": null,
       "status": "Öppen",
-      "skapad": "2026-09-12T09:35:49.201Z"
+      "skapad": "2026-07-01"
     }
   ],
-  "uppdaterad": "2026-09-12T09:35:49.201Z"
+  "uppdaterad": "2026-11-07T07:11:55.365Z"
 }
