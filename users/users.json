@@ -655,6 +655,33 @@
       "kontrollAdminAnlaggningId": "",
       "kontrollAdminAnlaggningNamn": "",
       "created": "2026-11-03"
+    },
+    {
+      "id": "umw617q7ls6w3",
+      "name": "Jan-Olof Nyqvist",
+      "email": "jo.nyqvist@cc-camping.se",
+      "pin": "9999",
+      "pnr": "",
+      "adminRoles": [
+        "budget-camping"
+      ],
+      "role": "Användare",
+      "active": true,
+      "apps": [],
+      "plCampingId": "",
+      "godkannarcamping": "",
+      "sbaCamping": "",
+      "nyckelCamping": "",
+      "budgetEnhet": "kapellskar",
+      "elCamping": "",
+      "projektCampingId": "",
+      "kontrollAnlaggningId": "",
+      "kontrollAnlaggningNamn": "",
+      "kontrollAnsvarigAnlaggningId": "",
+      "kontrollAnsvarigAnlaggningNamn": "",
+      "kontrollAdminAnlaggningId": "",
+      "kontrollAdminAnlaggningNamn": "",
+      "created": "2026-11-07"
     }
   ],
   "campings": [
