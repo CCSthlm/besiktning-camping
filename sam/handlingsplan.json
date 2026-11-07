@@ -1,6 +1,18 @@
 {
   "atgarder": [
     {
+      "id": "AT-AVV-AV-2606-QWIJ",
+      "kalla": "Avvikelse",
+      "kallaId": null,
+      "titel": "Avvikelse: Sjukdom / gästincident",
+      "beskrivning": "Misstänkt hjärtstopp",
+      "camping": "CC Björkö Örns Camping",
+      "ansvarig": "Massimo Johansson",
+      "deadline": "2026-06-13",
+      "status": "Klar",
+      "skapad": "2026-06-12"
+    },
+    {
       "id": "AT-AVV-AV-2606-G77J",
       "kalla": "Avvikelse",
       "kallaId": "AV-2606-G77J",
@@ -157,5 +169,5 @@
       "skapad": "2026-07-01"
     }
   ],
-  "uppdaterad": "2026-11-07T07:12:06.928Z"
+  "uppdaterad": "2026-11-07T07:13:14.743Z"
 }
