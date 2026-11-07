@@ -10,8 +10,9 @@
     "gastavgift_pris": 339,
     "el_intakt_sommar_kwh": 0,
     "loner_sommarvard": 6,
-    "loner_vintervard": 3
+    "loner_vintervard": 3,
+    "arvoden_antal": 2
   },
   "investeringar": [],
-  "autosparad": "2026-11-07T07:05:33.288Z"
+  "autosparad": "2026-11-07T07:05:52.031Z"
 }
