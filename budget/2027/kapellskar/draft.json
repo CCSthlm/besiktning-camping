@@ -58,7 +58,9 @@
     "7830": 12000,
     "8830": -220000
   },
-  "kommentarer": {},
+  "kommentarer": {
+    "4011": "Dansbana tak 150000\n201 duschar 50000\n202 utekök"
+  },
   "paramVarden": {
     "helarsplatser_antal": 41,
     "helarsplatser_pris": 16071,
@@ -72,5 +74,5 @@
     "soc_avg_lonekostnad": 260000
   },
   "investeringar": [],
-  "autosparad": "2026-11-07T10:17:41.724Z"
+  "autosparad": "2026-11-07T10:19:15.751Z"
 }
