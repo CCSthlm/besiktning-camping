@@ -2,6 +2,7 @@
   "kontoVarden": {
     "3011": 214286,
     "3012": 87054,
+    "3016": 34375,
     "8830": -220000
   },
   "kommentarer": {},
@@ -18,5 +19,5 @@
     "soc_avg_lonekostnad": 260000
   },
   "investeringar": [],
-  "autosparad": "2026-11-07T07:08:32.146Z"
+  "autosparad": "2026-11-07T07:09:20.540Z"
 }
