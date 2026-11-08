@@ -72,7 +72,8 @@
     "loner_vintervard": 3,
     "arvoden_antal": 1,
     "arvoden_belopp": 35000,
-    "soc_avg_lonekostnad": 260000
+    "soc_avg_lonekostnad": 260000,
+    "el_intakt_vinter_kwh": 113042
   },
   "investeringar": [
     {
@@ -136,5 +137,5 @@
       "y2031": 0
     }
   ],
-  "autosparad": "2026-11-08T14:28:13.981Z"
+  "autosparad": "2026-11-08T14:28:26.404Z"
 }
