@@ -67,7 +67,7 @@
     "helarsplatser_pris": 16071,
     "gastavgift_antal": 1800,
     "gastavgift_pris": 339,
-    "el_intakt_sommar_kwh": 0,
+    "el_intakt_sommar_kwh": 21257,
     "loner_sommarvard": 6,
     "loner_vintervard": 3,
     "arvoden_antal": 1,
@@ -136,5 +136,5 @@
       "y2031": 0
     }
   ],
-  "autosparad": "2026-11-07T10:38:40.911Z"
+  "autosparad": "2026-11-08T14:28:13.981Z"
 }
