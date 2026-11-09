@@ -358,11 +358,14 @@
           "ts": "2026-09-25T12:47:37.127Z"
         }
       ],
-      "status": "inskickad",
+      "status": "godkand",
       "skapad": "2026-09-25T12:42:38.529Z",
       "skapadAv": "Evert Olén",
       "signeradAv": "Evert Olén",
-      "signeradTs": "2026-09-25T12:47:50.011Z"
+      "signeradTs": "2026-09-25T12:47:50.011Z",
+      "statusKommentar": "20261125",
+      "statusTs": "2026-11-09T09:52:14.221Z",
+      "statusAv": "Anna Söderman"
     }
   ]
 }
