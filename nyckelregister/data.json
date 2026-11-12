@@ -1018,14 +1018,14 @@
     },
     {
       "id": "mtzv6vgl4snvr",
-      "nyckelId": "Kap 50",
+      "nyckelId": "KAP 50",
       "typ": "Nyckel",
       "beskrivning": "Torpet, Verkstaden och Ungdomshuset",
       "camping": "c3",
       "plats": "",
       "tillvnr": "",
       "kopior": 1,
-      "anteckning": "",
+      "anteckning": "Blippen återlämnad och utbetalat 200 kr",
       "status": "ute",
       "innehavarId": "mtzv6vgl6axvl",
       "utlamnadTs": "2024-05-18T22:00:00.000Z",
@@ -2868,6 +2868,18 @@
       "nyckelId": "Kap 8",
       "personId": "mtzv6vgl96o8z",
       "personNamn": "Therese Ottenäs",
+      "utfordAv": "Elisabeth Terol",
+      "anteckning": ""
+    },
+    {
+      "id": "mwde1f0vyc6d3",
+      "ts": "2026-11-12T10:11:25.903Z",
+      "action": "edit",
+      "detail": "Redigerade nyckel KAP 50",
+      "nyckelDbId": "",
+      "nyckelId": "",
+      "personId": "",
+      "personNamn": "",
       "utfordAv": "Elisabeth Terol",
       "anteckning": ""
     }
