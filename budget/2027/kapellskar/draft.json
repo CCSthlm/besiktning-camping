@@ -64,7 +64,7 @@
   },
   "paramVarden": {
     "helarsplatser_antal": 41,
-    "helarsplatser_pris": 16071.43,
+    "helarsplatser_pris": 16517.86,
     "gastavgift_antal": 1900,
     "gastavgift_pris": 357.14,
     "el_intakt_sommar_kwh": 89400,
@@ -139,5 +139,5 @@
       "y2031": 0
     }
   ],
-  "autosparad": "2026-11-13T08:15:20.262Z"
+  "autosparad": "2026-11-13T08:24:11.670Z"
 }
