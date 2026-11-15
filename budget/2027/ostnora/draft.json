@@ -65,6 +65,7 @@
     "8830": -220000
   },
   "kommentarer": {
+    "3010": "har ni tagit med höjningen på 500kr inför 2027?",
     "4308": "Ta bort detta. Har svårt att se att ni ska ha kostnader för sektionsaktivitet."
   },
   "paramVarden": {
@@ -120,5 +121,5 @@
       "y2031": 0
     }
   ],
-  "autosparad": "2026-11-15T11:44:25.878Z"
+  "autosparad": "2026-11-15T11:53:54.560Z"
 }
