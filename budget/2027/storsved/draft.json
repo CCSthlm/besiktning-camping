@@ -72,6 +72,7 @@
     "5212": "tom 31/10 så är kostnaden 17900 kr, så höj lite i budgeten.",
     "7010": "Avser 4 sommarvärdar och 1 vintervärd.\nSe Storsvedstankar under arvoden.",
     "7241": "Not från Storsved: Det planeras för 4 (3+1 som mer som en teamleader/superuser) sommarvärdar och1 vintervärd samt 1 campingansvarig på helår, dvs 155 000.\nTeamleader ska enbart finnas på de campingar som har resturang. Superuser kommer att plockas bort från campingarna 2027.",
+    "7510": "Här vet jag inte om det är något tokigt men självklart blir det sociala avgifter på de arvoden som betalas ut. Brukar vara 31,42%.",
     "7610": "tex cv utbildning, hlr mm."
   },
   "paramVarden": {
@@ -90,5 +91,5 @@
     "soc_avg_lonekostnad": 0
   },
   "investeringar": [],
-  "autosparad": "2026-11-15T13:02:29.654Z"
+  "autosparad": "2026-11-15T13:06:13.511Z"
 }
