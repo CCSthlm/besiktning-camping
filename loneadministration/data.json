@@ -1326,6 +1326,281 @@
         ],
         "anteckning": ""
       }
+    ],
+    "2026-09": [
+      {
+        "id": "mwhw0ymmiyagz",
+        "personId": "mtj020srs8p9x",
+        "personName": "Ingalill Nore",
+        "pnr": "19481117-0200",
+        "anstform": "säsongsanställd",
+        "timlön": 0,
+        "manlön": 0,
+        "kostnadsst": "70",
+        "kostnadsbarare": "75",
+        "timeRows": [
+          {
+            "id": "mwhw0ymm824dx",
+            "date": "2026-09-01",
+            "timeIn": "14:08",
+            "timeOut": "16:03",
+            "hours": 1.92,
+            "obHours": 0,
+            "note": ""
+          },
+          {
+            "id": "mwhw0ymmwa53i",
+            "date": "2026-09-02",
+            "timeIn": "14:08",
+            "timeOut": "13:53",
+            "hours": 23.75,
+            "obHours": 0,
+            "note": ""
+          },
+          {
+            "id": "mwhw0ymmct0sw",
+            "date": "2026-09-18",
+            "timeIn": "16:32",
+            "timeOut": "",
+            "hours": 0,
+            "obHours": 0,
+            "note": ""
+          },
+          {
+            "id": "mwhw0ymmdjzqh",
+            "date": "2026-09-25",
+            "timeIn": "16:20",
+            "timeOut": "21:31",
+            "hours": 5.18,
+            "obHours": 0,
+            "note": ""
+          },
+          {
+            "id": "mwhw0ymmp34pp",
+            "date": "2026-09-26",
+            "timeIn": "10:46",
+            "timeOut": "21:09",
+            "hours": 10.38,
+            "obHours": 0,
+            "note": ""
+          },
+          {
+            "id": "mwhw0ymm3xjuf",
+            "date": "2026-09-26",
+            "timeIn": "21:09",
+            "timeOut": "21:09",
+            "hours": 0,
+            "obHours": 0,
+            "note": ""
+          }
+        ],
+        "anteckning": ""
+      },
+      {
+        "id": "mwhw0ymmpkybb",
+        "personId": "mtj020srxs5xm",
+        "personName": "Bo Wahlund",
+        "pnr": "19580412-0250",
+        "anstform": "säsongsanställd",
+        "timlön": 0,
+        "manlön": 0,
+        "kostnadsst": "70",
+        "kostnadsbarare": "75",
+        "timeRows": [
+          {
+            "id": "mwhw0ymmv2e7u",
+            "date": "2026-09-04",
+            "timeIn": "15:54",
+            "timeOut": "21:47",
+            "hours": 5.88,
+            "obHours": 0,
+            "note": ""
+          },
+          {
+            "id": "mwhw0ymmkulse",
+            "date": "2026-09-05",
+            "timeIn": "10:50",
+            "timeOut": "",
+            "hours": 0,
+            "obHours": 0,
+            "note": ""
+          },
+          {
+            "id": "mwhw0ymmhrh75",
+            "date": "2026-09-18",
+            "timeIn": "16:32",
+            "timeOut": "",
+            "hours": 0,
+            "obHours": 0,
+            "note": ""
+          },
+          {
+            "id": "mwhw0ymms02t7",
+            "date": "2026-09-19",
+            "timeIn": "10:21",
+            "timeOut": "",
+            "hours": 0,
+            "obHours": 0,
+            "note": ""
+          }
+        ],
+        "anteckning": ""
+      },
+      {
+        "id": "mwhw0ymm180t4",
+        "personId": "mtj020srb13s8",
+        "personName": "Linda Wahlund",
+        "pnr": "19750729-0588",
+        "anstform": "säsongsanställd",
+        "timlön": 0,
+        "manlön": 0,
+        "kostnadsst": "70",
+        "kostnadsbarare": "75",
+        "timeRows": [
+          {
+            "id": "mwhw0ymm8o8fq",
+            "date": "2026-09-04",
+            "timeIn": "15:54",
+            "timeOut": "21:47",
+            "hours": 5.88,
+            "obHours": 0,
+            "note": ""
+          },
+          {
+            "id": "mwhw0ymmcmhcw",
+            "date": "2026-09-05",
+            "timeIn": "10:50",
+            "timeOut": "09:10",
+            "hours": 22.33,
+            "obHours": 0,
+            "note": ""
+          },
+          {
+            "id": "mwhw0ymmqkqun",
+            "date": "2026-09-19",
+            "timeIn": "10:21",
+            "timeOut": "20:35",
+            "hours": 10.23,
+            "obHours": 0,
+            "note": ""
+          }
+        ],
+        "anteckning": ""
+      },
+      {
+        "id": "mwhw0ymmnt7i6",
+        "personId": "mtj020srsq84t",
+        "personName": "Sussi Törnander",
+        "pnr": "19631009-6646",
+        "anstform": "säsongsanställd",
+        "timlön": 0,
+        "manlön": 0,
+        "kostnadsst": "70",
+        "kostnadsbarare": "75",
+        "timeRows": [
+          {
+            "id": "mwhw0ymmls08b",
+            "date": "2026-09-10",
+            "timeIn": "16:59",
+            "timeOut": "18:21",
+            "hours": 1.37,
+            "obHours": 0,
+            "note": ""
+          },
+          {
+            "id": "mwhw0ymmy45za",
+            "date": "2026-09-11",
+            "timeIn": "16:15",
+            "timeOut": "21:59",
+            "hours": 5.73,
+            "obHours": 0,
+            "note": ""
+          },
+          {
+            "id": "mwhw0ymmxwle7",
+            "date": "2026-09-12",
+            "timeIn": "09:46",
+            "timeOut": "21:55",
+            "hours": 12.15,
+            "obHours": 0,
+            "note": ""
+          },
+          {
+            "id": "mwhw0ymm94ogu",
+            "date": "2026-09-13",
+            "timeIn": "09:41",
+            "timeOut": "",
+            "hours": 0,
+            "obHours": 0,
+            "note": ""
+          }
+        ],
+        "anteckning": ""
+      },
+      {
+        "id": "mwhw0ymmepr3e",
+        "personId": "mtj020srnsnas",
+        "personName": "Jan Törnander",
+        "pnr": "19590103-6615",
+        "anstform": "säsongsanställd",
+        "timlön": 0,
+        "manlön": 0,
+        "kostnadsst": "70",
+        "kostnadsbarare": "75",
+        "timeRows": [
+          {
+            "id": "mwhw0ymmfhl6u",
+            "date": "2026-09-11",
+            "timeIn": "16:15",
+            "timeOut": "21:58",
+            "hours": 5.72,
+            "obHours": 0,
+            "note": ""
+          },
+          {
+            "id": "mwhw0ymmst4cr",
+            "date": "2026-09-12",
+            "timeIn": "09:46",
+            "timeOut": "21:54",
+            "hours": 12.13,
+            "obHours": 0,
+            "note": ""
+          }
+        ],
+        "anteckning": ""
+      },
+      {
+        "id": "mwhw0ymmf25dy",
+        "personId": "mtj020sr1g75q",
+        "personName": "Bengt Forslund",
+        "pnr": "19620708-1198",
+        "anstform": "säsongsanställd",
+        "timlön": 0,
+        "manlön": 0,
+        "kostnadsst": "70",
+        "kostnadsbarare": "75",
+        "timeRows": [
+          {
+            "id": "mwhw0ymmlao8a",
+            "date": "2026-09-25",
+            "timeIn": "16:20",
+            "timeOut": "21:31",
+            "hours": 5.18,
+            "obHours": 0,
+            "note": ""
+          },
+          {
+            "id": "mwhw0ymmwqtum",
+            "date": "2026-09-26",
+            "timeIn": "10:46",
+            "timeOut": "21:09",
+            "hours": 10.38,
+            "obHours": 0,
+            "note": ""
+          }
+        ],
+        "anteckning": ""
+      }
     ]
   },
   "obRegler": []
