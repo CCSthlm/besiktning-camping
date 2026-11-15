@@ -68,7 +68,7 @@
     "3010": "har ni tagit med höjningen på 500kr inför 2027?",
     "3313": "Det här är pengar som kommer från Riks för inlösta presentkort för nya medlemmar. Ni bör lägga noll kr här.",
     "4308": "Ta bort detta. Har svårt att se att ni ska ha kostnader för sektionsaktivitet.",
-    "6540": "Ska ni inte ha kvar Bambora?",
+    "6540": "Ska ni inte ha kvar Bambora? Jo ligger under 6513",
     "6570": "Här bör ni höja med 2-3000Kr. tom 31/10 låg det på 5922:-.",
     "7010": "Här blev utfallet tom 31/10 97000;. Bör ändras i budgeten.",
     "7241": "Här blev utfallet tom 31/10 495.000:- ni måste skilja på löner och arvoden."
@@ -126,5 +126,5 @@
       "y2031": 0
     }
   ],
-  "autosparad": "2026-11-15T14:58:43.041Z"
+  "autosparad": "2026-11-15T15:07:00.972Z"
 }
