@@ -69,7 +69,8 @@
     "3313": "Det här är pengar som kommer från Riks för inlösta presentkort för nya medlemmar. Ni bör lägga noll kr här.",
     "4308": "Ta bort detta. Har svårt att se att ni ska ha kostnader för sektionsaktivitet.",
     "6540": "Ska ni inte ha kvar Bambora?",
-    "6570": "Här bör ni höja med 2-3000Kr. tom 31/10 låg det på 5922:-."
+    "6570": "Här bör ni höja med 2-3000Kr. tom 31/10 låg det på 5922:-.",
+    "7241": "Här blev utfallet tom 31/10 495.000:- ni måste skilja på löner och arvoden."
   },
   "paramVarden": {
     "helarsplatser_antal": 61,
@@ -124,5 +125,5 @@
       "y2031": 0
     }
   ],
-  "autosparad": "2026-11-15T12:21:51.141Z"
+  "autosparad": "2026-11-15T12:24:45.065Z"
 }
