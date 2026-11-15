@@ -64,7 +64,9 @@
     "7384": 20000,
     "8830": -220000
   },
-  "kommentarer": {},
+  "kommentarer": {
+    "4308": "Ta bort detta. Har svårt att se att ni ska ha kostnader för sektionsaktivitet."
+  },
   "paramVarden": {
     "helarsplatser_antal": 61,
     "helarsplatser_pris": 16517.86,
@@ -118,5 +120,5 @@
       "y2031": 0
     }
   ],
-  "autosparad": "2026-11-04T18:51:20.403Z"
+  "autosparad": "2026-11-15T11:44:25.878Z"
 }
