@@ -65,7 +65,7 @@
     "8830": -220000
   },
   "kommentarer": {
-    "3010": "har ni tagit med höjningen på 500kr inför 2027?",
+    "3010": "har ni tagit med höjningen på 500kr inför 2027? ja",
     "3313": "Det här är pengar som kommer från Riks för inlösta presentkort för nya medlemmar. Ni bör lägga noll kr här.",
     "4308": "Ta bort detta. Har svårt att se att ni ska ha kostnader för sektionsaktivitet.",
     "6540": "Ska ni inte ha kvar Bambora? Jo ligger under 6513",
@@ -126,5 +126,5 @@
       "y2031": 0
     }
   ],
-  "autosparad": "2026-11-15T15:07:00.972Z"
+  "autosparad": "2026-11-15T15:13:21.202Z"
 }
