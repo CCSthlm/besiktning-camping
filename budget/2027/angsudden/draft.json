@@ -1,5 +1,6 @@
 {
   "kontoVarden": {
+    "5110": 390000,
     "8830": -220000
   },
   "kommentarer": {},
@@ -11,5 +12,5 @@
     "soc_avg_lonekostnad": 25000
   },
   "investeringar": [],
-  "autosparad": "2026-11-18T11:42:27.750Z"
+  "autosparad": "2026-11-18T12:01:38.680Z"
 }
