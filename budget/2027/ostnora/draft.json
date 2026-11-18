@@ -72,7 +72,7 @@
     "6540": "Ska ni inte ha kvar Bambora? Jo ligger under 6513 för Bambora är en IT tjänst utan betalningtermial",
     "6570": "Här bör ni höja med 2-3000Kr. tom 31/10 låg det på 5922:-.         Ligger på kontokortsavgister 6040 men jag flyttar hit de",
     "7010": "Här blev utfallet tom 31/10 97000;. Bör ändras i budgeten.",
-    "7241": "Här blev utfallet tom 31/10 495.000:- ni måste skilja på löner och arvoden."
+    "7241": ""
   },
   "paramVarden": {
     "helarsplatser_antal": 61,
@@ -127,5 +127,5 @@
       "y2031": 0
     }
   ],
-  "autosparad": "2026-11-18T10:16:18.208Z"
+  "autosparad": "2026-11-18T12:10:03.038Z"
 }
