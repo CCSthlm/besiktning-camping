@@ -5,8 +5,9 @@
   "kommentarer": {},
   "paramVarden": {
     "arvoden_antal": 1,
-    "arvoden_belopp": 20000
+    "arvoden_belopp": 20000,
+    "soc_avg_lonekostnad": 20000
   },
   "investeringar": [],
-  "autosparad": "2026-11-18T11:43:10.971Z"
+  "autosparad": "2026-11-18T11:43:15.508Z"
 }
