@@ -65,7 +65,7 @@
     "8830": -220000
   },
   "kommentarer": {
-    "3010": "har ni tagit med höjningen på 500kr inför 2027? ja",
+    "3010": "",
     "3313": "Det här är pengar som kommer från Riks för inlösta presentkort för nya medlemmar. Ni bör lägga noll kr här.",
     "4308": "",
     "5213": "Denna har jag flyttat till konto 5645 men utfallet blir detsamma.",
@@ -127,5 +127,5 @@
       "y2031": 0
     }
   ],
-  "autosparad": "2026-11-18T12:25:50.027Z"
+  "autosparad": "2026-11-18T12:26:27.058Z"
 }
