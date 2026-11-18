@@ -7,8 +7,9 @@
     "helarsplatser_antal": 117,
     "helarsplatser_pris": 4910.71,
     "arvoden_antal": 1,
-    "arvoden_belopp": 25000
+    "arvoden_belopp": 25000,
+    "soc_avg_lonekostnad": 25000
   },
   "investeringar": [],
-  "autosparad": "2026-10-01T12:50:53.947Z"
+  "autosparad": "2026-11-18T11:42:21.122Z"
 }
