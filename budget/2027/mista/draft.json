@@ -56,6 +56,7 @@
     "8830": -220000
   },
   "kommentarer": {
+    "4011": "Bord o Stolar\t10 000\nMarkduk\t10 000\nVäggrus\t20 000\nBadsand\t10 000\nElmateriel\t10 000\nHLR kurs\t10 000\nRamp kanoter\t8 000\nKajaker\t20 000\nLekplatsutr.\t8 000\nGästkök utr.\t10 000\nTvättmaskin\t30 000\nBrandsläckarhus\t5 000\nInr. Stugor\t5 000\nFlytt tvättutr.\t10 000\nRöjsåg\t10 000\nEj definierat än\t74 000\n250 000",
     "4390": "Pant är ett minusvärde som kostnad. Går ej att lägga in ett minusvärde"
   },
   "paramVarden": {
@@ -87,5 +88,5 @@
       "y2031": 0
     }
   ],
-  "autosparad": "2026-11-15T16:36:38.404Z"
+  "autosparad": "2026-11-18T09:48:17.942Z"
 }
