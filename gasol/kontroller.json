@@ -192,7 +192,28 @@
       "utfordAv": "Reception Östnora",
       "utfordAvId": "ums5ysv2emd8s",
       "skapad": "2026-11-21T10:59:59.836Z"
+    },
+    {
+      "id": "GK-1795258863084",
+      "intygsNr": "GAS-2026-0010",
+      "camping": "CC Östnora Camping",
+      "regnr": "TPF910",
+      "fordonstyp": "husvagn",
+      "plats": "10",
+      "datum": "2026-05-31",
+      "resultat": "godkand",
+      "externDatum": null,
+      "besiktDatum": "2026-06-30",
+      "besiktNasta": "2027-06-30",
+      "nastaKontroll": "2027-05-31",
+      "fabrikat": null,
+      "modell": null,
+      "arsmodell": null,
+      "anteckning": null,
+      "utfordAv": "Reception Östnora",
+      "utfordAvId": "ums5ysv2emd8s",
+      "skapad": "2026-11-21T11:01:03.084Z"
     }
   ],
-  "uppdaterad": "2026-11-21T10:59:59.836Z"
+  "uppdaterad": "2026-11-21T11:01:03.084Z"
 }
