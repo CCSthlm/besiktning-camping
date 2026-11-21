@@ -535,7 +535,7 @@
       "camping": "CC Östnora Camping",
       "regnr": "HJW960",
       "fordonstyp": "husvagn",
-      "plats": null,
+      "plats": "28",
       "datum": "2026-04-09",
       "resultat": "godkand",
       "externDatum": null,
@@ -551,5 +551,5 @@
       "skapad": "2026-11-21T11:27:05.006Z"
     }
   ],
-  "uppdaterad": "2026-11-21T11:27:43.473Z"
+  "uppdaterad": "2026-11-21T11:28:02.029Z"
 }
