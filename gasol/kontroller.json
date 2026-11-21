@@ -234,7 +234,28 @@
       "utfordAv": "Reception Östnora",
       "utfordAvId": "ums5ysv2emd8s",
       "skapad": "2026-11-21T11:03:03.480Z"
+    },
+    {
+      "id": "GK-1795259057491",
+      "intygsNr": "GAS-2026-0012",
+      "camping": "CC Östnora Camping",
+      "regnr": "RSW754",
+      "fordonstyp": "husvagn",
+      "plats": "12",
+      "datum": "2025-12-16",
+      "resultat": "godkand",
+      "externDatum": null,
+      "besiktDatum": "2026-06-30",
+      "besiktNasta": "2027-06-30",
+      "nastaKontroll": "2026-12-16",
+      "fabrikat": null,
+      "modell": null,
+      "arsmodell": null,
+      "anteckning": null,
+      "utfordAv": "Reception Östnora",
+      "utfordAvId": "ums5ysv2emd8s",
+      "skapad": "2026-11-21T11:04:17.491Z"
     }
   ],
-  "uppdaterad": "2026-11-21T11:03:03.480Z"
+  "uppdaterad": "2026-11-21T11:04:17.491Z"
 }
