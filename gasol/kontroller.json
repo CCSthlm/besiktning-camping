@@ -682,7 +682,7 @@
       "camping": "CC Östnora Camping",
       "regnr": "SMP022",
       "fordonstyp": "husvagn",
-      "plats": null,
+      "plats": "39",
       "datum": "2026-07-12",
       "resultat": "godkand",
       "externDatum": null,
@@ -698,5 +698,5 @@
       "skapad": "2026-11-21T11:36:02.853Z"
     }
   ],
-  "uppdaterad": "2026-11-21T11:36:02.853Z"
+  "uppdaterad": "2026-11-21T11:36:24.753Z"
 }
