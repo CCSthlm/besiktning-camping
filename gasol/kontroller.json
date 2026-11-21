@@ -871,7 +871,7 @@
       "camping": "CC Östnora Camping",
       "regnr": "FJT37H",
       "fordonstyp": "husbil",
-      "plats": null,
+      "plats": "49",
       "datum": "2026-05-06",
       "resultat": "godkand",
       "externDatum": null,
@@ -887,5 +887,5 @@
       "skapad": "2026-11-21T11:56:29.872Z"
     }
   ],
-  "uppdaterad": "2026-11-21T11:56:29.872Z"
+  "uppdaterad": "2026-11-21T11:56:58.169Z"
 }
