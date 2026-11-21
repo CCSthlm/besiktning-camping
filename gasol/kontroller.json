@@ -388,7 +388,7 @@
       "camping": "CC Östnora Camping",
       "regnr": "HBM498",
       "fordonstyp": "husvagn",
-      "plats": null,
+      "plats": "20",
       "datum": "2026-06-07",
       "resultat": "godkand",
       "externDatum": null,
@@ -404,5 +404,5 @@
       "skapad": "2026-11-21T11:15:21.733Z"
     }
   ],
-  "uppdaterad": "2026-11-21T11:15:21.733Z"
+  "uppdaterad": "2026-11-21T11:15:35.616Z"
 }
