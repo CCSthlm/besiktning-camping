@@ -45,7 +45,28 @@
       "utfordAv": "Reception Östnora",
       "utfordAvId": "ums5ysv2emd8s",
       "skapad": "2026-08-02T15:00:40.888Z"
+    },
+    {
+      "id": "GK-1795257919091",
+      "intygsNr": "GAS-2026-0003",
+      "camping": "CC Östnora Camping",
+      "regnr": "LBK133",
+      "fordonstyp": "husvagn",
+      "plats": "1",
+      "datum": "2026-05-28",
+      "resultat": "godkand",
+      "externDatum": null,
+      "besiktDatum": null,
+      "besiktNasta": null,
+      "nastaKontroll": "2027-05-28",
+      "fabrikat": null,
+      "modell": null,
+      "arsmodell": null,
+      "anteckning": null,
+      "utfordAv": "Reception Östnora",
+      "utfordAvId": "ums5ysv2emd8s",
+      "skapad": "2026-11-21T10:45:19.091Z"
     }
   ],
-  "uppdaterad": "2026-08-02T15:00:40.888Z"
+  "uppdaterad": "2026-11-21T10:45:19.091Z"
 }
