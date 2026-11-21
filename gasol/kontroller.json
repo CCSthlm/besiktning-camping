@@ -528,7 +528,28 @@
       "utfordAv": "Reception Östnora",
       "utfordAvId": "ums5ysv2emd8s",
       "skapad": "2026-11-21T11:25:56.343Z"
+    },
+    {
+      "id": "GK-1795260425006",
+      "intygsNr": "GAS-2026-0026",
+      "camping": "CC Östnora Camping",
+      "regnr": "HJW960",
+      "fordonstyp": "husvagn",
+      "plats": null,
+      "datum": "2026-04-09",
+      "resultat": "godkand",
+      "externDatum": null,
+      "besiktDatum": "2026-04-30",
+      "besiktNasta": "2027-04-30",
+      "nastaKontroll": "2027-04-09",
+      "fabrikat": null,
+      "modell": null,
+      "arsmodell": null,
+      "anteckning": null,
+      "utfordAv": "Reception Östnora",
+      "utfordAvId": "ums5ysv2emd8s",
+      "skapad": "2026-11-21T11:27:05.006Z"
     }
   ],
-  "uppdaterad": "2026-11-21T11:25:56.344Z"
+  "uppdaterad": "2026-11-21T11:27:05.006Z"
 }
