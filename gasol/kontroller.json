@@ -913,7 +913,7 @@
       "camping": "CC Östnora Camping",
       "regnr": "PKL909",
       "fordonstyp": "husvagn",
-      "plats": null,
+      "plats": "52",
       "datum": "2026-07-27",
       "resultat": "godkand",
       "externDatum": null,
@@ -929,5 +929,5 @@
       "skapad": "2026-11-21T11:59:50.714Z"
     }
   ],
-  "uppdaterad": "2026-11-21T11:59:50.714Z"
+  "uppdaterad": "2026-11-21T12:00:13.633Z"
 }
