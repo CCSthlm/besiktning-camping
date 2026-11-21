@@ -556,7 +556,7 @@
       "camping": "CC Östnora Camping",
       "regnr": "TKN841",
       "fordonstyp": "husvagn",
-      "plats": null,
+      "plats": "29",
       "datum": "2026-08-04",
       "resultat": "godkand",
       "externDatum": null,
@@ -572,5 +572,5 @@
       "skapad": "2026-11-21T11:28:48.139Z"
     }
   ],
-  "uppdaterad": "2026-11-21T11:28:48.139Z"
+  "uppdaterad": "2026-11-21T11:29:10.639Z"
 }
