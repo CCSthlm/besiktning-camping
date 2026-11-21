@@ -570,7 +570,28 @@
       "utfordAv": "Reception Östnora",
       "utfordAvId": "ums5ysv2emd8s",
       "skapad": "2026-11-21T11:28:48.139Z"
+    },
+    {
+      "id": "GK-1795260590884",
+      "intygsNr": "GAS-2026-0028",
+      "camping": "CC Östnora Camping",
+      "regnr": "MMB511",
+      "fordonstyp": "husvagn",
+      "plats": "30",
+      "datum": "2026-04-09",
+      "resultat": "godkand",
+      "externDatum": null,
+      "besiktDatum": "2026-04-30",
+      "besiktNasta": "2027-04-30",
+      "nastaKontroll": "2027-04-09",
+      "fabrikat": null,
+      "modell": null,
+      "arsmodell": null,
+      "anteckning": null,
+      "utfordAv": "Reception Östnora",
+      "utfordAvId": "ums5ysv2emd8s",
+      "skapad": "2026-11-21T11:29:50.884Z"
     }
   ],
-  "uppdaterad": "2026-11-21T11:29:10.639Z"
+  "uppdaterad": "2026-11-21T11:29:50.884Z"
 }
