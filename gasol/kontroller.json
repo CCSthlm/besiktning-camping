@@ -282,8 +282,8 @@
       "intygsNr": "GAS-2026-0014",
       "camping": "CC Östnora Camping",
       "regnr": "HWP01N",
-      "fordonstyp": "husbil",
-      "plats": null,
+      "fordonstyp": "husvagn",
+      "plats": "14",
       "datum": "2026-05-09",
       "resultat": "godkand",
       "externDatum": null,
@@ -299,5 +299,5 @@
       "skapad": "2026-11-21T11:08:34.702Z"
     }
   ],
-  "uppdaterad": "2026-11-21T11:08:34.702Z"
+  "uppdaterad": "2026-11-21T11:09:00.668Z"
 }
