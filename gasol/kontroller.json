@@ -444,7 +444,28 @@
       "utfordAv": "Reception Östnora",
       "utfordAvId": "ums5ysv2emd8s",
       "skapad": "2026-11-21T11:17:39.081Z"
+    },
+    {
+      "id": "GK-1795259949628",
+      "intygsNr": "GAS-2026-0022",
+      "camping": "CC Östnora Camping",
+      "regnr": "ACC42L",
+      "fordonstyp": "husvagn",
+      "plats": "23",
+      "datum": "2026-07-11",
+      "resultat": "godkand",
+      "externDatum": null,
+      "besiktDatum": "2026-05-31",
+      "besiktNasta": "2027-05-31",
+      "nastaKontroll": "2027-07-11",
+      "fabrikat": null,
+      "modell": null,
+      "arsmodell": null,
+      "anteckning": null,
+      "utfordAv": "Reception Östnora",
+      "utfordAvId": "ums5ysv2emd8s",
+      "skapad": "2026-11-21T11:19:09.628Z"
     }
   ],
-  "uppdaterad": "2026-11-21T11:17:39.081Z"
+  "uppdaterad": "2026-11-21T11:19:09.628Z"
 }
