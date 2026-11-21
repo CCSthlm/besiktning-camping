@@ -56,8 +56,8 @@
       "datum": "2026-05-28",
       "resultat": "godkand",
       "externDatum": null,
-      "besiktDatum": null,
-      "besiktNasta": null,
+      "besiktDatum": "2026-05-31",
+      "besiktNasta": "2027-05-31",
       "nastaKontroll": "2027-05-28",
       "fabrikat": null,
       "modell": null,
@@ -110,5 +110,5 @@
       "skapad": "2026-11-21T10:50:25.743Z"
     }
   ],
-  "uppdaterad": "2026-11-21T10:52:10.923Z"
+  "uppdaterad": "2026-11-21T10:52:26.619Z"
 }
