@@ -68,7 +68,7 @@
     "el_intakt_vinter_kwh": 160000,
     "el_kostnad_sommar_kwh": 95000,
     "el_kostnad_vinter_kwh": 105000,
-    "loner_sommarvard": 4.54,
+    "loner_sommarvard": 4.5,
     "loner_vintervard": 1,
     "arvoden_antal": 1,
     "arvoden_belopp": 25000,
@@ -88,5 +88,5 @@
       "y2031": 0
     }
   ],
-  "autosparad": "2026-11-23T14:22:36.654Z"
+  "autosparad": "2026-11-23T14:22:42.116Z"
 }
