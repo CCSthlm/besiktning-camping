@@ -80,7 +80,7 @@
     "helarsplatser_pris": 15535.71,
     "gastavgift_antal": 430,
     "gastavgift_pris": 383.93,
-    "loner_sommarvard": 4,
+    "loner_sommarvard": 3,
     "loner_vintervard": 1,
     "arvoden_antal": 1,
     "arvoden_belopp": 25000,
@@ -91,5 +91,5 @@
     "soc_avg_lonekostnad": 150000
   },
   "investeringar": [],
-  "autosparad": "2026-11-18T11:24:00.038Z"
+  "autosparad": "2026-11-23T18:09:27.260Z"
 }
