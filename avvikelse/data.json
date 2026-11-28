@@ -597,6 +597,49 @@
           "status": "ny"
         }
       ]
+    },
+    {
+      "id": "AV-2611-2VRT",
+      "ts": "2026-11-28T08:49:44.533Z",
+      "kategori": "Arbetsmiljö / tillbud",
+      "kategoriIndex": 3,
+      "risk": "Medel",
+      "riskNivå": 2,
+      "anläggning": "CC Björkö Örns Camping",
+      "plats": "Reception",
+      "datum": "2026-11-14",
+      "tid": "",
+      "rapportör": "Receptionen Björkö Örn",
+      "rapportörEmail": "info.bjorko@cc-camping.se",
+      "beskrivning": "Jag har fått information om en händelse som inträffade i receptionen förra helgen 14/11, där Hans Forevärn, plats 21, framförde sitt missnöje angående utslagsrummet till de campingvärdar som arbetade.\nEnligt vad jag fått berättat ska Hans ha varit mycket högljudd och uttryckt sin ilska och frustration på ett sätt som gjorde att campingvärdarna upplevde situationen som både obehaglig och olustig.\nMin uppfattning är att detta inte är en enskild händelse, utan att hans missnöje fortsätter att komma till uttryck på ett sätt som nu även drabbar våra campingvärdar ännu en gång. \nJag tycker att det är mycket allvarligt att våra campingvärdar ska behöva känna obehag när de utför sitt ideella arbete. Det är inte acceptabelt.",
+      "omedelbar": "",
+      "ansvarig": "",
+      "deadline": "",
+      "kommentar": "",
+      "status": "eskalerad",
+      "eskalerad": true,
+      "bilder": [],
+      "dynamicFields": {
+        "d-arbtyp": "",
+        "d-personal": "",
+        "d-vad-hände": "",
+        "d-vad-kunnat": "",
+        "d-arbfoerstahjälp": false,
+        "d-arbambulans": false,
+        "d-skyddsombud": false,
+        "d-chef": false,
+        "d-allvarligt": false,
+        "d-amv": false,
+        "d-fk": false
+      },
+      "historik": [
+        {
+          "ts": "2026-11-28T08:49:44.533Z",
+          "av": "Receptionen Björkö Örn",
+          "händelse": "Skapades",
+          "status": "ny"
+        }
+      ]
     }
   ],
   "inställningar": {
